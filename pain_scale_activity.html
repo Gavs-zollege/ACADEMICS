@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pain Scale Activity</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 12px 40px;
+  }
+
+  .container { max-width: 860px; width: 100%; }
+
+  .header { text-align: center; margin-bottom: 28px; }
+  .header h1 { font-size: 26px; font-weight: 800; color: #1a2340; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .header p { font-size: 15px; color: #5a6880; font-weight: 600; }
+
+  .instruction {
+    background: #e8f0fb;
+    border-left: 4px solid #4a7fd4;
+    border-radius: 0 10px 10px 0;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #2c4a80;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .faces-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+
+  .face-btn {
+    background: white;
+    border: 3px solid #e0e8f0;
+    border-radius: 18px;
+    padding: 14px 10px 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.2s, transform 0.18s, box-shadow 0.18s;
+    width: 122px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+  .face-btn:hover { transform: translateY(-4px) scale(1.04); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+
+  .face-btn.selected {
+    border-color: #1a2340;
+    background: #f4f7fb;
+    box-shadow: 0 0 0 2px #1a2340, 0 8px 20px rgba(0,0,0,0.1);
+    transform: translateY(-4px) scale(1.04);
+  }
+
+  .face-btn svg { width: 74px; height: 74px; }
+
+  .face-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #3a4a60;
+    line-height: 1.3;
+  }
+
+  .result-area {
+    background: white;
+    border-radius: 18px;
+    border: 2px solid #e0e8f0;
+    padding: 28px 32px;
+    text-align: center;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: border-color 0.3s;
+    margin-bottom: 20px;
+  }
+
+  .result-area.active { border-color: #4a7fd4; }
+  .result-prompt { font-size: 15px; color: #9aa8bc; font-weight: 600; }
+  .result-face svg { width: 68px; height: 68px; }
+  .result-name { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; }
+
+  .result-score-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .result-desc { font-size: 15px; color: #4a5a70; max-width: 540px; line-height: 1.65; font-weight: 600; }
+
+  .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .btn-submit {
+    background: #1a2340;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 32px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.12s;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-submit:hover { background: #2c3d6a; }
+  .btn-submit:active { transform: scale(0.97); }
+  .btn-submit:disabled { background: #b0bcc8; cursor: not-allowed; }
+
+  .btn-reset {
+    background: none;
+    border: 2px solid #c8d4e0;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #5a6880;
+    cursor: pointer;
+    transition: background 0.18s, border-color 0.18s;
+  }
+
+  .btn-reset:hover { background: #f0f4f8; border-color: #a0b0c0; }
+
+  .submitted-banner {
+    display: none;
+    background: #e6f4ec;
+    border: 2px solid #4caf7a;
+    border-radius: 14px;
+    padding: 20px 24px;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .submitted-banner.show { display: block; }
+  .submitted-banner .checkmark { font-size: 32px; margin-bottom: 8px; }
+  .submitted-banner h3 { font-size: 17px; font-weight: 800; color: #1a6636; margin-bottom: 6px; }
+  .submitted-banner p { font-size: 14px; color: #2d7a50; font-weight: 600; }
+
+  @media (max-width: 600px) {
+    .face-btn { width: 90px; padding: 10px 6px 8px; }
+    .face-btn svg { width: 56px; height: 56px; }
+    .face-label { font-size: 9.5px; }
+    .header h1 { font-size: 21px; }
+    .result-area { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Pain Scale Activity</h1>
+    <p>How are you feeling today?</p>
+  </div>
+
+  <div class="instruction">
+    Click on the face that best describes how much pain you are feeling right now, then press <strong>Submit My Answer</strong>.
+  </div>
+
+  <div class="faces-row" id="facesRow"></div>
+
+  <div class="result-area" id="resultArea">
+    <p class="result-prompt">Select a face above to get started.</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn-submit" id="submitBtn" disabled onclick="submitAnswer()">Submit My Answer</button>
+    <button class="btn-reset" id="resetBtn" style="display:none" onclick="resetAll()">Start Over</button>
+  </div>
+
+  <div class="submitted-banner" id="submittedBanner">
+    <div class="checkmark">&#9989;</div>
+    <h3>Answer Submitted!</h3>
+    <p id="submittedText"></p>
+  </div>
+</div>
+
+<script>
+const levels = [
+  {
+    label: "No Pain",
+    score: 0,
+    color: "#3aaa6e",
+    stroke: "#2a7d50",
+    mouth: "smile",
+    eyes: "happy",
+    desc: "You have no pain at all right now. That is wonderful! Keep up whatever healthy habits you have."
+  },
+  {
+    label: "Hurts a Little",
+    score: 2,
+    color: "#5bbf7a",
+    stroke: "#3a8f56",
+    mouth: "slight-smile",
+    eyes: "neutral",
+    desc: "You have mild pain that is easy to ignore. You can do most activities without much trouble."
+  },
+  {
+    label: "Hurts a Little More",
+    score: 4,
+    color: "#c0c830",
+    stroke: "#8a9020",
+    mouth: "flat",
+    eyes: "neutral",
+    desc: "You have moderate pain. It may be hard to concentrate on some tasks, but you can still manage most activities."
+  },
+  {
+    label: "Hurts Even More",
+    score: 6,
+    color: "#e8a020",
+    stroke: "#b07510",
+    mouth: "frown",
+    eyes: "sad",
+    desc: "You have considerable pain. It is hard to concentrate and you may need to stop some activities. Consider telling a teacher or nurse."
+  },
+  {
+    label: "Hurts a Whole Lot",
+    score: 8,
+    color: "#e06420",
+    stroke: "#a84410",
+    mouth: "frown-deep",
+    eyes: "very-sad",
+    desc: "You have intense pain. It is hard to do anything. Please tell a doctor, nurse, or trusted adult right away."
+  },
+  {
+    label: "Hurts Worst",
+    score: 10,
+    color: "#e04060",
+    stroke: "#aa2040",
+    mouth: "cry",
+    eyes: "cry",
+    desc: "This is the worst pain imaginable. This is urgent — please tell a doctor, nurse, or trusted adult immediately."
+  }
+];
+
+function drawFace(lvl, size) {
+  const r = size / 2;
+  const cx = r, cy = r;
+  const eyeY = cy - r * 0.15;
+  const eyeR = r * 0.085;
+  const eyeXL = cx - r * 0.27, eyeXR = cx + r * 0.27;
+  const sw = r * 0.1;
+  const my = cy + r * 0.22;
+  const mx = r * 0.32;
+
+  let eyes = "";
+  if (lvl.eyes === "happy" || lvl.eyes === "neutral") {
+    eyes = `<circle cx="${eyeXL}" cy="${eyeY}" r="${eyeR}" fill="${lvl.stroke}"/>
+            <circle cx="${eyeXR}" cy="${eyeY}" r="${eyeR}" fill="${lvl.stroke}"/>`;
+  } else if (lvl.eyes === "sad" || lvl.eyes === "very-sad") {
+    eyes = `<circle cx="${eyeXL}" cy="${eyeY + r*0.04}" r="${eyeR}" fill="${lvl.stroke}"/>
+            <circle cx="${eyeXR}" cy="${eyeY + r*0.04}" r="${eyeR}" fill="${lvl.stroke}"/>`;
+  } else if (lvl.eyes === "cry") {
+    eyes = `<circle cx="${eyeXL}" cy="${eyeY + r*0.04}" r="${eyeR}" fill="${lvl.stroke}"/>
+            <circle cx="${eyeXR}" cy="${eyeY + r*0.04}" r="${eyeR}" fill="${lvl.stroke}"/>
+            <path d="M${eyeXL} ${eyeY+r*0.08} Q${eyeXL-r*0.04} ${cy+r*0.22} ${eyeXL} ${cy+r*0.36}" stroke="#6ab4e8" stroke-width="${r*0.08}" fill="none" stroke-linecap="round"/>
+            <path d="M${eyeXR} ${eyeY+r*0.08} Q${eyeXR+r*0.04} ${cy+r*0.22} ${eyeXR} ${cy+r*0.36}" stroke="#6ab4e8" stroke-width="${r*0.08}" fill="none" stroke-linecap="round"/>`;
+  }
+
+  let mouth = "";
+  if (lvl.mouth === "smile") {
+    mouth = `<path d="M${cx-mx} ${my} Q${cx} ${cy+r*0.52} ${cx+mx} ${my}" fill="none" stroke="${lvl.stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+  } else if (lvl.mouth === "slight-smile") {
+    mouth = `<path d="M${cx-mx*0.85} ${my+r*0.04} Q${cx} ${cy+r*0.42} ${cx+mx*0.85} ${my+r*0.04}" fill="none" stroke="${lvl.stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+  } else if (lvl.mouth === "flat") {
+    mouth = `<line x1="${cx-mx}" y1="${my+r*0.1}" x2="${cx+mx}" y2="${my+r*0.1}" stroke="${lvl.stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+  } else if (lvl.mouth === "frown") {
+    mouth = `<path d="M${cx-mx} ${my+r*0.18} Q${cx} ${my-r*0.06} ${cx+mx} ${my+r*0.18}" fill="none" stroke="${lvl.stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+  } else if (lvl.mouth === "frown-deep") {
+    mouth = `<path d="M${cx-mx} ${my+r*0.22} Q${cx} ${my-r*0.1} ${cx+mx} ${my+r*0.22}" fill="none" stroke="${lvl.stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+  } else if (lvl.mouth === "cry") {
+    mouth = `<path d="M${cx-mx} ${my+r*0.3} Q${cx} ${my+r*0.02} ${cx+mx} ${my+r*0.3}" fill="none" stroke="${lvl.stroke}" stroke-width="${sw}" stroke-linecap="round"/>`;
+  }
+
+  return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="${cx}" cy="${cy}" r="${r-2}" fill="${lvl.color}" stroke="${lvl.stroke}" stroke-width="${r*0.09}"/>
+    ${eyes}
+    ${mouth}
+  </svg>`;
+}
+
+const row = document.getElementById("facesRow");
+let selectedIndex = null;
+let submitted = false;
+
+levels.forEach(function(lvl, i) {
+  const btn = document.createElement("button");
+  btn.className = "face-btn";
+  btn.setAttribute("aria-label", lvl.label + " - pain score " + lvl.score + " out of 10");
+  btn.innerHTML = drawFace(lvl, 100) + '<span class="face-label">' + lvl.label + '</span>';
+  btn.onclick = function() { if (!submitted) selectLevel(i, btn); };
+  row.appendChild(btn);
+});
+
+function selectLevel(i, btn) {
+  document.querySelectorAll(".face-btn").forEach(function(b) { b.classList.remove("selected"); });
+  btn.classList.add("selected");
+  selectedIndex = i;
+
+  const lvl = levels[i];
+  const card = document.getElementById("resultArea");
+  card.classList.add("active");
+  const bgLight = lvl.color + "22";
+
+  card.innerHTML =
+    '<div class="result-face">' + drawFace(lvl, 80) + '</div>' +
+    '<div class="result-name" style="color:' + lvl.stroke + '">' + lvl.label + '</div>' +
+    '<span class="result-score-badge" style="background:' + bgLight + '; color:' + lvl.stroke + '">Pain Score: ' + lvl.score + ' / 10</span>' +
+    '<div class="result-desc">' + lvl.desc + '</div>';
+
+  document.getElementById("submitBtn").disabled = false;
+  document.getElementById("resetBtn").style.display = "inline-block";
+}
+
+function submitAnswer() {
+  if (selectedIndex === null) return;
+  submitted = true;
+  const lvl = levels[selectedIndex];
+
+  document.querySelectorAll(".face-btn").forEach(function(b) { b.style.cursor = "default"; });
+  document.getElementById("submitBtn").disabled = true;
+
+  const submittedText = 'You selected: "' + lvl.label + '" \u2014 Pain Score ' + lvl.score + '/10. Your response has been recorded.';
+  document.getElementById("submittedText").textContent = submittedText;
+
+  const banner = document.getElementById("submittedBanner");
+  banner.classList.add("show");
+  banner.scrollIntoView({ behavior: "smooth", block: "nearest" });
+
+  // Attempt LTI postMessage for Canvas score passback
+  try {
+    window.parent.postMessage({
+      subject: "lti.setScore",
+      score: lvl.score / 10,
+      label: lvl.label
+    }, "*");
+  } catch(e) {}
+
+  console.log("Pain Scale Submission:", { label: lvl.label, score: lvl.score, timestamp: new Date().toISOString() });
+}
+
+function resetAll() {
+  submitted = false;
+  selectedIndex = null;
+
+  document.querySelectorAll(".face-btn").forEach(function(b) {
+    b.classList.remove("selected");
+    b.style.cursor = "pointer";
+  });
+
+  const card = document.getElementById("resultArea");
+  card.classList.remove("active");
+  card.innerHTML = '<p class="result-prompt">Select a face above to get started.</p>';
+
+  document.getElementById("submitBtn").disabled = true;
+  document.getElementById("resetBtn").style.display = "none";
+  document.getElementById("submittedBanner").classList.remove("show");
+}
+</script>
+</body>
+</html>

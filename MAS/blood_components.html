@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Blood Components Lab</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0d0d0d; color: #f0e6e6; }
+  .hero { background: linear-gradient(135deg, #1a0000 0%, #3d0000 50%, #6b0000 100%); padding: 28px 20px 20px; text-align: center; position: relative; overflow: hidden; border-bottom: 3px solid #cc0000; }
+  .hero h1 { font-size: 22px; font-weight: 900; color: #fff; letter-spacing: 2px; text-shadow: 0 0 20px rgba(255,60,60,0.5); }
+  .hero p { font-size: 14px; color: rgba(255,200,200,0.9); margin-top: 6px; font-weight: 700; }
+  .tabs { display: flex; background: #1a0000; border-bottom: 3px solid #cc0000; }
+  .tab { flex: 1; padding: 13px 6px; font-size: 13px; font-weight: 900; text-align: center; cursor: pointer; color: #ff9999; border: none; background: transparent; transition: background 0.2s; letter-spacing: 0.5px; }
+  .tab.active { background: #3d0000; color: #ffdddd; border-bottom: 4px solid #ff3333; }
+  .tab:hover:not(.active) { background: #2a0000; }
+  .content { background: #111111; min-height: 400px; padding: 20px; }
+  .card-scene { perspective: 800px; width: 100%; max-width: 380px; height: 230px; margin: 0 auto 16px; cursor: pointer; }
+  .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s; }
+  .card-scene.flipped .card-inner { transform: rotateY(180deg); }
+  .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
+  .card-front { background: linear-gradient(135deg, #5a0000, #2a0000); color: white; box-shadow: 0 6px 24px rgba(255,0,0,0.3), 0 0 0 2px #7a0000; }
+  .card-back { background: linear-gradient(135deg, #1e1e1e, #2a1010); color: #ffe0e0; transform: rotateY(180deg); border: 2px solid #cc3333; box-shadow: 0 6px 24px rgba(200,0,0,0.25); }
+  .card-label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; margin-bottom: 10px; color: #ff9999; }
+  .card-title { font-size: 28px; font-weight: 900; color: #ffffff; text-shadow: 0 2px 8px rgba(0,0,0,0.5); }
+  .card-body { font-size: 14px; font-weight: 700; line-height: 1.7; color: #ffe8e8; }
+  .card-hint { font-size: 12px; opacity: 0.8; margin-top: 10px; font-style: italic; color: #ffb3b3; font-weight: 700; }
+  .card-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 10px; }
+  .card-nav button { background: #7a0000; color: #ffe0e0; border: 2px solid #cc2222; padding: 9px 22px; border-radius: 20px; font-weight: 900; font-size: 13px; cursor: pointer; transition: background 0.2s; }
+  .card-nav button:hover { background: #aa0000; }
+  .card-counter { font-size: 13px; font-weight: 900; color: #ff9999; }
+  .quiz-q { font-size: 16px; font-weight: 900; color: #ffe0e0; background: #2a0000; border-left: 5px solid #ff3333; padding: 15px 16px; border-radius: 0 10px 10px 0; margin-bottom: 14px; line-height: 1.5; border: 1px solid #5a0000; }
+  .quiz-opts { display: flex; flex-direction: column; gap: 9px; }
+  .quiz-opt { background: #1c1c1c; border: 2px solid #5a1111; border-radius: 10px; padding: 12px 16px; font-size: 14px; font-weight: 800; color: #ffdddd; cursor: pointer; transition: all 0.2s; text-align: left; }
+  .quiz-opt:hover:not(:disabled) { background: #2a0000; border-color: #ff4444; transform: translateX(5px); color: #ffffff; }
+  .quiz-opt.correct { background: #0a2e0a; border-color: #44dd44; color: #aaffaa; }
+  .quiz-opt.wrong { background: #2e0a0a; border-color: #dd2222; color: #ff9999; text-decoration: line-through; }
+  .quiz-feedback { font-size: 13px; font-weight: 800; padding: 12px 14px; border-radius: 8px; margin-top: 10px; line-height: 1.6; }
+  .quiz-feedback.ok { background: #0a2e0a; color: #88ff88; border: 2px solid #44aa44; }
+  .quiz-feedback.bad { background: #2e0a0a; color: #ffaaaa; border: 2px solid #aa2222; }
+  .quiz-next { margin-top: 12px; background: #7a0000; color: #ffe0e0; border: 2px solid #cc2222; padding: 10px 26px; border-radius: 20px; font-weight: 900; font-size: 13px; cursor: pointer; display: block; transition: background 0.2s; }
+  .quiz-next:hover { background: #aa0000; }
+  .quiz-score { text-align: center; padding: 24px; }
+  .quiz-score .big { font-size: 56px; font-weight: 900; color: #ff4444; text-shadow: 0 0 20px rgba(255,0,0,0.4); }
+  .quiz-score p { font-size: 16px; font-weight: 800; color: #ffcccc; margin-top: 10px; }
+  .quiz-score button { margin-top: 16px; background: #7a0000; color: #ffe0e0; border: 2px solid #cc2222; padding: 11px 30px; border-radius: 20px; font-weight: 900; font-size: 14px; cursor: pointer; }
+  .sort-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 18px; }
+  .drop-zone { background: #1a1a1a; border: 2px dashed #5a2222; border-radius: 12px; padding: 10px; min-height: 140px; transition: all 0.2s; }
+  .drop-zone.drag-over { background: #2a0808; border-color: #ff3333; border-style: solid; }
+  .drop-zone h3 { font-size: 12px; font-weight: 900; text-align: center; color: #ff9999; padding-bottom: 7px; border-bottom: 2px solid #5a2222; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .tube-icon { font-size: 22px; text-align: center; margin-bottom: 3px; }
+  .sort-items-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 14px; }
+  .sort-chip { background: #6a0000; color: #ffe0e0; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; cursor: grab; user-select: none; border: 2px solid #aa1111; transition: transform 0.15s, background 0.15s; }
+  .sort-chip:hover { transform: scale(1.06); background: #8a0000; }
+  .sort-chip.placed { background: #2a1010; color: #ffcccc; border-color: #7a2222; cursor: grab; font-size: 11px; padding: 5px 10px; margin: 2px 0; display: block; width: 100%; text-align: center; border-radius: 10px; }
+  .sort-chip.correct-placed { background: #0a2e0a; color: #aaffaa; border-color: #33aa33; cursor: default; font-weight: 900; }
+  .sort-chip.wrong-placed { background: #2e0a0a; color: #ffaaaa; border-color: #aa2222; }
+  .sort-feedback-row { text-align: center; margin-top: 8px; }
+  .sort-score { font-size: 15px; font-weight: 900; color: #ffcccc; margin-top: 8px; padding: 10px; border-radius: 8px; }
+  .section-title { font-size: 14px; font-weight: 900; color: #ff9999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div style="font-size:34px;margin-bottom:8px;">🧪</div>
+  <h1>BLOOD COMPONENTS LAB</h1>
+  <p>Medical Assistant Program — Interactive Activity</p>
+</div>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('flashcards',this)">📋 Flashcards</button>
+  <button class="tab" onclick="switchTab('quiz',this)">❓ Quiz</button>
+  <button class="tab" onclick="switchTab('sort',this)">🔬 Sort It</button>
+</div>
+<div class="content" id="main-content"></div>
+
+<script>
+const cards = [
+  { term:"Whole Blood", def:"Complete, unprocessed blood containing red blood cells, white blood cells, platelets, and plasma. Used in transfusions for massive blood loss.", hint:"Think: everything still in the tube!" },
+  { term:"Plasma", def:"The liquid portion of blood (about 55%) containing clotting factors (fibrinogen). Pale yellow. Collected with anticoagulant — cells settle but clotting proteins REMAIN.", hint:"Has fibrinogen — can still clot!" },
+  { term:"Serum", def:"Plasma MINUS clotting factors. Obtained after blood clots and is centrifuged. Clear yellow fluid used in most chemistry & serology tests.", hint:"Serum = after the clot forms" },
+  { term:"Centrifugation", def:"The spinning process used to separate blood components by density. Heavier cells sink to the bottom; lighter plasma/serum rises to the top.", hint:"Spin to separate!" },
+  { term:"Buffy Coat", def:"A thin whitish layer between red blood cells and plasma/serum after centrifugation. Contains white blood cells and platelets.", hint:"The 'middle child' layer" },
+  { term:"Anticoagulant", def:"Additive in certain blood collection tubes (EDTA, heparin, citrate) that PREVENTS blood from clotting. Needed to collect plasma, not serum.", hint:"Stops the clot — used for plasma tubes" },
+];
+
+const questions = [
+  { q:"Which blood component is collected AFTER the blood has clotted?", opts:["Plasma","Whole Blood","Serum","Buffy Coat"], ans:2, exp:"Serum is the liquid that remains AFTER clotting occurs and clotting factors are removed." },
+  { q:"What is the key difference between plasma and serum?", opts:["Plasma has no red cells","Serum has no red cells","Plasma contains clotting factors; serum does not","Serum contains more platelets"], ans:2, exp:"Plasma retains fibrinogen and other clotting factors. Serum is plasma minus those factors." },
+  { q:"Which tube additive is used to collect PLASMA?", opts:["No additive","Anticoagulant (EDTA/heparin)","Clot activator","Gel separator only"], ans:1, exp:"Anticoagulants prevent clotting, allowing plasma to be separated from cells." },
+  { q:"After centrifugation, where is the buffy coat located?", opts:["Top of the tube","Bottom of the tube","Between red cells and plasma","Mixed throughout"], ans:2, exp:"The buffy coat sits between the heavy red blood cells (bottom) and the lighter plasma (top)." },
+  { q:"Whole blood is approximately what percentage plasma?", opts:["10%","35%","55%","80%"], ans:2, exp:"Plasma makes up about 55% of whole blood volume; the rest is mainly red blood cells." },
+  { q:"Which sample would you use for MOST chemistry and serology tests?", opts:["Whole Blood","Plasma","Serum","Buffy Coat"], ans:2, exp:"Serum is the standard specimen for most chemistry panels and serology tests." },
+];
+
+const sortData = {
+  "Whole Blood":["Contains ALL blood cells","Used in massive transfusions","No centrifugation needed","Deep red, opaque"],
+  "Serum":["NO clotting factors","Clear yellow color","Collected in red/gold top tube","Used for most chemistry tests"],
+  "Plasma":["Contains fibrinogen","Collected with anticoagulant","Used for coagulation studies","~55% of blood volume"],
+};
+
+let cardIdx=0, flipped=false;
+let qIdx=0, score=0, answered=false;
+let dragItem=null, dragSource=null;
+let sortState={};
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  if(tab==='flashcards') renderFlashcards();
+  else if(tab==='quiz'){ qIdx=0; score=0; answered=false; renderQuiz(); }
+  else renderSort();
+}
+
+function renderFlashcards() {
+  const c=cards[cardIdx];
+  document.getElementById('main-content').innerHTML=`
+    <div class="section-title">Flashcard ${cardIdx+1} of ${cards.length}</div>
+    <div class="card-scene${flipped?' flipped':''}" id="card-scene" onclick="flipCard()">
+      <div class="card-inner">
+        <div class="card-face card-front">
+          <div class="card-label">Term</div>
+          <div class="card-title">${c.term}</div>
+          <div class="card-hint">👆 Tap to reveal definition</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-label">Definition</div>
+          <div class="card-body">${c.def}</div>
+          <div class="card-hint">💡 ${c.hint}</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav">
+      <button onclick="prevCard()">← Prev</button>
+      <span class="card-counter">${cardIdx+1} / ${cards.length}</span>
+      <button onclick="nextCard()">Next →</button>
+    </div>`;
+}
+
+function flipCard() { flipped=!flipped; document.getElementById('card-scene').classList.toggle('flipped',flipped); }
+function nextCard() { cardIdx=(cardIdx+1)%cards.length; flipped=false; renderFlashcards(); }
+function prevCard() { cardIdx=(cardIdx-1+cards.length)%cards.length; flipped=false; renderFlashcards(); }
+
+function renderQuiz() {
+  if(qIdx>=questions.length){
+    const pct=Math.round(score/questions.length*100);
+    const msg=pct===100?"🏆 Perfect Score! You're a lab superstar!":pct>=80?"🎉 Great work! Almost there!":pct>=60?"👍 Good effort — review your notes!":"📚 Keep studying — you've got this!";
+    document.getElementById('main-content').innerHTML=`
+      <div class="quiz-score">
+        <div class="big">${score}/${questions.length}</div>
+        <p>${msg}</p>
+        <p style="font-size:13px;color:#ff8888;font-weight:700;margin-top:6px;">${pct}% correct</p>
+        <button onclick="qIdx=0;score=0;answered=false;renderQuiz()">🔄 Try Again</button>
+      </div>`;
+    return;
+  }
+  const q=questions[qIdx];
+  document.getElementById('main-content').innerHTML=`
+    <div class="section-title">Question ${qIdx+1} of ${questions.length} — Score: ${score}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-opt" id="opt${i}" onclick="checkAns(${i})">${o}</button>`).join('')}</div>
+    <div id="qfb"></div>
+    <div id="qnext"></div>`;
+}
+
+function checkAns(i) {
+  if(answered) return;
+  answered=true;
+  const q=questions[qIdx];
+  document.querySelectorAll('.quiz-opt').forEach(o=>o.disabled=true);
+  document.getElementById('opt'+q.ans).classList.add('correct');
+  const fb=document.getElementById('qfb');
+  if(i===q.ans){ score++; fb.innerHTML=`<div class="quiz-feedback ok">✅ Correct! ${q.exp}</div>`; }
+  else { document.getElementById('opt'+i).classList.add('wrong'); fb.innerHTML=`<div class="quiz-feedback bad">❌ Not quite. ${q.exp}</div>`; }
+  document.getElementById('qnext').innerHTML=`<button class="quiz-next" onclick="qIdx++;answered=false;renderQuiz()">${qIdx+1<questions.length?'Next Question →':'See Results 🎓'}</button>`;
+}
+
+function renderSort() {
+  sortState={ correct:{} };
+  const allItems=Object.entries(sortData).flatMap(([cat,items])=>items.map(item=>({item,cat})));
+  const shuffled=allItems.sort(()=>Math.random()-0.5);
+  document.getElementById('main-content').innerHTML=`
+    <div class="section-title">Drag each clue to its correct blood component!</div>
+    <div class="sort-grid">
+      ${["Whole Blood","Serum","Plasma"].map(cat=>`
+        <div class="drop-zone" id="dz-${cat.replace(' ','-')}" ondragover="doDragOver(event)" ondrop="doDrop(event,'${cat}')" ondragleave="doDragLeave(event)">
+          <div class="tube-icon">${cat==='Whole Blood'?'🔴':cat==='Serum'?'🟡':'🌕'}</div>
+          <h3>${cat}</h3>
+          <div id="zone-${cat.replace(' ','-')}"></div>
+        </div>`).join('')}
+    </div>
+    <div class="section-title" style="margin-bottom:8px;">Clues to Sort:</div>
+    <div class="sort-items-pool" id="pool">
+      ${shuffled.map(({item,cat})=>`<div class="sort-chip" draggable="true" data-item="${item}" data-cat="${cat}" ondragstart="doDragStart(event)">${item}</div>`).join('')}
+    </div>
+    <div class="sort-feedback-row"><div class="sort-score" id="sort-score"></div></div>`;
+}
+
+function doDragStart(e) { dragItem=e.target.dataset.item; dragSource=e.target.dataset.cat; e.dataTransfer.setData('text/plain',dragItem); }
+function doDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function doDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+
+function doDrop(e, targetCat) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(!dragItem) return;
+  const isCorrect=dragSource===targetCat;
+  if(!isCorrect){
+    const s=document.getElementById('sort-score');
+    s.style.color='#ff6666';
+    s.textContent=`❌ "${dragItem}" doesn't belong in ${targetCat}. Try another column!`;
+    dragItem=null; dragSource=null; return;
+  }
+  const chip=document.querySelector(`.sort-chip[data-item="${CSS.escape(dragItem)}"]`);
+  if(chip&&chip.parentElement.id==='pool') chip.remove();
+  const zone=document.getElementById('zone-'+targetCat.replace(' ','-'));
+  const placed=document.createElement('div');
+  placed.className='sort-chip placed correct-placed';
+  placed.textContent=dragItem;
+  zone.appendChild(placed);
+  sortState.correct[dragItem]=true;
+  const total=Object.values(sortData).flat().length;
+  const done=Object.keys(sortState.correct).length;
+  const s=document.getElementById('sort-score');
+  s.style.color='#88ff88';
+  s.textContent=done===total?`🏆 All ${total} items sorted correctly! Amazing work!`:`✅ Correct! ${done}/${total} placed`;
+  dragItem=null; dragSource=null;
+}
+
+renderFlashcards();
+</script>
+</body>
+</html>

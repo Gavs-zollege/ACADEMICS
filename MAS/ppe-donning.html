@@ -1,4 +1,3 @@
-Index.html.html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +13,6 @@ p.sub{text-align:center;font-size:.9rem;color:#64748b;margin-bottom:20px}
 @media(min-width:600px){.grid{grid-template-columns:repeat(4,1fr)}}
 .card{background:#fff;border-radius:14px;border:2px solid #e2e8f0;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;user-select:none;position:relative}
 .card:hover{border-color:#94a3b8;transform:translateY(-2px)}
-.card.selected{border-color:#3b82f6;background:#eff6ff}
 .card.correct{border-color:#22c55e;background:#f0fdf4;animation:pop .3s ease}
 .card.wrong{border-color:#ef4444;background:#fef2f2;animation:shake .4s ease}
 .card.disabled{cursor:default;pointer-events:none}
@@ -29,7 +27,6 @@ p.sub{text-align:center;font-size:.9rem;color:#64748b;margin-bottom:20px}
 .card-desc{font-size:.7rem;color:#64748b;line-height:1.3}
 .order-row{display:flex;align-items:center;justify-content:center;gap:8px;max-width:700px;margin:0 auto 18px;flex-wrap:wrap}
 .step-slot{width:44px;height:44px;border-radius:50%;border:2px dashed #cbd5e1;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#94a3b8;transition:all .3s}
-.step-slot.filled{border-style:solid;border-color:#3b82f6;color:#3b82f6;background:#eff6ff}
 .step-slot.correct-slot{border-color:#22c55e;color:#22c55e;background:#f0fdf4}
 .step-slot.wrong-slot{border-color:#ef4444;color:#ef4444;background:#fef2f2}
 .arrow{color:#cbd5e1;font-size:1.1rem}
@@ -50,9 +47,7 @@ p.sub{text-align:center;font-size:.9rem;color:#64748b;margin-bottom:20px}
 <p class="sub">Click each PPE item in the correct order to put it on. Can you get it right?</p>
 
 <div class="order-row" id="slots"></div>
-
 <div id="feedback"></div>
-
 <div class="grid" id="cards"></div>
 
 <div class="complete-msg" id="complete">
@@ -61,7 +56,6 @@ p.sub{text-align:center;font-size:.9rem;color:#64748b;margin-bottom:20px}
 </div>
 
 <div class="score-bar" id="score">Steps completed: 0 / 4</div>
-
 <button id="reset-btn" onclick="resetGame()">↺ Try Again</button>
 
 <script>
@@ -112,7 +106,6 @@ const items = [
 ];
 
 let currentStep = 0;
-let wrongAttempt = false;
 
 function buildSlots(){
   const sl = document.getElementById('slots');

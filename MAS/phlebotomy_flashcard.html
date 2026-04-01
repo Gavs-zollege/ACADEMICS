@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Phlebotomy Flashcards</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; background: #0f172a; font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+  .header { width: 100%; max-width: 600px; margin-bottom: 18px; text-align: center; }
+  .week-badge { display: inline-block; background: #b91c1c; color: #fff; border-radius: 20px; padding: 4px 16px; font-size: 12px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
+  h1 { color: #f1f5f9; font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .subtitle { color: #94a3b8; font-size: 13px; }
+  .progress-wrap { width: 100%; max-width: 600px; margin-bottom: 16px; }
+  .progress-meta { display: flex; justify-content: space-between; color: #64748b; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+  .progress-bar-bg { background: #1e293b; border-radius: 99px; height: 8px; }
+  .progress-bar { border-radius: 99px; height: 8px; transition: width 0.4s; }
+  .cat-badge { margin-bottom: 12px; }
+  .cat-badge span { color: #fff; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; }
+  .card { width: 100%; max-width: 600px; min-height: 220px; border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; transition: all 0.3s; margin-bottom: 18px; user-select: none; cursor: pointer; }
+  .card.answered { cursor: default; }
+  .card-icon { font-size: 28px; margin-bottom: 12px; }
+  .card-question { color: #f1f5f9; font-size: 18px; font-weight: 700; line-height: 1.5; }
+  .card-hint { color: #64748b; font-size: 13px; margin-top: 16px; }
+  .card-answer { color: #86efac; font-size: 16px; font-weight: 600; line-height: 1.6; white-space: pre-line; }
+  .btn-row { display: flex; gap: 14px; margin-bottom: 16px; width: 100%; max-width: 600px; }
+  .btn-got { flex: 1; background: #15803d; color: #fff; border: 3px solid #22c55e; border-radius: 14px; padding: 16px; font-size: 17px; font-weight: 900; cursor: pointer; }
+  .btn-review { flex: 1; background: #991b1b; color: #fff; border: 3px solid #ef4444; border-radius: 14px; padding: 16px; font-size: 17px; font-weight: 900; cursor: pointer; }
+  .btn-next { color: #fff; border: none; border-radius: 14px; padding: 16px 48px; font-size: 18px; font-weight: 900; cursor: pointer; margin-bottom: 16px; letter-spacing: 0.5px; }
+  .flip-hint { color: #475569; font-size: 12px; text-align: center; }
+  /* Done screen */
+  #done-screen { display: none; min-height: 100vh; background: #0f172a; flex-direction: column; align-items: center; justify-content: center; padding: 24px; width: 100%; }
+  .done-card { background: #1e293b; border-radius: 20px; padding: 40px; max-width: 480px; width: 100%; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+  .done-emoji { font-size: 56px; margin-bottom: 12px; }
+  .done-title { color: #f1f5f9; font-size: 26px; margin-bottom: 8px; font-weight: 700; }
+  .done-sub { color: #94a3b8; margin-bottom: 28px; font-size: 15px; }
+  .score-row { display: flex; gap: 16px; justify-content: center; margin-bottom: 28px; }
+  .score-got { background: #14532d; border-radius: 12px; padding: 16px 28px; }
+  .score-got .num { color: #4ade80; font-size: 32px; font-weight: 800; }
+  .score-got .lbl { color: #86efac; font-size: 13px; font-weight: 600; }
+  .score-miss { background: #450a0a; border-radius: 12px; padding: 16px 28px; }
+  .score-miss .num { color: #f87171; font-size: 32px; font-weight: 800; }
+  .score-miss .lbl { color: #fca5a5; font-size: 13px; font-weight: 600; }
+  .score-pct { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
+  .score-pct strong { color: #f1f5f9; }
+  .btn-restart { background: #b91c1c; color: #fff; border: none; border-radius: 12px; padding: 14px 36px; font-size: 16px; font-weight: 800; cursor: pointer; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+
+<div id="game-screen">
+  <div class="header">
+    <div class="week-badge">WEEK 5 · PHLEBOTOMY &amp; BLOOD COLLECTION</div>
+    <h1>Flashcard Review</h1>
+    <p class="subtitle">🧠 A fun activity to sharpen your recall — flip each card, then mark how you did!</p>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="progress-label">Card 1 of 20</span>
+      <span id="score-label">✅ 0 &nbsp;|&nbsp; ❌ 0</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+  </div>
+  <div class="cat-badge"><span id="cat-badge-text"></span></div>
+  <div class="card" id="card" onclick="handleFlip()">
+    <div class="card-icon" id="card-icon">❓</div>
+    <p id="card-text" class="card-question"></p>
+    <p class="card-hint" id="card-hint">Tap to reveal answer</p>
+  </div>
+  <div class="btn-row" id="btn-answer" style="display:none">
+    <button class="btn-got" onclick="handleAnswer(true)">👍 Got It!</button>
+    <button class="btn-review" onclick="handleAnswer(false)">📖 Need Review</button>
+  </div>
+  <button class="btn-next" id="btn-next" style="display:none" onclick="handleNext()">Next Card →</button>
+  <p class="flip-hint" id="flip-hint">Flip the card first, then mark whether you got it right!</p>
+</div>
+
+<div id="done-screen">
+  <div class="done-card">
+    <div class="done-emoji">🎉</div>
+    <h2 class="done-title">Week 5 Complete!</h2>
+    <p class="done-sub">Great work reviewing Phlebotomy &amp; Blood Collection!</p>
+    <div class="score-row">
+      <div class="score-got"><div class="num" id="done-got">0</div><div class="lbl">GOT IT</div></div>
+      <div class="score-miss"><div class="num" id="done-miss">0</div><div class="lbl">REVIEW</div></div>
+    </div>
+    <p class="score-pct" id="done-pct"></p>
+    <button class="btn-restart" onclick="handleRestart()">🔄 Play Again</button>
+  </div>
+</div>
+
+<script>
+const cards = [
+  { category: "Blood Composition", q: "What percentage of blood is plasma, and what does it contain?", a: "Plasma makes up 55% of blood and contains water, proteins, nutrients, and hormones." },
+  { category: "Blood Composition", q: "What are the three formed elements of blood and their functions?", a: "Red blood cells (carry oxygen), White blood cells (fight infection), and Platelets (aid in clotting) — together making up 45% of blood." },
+  { category: "Specimen Types", q: "What is the difference between serum and plasma?", a: "Serum is the liquid portion after blood has clotted. Plasma is the liquid portion when an anticoagulant is used — blood is NOT allowed to clot." },
+  { category: "Specimen Types", q: "Which specimen type is used for hematology tests like a CBC?", a: "Whole blood is used for hematology tests, as it contains all blood components." },
+  { category: "Vein Anatomy", q: "Which vein is preferred first for venipuncture, and why?", a: "The Median Cubital Vein — it is the most common choice because it is centrally located and stable." },
+  { category: "Vein Anatomy", q: "Why should the basilic vein be used with caution?", a: "The basilic vein is located on the inner arm near an artery and nerve, making it riskier. Use it only when no other vein is available." },
+  { category: "Tube Colors", q: "What color tube is used for a CBC (Complete Blood Count)?", a: "Lavender (purple) tube — contains EDTA anticoagulant, used for hematology and CBC tests." },
+  { category: "Tube Colors", q: "What color tube is used for coagulation studies, and what is the key rule?", a: "Light Blue tube (Sodium Citrate). It MUST be filled completely to maintain the correct blood-to-additive ratio." },
+  { category: "Tube Colors", q: "What color tube is used for glucose testing?", a: "Gray tube — contains Sodium Fluoride, which preserves glucose levels." },
+  { category: "Order of Draw", q: "What is the correct order of draw? Use the mnemonic!", a: "Bunnies Love Roaming Gardens, Looking for Delicious Leafy Greens. Yum!\n(Blood Culture → Light Blue → Red → Gold/SST → Light Green → Dark Green → Lavender → Gray → Yellow)" },
+  { category: "Order of Draw", q: "Why does order of draw matter?", a: "To prevent additive carryover between tubes. Drawing in the wrong order can contaminate samples and invalidate test results." },
+  { category: "Tourniquet", q: "Where is the tourniquet applied and how long should it stay on?", a: "Apply 3–4 inches above the puncture site. Leave on for less than 1 minute — prolonged use can skew test results." },
+  { category: "Needle Technique", q: "At what angle should a needle be inserted during venipuncture (ETS)?", a: "15–30 degrees, bevel up. For the Winged Infusion Set, use a shallower 10–15 degree angle." },
+  { category: "Needle Technique", q: "What should you NEVER do with a used needle?", a: "Never recap a used needle. Engage the needle safety device immediately after withdrawal to prevent accidental needlestick injuries." },
+  { category: "Collection Methods", q: "When is the Butterfly (Winged Infusion) method preferred?", a: "For small, fragile, or rolling veins — and for pediatric, geriatric, or hand/wrist collections. It offers easier access and greater patient comfort." },
+  { category: "Collection Methods", q: "When is the Syringe method preferred over the ETS method?", a: "For collapsing or fragile veins (e.g., elderly or dehydrated patients) — the plunger allows manual control of suction to avoid vein collapse." },
+  { category: "Capillary Collection", q: "What is the first step after puncturing the finger in a capillary stick, and why?", a: "Wipe away the first drop of blood — it contains alcohol residue and tissue fluid that can cause hemolysis or dilute the specimen." },
+  { category: "Capillary Collection", q: "What common tests use capillary blood collection?", a: "Glucose, Hematocrit (HCT), PKU screening, and blood smears. Common sites: fingertip (adults) and heel (infants)." },
+  { category: "Site Selection", q: "Name four sites to AVOID when selecting a phlebotomy site.", a: "Avoid: hematomas, scars, edematous (swollen) areas, and mastectomy sites. Always palpate — don't rely on sight alone." },
+  { category: "Labeling & Documentation", q: "What information must be on every specimen label?", a: "Patient's full name, date of birth, collection time and date, and the collector's initials. Labels must be completed at the bedside in front of the patient." },
+];
+
+const catColors = {
+  "Blood Composition": "#b91c1c",
+  "Specimen Types": "#0f766e",
+  "Vein Anatomy": "#7e22ce",
+  "Tube Colors": "#b45309",
+  "Order of Draw": "#1d4ed8",
+  "Tourniquet": "#be185d",
+  "Needle Technique": "#065f46",
+  "Collection Methods": "#9f1239",
+  "Capillary Collection": "#0369a1",
+  "Site Selection": "#713f12",
+  "Labeling & Documentation": "#4338ca",
+};
+
+let shuffled = [], idx = 0, flipped = false, answered = false, score = { got: 0, missed: 0 };
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function init() {
+  shuffled = shuffle(cards);
+  idx = 0; flipped = false; answered = false; score = { got: 0, missed: 0 };
+  render();
+}
+
+function color() { return catColors[shuffled[idx]?.category] || "#b91c1c"; }
+
+function render() {
+  const card = shuffled[idx];
+  const total = shuffled.length;
+  const c = color();
+
+  document.getElementById('progress-label').textContent = `Card ${idx + 1} of ${total}`;
+  document.getElementById('score-label').innerHTML = `✅ ${score.got} &nbsp;|&nbsp; ❌ ${score.missed}`;
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = `${(idx / total) * 100}%`;
+  bar.style.background = c;
+
+  const badge = document.getElementById('cat-badge-text');
+  badge.textContent = card.category;
+  badge.parentElement.firstElementChild.style.background = c;
+
+  const cardEl = document.getElementById('card');
+  cardEl.style.background = flipped ? '#1a2e1a' : '#1e293b';
+  cardEl.style.border = `2.5px solid ${flipped ? '#22c55e' : c}`;
+  cardEl.style.boxShadow = `0 4px 24px ${c}33`;
+  cardEl.className = 'card' + (answered ? ' answered' : '');
+
+  const icon = document.getElementById('card-icon');
+  const text = document.getElementById('card-text');
+  const hint = document.getElementById('card-hint');
+
+  if (!flipped) {
+    icon.textContent = '❓';
+    text.className = 'card-question';
+    text.textContent = card.q;
+    hint.style.display = 'block';
+  } else {
+    icon.textContent = '✅';
+    text.className = 'card-answer';
+    text.textContent = card.a;
+    hint.style.display = 'none';
+  }
+
+  document.getElementById('btn-answer').style.display = (flipped && !answered) ? 'flex' : 'none';
+  const btnNext = document.getElementById('btn-next');
+  btnNext.style.display = answered ? 'inline-block' : 'none';
+  btnNext.style.background = c;
+  btnNext.style.boxShadow = `0 4px 16px ${c}66`;
+  btnNext.textContent = (idx + 1 >= total) ? 'See Results 🎉' : 'Next Card →';
+  document.getElementById('flip-hint').style.display = (!flipped) ? 'block' : 'none';
+}
+
+function handleFlip() {
+  if (answered) return;
+  flipped = !flipped;
+  render();
+}
+
+function handleAnswer(correct) {
+  if (correct) score.got++; else score.missed++;
+  answered = true;
+  render();
+}
+
+function handleNext() {
+  if (idx + 1 >= shuffled.length) { showDone(); return; }
+  idx++; flipped = false; answered = false;
+  render();
+}
+
+function showDone() {
+  document.getElementById('game-screen').style.display = 'none';
+  const done = document.getElementById('done-screen');
+  done.style.display = 'flex';
+  document.getElementById('done-got').textContent = score.got;
+  document.getElementById('done-miss').textContent = score.missed;
+  const pct = Math.round((score.got / shuffled.length) * 100);
+  document.getElementById('done-pct').innerHTML = `Score: <strong>${pct}%</strong> — ${score.got}/${shuffled.length} cards`;
+}
+
+function handleRestart() {
+  document.getElementById('done-screen').style.display = 'none';
+  document.getElementById('game-screen').style.display = 'flex';
+  document.getElementById('game-screen').style.flexDirection = 'column';
+  document.getElementById('game-screen').style.alignItems = 'center';
+  init();
+}
+
+init();
+</script>
+</body>
+</html>

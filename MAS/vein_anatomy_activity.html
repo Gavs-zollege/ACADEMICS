@@ -3,259 +3,313 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Vein Anatomy Explorer</title>
+<title>Vein Anatomy Activity</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: system-ui, sans-serif; }
-  #app { background: linear-gradient(135deg, #dbeeff 0%, #e6f9f1 100%); min-height: 100vh; padding: 1.5rem; }
-  h1 { font-size: 22px; font-weight: 500; color: #0a3d62; text-align: center; margin-bottom: 0.25rem; }
-  .subtitle { text-align: center; color: #2d7fb8; font-size: 14px; margin-bottom: 1.25rem; font-weight: 500; }
-  .tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 1.25rem; flex-wrap: wrap; }
-  .tab { padding: 8px 18px; border-radius: 20px; border: 2px solid #1a6fa8; background: transparent; color: #1a6fa8; font-size: 14px; font-weight: 500; cursor: pointer; transition: all .2s; }
+  body { font-family: system-ui, sans-serif; background: #f0f6ff; }
+  #app { max-width: 720px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 22px; font-weight: 800; color: #0a3d62; text-align: center; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #2d7fb8; font-size: 14px; margin-bottom: 18px; font-weight: 600; }
+
+  .tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+  .tab { padding: 9px 20px; border-radius: 20px; border: 2px solid #1a6fa8; background: transparent; color: #1a6fa8; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s; }
   .tab.active { background: #1a6fa8; color: #fff; }
   .panel { display: none; }
   .panel.active { display: block; }
-  .explore-layout { display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; }
-  .arm-wrap { flex: 0 0 220px; position: relative; }
-  .arm-wrap svg { width: 100%; cursor: default; }
-  .vein-btn { cursor: pointer; transition: opacity .2s; }
-  .info-card { flex: 1; min-width: 220px; background: #fff; border-radius: 14px; border: 2px solid #b3d8f5; padding: 1.25rem; min-height: 200px; }
-  .info-card h2 { font-size: 18px; font-weight: 500; margin-bottom: 0.5rem; }
-  .info-card .badge { display: inline-block; padding: 3px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; margin-bottom: 0.75rem; }
-  .info-card p { font-size: 14px; line-height: 1.6; color: #334; font-weight: 400; }
-  .info-card ul { margin: 0.5rem 0 0 1rem; font-size: 14px; color: #334; line-height: 1.7; font-weight: 400; }
-  .placeholder { color: #aab; font-size: 14px; text-align: center; padding-top: 3rem; }
-  .quiz-box { background: #fff; border-radius: 14px; border: 2px solid #b3d8f5; padding: 1.25rem; max-width: 520px; margin: 0 auto; }
-  .q-counter { font-size: 12px; color: #888; margin-bottom: 0.5rem; font-weight: 500; }
-  .q-text { font-size: 16px; font-weight: 500; color: #0a3d62; margin-bottom: 1rem; line-height: 1.5; }
+
+  /* ── ARM SVG ── */
+  .arm-container { display: flex; justify-content: center; margin-bottom: 16px; }
+  svg.arm { width: 100%; max-width: 340px; }
+
+  /* ── EXPLORE ── */
+  .info-card { background: #fff; border-radius: 14px; border: 2px solid #b3d8f5; padding: 18px; min-height: 160px; }
+  .info-card .vein-name { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+  .info-card .vein-badge { display: inline-block; padding: 3px 12px; border-radius: 12px; font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+  .info-card p { font-size: 14px; line-height: 1.65; color: #334; }
+  .info-card ul { margin: 8px 0 0 18px; font-size: 14px; color: #334; line-height: 1.8; }
+  .placeholder { color: #aab; font-size: 14px; text-align: center; padding: 40px 0; }
+
+  /* ── DRAG & LABEL ── */
+  .label-bank { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 16px; padding: 14px; background: #fff; border-radius: 12px; border: 2px solid #b3d8f5; }
+  .label-chip { background: #1a6fa8; color: #fff; padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: grab; user-select: none; border: none; transition: opacity .2s, transform .15s; }
+  .label-chip:hover { transform: scale(1.05); }
+  .label-chip.used { opacity: 0.3; pointer-events: none; }
+  .drop-target { position: absolute; background: rgba(255,255,255,0.85); border: 2px dashed #1a6fa8; border-radius: 8px; font-size: 11px; font-weight: 700; color: #1a6fa8; display: flex; align-items: center; justify-content: center; text-align: center; padding: 3px 5px; cursor: pointer; transition: all .2s; min-width: 90px; height: 28px; }
+  .drop-target:hover { background: #dbeeff; }
+  .drop-target.correct { background: #d4f5e7; border-color: #27ae60; color: #1a7a40; border-style: solid; cursor: default; }
+  .drop-target.wrong { background: #fde8ea; border-color: #e74c3c; color: #c0392b; border-style: solid; }
+  .drag-score { text-align: center; font-size: 15px; font-weight: 700; color: #0a3d62; margin-top: 10px; min-height: 24px; }
+  .reset-btn { display: block; margin: 12px auto 0; padding: 8px 22px; background: #1a6fa8; color: #fff; border: none; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; }
+
+  /* ── QUIZ ── */
+  .quiz-wrap { background: #fff; border-radius: 14px; border: 2px solid #b3d8f5; padding: 18px; max-width: 520px; margin: 0 auto; }
+  .q-counter { font-size: 12px; color: #888; font-weight: 600; margin-bottom: 6px; }
+  .q-text { font-size: 16px; font-weight: 700; color: #0a3d62; margin-bottom: 14px; line-height: 1.5; }
   .choices { display: flex; flex-direction: column; gap: 8px; }
-  .choice { padding: 10px 14px; border-radius: 10px; border: 2px solid #cde; background: #f5faff; font-size: 14px; cursor: pointer; text-align: left; font-weight: 400; transition: all .18s; }
+  .choice { padding: 11px 14px; border-radius: 10px; border: 2px solid #cde; background: #f5faff; font-size: 14px; font-weight: 600; cursor: pointer; text-align: left; transition: all .18s; }
   .choice:hover { border-color: #1a6fa8; background: #e8f4ff; }
-  .choice.correct { border-color: #27ae60; background: #eafaf1; color: #1a7a40; font-weight: 500; }
+  .choice.correct { border-color: #27ae60; background: #eafaf1; color: #1a7a40; }
   .choice.wrong { border-color: #e74c3c; background: #fdf0ee; color: #c0392b; }
-  .feedback { margin-top: 0.75rem; font-size: 14px; min-height: 20px; font-weight: 500; }
-  .next-btn { margin-top: 1rem; padding: 9px 22px; background: #1a6fa8; color: #fff; border: none; border-radius: 20px; font-size: 14px; cursor: pointer; font-weight: 500; display: none; }
+  .q-feedback { margin-top: 10px; font-size: 14px; font-weight: 600; min-height: 20px; }
+  .next-btn { margin-top: 12px; padding: 9px 22px; background: #1a6fa8; color: #fff; border: none; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; display: none; }
   .score-box { text-align: center; padding: 1.5rem; }
-  .score-box .big { font-size: 48px; font-weight: 500; color: #1a6fa8; }
-  .score-box p { font-size: 15px; color: #334; margin: 0.5rem 0 1rem; font-weight: 400; }
-  .restart-btn { padding: 10px 24px; background: #1a6fa8; color: #fff; border: none; border-radius: 20px; font-size: 14px; cursor: pointer; font-weight: 500; }
-  .match-layout { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-  .match-col { display: flex; flex-direction: column; gap: 10px; }
-  .match-item { padding: 10px 16px; border-radius: 10px; border: 2px solid #b3d8f5; background: #f5faff; font-size: 14px; cursor: pointer; min-width: 180px; text-align: center; transition: all .2s; font-weight: 500; }
-  .match-item.selected { border-color: #1a6fa8; background: #dbeeff; }
-  .match-item.matched { border-color: #27ae60; background: #eafaf1; color: #1a7a40; cursor: default; }
-  .match-item.wrong-flash { border-color: #e74c3c; background: #fdf0ee; }
-  .match-header { font-size: 13px; font-weight: 500; color: #1a6fa8; text-align: center; margin-bottom: 4px; }
-  .match-score { text-align: center; margin-top: 1rem; font-size: 15px; font-weight: 500; color: #0a3d62; }
-  .reset-btn { display: block; margin: 1rem auto 0; padding: 9px 22px; background: #1a6fa8; color: #fff; border: none; border-radius: 20px; font-size: 14px; cursor: pointer; font-weight: 500; }
+  .score-box .big { font-size: 52px; font-weight: 800; color: #1a6fa8; }
+  .score-box p { font-size: 15px; color: #334; margin: 8px 0 16px; }
+  .restart-btn { padding: 10px 24px; background: #1a6fa8; color: #fff; border: none; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+  /* progress bar */
+  .prog-wrap { background: #dbeeff; border-radius: 10px; height: 7px; margin-bottom: 14px; overflow: hidden; }
+  .prog-fill { height: 7px; background: #1a6fa8; border-radius: 10px; transition: width .4s; }
 </style>
 </head>
 <body>
 <div id="app">
-  <h1>🩸 Vein Anatomy Explorer</h1>
-  <p class="subtitle"><strong>Medical Assistant Program — Phlebotomy Basics</strong></p>
+  <h1>🩸 Forearm Vein Anatomy</h1>
+  <p class="subtitle">Medical Assistant Program — Phlebotomy Basics</p>
+
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('explore', this)">🔍 Explore</button>
-    <button class="tab" onclick="switchTab('quiz', this)">📝 Quiz Me</button>
-    <button class="tab" onclick="switchTab('match', this)">🧩 Match It</button>
+    <button class="tab active" onclick="switchTab('explore',this)">🔍 Explore</button>
+    <button class="tab" onclick="switchTab('drag',this)">🏷️ Drag & Label</button>
+    <button class="tab" onclick="switchTab('quiz',this)">📝 Quiz Me</button>
   </div>
 
   <!-- EXPLORE -->
   <div class="panel active" id="panel-explore">
-    <div class="explore-layout">
-      <div class="arm-wrap">
-        <svg viewBox="0 0 220 520" xmlns="http://www.w3.org/2000/svg">
-          <!-- Shoulder -->
-          <ellipse cx="110" cy="48" rx="58" ry="26" fill="#f0c9a0" stroke="#d4a978" stroke-width="1.5"/>
-          <!-- Upper arm -->
-          <path d="M52 48 Q44 120 46 200 Q48 240 60 260 L160 260 Q172 240 174 200 Q176 120 168 48 Z" fill="#f0c9a0" stroke="#d4a978" stroke-width="1.5"/>
-          <!-- Elbow crease -->
-          <path d="M60 260 Q110 275 160 260" stroke="#d4a978" stroke-width="1" fill="none" stroke-dasharray="4 2"/>
-          <!-- Forearm -->
-          <path d="M68 265 Q58 340 60 400 Q62 430 75 448 L145 448 Q158 430 160 400 Q162 340 152 265 Z" fill="#f0c9a0" stroke="#d4a978" stroke-width="1.5"/>
-          <!-- Wrist -->
-          <path d="M75 448 Q110 458 145 448 L143 465 Q110 474 77 465 Z" fill="#ecc090" stroke="#d4a978" stroke-width="1.5"/>
-          <!-- Hand/palm -->
-          <path d="M77 465 Q110 480 143 465 Q148 478 145 492 Q130 502 110 504 Q90 502 75 492 Q72 478 77 465 Z" fill="#ecc090" stroke="#d4a978" stroke-width="1.5"/>
+    <div class="arm-container">
+      <svg class="arm" viewBox="0 0 340 560" xmlns="http://www.w3.org/2000/svg">
+        <!-- Forearm body -->
+        <path d="M110 30 Q80 50 68 130 Q58 200 60 280 Q62 340 72 390 Q82 430 100 460 L130 470 Q140 480 170 482 Q200 480 210 470 L240 460 Q258 430 268 390 Q278 340 280 280 Q282 200 272 130 Q260 50 230 30 Z" fill="#f0c4a0" stroke="#d4a070" stroke-width="1.5"/>
+        <!-- Elbow highlight -->
+        <ellipse cx="170" cy="175" rx="80" ry="40" fill="#e8b88a" opacity="0.5"/>
+        <!-- Wrist -->
+        <path d="M115 455 Q170 470 225 455 L222 490 Q170 504 118 490 Z" fill="#e8b070" stroke="#d4a070" stroke-width="1"/>
+        <!-- Hand -->
+        <path d="M118 490 Q170 508 222 490 Q230 510 226 530 Q210 546 170 550 Q130 546 114 530 Q110 510 118 490 Z" fill="#e8b070" stroke="#d4a070" stroke-width="1"/>
+        <!-- Fingers hint -->
+        <path d="M130 548 Q128 560 132 565" stroke="#d4a070" stroke-width="2" fill="none"/>
+        <path d="M148 551 Q147 563 151 568" stroke="#d4a070" stroke-width="2" fill="none"/>
+        <path d="M170 552 Q170 564 174 569" stroke="#d4a070" stroke-width="2" fill="none"/>
+        <path d="M192 551 Q193 563 197 567" stroke="#d4a070" stroke-width="2" fill="none"/>
+        <path d="M210 548 Q212 559 215 563" stroke="#d4a070" stroke-width="2" fill="none"/>
 
-          <!-- CEPHALIC vein - lateral (outer/left side) -->
-          <path d="M72 80 Q66 160 64 230 Q63 250 68 262" stroke="#0e7c5a" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
-          <path d="M68 262 Q65 310 67 370 Q68 410 74 445" stroke="#0e7c5a" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+        <!-- CEPHALIC vein (lateral/outer left) -->
+        <path d="M105 35 Q95 80 88 140 Q82 190 84 240 Q86 300 90 360 Q94 410 105 450" stroke="#2980b9" stroke-width="3.5" fill="none" stroke-linecap="round" id="sv-ceph"/>
+        <!-- BASILIC vein (medial/inner right) -->
+        <path d="M235 35 Q245 80 252 140 Q258 190 256 240 Q254 300 250 360 Q246 410 235 450" stroke="#8e44ad" stroke-width="3.5" fill="none" stroke-linecap="round" id="sv-bas"/>
+        <!-- MEDIAN CUBITAL vein (elbow bridge) -->
+        <path d="M92 185 Q120 162 170 158 Q220 162 248 185" stroke="#e74c3c" stroke-width="4" fill="none" stroke-linecap="round" id="sv-mc"/>
+        <!-- MEDIAN ANTEBRACHIAL vein (center) -->
+        <path d="M170 200 Q168 270 166 340 Q165 390 166 440" stroke="#27ae60" stroke-width="3" fill="none" stroke-linecap="round" id="sv-mab"/>
+        <!-- ACCESSORY CEPHALIC vein (branch from cephalic) -->
+        <path d="M92 185 Q112 172 140 168 Q155 165 170 158" stroke="#f39c12" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="6 3" id="sv-acc"/>
 
-          <!-- BASILIC vein - medial (inner/right side) -->
-          <path d="M148 80 Q154 160 156 230 Q157 250 152 262" stroke="#9b2335" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
-          <path d="M152 262 Q155 310 153 370 Q152 410 146 445" stroke="#9b2335" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+        <!-- DOT 1 — Cephalic -->
+        <g style="cursor:pointer" onclick="showVein('ceph')">
+          <circle id="dot-ceph" cx="88" cy="290" r="14" fill="#2980b9" stroke="#fff" stroke-width="2.5"/>
+          <text x="88" y="295" text-anchor="middle" font-size="12" fill="#fff" font-weight="800">1</text>
+        </g>
+        <!-- DOT 2 — Basilic -->
+        <g style="cursor:pointer" onclick="showVein('bas')">
+          <circle id="dot-bas" cx="252" cy="290" r="14" fill="#8e44ad" stroke="#fff" stroke-width="2.5"/>
+          <text x="252" y="295" text-anchor="middle" font-size="12" fill="#fff" font-weight="800">2</text>
+        </g>
+        <!-- DOT 3 — Median Cubital -->
+        <g style="cursor:pointer" onclick="showVein('mc')">
+          <circle id="dot-mc" cx="170" cy="170" r="14" fill="#e74c3c" stroke="#fff" stroke-width="2.5"/>
+          <text x="170" y="175" text-anchor="middle" font-size="12" fill="#fff" font-weight="800">3</text>
+        </g>
+        <!-- DOT 4 — Median Antebrachial -->
+        <g style="cursor:pointer" onclick="showVein('mab')">
+          <circle id="dot-mab" cx="170" cy="340" r="14" fill="#27ae60" stroke="#fff" stroke-width="2.5"/>
+          <text x="170" y="345" text-anchor="middle" font-size="12" fill="#fff" font-weight="800">4</text>
+        </g>
+        <!-- DOT 5 — Accessory Cephalic -->
+        <g style="cursor:pointer" onclick="showVein('acc')">
+          <circle id="dot-acc" cx="130" cy="168" r="14" fill="#f39c12" stroke="#fff" stroke-width="2.5"/>
+          <text x="130" y="173" text-anchor="middle" font-size="12" fill="#fff" font-weight="800">5</text>
+        </g>
 
-          <!-- MEDIAN CUBITAL - connecting bridge at elbow -->
-          <path d="M68 262 Q90 252 110 255 Q130 252 152 262" stroke="#1a6fa8" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.9"/>
+        <!-- Legend dots -->
+        <circle cx="20" cy="480" r="6" fill="#2980b9"/>
+        <text x="30" y="484" font-size="10" fill="#334" font-weight="600">Cephalic</text>
+        <circle cx="20" cy="496" r="6" fill="#8e44ad"/>
+        <text x="30" y="500" font-size="10" fill="#334" font-weight="600">Basilic</text>
+        <circle cx="20" cy="512" r="6" fill="#e74c3c"/>
+        <text x="30" y="516" font-size="10" fill="#334" font-weight="600">Median Cubital</text>
+        <circle cx="170" cy="480" r="6" fill="#27ae60"/>
+        <text x="180" y="484" font-size="10" fill="#334" font-weight="600">Median Antebrachial</text>
+        <circle cx="170" cy="496" r="6" fill="#f39c12"/>
+        <text x="180" y="500" font-size="10" fill="#334" font-weight="600">Accessory Cephalic</text>
+      </svg>
+    </div>
+    <div class="info-card" id="info-card">
+      <p class="placeholder">👆 Tap a numbered dot on the arm to learn about each vein!</p>
+    </div>
+  </div>
 
-          <!-- Vein labels -->
-          <text x="44" y="175" font-size="9" fill="#0e7c5a" font-weight="700" text-anchor="middle">Cephalic</text>
-          <text x="176" y="175" font-size="9" fill="#9b2335" font-weight="700" text-anchor="middle">Basilic</text>
-          <text x="110" y="285" font-size="9" fill="#1a6fa8" font-weight="700" text-anchor="middle">Median Cubital</text>
-
-          <!-- DOT 1 — Median Cubital (elbow center) -->
-          <g class="vein-btn" onclick="showVein('mc')">
-            <circle id="dot-mc" cx="110" cy="255" r="13" fill="#1a6fa8" stroke="#fff" stroke-width="2.5"/>
-            <text x="110" y="260" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">1</text>
-          </g>
-
-          <!-- DOT 2 — Cephalic (mid upper arm, outer) -->
-          <g class="vein-btn" onclick="showVein('ceph')">
-            <circle id="dot-ceph" cx="66" cy="150" r="13" fill="#0e7c5a" stroke="#fff" stroke-width="2.5"/>
-            <text x="66" y="155" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">2</text>
-          </g>
-
-          <!-- DOT 3 — Basilic (mid upper arm, inner) -->
-          <g class="vein-btn" onclick="showVein('bas')">
-            <circle id="dot-bas" cx="154" cy="150" r="13" fill="#9b2335" stroke="#fff" stroke-width="2.5"/>
-            <text x="154" y="155" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">3</text>
-          </g>
+  <!-- DRAG & LABEL -->
+  <div class="panel" id="panel-drag">
+    <div class="label-bank" id="label-bank"></div>
+    <div class="arm-container">
+      <div style="position:relative;width:340px;">
+        <svg class="arm" viewBox="0 0 340 560" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+          <path d="M110 30 Q80 50 68 130 Q58 200 60 280 Q62 340 72 390 Q82 430 100 460 L130 470 Q140 480 170 482 Q200 480 210 470 L240 460 Q258 430 268 390 Q278 340 280 280 Q282 200 272 130 Q260 50 230 30 Z" fill="#f0c4a0" stroke="#d4a070" stroke-width="1.5"/>
+          <ellipse cx="170" cy="175" rx="80" ry="40" fill="#e8b88a" opacity="0.5"/>
+          <path d="M115 455 Q170 470 225 455 L222 490 Q170 504 118 490 Z" fill="#e8b070" stroke="#d4a070" stroke-width="1"/>
+          <path d="M118 490 Q170 508 222 490 Q230 510 226 530 Q210 546 170 550 Q130 546 114 530 Q110 510 118 490 Z" fill="#e8b070" stroke="#d4a070" stroke-width="1"/>
+          <path d="M105 35 Q95 80 88 140 Q82 190 84 240 Q86 300 90 360 Q94 410 105 450" stroke="#2980b9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path d="M235 35 Q245 80 252 140 Q258 190 256 240 Q254 300 250 360 Q246 410 235 450" stroke="#8e44ad" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path d="M92 185 Q120 162 170 158 Q220 162 248 185" stroke="#e74c3c" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M170 200 Q168 270 166 340 Q165 390 166 440" stroke="#27ae60" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M92 185 Q112 172 140 168 Q155 165 170 158" stroke="#f39c12" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="6 3"/>
+          <!-- Orange dots for drop targets -->
+          <circle cx="88" cy="290" r="8" fill="#ff6b35" stroke="#fff" stroke-width="2"/>
+          <circle cx="252" cy="290" r="8" fill="#ff6b35" stroke="#fff" stroke-width="2"/>
+          <circle cx="170" cy="170" r="8" fill="#ff6b35" stroke="#fff" stroke-width="2"/>
+          <circle cx="170" cy="340" r="8" fill="#ff6b35" stroke="#fff" stroke-width="2"/>
+          <circle cx="130" cy="168" r="8" fill="#ff6b35" stroke="#fff" stroke-width="2"/>
         </svg>
-        <p style="text-align:center;font-size:12px;color:#888;font-weight:500;">Tap a red dot to learn!</p>
-      </div>
-      <div class="info-card" id="info-card">
-        <p class="placeholder">👆 <strong>Tap a numbered dot</strong> on the arm to explore each vein.</p>
+        <!-- Drop zones positioned over SVG -->
+        <div class="drop-target" id="dz-ceph"   style="left:2px;  top:270px;" data-answer="Cephalic Vein"            onclick="dropHere('ceph')">Drop here</div>
+        <div class="drop-target" id="dz-bas"    style="right:2px; top:270px;" data-answer="Basilic Vein"             onclick="dropHere('bas')">Drop here</div>
+        <div class="drop-target" id="dz-mc"     style="left:50%; transform:translateX(-50%); top:140px;" data-answer="Median Cubital Vein"      onclick="dropHere('mc')">Drop here</div>
+        <div class="drop-target" id="dz-mab"    style="left:50%; transform:translateX(-50%); top:315px;" data-answer="Median Antebrachial Vein" onclick="dropHere('mab')">Drop here</div>
+        <div class="drop-target" id="dz-acc"    style="left:18px; top:138px;" data-answer="Accessory Cephalic Vein"  onclick="dropHere('acc')">Drop here</div>
       </div>
     </div>
+    <p class="drag-score" id="drag-score"></p>
+    <button class="reset-btn" onclick="initDrag()">🔄 Reset</button>
   </div>
 
   <!-- QUIZ -->
   <div class="panel" id="panel-quiz">
-    <div class="quiz-box"><div id="quiz-content"></div></div>
-  </div>
-
-  <!-- MATCH -->
-  <div class="panel" id="panel-match">
-    <div class="match-layout">
-      <div>
-        <p class="match-header">🩸 Vein Name</p>
-        <div class="match-col" id="match-left"></div>
-      </div>
-      <div>
-        <p class="match-header">📋 Description</p>
-        <div class="match-col" id="match-right"></div>
-      </div>
-    </div>
-    <p class="match-score" id="match-score"></p>
-    <button class="reset-btn" onclick="initMatch()">🔄 Restart</button>
+    <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="quiz-wrap"><div id="quiz-content"></div></div>
   </div>
 </div>
 
 <script>
 const veins = {
-  mc: { name:"Median Cubital Vein", color:"#1a6fa8", badgeBg:"#dbeeff", badgeColor:"#0a3d62", badge:"⭐ First Choice", desc:"The go-to vein for blood draws! It sits in the antecubital fossa (inner elbow) and is stable, easy to find, and away from major arteries and nerves.", facts:["Most commonly used for venipuncture","Central, flat location — easy to anchor","Least painful for most patients","Lowest risk of complications"] },
-  ceph: { name:"Cephalic Vein", color:"#0e7c5a", badgeBg:"#d4f5e7", badgeColor:"#064d38", badge:"👍 Second Choice", desc:"Located on the outer (lateral) side of the arm. A solid backup when the median cubital is unavailable, though it can roll and is slightly harder to access.", facts:["Runs along the outer forearm & upper arm","Can be more difficult to stabilize","Good option for IV catheter placement","May require extra anchoring technique"] },
-  bas: { name:"Basilic Vein", color:"#9b2335", badgeBg:"#fde8ea", badgeColor:"#6b0f1a", badge:"⚠️ Use Caution", desc:"Found on the inner (medial) side of the arm near the brachial artery and median nerve. Use only when other sites are unavailable — extra care required!", facts:["Runs along the inner forearm & upper arm","Proximity to brachial artery = arterial risk","Near median nerve — pain or nerve damage risk","Tends to roll — requires skilled technique"] },
+  ceph: { name:"Cephalic Vein", color:"#2980b9", badge:"👍 2nd Choice", badgeBg:"#dbeeff", badgeColor:"#0a3d62", desc:"Runs along the outer (lateral) side of the forearm and upper arm. A reliable backup when the median cubital is unavailable.", facts:["Located on the lateral/outer forearm","Can roll — requires anchoring","Good for IV catheter placement","Second choice for venipuncture"] },
+  bas:  { name:"Basilic Vein",  color:"#8e44ad", badge:"⚠️ Use Caution", badgeBg:"#f3e8ff", badgeColor:"#5b1f7a", desc:"Runs along the inner (medial) side of the arm. Requires caution due to its proximity to the brachial artery and median nerve.", facts:["Located on the medial/inner forearm","Close to brachial artery — arterial risk","Near median nerve — nerve injury risk","Last resort for venipuncture"] },
+  mc:   { name:"Median Cubital Vein", color:"#e74c3c", badge:"⭐ 1st Choice", badgeBg:"#fde8ea", badgeColor:"#7b0000", desc:"The bridge vein connecting the cephalic and basilic veins at the elbow. It is the most commonly used vein for blood draws due to its stability and accessibility.", facts:["Located in the antecubital fossa (inner elbow)","Most stable — easy to anchor","Lowest risk of complications","#1 choice for venipuncture"] },
+  mab:  { name:"Median Antebrachial Vein", color:"#27ae60", badge:"ℹ️ Supplemental", badgeBg:"#d4f5e7", badgeColor:"#0d4f2a", desc:"Runs down the center of the forearm. Used when other sites are exhausted, though it is smaller and less reliable.", facts:["Runs along the center of the forearm","Smaller and less prominent","Used when primary sites unavailable","Can be difficult to access"] },
+  acc:  { name:"Accessory Cephalic Vein", color:"#f39c12", badge:"ℹ️ Supplemental", badgeBg:"#fef3cd", badgeColor:"#7a4a00", desc:"A branch of the cephalic vein found near the elbow. It can serve as an alternative site when the primary veins are not accessible.", facts:["Branch of the cephalic vein","Located near the lateral elbow","Varies in size between patients","Alternative when primary sites unavailable"] },
 };
 
+// EXPLORE
 function showVein(id) {
-  const v=veins[id];
-  ['dot-mc','dot-ceph','dot-bas'].forEach(d=>document.getElementById(d).setAttribute('fill','#e74c3c'));
-  document.getElementById('dot-'+id).setAttribute('fill',v.color);
-  document.getElementById('info-card').innerHTML=`
-    <h2 style="color:${v.color};font-weight:500;">${v.name}</h2>
-    <span class="badge" style="background:${v.badgeBg};color:${v.badgeColor};">${v.badge}</span>
-    <p><strong>Overview:</strong> ${v.desc}</p>
-    <ul>${v.facts.map(f=>`<li><strong>${f}</strong></li>`).join('')}</ul>`;
+  const v = veins[id];
+  Object.keys(veins).forEach(k => {
+    const dot = document.getElementById('dot-'+k);
+    if (dot) dot.setAttribute('fill', veins[k].color);
+  });
+  document.getElementById('info-card').innerHTML = `
+    <div class="vein-name" style="color:${v.color}">${v.name}</div>
+    <span class="vein-badge" style="background:${v.badgeBg};color:${v.badgeColor}">${v.badge}</span>
+    <p>${v.desc}</p>
+    <ul>${v.facts.map(f=>`<li>${f}</li>`).join('')}</ul>`;
 }
 
+// DRAG & LABEL
+let dragSelected = null, dragCorrect = 0;
+
+function initDrag() {
+  dragSelected = null; dragCorrect = 0;
+  const bank = document.getElementById('label-bank');
+  const labels = Object.values(veins).map(v=>v.name).sort(()=>Math.random()-0.5);
+  bank.innerHTML = labels.map(l=>`<button class="label-chip" data-label="${l}" onclick="selectChip(this)">${l}</button>`).join('');
+  document.querySelectorAll('.drop-target').forEach(dz => { dz.textContent='Drop here'; dz.className='drop-target'; });
+  document.getElementById('drag-score').textContent = '';
+}
+
+function selectChip(btn) {
+  if (btn.classList.contains('used')) return;
+  const already = btn.style.outline !== '';
+  document.querySelectorAll('.label-chip').forEach(b => b.style.outline = '');
+  if (already) { dragSelected = null; return; }
+  btn.style.outline = '3px solid #ff6b35';
+  btn.style.transform = 'scale(1.08)';
+  dragSelected = btn.dataset.label;
+  document.getElementById('drag-score').textContent = `👆 Now tap a zone on the arm to place "${dragSelected}"`;
+  document.getElementById('drag-score').style.color = '#1a6fa8';
+}
+
+function dropHere(id) {
+  if (!dragSelected) {
+    document.getElementById('drag-score').textContent = '👆 First select a label from the bank above!';
+    document.getElementById('drag-score').style.color = '#e74c3c';
+    return;
+  }
+  const dz = document.getElementById('dz-'+id);
+  if (dz.classList.contains('correct')) return;
+  const answer = dz.dataset.answer;
+  if (dragSelected === answer) {
+    dz.textContent = dragSelected;
+    dz.className = 'drop-target correct';
+    dragCorrect++;
+    document.querySelectorAll('.label-chip').forEach(b => {
+      if (b.dataset.label === dragSelected) { b.classList.add('used'); b.style.outline=''; b.style.transform=''; }
+    });
+    const total = Object.keys(veins).length;
+    document.getElementById('drag-score').textContent = dragCorrect === total ? `🎉 Perfect! All ${total} veins labeled correctly!` : `✅ Correct! ${dragCorrect}/${total} placed — keep going!`;
+    document.getElementById('drag-score').style.color = '#27ae60';
+  } else {
+    dz.className = 'drop-target wrong';
+    dz.textContent = '✗ Try again';
+    setTimeout(() => { dz.className = 'drop-target'; dz.textContent = 'Tap here'; }, 900);
+    document.getElementById('drag-score').textContent = `❌ "${dragSelected}" doesn't go there — try another zone!`;
+    document.getElementById('drag-score').style.color = '#e74c3c';
+  }
+  dragSelected = null;
+  document.querySelectorAll('.label-chip').forEach(b => { b.style.outline=''; b.style.transform=''; });
+}
+
+// QUIZ
 const questions = [
-  { q:"Which vein is the MOST commonly used for blood draws?", choices:["Basilic Vein","Cephalic Vein","Median Cubital Vein","Radial Vein"], ans:2 },
-  { q:"The Basilic Vein requires caution because it is located near which structures?", choices:["Tendons and ligaments","Brachial artery and median nerve","Radial nerve and ulnar artery","Lymph nodes"], ans:1 },
-  { q:"Where is the Cephalic Vein located on the arm?", choices:["Inner medial side","Central antecubital fossa","Outer lateral side","Posterior forearm"], ans:2 },
-  { q:"Which vein is described as being in the antecubital fossa (inner elbow)?", choices:["Basilic Vein","Cephalic Vein","Median Cubital Vein","Brachial Vein"], ans:2 },
-  { q:"The Cephalic Vein is considered which choice for venipuncture?", choices:["First choice","Second choice","Last resort","Not used"], ans:1 },
-  { q:"Which vein can 'roll' and is slightly harder to access?", choices:["Median Cubital Vein","Cephalic Vein","Both equally","Basilic Vein"], ans:1 },
+  { q:"Which vein is the #1 choice for venipuncture?", opts:["Basilic Vein","Median Antebrachial Vein","Median Cubital Vein","Cephalic Vein"], ans:2, exp:"The Median Cubital Vein in the antecubital fossa is the most stable and accessible — always the first choice." },
+  { q:"The Basilic Vein requires extra caution because it is near which structures?", opts:["Radial nerve and ulnar artery","Brachial artery and median nerve","Femoral artery and sciatic nerve","Tendons and ligaments"], ans:1, exp:"The Basilic Vein runs close to the brachial artery and median nerve, making it risky to access." },
+  { q:"Where does the Cephalic Vein run on the forearm?", opts:["Center of the forearm","Inner/medial side","Outer/lateral side","Posterior of the forearm"], ans:2, exp:"The Cephalic Vein runs along the outer (lateral) side of the forearm and upper arm." },
+  { q:"Which vein runs down the CENTER of the forearm?", opts:["Accessory Cephalic Vein","Basilic Vein","Cephalic Vein","Median Antebrachial Vein"], ans:3, exp:"The Median Antebrachial Vein runs along the center of the forearm, though it is smaller and less reliable." },
+  { q:"The Accessory Cephalic Vein is a branch of which vein?", opts:["Basilic Vein","Median Cubital Vein","Cephalic Vein","Median Antebrachial Vein"], ans:2, exp:"The Accessory Cephalic Vein is a branch that comes off the Cephalic Vein near the elbow." },
+  { q:"Which vein connects the Cephalic and Basilic veins at the elbow?", opts:["Median Antebrachial Vein","Accessory Cephalic Vein","Median Cubital Vein","Radial Vein"], ans:2, exp:"The Median Cubital Vein acts as a bridge connecting the Cephalic and Basilic veins in the antecubital fossa." },
+  { q:"Which vein is considered the LAST resort for venipuncture?", opts:["Cephalic Vein","Median Cubital Vein","Accessory Cephalic Vein","Basilic Vein"], ans:3, exp:"The Basilic Vein is used as a last resort due to its proximity to the brachial artery and median nerve." },
 ];
 
-let qIdx=0, score=0, answered=false;
+let qIdx=0, qScore=0, qAnswered=false;
 
 function renderQuiz() {
+  document.getElementById('prog-fill').style.width = (qIdx/questions.length*100)+'%';
   if(qIdx>=questions.length){
-    const pct=Math.round(score/questions.length*100);
-    const msg=pct===100?"Perfect score! 🎉":pct>=70?"Great job! 💪":"Keep practicing! 📚";
+    const pct=Math.round(qScore/questions.length*100);
+    const msg=pct===100?'🏆 Perfect! You know your veins!':pct>=70?'🎉 Great job! Review any missed ones.':'📚 Keep studying — you\'ve got this!';
     document.getElementById('quiz-content').innerHTML=`
       <div class="score-box">
-        <div class="big">${score}/${questions.length}</div>
-        <p><strong>${msg}</strong> You scored ${pct}%</p>
-        <button class="restart-btn" onclick="resetQuiz()">🔄 Try Again</button>
+        <div class="big">${qScore}/${questions.length}</div>
+        <p>${msg}<br><strong>${pct}%</strong></p>
+        <button class="restart-btn" onclick="qIdx=0;qScore=0;renderQuiz()">🔄 Try Again</button>
       </div>`;
     return;
   }
   const q=questions[qIdx];
+  qAnswered=false;
   document.getElementById('quiz-content').innerHTML=`
-    <p class="q-counter"><strong>Question ${qIdx+1} of ${questions.length}</strong></p>
-    <p class="q-text"><strong>${q.q}</strong></p>
-    <div class="choices">
-      ${q.choices.map((c,i)=>`<button class="choice" onclick="pickAnswer(${i})">${String.fromCharCode(65+i)}. ${c}</button>`).join('')}
-    </div>
-    <p class="feedback" id="feedback"></p>
-    <button class="next-btn" id="next-btn" onclick="nextQ()">Next →</button>`;
-  answered=false;
+    <p class="q-counter">Question ${qIdx+1} of ${questions.length}</p>
+    <p class="q-text">${q.q}</p>
+    <div class="choices">${q.opts.map((o,i)=>`<button class="choice" onclick="pickAns(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}</div>
+    <p class="q-feedback" id="q-fb"></p>
+    <button class="next-btn" id="next-btn" onclick="qIdx++;renderQuiz()">Next →</button>`;
 }
 
-function pickAnswer(i) {
-  if(answered) return;
-  answered=true;
+function pickAns(i) {
+  if(qAnswered) return;
+  qAnswered=true;
   const q=questions[qIdx];
   document.querySelectorAll('.choice').forEach((b,idx)=>{ b.disabled=true; if(idx===q.ans) b.classList.add('correct'); else if(idx===i) b.classList.add('wrong'); });
-  const fb=document.getElementById('feedback');
-  if(i===q.ans){ score++; fb.innerHTML='<strong style="color:#27ae60">✅ Correct! Well done!</strong>'; }
-  else { fb.innerHTML=`<strong style="color:#e74c3c">❌ Not quite — the answer is ${String.fromCharCode(65+q.ans)}.</strong>`; }
+  const fb=document.getElementById('q-fb');
+  if(i===q.ans){ qScore++; fb.innerHTML=`<span style="color:#27ae60">✅ Correct! ${q.exp}</span>`; }
+  else { fb.innerHTML=`<span style="color:#e74c3c">❌ ${q.exp}</span>`; }
   document.getElementById('next-btn').style.display='inline-block';
-}
-
-function nextQ() { qIdx++; renderQuiz(); }
-function resetQuiz() { qIdx=0; score=0; renderQuiz(); }
-
-const matchPairs = [
-  { left:"Median Cubital Vein", right:"Most common — stable, central location" },
-  { left:"Cephalic Vein", right:"Outer arm — slightly harder to access" },
-  { left:"Basilic Vein", right:"Inner arm — near artery & nerve, use caution" },
-];
-
-let selectedLeft=null, selectedRight=null, matchedCount=0;
-
-function initMatch() {
-  matchedCount=0; selectedLeft=null; selectedRight=null;
-  const rights=[...matchPairs].sort(()=>Math.random()-0.5);
-  document.getElementById('match-left').innerHTML=matchPairs.map((p,i)=>
-    `<button class="match-item" id="ml-${i}" onclick="selectLeft(${i},'${p.left}')">${p.left}</button>`).join('');
-  document.getElementById('match-right').innerHTML=rights.map((p,i)=>
-    `<button class="match-item" id="mr-${i}" onclick="selectRight(${i},'${p.right}')">${p.right}</button>`).join('');
-  document.getElementById('match-score').textContent='';
-}
-
-function selectLeft(i, val) {
-  if(document.getElementById('ml-'+i).classList.contains('matched')) return;
-  document.querySelectorAll('#match-left .match-item').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('ml-'+i).classList.add('selected');
-  selectedLeft={i,val};
-  if(selectedRight) checkMatch();
-}
-
-function selectRight(i, val) {
-  if(document.getElementById('mr-'+i).classList.contains('matched')) return;
-  document.querySelectorAll('#match-right .match-item').forEach(b=>b.classList.remove('selected'));
-  document.getElementById('mr-'+i).classList.add('selected');
-  selectedRight={i,val};
-  if(selectedLeft) checkMatch();
-}
-
-function checkMatch() {
-  const pair=matchPairs.find(p=>p.left===selectedLeft.val);
-  if(pair&&pair.right===selectedRight.val){
-    document.getElementById('ml-'+selectedLeft.i).classList.replace('selected','matched');
-    document.getElementById('mr-'+selectedRight.i).classList.replace('selected','matched');
-    matchedCount++;
-    if(matchedCount===matchPairs.length) document.getElementById('match-score').innerHTML='<strong>🎉 All matched! Great work!</strong>';
-  } else {
-    const lEl=document.getElementById('ml-'+selectedLeft.i), rEl=document.getElementById('mr-'+selectedRight.i);
-    lEl.classList.add('wrong-flash'); rEl.classList.add('wrong-flash');
-    setTimeout(()=>{ lEl.classList.remove('wrong-flash','selected'); rEl.classList.remove('wrong-flash','selected'); },700);
-  }
-  selectedLeft=null; selectedRight=null;
 }
 
 function switchTab(name, btn) {
@@ -263,8 +317,8 @@ function switchTab(name, btn) {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('panel-'+name).classList.add('active');
-  if(name==='quiz'&&qIdx===0) renderQuiz();
-  if(name==='match') initMatch();
+  if(name==='drag') initDrag();
+  if(name==='quiz'){ qIdx=0; qScore=0; renderQuiz(); }
 }
 
 renderQuiz();

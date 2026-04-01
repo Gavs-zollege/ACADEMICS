@@ -1,0 +1,369 @@
+pulse_labeling_easy.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: linear-gradient(135deg, #1a3a5c 0%, #0d6efd22 100%);
+    background-color: #1a3a5c;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 18px 10px 30px;
+  }
+  h1 {
+    color: #fff;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+  .subtitle {
+    color: #b8d4f0;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .main {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 860px;
+  }
+  .figure-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+  svg.body-svg {
+    display: block;
+  }
+  .drop-zone {
+    position: absolute;
+    background: rgba(255,255,255,0.13);
+    border: 2.5px dashed #7ec8f7;
+    border-radius: 8px;
+    min-width: 130px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    font-size: 13px;
+    font-weight: 800;
+    color: #d0eaff;
+    white-space: nowrap;
+    padding: 0 8px;
+  }
+  .drop-zone:hover { background: rgba(126,200,247,0.22); }
+  .drop-zone.correct {
+    background: rgba(34,197,94,0.22);
+    border: 2.5px solid #22c55e;
+    color: #22c55e;
+  }
+  .drop-zone.wrong {
+    background: rgba(239,68,68,0.22);
+    border: 2.5px solid #ef4444;
+    animation: shake 0.35s;
+  }
+  @keyframes shake {
+    0%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}100%{transform:translateX(0)}
+  }
+  .label-bank {
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(126,200,247,0.3);
+    border-radius: 14px;
+    padding: 16px 14px;
+    width: 190px;
+    flex-shrink: 0;
+  }
+  .label-bank h2 {
+    color: #7ec8f7;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+  .label-item {
+    background: #1e5fa8;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 800;
+    border-radius: 7px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    cursor: grab;
+    text-align: center;
+    border: 1.5px solid #4a9fd4;
+    user-select: none;
+    transition: opacity 0.2s, background 0.2s;
+  }
+  .label-item:hover { background: #2471c8; }
+  .label-item.used { opacity: 0.25; pointer-events: none; }
+  .label-item.dragging { opacity: 0.5; }
+
+  .connector {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .btns {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  button {
+    background: #1e5fa8;
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  button:hover { background: #2471c8; }
+  button.reset-btn { background: #7c3aed; }
+  button.reset-btn:hover { background: #6d28d9; }
+  button.result-btn { background: #0f766e; }
+  button.result-btn:hover { background: #0d5c55; }
+
+  .result-box {
+    display: none;
+    background: rgba(255,255,255,0.09);
+    border: 2px solid #7ec8f7;
+    border-radius: 12px;
+    padding: 16px 24px;
+    margin-top: 16px;
+    color: #fff;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+  }
+  .result-box h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+  .result-box .score { font-size: 36px; font-weight: 900; color: #22c55e; }
+  .result-box p { font-size: 14px; color: #b8d4f0; font-weight: 700; margin-top: 6px; }
+  .result-box .miss { color: #fbbf24; font-size: 13px; font-weight: 800; margin-top: 8px; }
+
+  .dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #f97316;
+    border: 2px solid #fff;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<h1>Pulse Sites — Drag & Label</h1>
+<div class="subtitle">Drag each label to the correct pulse site on the body</div>
+
+<div class="main">
+  <div class="figure-wrap" id="figureWrap">
+    <!-- SVG body: slimmer male figure -->
+    <svg class="body-svg" width="300" height="560" viewBox="0 0 300 560" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="sg" cx="50%" cy="40%" r="60%">
+          <stop offset="0%" stop-color="#e8b89a"/>
+          <stop offset="100%" stop-color="#c98060"/>
+        </radialGradient>
+      </defs>
+      <!-- Background -->
+      <rect width="300" height="560" fill="none"/>
+      <!-- Neck -->
+      <rect x="134" y="88" width="32" height="32" rx="6" fill="url(#sg)"/>
+      <!-- Torso (slim) -->
+      <path d="M105,118 Q95,145 92,200 L88,310 Q90,320 150,322 Q210,320 212,310 L208,200 Q205,145 195,118 Z" fill="url(#sg)"/>
+      <!-- Head -->
+      <ellipse cx="150" cy="62" rx="38" ry="44" fill="url(#sg)"/>
+      <!-- Hair -->
+      <ellipse cx="150" cy="30" rx="38" ry="22" fill="#3b1c08"/>
+      <rect x="112" y="22" width="76" height="18" rx="8" fill="#3b1c08"/>
+      <!-- Eyes -->
+      <ellipse cx="136" cy="58" rx="5" ry="4" fill="#fff"/>
+      <ellipse cx="164" cy="58" rx="5" ry="4" fill="#fff"/>
+      <circle cx="137" cy="58" r="2.5" fill="#3b1c08"/>
+      <circle cx="165" cy="58" r="2.5" fill="#3b1c08"/>
+      <!-- Shoulders + Arms (slim) -->
+      <path d="M105,122 Q82,130 74,160 L68,240 Q67,250 76,252 L80,252 Q90,250 92,240 L96,190 Q100,155 112,138 Z" fill="url(#sg)"/>
+      <path d="M195,122 Q218,130 226,160 L232,240 Q233,250 224,252 L220,252 Q210,250 208,240 L204,190 Q200,155 188,138 Z" fill="url(#sg)"/>
+      <!-- Forearms -->
+      <path d="M68,240 Q64,280 62,300 L70,304 Q74,284 80,252 Z" fill="url(#sg)"/>
+      <path d="M232,240 Q236,280 238,300 L230,304 Q226,284 220,252 Z" fill="url(#sg)"/>
+      <!-- Hands -->
+      <ellipse cx="66" cy="312" rx="11" ry="16" fill="url(#sg)"/>
+      <ellipse cx="234" cy="312" rx="11" ry="16" fill="url(#sg)"/>
+      <!-- Hips (slim) -->
+      <path d="M92,308 L88,322 Q90,340 110,342 L150,344 L190,342 Q210,340 212,322 L208,308 Z" fill="url(#sg)"/>
+      <!-- Upper Legs (slim) -->
+      <path d="M110,342 Q100,370 98,430 L116,432 Q118,380 120,345 Z" fill="url(#sg)"/>
+      <path d="M190,342 Q200,370 202,430 L184,432 Q182,380 180,345 Z" fill="url(#sg)"/>
+      <!-- Lower Legs -->
+      <path d="M98,430 Q95,480 94,510 L114,510 Q116,482 116,432 Z" fill="url(#sg)"/>
+      <path d="M202,430 Q205,480 206,510 L186,510 Q184,482 184,432 Z" fill="url(#sg)"/>
+      <!-- Feet -->
+      <ellipse cx="104" cy="516" rx="20" ry="10" fill="url(#sg)"/>
+      <ellipse cx="196" cy="516" rx="20" ry="10" fill="url(#sg)"/>
+      <!-- Abs lines -->
+      <line x1="150" y1="145" x2="150" y2="295" stroke="#c07050" stroke-width="1" opacity="0.35"/>
+      <line x1="118" y1="185" x2="182" y2="185" stroke="#c07050" stroke-width="0.8" opacity="0.25"/>
+      <line x1="114" y1="215" x2="186" y2="215" stroke="#c07050" stroke-width="0.8" opacity="0.25"/>
+      <line x1="112" y1="245" x2="188" y2="245" stroke="#c07050" stroke-width="0.8" opacity="0.25"/>
+      <line x1="112" y1="270" x2="188" y2="270" stroke="#c07050" stroke-width="0.8" opacity="0.25"/>
+    </svg>
+
+    <!-- Dots for pulse sites (x,y as % of svg 300x560) -->
+    <!-- 1 Temporal: ~(150,30)px -->
+    <div class="dot" style="left:155px;top:28px"></div>
+    <!-- 2 Carotid: ~(135,98) -->
+    <div class="dot" style="left:135px;top:98px"></div>
+    <!-- 3 Apical: ~(168,162) -->
+    <div class="dot" style="left:168px;top:162px"></div>
+    <!-- 4 Brachial: ~(78,190) -->
+    <div class="dot" style="left:78px;top:190px"></div>
+    <!-- 5 Radial: ~(232,248) -->
+    <div class="dot" style="left:232px;top:248px"></div>
+    <!-- 6 Femoral: ~(176,350) -->
+    <div class="dot" style="left:176px;top:350px"></div>
+    <!-- 7 Popliteal: ~(100,440) -->
+    <div class="dot" style="left:100px;top:440px"></div>
+    <!-- 8 Posterior Tibial: ~(196,490) -->
+    <div class="dot" style="left:196px;top:490px"></div>
+    <!-- 9 Pedal: ~(104,518) -->
+    <div class="dot" style="left:104px;top:518px"></div>
+
+    <!-- Drop zones: positioned relative to figure -->
+    <!-- Temporal - top right -->
+    <div class="drop-zone" id="dz-temporal" data-answer="Temporal Artery" style="top:6px;left:160px;min-width:120px;"></div>
+    <!-- Carotid - top left -->
+    <div class="drop-zone" id="dz-carotid" data-answer="Carotid" style="top:84px;left:6px;min-width:100px;"></div>
+    <!-- Apical - right -->
+    <div class="drop-zone" id="dz-apical" data-answer="Apical Pulse" style="top:148px;left:174px;min-width:120px;"></div>
+    <!-- Brachial - left -->
+    <div class="drop-zone" id="dz-brachial" data-answer="Brachial" style="top:178px;left:2px;min-width:90px;"></div>
+    <!-- Radial - right -->
+    <div class="drop-zone" id="dz-radial" data-answer="Radial" style="top:234px;left:216px;min-width:80px;"></div>
+    <!-- Femoral - right -->
+    <div class="drop-zone" id="dz-femoral" data-answer="Femoral" style="top:338px;left:182px;min-width:90px;"></div>
+    <!-- Popliteal - left -->
+    <div class="drop-zone" id="dz-popliteal" data-answer="Popliteal Artery" style="top:426px;left:2px;min-width:130px;"></div>
+    <!-- Post Tibial - right -->
+    <div class="drop-zone" id="dz-posttibial" data-answer="Posterior Tibial Artery" style="top:476px;left:174px;min-width:130px;"></div>
+    <!-- Pedal - left -->
+    <div class="drop-zone" id="dz-pedal" data-answer="Pedal" style="top:520px;left:2px;min-width:80px;"></div>
+  </div>
+
+  <!-- Label bank -->
+  <div class="label-bank">
+    <h2>Labels</h2>
+    <div id="labelBank">
+      <div class="label-item" draggable="true" data-label="Temporal Artery">Temporal Artery</div>
+      <div class="label-item" draggable="true" data-label="Carotid">Carotid</div>
+      <div class="label-item" draggable="true" data-label="Apical Pulse">Apical Pulse</div>
+      <div class="label-item" draggable="true" data-label="Brachial">Brachial</div>
+      <div class="label-item" draggable="true" data-label="Radial">Radial</div>
+      <div class="label-item" draggable="true" data-label="Femoral">Femoral</div>
+      <div class="label-item" draggable="true" data-label="Popliteal Artery">Popliteal Artery</div>
+      <div class="label-item" draggable="true" data-label="Posterior Tibial Artery">Posterior Tibial Artery</div>
+      <div class="label-item" draggable="true" data-label="Pedal">Pedal</div>
+    </div>
+  </div>
+</div>
+
+<div class="btns">
+  <button class="reset-btn" onclick="resetAll()">Reset</button>
+  <button class="result-btn" onclick="showResult()">Show Result</button>
+</div>
+
+<div class="result-box" id="resultBox">
+  <h3>Your Score</h3>
+  <div class="score" id="scoreDisplay"></div>
+  <p id="scoreMsg"></p>
+  <div class="miss" id="missList"></div>
+</div>
+
+<script>
+  let dragging = null;
+  const correct = {};
+
+  document.querySelectorAll('.label-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      dragging = item;
+      item.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', item.dataset.label);
+    });
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+    });
+  });
+
+  document.querySelectorAll('.drop-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => e.preventDefault());
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      const label = e.dataTransfer.getData('text/plain');
+      const answer = zone.dataset.answer;
+      if (zone.classList.contains('correct')) return;
+      if (label === answer) {
+        zone.textContent = label;
+        zone.classList.add('correct');
+        zone.classList.remove('wrong');
+        correct[zone.id] = true;
+        if (dragging) dragging.classList.add('used');
+      } else {
+        zone.classList.add('wrong');
+        setTimeout(() => zone.classList.remove('wrong'), 400);
+      }
+    });
+  });
+
+  function resetAll() {
+    document.querySelectorAll('.drop-zone').forEach(z => {
+      z.classList.remove('correct','wrong');
+      z.textContent = '';
+    });
+    document.querySelectorAll('.label-item').forEach(i => i.classList.remove('used'));
+    for (let k in correct) delete correct[k];
+    document.getElementById('resultBox').style.display = 'none';
+  }
+
+  function showResult() {
+    const total = document.querySelectorAll('.drop-zone').length;
+    const done = Object.keys(correct).length;
+    const rb = document.getElementById('resultBox');
+    rb.style.display = 'block';
+    document.getElementById('scoreDisplay').textContent = done + ' / ' + total;
+    if (done === total) {
+      document.getElementById('scoreMsg').textContent = 'Perfect! You labeled all pulse sites correctly!';
+      document.getElementById('missList').textContent = '';
+    } else {
+      document.getElementById('scoreMsg').textContent = 'Keep going! Complete the remaining labels.';
+      const missed = [];
+      document.querySelectorAll('.drop-zone').forEach(z => {
+        if (!z.classList.contains('correct')) missed.push(z.dataset.answer);
+      });
+      document.getElementById('missList').textContent = 'Still needed: ' + missed.join(', ');
+    }
+    rb.scrollIntoView({behavior:'smooth'});
+  }
+</script>
+</body>
+</html>

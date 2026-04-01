@@ -129,6 +129,11 @@
     }
     function poBadgeColor(po) { return po === 'PO1' ? 'badge-purple' : 'badge-blue'; }
 
+    function shuffle(arr) {
+      return arr.map((v, i) => ({ v, i, r: Math.random() }))
+                .sort((a, b) => a.r - b.r);
+    }
+
     function render() {
       const app = document.getElementById('app');
       const tq = totalQuestions();
@@ -168,7 +173,7 @@
         <div class="question-card">
           <div class="question-text">${q.q}</div>
           <div class="choices" id="choices">
-            ${q.choices.map((c, i) => `<button class="choice-btn" id="c${i}" onclick="choose(${i})">${c}</button>`).join('')}
+            ${shuffle(q.choices).map(({v, i}) => `<button class="choice-btn" id="c${i}" onclick="choose(${i})">${v}</button>`).join('')}
           </div>
           <div id="feedback"></div>
           <div id="next-wrap"></div>

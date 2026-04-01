@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Flashcards – Week 06</title>
+<title>Cardiopulmonary Flashcards</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{min-height:100vh;background:linear-gradient(135deg,#1a0a0a 0%,#2d0d0d 50%,#1a0a0a 100%);display:flex;flex-direction:column;align-items:center;padding:24px 16px;font-family:'Segoe UI',sans-serif}
@@ -37,7 +37,7 @@
 <body>
 
 <div style="text-align:center;margin-bottom:8px">
-  <div class="badge">WEEK 06 — CARDIOPULMONARY TESTING &amp; PATIENT CARE</div>
+  <div class="badge">CARDIOPULMONARY TESTING &amp; PATIENT CARE</div>
   <h1>📋 Flashcard Review</h1>
   <p class="subtitle">🎉 A fun activity to boost your recall! Flip each card to reveal the answer.</p>
 </div>
@@ -100,30 +100,22 @@ const total=cards.length;
 function render(){
   const c=cards[idx];
   const cardEl=document.getElementById('card');
-  const label=document.getElementById('card-label');
-  const text=document.getElementById('card-text');
-  const mb=document.getElementById('mastered-badge');
-  const fb=document.getElementById('flip-btn');
-
   cardEl.classList.toggle('flipped',flipped);
-  label.textContent=flipped?'✅ ANSWER':'❓ QUESTION — tap to flip';
+  document.getElementById('card-label').textContent=flipped?'✅ ANSWER':'❓ QUESTION — tap to flip';
+  const text=document.getElementById('card-text');
   text.style.fontWeight=flipped?'500':'700';
   text.textContent=flipped?c.a:c.q;
-  mb.style.display=done.has(idx)?'block':'none';
-  fb.textContent=flipped?'🔁 Show Question':'💡 Show Answer';
-
+  document.getElementById('mastered-badge').style.display=done.has(idx)?'block':'none';
+  document.getElementById('flip-btn').textContent=flipped?'🔁 Show Question':'💡 Show Answer';
   document.getElementById('card-counter').textContent=`Card ${idx+1} of ${total}`;
-  const pct=Math.round((done.size/total)*100);
+  const pct=Math.round(done.size/total*100);
   document.getElementById('mastered-counter').textContent=`✅ ${done.size} mastered (${pct}%)`;
   document.getElementById('progress-bar').style.width=pct+'%';
-
   const comp=document.getElementById('complete');
   if(done.size===total){
     comp.classList.add('show');
-    document.getElementById('complete-msg').textContent=`You've mastered all ${total} cards for Week 06. You're ready for clinical practice!`;
-  } else {
-    comp.classList.remove('show');
-  }
+    document.getElementById('complete-msg').textContent=`You've mastered all ${total} cards. You're ready for clinical practice!`;
+  } else { comp.classList.remove('show'); }
 }
 
 function toggleFlip(){flipped=!flipped;render();}

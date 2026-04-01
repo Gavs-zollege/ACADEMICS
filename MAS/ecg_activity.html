@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECG Alert Activity</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: linear-gradient(135deg, #FFF3CD 0%, #FADADD 50%, #D6EAF8 100%);
+    min-height: 100vh;
+    padding: 24px 16px;
+    font-family: sans-serif;
+  }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header .icon { font-size: 44px; }
+  .header h1 { font-size: 26px; font-weight: 900; color: #B03A2E; margin: 6px 0 4px; letter-spacing: 1px; }
+  .header p { font-weight: 700; color: #555; font-size: 15px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 520px; margin: 0 auto 24px; }
+  .card {
+    border-radius: 18px; padding: 18px 12px; text-align: center;
+    cursor: pointer; transition: all 0.2s; border: 3px solid;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  }
+  .card:hover { transform: scale(1.02); }
+  .card.active { transform: scale(1.04); }
+  .card .emoji { font-size: 48px; line-height: 1.1; }
+  .card .label { font-weight: 900; font-size: 15px; margin-top: 8px; letter-spacing: 0.5px; }
+  .card .badge { margin-top: 6px; font-size: 18px; }
+
+  .detail, .quiz, .score-box {
+    background: #fff; border-radius: 18px; padding: 20px 18px;
+    max-width: 520px; margin: 0 auto 20px; border: 3px solid;
+  }
+  .detail .d-emoji { font-size: 36px; text-align: center; }
+  .detail h2 { font-weight: 900; font-size: 20px; text-align: center; margin: 8px 0 10px; letter-spacing: 0.5px; }
+  .detail .desc { font-weight: 700; color: #333; font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
+  .detail .fact { border-radius: 12px; padding: 10px 14px; font-weight: 800; font-size: 13px; margin-bottom: 14px; }
+  .quiz-btn {
+    width: 100%; color: #fff; font-weight: 900; font-size: 15px;
+    border: none; border-radius: 12px; padding: 12px 0; cursor: pointer; letter-spacing: 0.5px;
+  }
+
+  .quiz h3 { font-weight: 900; font-size: 16px; margin-bottom: 14px; text-align: center; }
+  .opt-btn {
+    display: block; width: 100%; font-weight: 800; font-size: 14px;
+    border-radius: 10px; padding: 11px 14px; margin-bottom: 10px;
+    cursor: pointer; text-align: left; transition: all 0.2s; border: 2px solid #ddd;
+    background: #F4F6F7; color: #333;
+  }
+  .opt-btn.correct { background: #D5F5E3; color: #145A32; border-color: #27AE60; }
+  .opt-btn.wrong { background: #FADBD8; color: #B03A2E; border-color: #E74C3C; }
+  .opt-btn:disabled { cursor: default; }
+  .result-msg { font-weight: 800; font-size: 14px; text-align: center; margin-top: 6px; }
+
+  .score-box { border-color: #F39C12; text-align: center; }
+  .score-box .trophy { font-size: 52px; }
+  .score-box h2 { font-weight: 900; font-size: 22px; color: #B7770D; margin: 8px 0; }
+  .score-box p { font-weight: 700; color: #555; font-size: 14px; }
+  .play-again {
+    background: #E74C3C; color: #fff; font-weight: 900; font-size: 15px;
+    border: none; border-radius: 12px; padding: 12px 28px; cursor: pointer; margin-top: 8px;
+  }
+
+  .tip {
+    max-width: 520px; margin: 0 auto;
+    background: #fff9e6; border: 2px dashed #F39C12;
+    border-radius: 14px; padding: 12px 16px; text-align: center;
+  }
+  .tip p { font-weight: 800; color: #B7770D; font-size: 13px; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="icon">❤️‍🩺</div>
+  <h1>ECG ALERT ACTIVITY</h1>
+  <p>Tap a sign to learn more, then test yourself!</p>
+</div>
+
+<div class="grid" id="grid"></div>
+<div id="detail-panel"></div>
+<div id="score-panel"></div>
+
+<div class="tip">
+  <p>🩺 <strong>Medical Tip:</strong> Any ONE of these signs can be enough reason to order an ECG — always document and report to the supervising provider!</p>
+</div>
+
+<script>
+const signs = [
+  {
+    id: 1, emoji: "💥", label: "CHEST PAIN",
+    color: "#C0392B", bg: "#FADBD8", border: "#E74C3C",
+    description: "Pressure, tightness, squeezing, or burning sensation in the chest. May radiate to arm, jaw, or back.",
+    fact: "🏆 Fun Fact: Chest pain is the #1 reason patients are sent for an ECG!",
+    question: "What type of chest pain warrants an ECG?",
+    options: ["Only sharp stabbing pain", "Pressure, tightness, or burning", "Only left-sided pain", "Pain after eating spicy food"],
+    correct: 1,
+  },
+  {
+    id: 2, emoji: "😮‍💨", label: "SHORTNESS OF BREATH",
+    color: "#1A5276", bg: "#D6EAF8", border: "#2980B9",
+    description: "Difficulty breathing or feeling like you can't get enough air, even at rest or with mild activity.",
+    fact: "💡 Fun Fact: Shortness of breath can sometimes be the ONLY symptom of a silent heart attack!",
+    question: "Why does heart trouble cause shortness of breath?",
+    options: ["Lungs fill with water", "Heart can't pump enough oxygen-rich blood", "Diaphragm cramps up", "Throat swells"],
+    correct: 1,
+  },
+  {
+    id: 3, emoji: "😵", label: "DIZZINESS",
+    color: "#6C3483", bg: "#E8DAEF", border: "#8E44AD",
+    description: "Feeling lightheaded, faint, or unsteady — especially if it comes on suddenly without an obvious cause.",
+    fact: "🌀 Fun Fact: Dizziness can signal an arrhythmia — the heart is beating too fast, slow, or irregularly!",
+    question: "What cardiac cause can trigger sudden dizziness?",
+    options: ["Low sodium", "Arrhythmia (irregular heartbeat)", "Eye strain", "Dehydration only"],
+    correct: 1,
+  },
+  {
+    id: 4, emoji: "💓", label: "RAPID HEARTBEAT",
+    color: "#145A32", bg: "#D5F5E3", border: "#27AE60",
+    description: "Palpitations or a racing heart that feels like fluttering, pounding, or skipping beats.",
+    fact: "⚡ Fun Fact: A normal resting heart rate is 60–100 bpm. An ECG can catch rates over 150 bpm in seconds!",
+    question: "What is the medical term for a rapid heartbeat over 100 bpm?",
+    options: ["Bradycardia", "Tachycardia", "Fibrillation", "Arrhythmia"],
+    correct: 1,
+  },
+];
+
+let selectedId = null;
+let quizMode = false;
+let answered = {};
+let score = 0;
+
+function render() {
+  renderGrid();
+  renderDetail();
+  renderScore();
+}
+
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = signs.map(s => {
+    const isActive = selectedId === s.id;
+    const ans = answered[s.id];
+    const badge = ans !== undefined ? (ans === s.correct ? '✅' : '❌') : '';
+    return `
+      <div class="card ${isActive ? 'active' : ''}"
+        style="background:${s.bg}; border-color:${isActive ? s.color : s.border}; box-shadow: ${isActive ? `0 6px 20px ${s.color}44` : '0 2px 8px rgba(0,0,0,0.10)'};"
+        onclick="handleCardClick(${s.id})">
+        <div class="emoji">${s.emoji}</div>
+        <div class="label" style="color:${s.color}">${s.label}</div>
+        ${badge ? `<div class="badge">${badge}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+function renderDetail() {
+  const panel = document.getElementById('detail-panel');
+  if (!selectedId) { panel.innerHTML = ''; return; }
+  const s = signs.find(x => x.id === selectedId);
+
+  if (!quizMode) {
+    panel.innerHTML = `
+      <div class="detail" style="border-color:${s.border}; box-shadow: 0 4px 16px ${s.color}33">
+        <div class="d-emoji">${s.emoji}</div>
+        <h2 style="color:${s.color}">${s.label}</h2>
+        <p class="desc">${s.description}</p>
+        <div class="fact" style="background:${s.bg}; color:${s.color}">${s.fact}</div>
+        <button class="quiz-btn" style="background:${s.color}" onclick="startQuiz()">🧠 QUIZ ME ON THIS!</button>
+      </div>`;
+  } else {
+    const isAnswered = answered[s.id] !== undefined;
+    const opts = s.options.map((opt, i) => {
+      let cls = '';
+      if (isAnswered) {
+        if (i === s.correct) cls = 'correct';
+        else if (i === answered[s.id]) cls = 'wrong';
+      }
+      const prefix = isAnswered ? (i === s.correct ? '✅ ' : i === answered[s.id] ? '❌ ' : '⬜ ') : '⬜ ';
+      return `<button class="opt-btn ${cls}" ${isAnswered ? 'disabled' : ''} onclick="handleAnswer(${s.id}, ${i})">${prefix}${opt}</button>`;
+    }).join('');
+
+    let resultMsg = '';
+    if (isAnswered) {
+      const ok = answered[s.id] === s.correct;
+      resultMsg = `<div class="result-msg" style="color:${ok ? '#145A32' : '#B03A2E'}">${ok ? '🎉 Correct! Great job!' : `❌ The correct answer is: "${s.options[s.correct]}"`}</div>`;
+    }
+
+    panel.innerHTML = `
+      <div class="quiz" style="border-color:${s.border}">
+        <h3 style="color:${s.color}">❓ ${s.question}</h3>
+        ${opts}
+        ${resultMsg}
+      </div>`;
+  }
+}
+
+function renderScore() {
+  const panel = document.getElementById('score-panel');
+  const total = signs.length;
+  const allAnswered = Object.keys(answered).length === total;
+  if (!allAnswered) { panel.innerHTML = ''; return; }
+
+  const trophy = score === 4 ? '🏆' : score >= 2 ? '👍' : '📚';
+  const msg = score === 4 ? "Perfect score! You're an ECG pro! 🌟" : score >= 2 ? "Nice work! Keep studying those signs! 💪" : "Keep practicing — you've got this! 📖";
+  panel.innerHTML = `
+    <div class="score-box">
+      <div class="trophy">${trophy}</div>
+      <h2>YOUR SCORE: ${score} / ${total}</h2>
+      <p>${msg}</p>
+      <button class="play-again" onclick="reset()">🔄 PLAY AGAIN</button>
+    </div>`;
+}
+
+function handleCardClick(id) {
+  selectedId = selectedId === id ? null : id;
+  quizMode = false;
+  render();
+}
+
+function startQuiz() {
+  quizMode = true;
+  renderDetail();
+}
+
+function handleAnswer(signId, optIdx) {
+  if (answered[signId] !== undefined) return;
+  const s = signs.find(x => x.id === signId);
+  if (optIdx === s.correct) score++;
+  answered[signId] = optIdx;
+  render();
+}
+
+function reset() {
+  selectedId = null;
+  quizMode = false;
+  answered = {};
+  score = 0;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

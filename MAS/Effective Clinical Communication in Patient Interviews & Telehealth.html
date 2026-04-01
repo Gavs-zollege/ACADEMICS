@@ -134,6 +134,12 @@
                 .sort((a, b) => a.r - b.r);
     }
 
+    function shuffle(arr) {
+      return arr.map((v, i) => ({ v, i })).sort(() => Math.random() - 0.5);
+    }
+
+    let shuffledChoices = [];
+
     function render() {
       const app = document.getElementById('app');
       const tq = totalQuestions();
@@ -154,6 +160,7 @@
 
       const s = scenario();
       const q = question();
+      shuffledChoices = shuffle(q.choices);
       const progress = Math.round((gq / tq) * 100);
 
       app.innerHTML = `
@@ -173,28 +180,28 @@
         <div class="question-card">
           <div class="question-text">${q.q}</div>
           <div class="choices" id="choices">
-            ${shuffle(q.choices).map(({v, i}) => `<button class="choice-btn" id="c${i}" onclick="choose(${i})">${v}</button>`).join('')}
+            ${shuffledChoices.map(({v, i}) => `<button class="choice-btn" data-orig="${i}" onclick="choose(${i})">${v}</button>`).join('')}
           </div>
           <div id="feedback"></div>
           <div id="next-wrap"></div>
         </div>`;
     }
 
-    function choose(idx) {
+    function choose(origIdx) {
       if (answered) return;
       answered = true;
       const q = question();
       const fb = document.getElementById('feedback');
       const nw = document.getElementById('next-wrap');
 
-      for (let i = 0; i < q.choices.length; i++) {
-        const btn = document.getElementById('c' + i);
+      document.querySelectorAll('.choice-btn').forEach(btn => {
         btn.disabled = true;
-        if (i === q.correct) btn.classList.add(idx === q.correct ? 'correct' : 'reveal');
-        else if (i === idx) btn.classList.add('wrong');
-      }
+        const o = parseInt(btn.dataset.orig);
+        if (o === q.correct) btn.classList.add(origIdx === q.correct ? 'correct' : 'reveal');
+        else if (o === origIdx) btn.classList.add('wrong');
+      });
 
-      if (idx === q.correct) {
+      if (origIdx === q.correct) {
         score++;
         fb.innerHTML = `<div class="feedback-box feedback-good">✓ ${q.feedback.good}</div>`;
       } else {

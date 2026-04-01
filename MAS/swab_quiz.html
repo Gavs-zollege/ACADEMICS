@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Throat Swab Quiz</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f4c75 0%, #1b6ca8 40%, #16a085 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(22,160,133,0.15) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    background: rgba(255,255,255,0.97);
+    border-radius: 24px;
+    padding: 36px 32px;
+    max-width: 640px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .header .badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #1b6ca8, #16a085);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f4c75;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+  }
+
+  .progress-bar-wrap {
+    background: #e0e0e0;
+    border-radius: 50px;
+    height: 10px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #1b6ca8, #16a085);
+    border-radius: 50px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #888;
+    text-align: right;
+    margin-bottom: 20px;
+  }
+
+  .question-card {
+    background: linear-gradient(135deg, #eaf4fb, #e8f8f5);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+    border-left: 6px solid #1b6ca8;
+  }
+
+  .step-tag {
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #1b6ca8;
+    margin-bottom: 8px;
+  }
+
+  .question-text {
+    font-size: 18px;
+    font-weight: 900;
+    color: #0f3d5c;
+    line-height: 1.5;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .opt-btn {
+    background: white;
+    border: 3px solid #c8dff0;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #1a1a2e;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+  .opt-btn:hover:not(:disabled) {
+    border-color: #1b6ca8;
+    background: #eaf4fb;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(27,108,168,0.2);
+  }
+
+  .opt-btn .letter {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1b6ca8, #16a085);
+    color: white;
+    font-size: 14px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .opt-btn.correct {
+    background: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+  }
+
+  .opt-btn.correct .letter { background: #28a745; }
+
+  .opt-btn.wrong {
+    background: #f8d7da;
+    border-color: #dc3545;
+    color: #721c24;
+  }
+
+  .opt-btn.wrong .letter { background: #dc3545; }
+
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback {
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .feedback.show { display: flex; }
+  .feedback.correct { background: #d4edda; color: #155724; border: 2px solid #28a745; }
+  .feedback.wrong { background: #f8d7da; color: #721c24; border: 2px solid #dc3545; }
+
+  .nav-row {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 14px 10px;
+    border-radius: 12px;
+    border: none;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-next {
+    background: linear-gradient(135deg, #1b6ca8, #16a085);
+    color: white;
+    box-shadow: 0 4px 14px rgba(27,108,168,0.4);
+  }
+
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(27,108,168,0.5); }
+  .btn-next:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+  .btn-redo {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    box-shadow: 0 4px 14px rgba(243,156,18,0.4);
+  }
+
+  .btn-redo:hover { transform: translateY(-2px); }
+
+  .btn-reset {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    box-shadow: 0 4px 14px rgba(231,76,60,0.4);
+  }
+
+  .btn-reset:hover { transform: translateY(-2px); }
+
+  /* Results screen */
+  .results {
+    display: none;
+    text-align: center;
+  }
+
+  .results.show { display: block; }
+
+  .score-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1b6ca8, #16a085);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 10px 30px rgba(27,108,168,0.4);
+  }
+
+  .score-num {
+    font-size: 44px;
+    font-weight: 900;
+    color: white;
+    line-height: 1;
+  }
+
+  .score-denom {
+    font-size: 16px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+  }
+
+  .result-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f4c75;
+    margin-bottom: 10px;
+  }
+
+  .result-msg {
+    font-size: 15px;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .result-btns {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+  }
+
+  .result-btns .btn {
+    max-width: 180px;
+    flex: 1;
+  }
+
+  .quiz-section { display: block; }
+  .quiz-section.hidden { display: none; }
+
+  .emoji { font-size: 22px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- QUIZ SECTION -->
+  <div class="quiz-section" id="quizSection">
+    <div class="header">
+      <div class="badge">🧪 Clinical Skills</div>
+      <h1>Throat Swab Collection</h1>
+      <p class="subtitle">Test your knowledge of the correct procedure!</p>
+    </div>
+
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progressBar" style="width:20%"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">Question 1 of 5</div>
+
+    <div class="question-card">
+      <div class="step-tag" id="stepTag">STEP 1</div>
+      <div class="question-text" id="questionText"></div>
+    </div>
+
+    <div class="options" id="optionsContainer"></div>
+
+    <div class="feedback" id="feedback">
+      <span class="emoji" id="feedbackEmoji"></span>
+      <span id="feedbackText"></span>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn btn-redo" onclick="redoQuestion()">🔄 Redo</button>
+      <button class="btn btn-reset" onclick="resetQuiz()">↩ Reset</button>
+      <button class="btn btn-next" id="nextBtn" onclick="nextQuestion()" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SECTION -->
+  <div class="results" id="resultsSection">
+    <div class="score-circle">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-denom">out of 5</div>
+    </div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="result-btns">
+      <button class="btn btn-redo" onclick="redoQuiz()">🔄 Redo Quiz</button>
+      <button class="btn btn-reset" onclick="resetQuiz()">↩ Full Reset</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    step: "STEP 1 — PATIENT POSITIONING",
+    question: "What is the correct patient position before performing a throat swab collection?",
+    options: [
+      "Lay the patient flat (supine position)",
+      "Tilt the patient's head back (semi-Fowler's position)",
+      "Have the patient lean forward with chin down",
+      "Position the patient sitting upright with head level"
+    ],
+    correct: 1,
+    explanation: "✅ Correct! Tilting the head back in semi-Fowler's position opens the airway and gives clear access to the throat for accurate sample collection."
+  },
+  {
+    step: "STEP 2 — SWAB INSERTION",
+    question: "How should the swab be inserted during a throat swab procedure?",
+    options: [
+      "At a 45° downward angle toward the tongue",
+      "Directly straight toward the back of the throat",
+      "Parallel to the palate, reaching ear-level depth",
+      "Along the lower gumline toward the tonsils"
+    ],
+    correct: 2,
+    explanation: "✅ Correct! The swab must be inserted parallel to the palate and advanced to ear-level depth to properly reach the oropharynx."
+  },
+  {
+    step: "STEP 3 — SAMPLE COLLECTION",
+    question: "Once the swab is in position, what is the correct technique to collect the specimen?",
+    options: [
+      "Quickly dab the swab and immediately remove it",
+      "Press firmly once on the tonsil area only",
+      "Rotate the swab for 10–15 seconds to absorb secretions, then withdraw",
+      "Keep the swab still for 30 seconds, then pull straight out"
+    ],
+    correct: 2,
+    explanation: "✅ Correct! Rotating for 10–15 seconds ensures maximum absorption of secretions for an adequate sample before withdrawing."
+  },
+  {
+    step: "STEP 4 — SPECIMEN HANDLING",
+    question: "After withdrawing the swab, what is the immediate next step?",
+    options: [
+      "Air dry the swab for 5 minutes before storing",
+      "Place the swab directly into a sterile dry container",
+      "Place the swab in transport medium and label it",
+      "Snap the swab into two pieces and seal the tube"
+    ],
+    correct: 2,
+    explanation: "✅ Correct! The swab must be placed in transport medium immediately to preserve the sample, then clearly labeled for lab processing."
+  },
+  {
+    step: "OVERALL PROCEDURE",
+    question: "Which of the following sequences correctly describes the throat swab collection procedure?",
+    options: [
+      "Insert swab → Position patient → Rotate swab → Place in medium",
+      "Position patient → Insert swab parallel to palate → Rotate 10–15 sec → Place in transport medium",
+      "Label tube → Insert swab → Position patient → Rotate swab",
+      "Position patient → Rotate swab → Insert swab → Label tube"
+    ],
+    correct: 1,
+    explanation: "✅ Correct! The full sequence is: position patient (semi-Fowler's) → insert swab parallel to palate → rotate 10–15 sec → place in labeled transport medium."
+  }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+const letters = ['A','B','C','D'];
+
+function loadQuestion() {
+  const q = questions[current];
+  document.getElementById('stepTag').textContent = q.step;
+  document.getElementById('questionText').textContent = q.question;
+  document.getElementById('progressBar').style.width = ((current + 1) / 5 * 100) + '%';
+  document.getElementById('progressLabel').textContent = `Question ${current + 1} of 5`;
+
+  const container = document.getElementById('optionsContainer');
+  container.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="letter">${letters[i]}</span>${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    container.appendChild(btn);
+  });
+
+  hideFeedback();
+  document.getElementById('nextBtn').disabled = true;
+  answered = false;
+}
+
+function selectAnswer(index) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[current];
+  const btns = document.querySelectorAll('.opt-btn');
+
+  btns.forEach(b => b.disabled = true);
+
+  if (index === q.correct) {
+    btns[index].classList.add('correct');
+    showFeedback('correct', '🎉', q.explanation);
+    score++;
+  } else {
+    btns[index].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    showFeedback('wrong', '❌', `Not quite! ${q.explanation}`);
+  }
+
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function showFeedback(type, emoji, text) {
+  const fb = document.getElementById('feedback');
+  fb.className = `feedback show ${type}`;
+  document.getElementById('feedbackEmoji').textContent = emoji;
+  document.getElementById('feedbackText').textContent = text;
+}
+
+function hideFeedback() {
+  document.getElementById('feedback').className = 'feedback';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResults();
+  } else {
+    loadQuestion();
+  }
+}
+
+function redoQuestion() {
+  if (answered) score = Math.max(0, score - (document.querySelector('.opt-btn.correct') && document.querySelector('.opt-btn.wrong') === null ? 1 : 0));
+  loadQuestion();
+}
+
+function resetQuiz() {
+  current = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('quizSection').classList.remove('hidden');
+  document.getElementById('resultsSection').classList.remove('show');
+  loadQuestion();
+}
+
+function redoQuiz() {
+  current = 0;
+  score = 0;
+  answered = false;
+  document.getElementById('resultsSection').classList.remove('show');
+  document.getElementById('quizSection').classList.remove('hidden');
+  loadQuestion();
+}
+
+function showResults() {
+  document.getElementById('quizSection').classList.add('hidden');
+  const rs = document.getElementById('resultsSection');
+  rs.classList.add('show');
+  document.getElementById('scoreNum').textContent = score;
+
+  let title, msg;
+  if (score === 5) {
+    title = "🏆 Perfect Score!";
+    msg = "Outstanding! You've mastered the throat swab collection procedure. You're ready to perform this with confidence!";
+  } else if (score >= 3) {
+    title = "👍 Good Job!";
+    msg = "You have a solid understanding of the procedure. Review the steps you missed and you'll be perfect!";
+  } else {
+    title = "📚 Keep Practicing!";
+    msg = "Don't worry — clinical skills take practice. Review the 4-step throat swab procedure and try again!";
+  }
+
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultMsg').textContent = msg;
+}
+
+// Init
+loadQuestion();
+</script>
+</body>
+</html>

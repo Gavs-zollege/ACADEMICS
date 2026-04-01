@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pharmacology Challenge</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; }
+  .hero {
+    min-height: 100vh;
+    background: linear-gradient(135deg, rgba(15,30,60,0.92) 0%, rgba(30,60,100,0.88) 100%), #0f1e3c;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  h1 { font-size: 28px; font-weight: 700; color: #fff; text-align: center; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .subtitle { font-size: 15px; color: rgba(255,255,255,0.75); font-weight: 700; margin-bottom: 1.5rem; text-align: center; }
+  .score-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 1.5rem; background: rgba(255,255,255,0.12); border-radius: 40px; padding: 8px 20px; }
+  .score-bar span { color: #fff; font-weight: 700; font-size: 14px; }
+  .score-val { font-size: 22px; color: #7df0c0; font-weight: 700; }
+  .card { background: rgba(255,255,255,0.95); border-radius: 18px; padding: 1.5rem 1.5rem 1rem; max-width: 560px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.25); margin-bottom: 1.2rem; }
+  .mode-btns { display: flex; gap: 10px; margin-bottom: 1.2rem; flex-wrap: wrap; justify-content: center; }
+  .mode-btn { padding: 9px 22px; border-radius: 30px; border: 2.5px solid #fff; background: rgba(255,255,255,0.15); color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; transition: all 0.18s; text-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  .mode-btn.active { background: #fff; color: #185FA5; border-color: #fff; text-shadow: none; }
+  .mode-btn:hover:not(.active) { background: rgba(255,255,255,0.28); }
+  .q-label { font-size: 12px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .question { font-size: 18px; font-weight: 700; color: #1a2540; margin-bottom: 1.2rem; min-height: 52px; line-height: 1.45; }
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opt { padding: 14px 12px; border-radius: 12px; border: 2.5px solid #b0bdd4; background: #eef2fa; font-weight: 800; font-size: 15px; color: #1a2540; cursor: pointer; transition: all 0.16s; text-align: center; line-height: 1.3; }
+  .opt:hover { border-color: #185FA5; background: #daeaf9; color: #0c3a70; }
+  .opt.correct { background: #d4f0bc; border-color: #2d7a0a; color: #1a4a06; }
+  .opt.wrong { background: #fcd8d8; border-color: #b02020; color: #5a0e0e; }
+  .opt.reveal { background: #d4f0bc; border-color: #2d7a0a; color: #1a4a06; opacity: 0.75; }
+  .opt:disabled { pointer-events: none; }
+  .feedback { margin-top: 1rem; padding: 10px 14px; border-radius: 10px; font-weight: 700; font-size: 14px; display: none; line-height: 1.5; }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #d4f0bc; color: #1a4a06; border: 1.5px solid #2d7a0a; }
+  .feedback.bad { background: #fcd8d8; color: #5a0e0e; border: 1.5px solid #b02020; }
+  .next-btn { margin-top: 1rem; width: 100%; padding: 13px; border-radius: 12px; background: #185FA5; color: #fff; font-weight: 800; font-size: 16px; border: none; cursor: pointer; display: none; transition: background 0.15s; }
+  .next-btn.show { display: block; }
+  .next-btn:hover { background: #0c447c; }
+  .progress { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-bottom: 1.4rem; max-width: 560px; }
+  .progress-fill { height: 6px; background: #7df0c0; border-radius: 10px; transition: width 0.4s; }
+  .drag-zone { display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; border: 2px dashed #b0bdd4; border-radius: 12px; padding: 10px; margin-bottom: 10px; background: #eef2fa; align-items: center; }
+  .drag-chip { padding: 8px 16px; border-radius: 30px; background: #185FA5; color: #fff; font-weight: 800; font-size: 14px; cursor: grab; user-select: none; border: none; }
+  .drop-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .drop-label { font-weight: 800; font-size: 14px; color: #1a2540; min-width: 130px; }
+  .drop-box { flex: 1; min-height: 38px; border: 2px dashed #378ADD; border-radius: 10px; background: #e6f1fb; display: flex; align-items: center; padding: 4px 8px; font-weight: 700; font-size: 13px; color: #185FA5; }
+  .drop-box.filled { background: #d4f0bc; border-color: #2d7a0a; color: #1a4a06; border-style: solid; font-weight: 800; }
+  .drop-box.wrong-match { background: #fcd8d8; border-color: #b02020; color: #5a0e0e; border-style: solid; }
+  .check-btn { width: 100%; padding: 13px; border-radius: 12px; background: #185FA5; color: #fff; font-weight: 800; font-size: 15px; border: none; cursor: pointer; margin-top: 8px; }
+  .check-btn:hover { background: #0c447c; }
+  .big-score { font-size: 64px; font-weight: 700; color: #7df0c0; }
+  .big-label { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 1rem; }
+  .retry-btn { padding: 14px 40px; border-radius: 30px; background: #7df0c0; color: #0c3a70; font-weight: 800; font-size: 17px; border: none; cursor: pointer; margin-top: 1rem; }
+  .retry-btn:hover { background: #5DCAA5; }
+  .badge { font-size: 36px; margin-bottom: 6px; }
+  .tip { font-size: 13px; color: rgba(255,255,255,0.65); font-weight: 700; margin-top: 6px; text-align: center; }
+  .streak { font-size: 13px; color: #facc15; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="hero" id="app">
+  <h1>Pharmacology Challenge</h1>
+  <div class="subtitle">Master Drug Classifications — Level Up Your Knowledge!</div>
+  <div class="score-bar">
+    <span>Score</span><span class="score-val" id="scoreDisplay">0</span>
+    <span style="opacity:0.5">|</span>
+    <span>Streak</span><span class="streak" id="streakDisplay">0 🔥</span>
+  </div>
+  <div class="progress" id="progressBar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="mode-btns">
+    <button class="mode-btn active" onclick="setMode('mcq',this)">Multiple Choice</button>
+    <button class="mode-btn" onclick="setMode('match',this)">Match the Drug</button>
+    <button class="mode-btn" onclick="setMode('fill',this)">Fill in the Blank</button>
+  </div>
+  <div id="gameArea" style="width:100%;max-width:560px;"></div>
+  <div class="tip" id="tipText"></div>
+</div>
+
+<script>
+const DRUGS = [
+  { type:'Antibiotic', action:'Kill or inhibit bacterial growth', example:'amoxicillin', emoji:'🦠' },
+  { type:'Analgesic', action:'Relieve pain without loss of consciousness', example:'acetaminophen', emoji:'💊' },
+  { type:'Antipyretic', action:'Reduce fever', example:'ibuprofen', emoji:'🌡️' },
+  { type:'Antihypertensive', action:'Lower blood pressure', example:'lisinopril', emoji:'❤️' },
+  { type:'Antidepressant', action:'Treat depression and anxiety disorders', example:'fluoxetine', emoji:'🧠' },
+  { type:'Antihistamine', action:'Alleviate allergic symptoms', example:'diphenhydramine', emoji:'🤧' },
+];
+
+const TIPS = [
+  '"Anti-" means against — antibiotics fight bacteria!',
+  'Analgesics come from Greek: "an" (without) + "algos" (pain)',
+  'Acetaminophen is analgesic AND antipyretic!',
+  'ACE inhibitors like lisinopril block blood vessel tightening',
+  'SSRIs like fluoxetine boost serotonin in the brain',
+  'Histamine causes sneezing & itching — antihistamines block it',
+];
+
+let mode='mcq', score=0, streak=0, qIndex=0, answered=false;
+
+function shuffle(arr) { return [...arr].sort(()=>Math.random()-0.5); }
+
+function buildMCQ() {
+  const q=DRUGS[qIndex%DRUGS.length];
+  const distractors=shuffle(DRUGS.filter(d=>d.type!==q.type)).slice(0,3).map(d=>d.type);
+  const opts=shuffle([q.type,...distractors]);
+  const coinflip=Math.random()<0.5;
+  return { question: coinflip ? `"${q.example}" is an example of which drug class?` : `Which drug class ${q.action.toLowerCase()}?`, answer:q.type, opts, q };
+}
+
+function buildFill() {
+  const q=DRUGS[qIndex%DRUGS.length];
+  const distractors=shuffle(DRUGS.filter(d=>d.example!==q.example)).slice(0,3).map(d=>d.example);
+  const opts=shuffle([q.example,...distractors]);
+  return { question:`A patient needs something to ${q.action.toLowerCase()}.\nWhich example drug would you choose?`, answer:q.example, opts, q };
+}
+
+function setMode(m, btn) {
+  mode=m;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  score=0; streak=0; qIndex=0;
+  document.getElementById('scoreDisplay').textContent='0';
+  document.getElementById('streakDisplay').textContent='0 🔥';
+  document.getElementById('progressFill').style.width='0%';
+  render();
+}
+
+function render() {
+  const area=document.getElementById('gameArea');
+  if(mode==='match'){ renderMatch(); return; }
+  answered=false;
+  const data=mode==='mcq'?buildMCQ():buildFill();
+  document.getElementById('progressFill').style.width=((qIndex%DRUGS.length)/DRUGS.length*100)+'%';
+  document.getElementById('tipText').textContent='';
+  area.innerHTML=`
+    <div class="card">
+      <div class="q-label">Question ${(qIndex%DRUGS.length)+1} of ${DRUGS.length} &nbsp;·&nbsp; ${mode==='mcq'?'Multiple Choice':'Fill in the Blank'}</div>
+      <div class="question">${data.q.emoji} ${data.question}</div>
+      <div class="options" id="opts">
+        ${data.opts.map(o=>`<button class="opt" onclick="checkAns(this,'${o}','${data.answer}')">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+      <button class="next-btn" id="nextBtn" onclick="nextQ()">Next Question →</button>
+    </div>`;
+}
+
+function checkAns(btn, chosen, answer) {
+  if(answered) return;
+  answered=true;
+  document.querySelectorAll('.opt').forEach(o=>{
+    o.disabled=true;
+    if(o.textContent.trim()===answer) o.classList.add(chosen===answer?'correct':'reveal');
+  });
+  const fb=document.getElementById('fb');
+  fb.classList.add('show');
+  if(chosen===answer){
+    btn.classList.add('correct');
+    score+=(streak>=2?20:10); streak++;
+    fb.className='feedback show ok';
+    fb.innerHTML=`✅ <strong>Correct!</strong> +${streak>=2?20:10} pts${streak>=2?' — '+streak+' streak! 🔥':''}<br>${getTip(answer)}`;
+  } else {
+    btn.classList.add('wrong'); streak=0;
+    fb.className='feedback show bad';
+    fb.innerHTML=`❌ <strong>Not quite!</strong> The correct answer is <strong>${answer}</strong>.<br>${getTip(answer)}`;
+  }
+  document.getElementById('scoreDisplay').textContent=score;
+  document.getElementById('streakDisplay').textContent=streak+' 🔥';
+  document.getElementById('nextBtn').classList.add('show');
+  document.getElementById('tipText').textContent='💡 '+TIPS[qIndex%TIPS.length];
+}
+
+function getTip(answer) {
+  const d=DRUGS.find(x=>x.type===answer||x.example===answer);
+  if(!d) return '';
+  return `<em>${d.type}s ${d.action.toLowerCase()}. Example: ${d.example}</em>`;
+}
+
+function nextQ() {
+  qIndex++;
+  if(qIndex>0&&qIndex%DRUGS.length===0){ showResult(); return; }
+  render();
+}
+
+function showResult() {
+  const pct=Math.round(score/(DRUGS.length*10)*100);
+  const emoji=pct>=80?'🏆':pct>=50?'👍':'📖';
+  const msg=pct>=80?'Expert-level!':pct>=50?'Good work!':'Keep studying!';
+  document.getElementById('gameArea').innerHTML=`
+    <div style="text-align:center;padding:1.5rem 0;">
+      <div class="badge">${emoji}</div>
+      <div class="big-score">${score}</div>
+      <div class="big-label">${msg}</div>
+      <div style="color:rgba(255,255,255,0.8);font-weight:700;font-size:15px;">You answered all 6 drug classes!</div>
+      <button class="retry-btn" onclick="restartGame()">Play Again 🔄</button>
+    </div>`;
+}
+
+function restartGame() {
+  score=0; streak=0; qIndex=0;
+  document.getElementById('scoreDisplay').textContent='0';
+  document.getElementById('streakDisplay').textContent='0 🔥';
+  document.getElementById('progressFill').style.width='0%';
+  render();
+}
+
+let dragData=null, matchState={}, matchPool=[];
+
+function renderMatch() {
+  matchPool=shuffle(DRUGS).slice(0,4);
+  matchState={};
+  matchPool.forEach(d=>matchState[d.type]=null);
+  const chips=shuffle([...matchPool]);
+  const area=document.getElementById('gameArea');
+  area.innerHTML=`
+    <div class="card">
+      <div class="q-label">Match the example drug to its class</div>
+      <div class="drag-zone" id="chipZone">
+        ${chips.map(d=>`<button class="drag-chip" draggable="true" id="chip_${d.type}" data-type="${d.type}">${d.example}</button>`).join('')}
+      </div>
+      <div id="dropRows">
+        ${matchPool.map(d=>`
+          <div class="drop-row">
+            <div class="drop-label">${d.emoji} ${d.type}</div>
+            <div class="drop-box" id="box_${d.type}" data-target="${d.type}">Drop here</div>
+          </div>`).join('')}
+      </div>
+      <button class="check-btn" onclick="checkMatch()">Check Answers ✔</button>
+      <div class="feedback" id="fb" style="margin-top:10px;"></div>
+    </div>`;
+
+  document.querySelectorAll('.drag-chip').forEach(chip=>{
+    chip.addEventListener('dragstart', e=>{ dragData=chip.dataset.type; e.dataTransfer.setData('text',chip.dataset.type); });
+    chip.addEventListener('mousedown', ()=>{ dragData=chip.dataset.type; });
+  });
+  document.querySelectorAll('.drop-box').forEach(box=>{
+    box.addEventListener('dragover', e=>e.preventDefault());
+    box.addEventListener('drop', e=>{ e.preventDefault(); dropHere(box.dataset.target); });
+    box.addEventListener('click', ()=>{ if(dragData) dropHere(box.dataset.target); });
+  });
+}
+
+function dropHere(target) {
+  if(!dragData) return;
+  const prev=Object.keys(matchState).find(k=>matchState[k]===dragData);
+  if(prev){ matchState[prev]=null; const b=document.getElementById('box_'+prev); b.textContent='Drop here'; b.className='drop-box'; }
+  matchState[target]=dragData;
+  const box=document.getElementById('box_'+target);
+  const chip=document.getElementById('chip_'+dragData);
+  box.textContent=chip?chip.textContent:dragData;
+  box.className='drop-box filled';
+  dragData=null;
+}
+
+function checkMatch() {
+  let correct=0;
+  matchPool.forEach(d=>{
+    const box=document.getElementById('box_'+d.type);
+    if(matchState[d.type]===d.type){ correct++; box.className='drop-box filled'; }
+    else if(matchState[d.type]){ box.className='drop-box wrong-match'; }
+  });
+  const fb=document.getElementById('fb');
+  fb.classList.add('show');
+  if(correct===matchPool.length){
+    score+=30; streak++;
+    fb.className='feedback show ok';
+    fb.innerHTML=`✅ <strong>Perfect match! +30 pts 🏆</strong>`;
+    document.getElementById('scoreDisplay').textContent=score;
+    document.getElementById('streakDisplay').textContent=streak+' 🔥';
+    setTimeout(renderMatch,1600);
+  } else {
+    streak=0;
+    fb.className='feedback show bad';
+    fb.innerHTML=`❌ <strong>${correct}/${matchPool.length} correct.</strong> Fix the wrong ones and try again!`;
+    document.getElementById('scoreDisplay').textContent=score;
+    document.getElementById('streakDisplay').textContent=streak+' 🔥';
+  }
+}
+
+render();
+</script>
+</body>
+</html>

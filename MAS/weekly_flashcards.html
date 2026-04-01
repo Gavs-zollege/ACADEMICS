@@ -6,35 +6,17 @@
 <title>Emergency Flashcards</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    min-height:100vh;
-    background:linear-gradient(135deg,#1a0a0a 0%,#2d0f0f 50%,#1a0a0a 100%);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:20px;font-family:'Segoe UI',sans-serif;color:#fff;
-  }
-  .badge{
-    background:rgba(180,30,30,0.25);border:1px solid rgba(180,30,30,0.5);
-    border-radius:30px;padding:6px 20px;display:inline-block;font-size:13px;
-    color:#f87171;font-weight:700;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;
-  }
+  body{min-height:100vh;background:linear-gradient(135deg,#1a0a0a 0%,#2d0f0f 50%,#1a0a0a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;font-family:'Segoe UI',sans-serif;color:#fff}
+  .badge{background:rgba(180,30,30,0.25);border:1px solid rgba(180,30,30,0.5);border-radius:30px;padding:6px 20px;display:inline-block;font-size:13px;color:#f87171;font-weight:700;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
   h1{font-size:clamp(22px,4vw,32px);font-weight:800;margin:0 0 4px;color:#fff;text-align:center}
   .subtitle{color:#fca5a5;font-size:14px;text-align:center;margin-bottom:10px}
   .progress-wrap{width:100%;max-width:600px;margin-bottom:16px}
   .progress-labels{display:flex;justify-content:space-between;font-size:13px;color:#fca5a5;margin-bottom:6px}
   .progress-bar-bg{background:rgba(255,255,255,0.1);border-radius:20px;height:8px}
   .progress-bar{background:linear-gradient(90deg,#b91c1c,#ef4444);height:8px;border-radius:20px;transition:width 0.4s ease;width:0%}
-  .card{
-    width:100%;max-width:600px;min-height:220px;border-radius:20px;
-    border:2px solid rgba(255,255,255,0.1);box-shadow:0 20px 50px rgba(0,0,0,0.5);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:30px 28px;cursor:pointer;transition:all 0.35s ease;text-align:center;position:relative;
-    background:linear-gradient(135deg,#111827,#1f2937);
-  }
+  .card{width:100%;max-width:600px;min-height:220px;border-radius:20px;border:2px solid rgba(255,255,255,0.1);box-shadow:0 20px 50px rgba(0,0,0,0.5);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 28px;cursor:pointer;transition:all 0.35s ease;text-align:center;position:relative;background:linear-gradient(135deg,#111827,#1f2937)}
   .card.flipped{background:linear-gradient(135deg,#7f1d1d,#b91c1c);border-color:#ef4444}
-  .card-label{
-    position:absolute;top:14px;right:18px;font-size:11px;font-weight:700;
-    letter-spacing:1px;color:#6b7280;text-transform:uppercase;
-  }
+  .card-label{position:absolute;top:14px;right:18px;font-size:11px;font-weight:700;letter-spacing:1px;color:#6b7280;text-transform:uppercase}
   .card.flipped .card-label{color:#fca5a5}
   .card-text{font-size:clamp(14px,2.5vw,17px);line-height:1.6;color:#f3f4f6;font-weight:600;white-space:pre-line}
   .card.flipped .card-text{font-weight:400}
@@ -45,16 +27,9 @@
   .btn-prev{background:rgba(255,255,255,0.08);color:#fff;border:2px solid rgba(255,255,255,0.2)!important}
   .btn-flip{background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;box-shadow:0 4px 14px rgba(220,38,38,0.4)}
   .btn-next{background:linear-gradient(135deg,#15803d,#16a34a);color:#fff;box-shadow:0 4px 14px rgba(21,128,61,0.4)}
-  .btn-reset{
-    margin-top:16px;background:transparent;color:#f87171;
-    border:2px solid #f87171!important;border-radius:10px;
-    padding:10px 24px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.5px;
-  }
+  .btn-reset{margin-top:16px;background:transparent;color:#f87171;border:2px solid #f87171!important;border-radius:10px;padding:10px 24px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:.5px}
   .dots{display:flex;gap:7px;margin-top:20px;flex-wrap:wrap;justify-content:center;max-width:400px}
-  .dot{
-    width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.2);
-    cursor:pointer;transition:background 0.3s;border:2px solid transparent;
-  }
+  .dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.2);cursor:pointer;transition:background 0.3s;border:2px solid transparent}
   .dot.current{background:#ef4444;border-color:#fff}
   .dot.reviewed{background:#16a34a}
   .legend{display:flex;gap:18px;margin-top:12px;font-size:12px;color:#9ca3af}
@@ -64,9 +39,9 @@
 <body>
 
 <div style="text-align:center;margin-bottom:10px">
-  <div class="badge">📅 Week 07 — When Every Second Counts</div>
+  <div class="badge">🚨 When Every Second Counts</div>
   <h1>🩺 Emergency Flashcards</h1>
-  <p class="subtitle">A fun recall activity to reinforce your Week 07 knowledge!</p>
+  <p class="subtitle">A fun recall activity to reinforce your emergency knowledge!</p>
 </div>
 
 <div class="progress-wrap">
@@ -104,16 +79,15 @@ const cards=[
   {q:"In Case Scenario #1 (Syncope after blood draw) — What do you do FIRST?",a:"Ensure the patient's safety by having them lie down or lean back to prevent a fall, assess responsiveness, stay calm, and call for help if the patient loses consciousness."},
   {q:"In Case Scenario #2 (Anaphylaxis) — What are the 3 key actions?",a:"1. Identify signs of anaphylaxis (swelling, difficulty breathing)\n2. Locate and administer epinephrine if trained\n3. Monitor breathing and circulation"},
   {q:"What are the 4 key Emergency Protocol items every MA should know?",a:"Office-specific emergency plan, regular drills and training, location of emergency exits, and how to call EMS from office phones."},
-  {q:"What are the 4 wrap-up takeaways from Week 07?",a:"1. Emergencies require quick, calm responses\n2. Know your scope of practice\n3. Always call for help if unsure\n4. Practice improves readiness"},
+  {q:"What are the 4 wrap-up takeaways for emergency preparedness?",a:"1. Emergencies require quick, calm responses\n2. Know your scope of practice\n3. Always call for help if unsure\n4. Practice improves readiness"},
   {q:"What does AED stand for and when is it used?",a:"AED stands for Automated External Defibrillator. It is used during cardiac arrest to analyze the heart rhythm and deliver an electric shock if needed to restore a normal heartbeat."}
 ];
 
-let idx=0,flipped=false,done=[];
+let idx=0, flipped=false, done=[];
 
 function render(){
-  const card=cards[idx];
-  const total=cards.length;
-  const progress=Math.round((done.length/total)*100);
+  const card=cards[idx], total=cards.length;
+  const progress=Math.round(done.length/total*100);
   document.getElementById('cardCounter').textContent=`Card ${idx+1} of ${total}`;
   document.getElementById('reviewedLabel').textContent=`${done.length} reviewed · ${progress}% done`;
   document.getElementById('progressBar').style.width=progress+'%';
@@ -121,10 +95,8 @@ function render(){
   document.getElementById('cardLabel').textContent=flipped?'✅ Answer':'❓ Question';
   document.getElementById('cardHint').textContent=flipped?'Click to see the question again':'👆 Click the card to reveal the answer';
   document.getElementById('flipBtn').textContent=flipped?'🔄 Show Question':'💡 Reveal Answer';
-  const cardEl=document.getElementById('card');
-  cardEl.className=flipped?'card flipped':'card';
+  document.getElementById('card').className=flipped?'card flipped':'card';
   document.getElementById('resetBtn').style.display=done.length>0?'':'none';
-  // dots
   const dotsEl=document.getElementById('dots');
   dotsEl.innerHTML='';
   cards.forEach((_,i)=>{

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MA Flashcards</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:#0d0d0d;font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
+  .screen{display:none;width:100%;max-width:660px;flex-direction:column;align-items:center}
+  .screen.active{display:flex}
+
+  /* START */
+  .start-box{background:#1a1a2e;border-radius:20px;padding:48px 40px;width:100%;text-align:center;border:2px solid #7b2d2d;box-shadow:0 8px 40px rgba(123,45,45,0.4)}
+  .start-box .icon{font-size:56px;margin-bottom:16px}
+  .start-box h1{color:#fff;font-size:28px;font-weight:800;margin-bottom:12px;line-height:1.2}
+  .start-box h2{color:#e05c5c;font-size:20px;font-weight:700;margin-bottom:20px}
+  .info-box{background:#111128;border-radius:12px;padding:20px;margin-bottom:28px;border:1px solid #333;color:#d0d0d0;font-size:15px;line-height:1.7;text-align:left}
+  .info-box strong{color:#fff}
+  .info-box .count{color:#e05c5c;font-weight:700}
+
+  /* FINISH */
+  .finish-box{background:#1a1a2e;border-radius:20px;padding:48px 40px;width:100%;text-align:center;border:2px solid #27ae60;box-shadow:0 8px 40px rgba(39,174,96,0.3)}
+  .finish-box .icon{font-size:64px;margin-bottom:16px}
+  .finish-box h2{color:#fff;font-size:26px;font-weight:800;margin-bottom:12px}
+  .finish-box p{color:#aaa;font-size:16px;margin-bottom:8px}
+  .finish-box p.sub{color:#d0d0d0;font-size:15px;margin-bottom:32px;line-height:1.6}
+  .finish-box p strong{color:#fff}
+
+  /* PROGRESS */
+  .prog-bar-wrap{width:100%;margin-bottom:20px}
+  .prog-labels{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .prog-labels .label{color:#aaa;font-size:14px;font-weight:600}
+  .prog-labels .counter{color:#e05c5c;font-size:14px;font-weight:800}
+  .prog-track{background:#2a2a2a;border-radius:999px;height:8px;overflow:hidden}
+  .prog-fill{background:linear-gradient(90deg,#c0392b,#e05c5c);height:100%;border-radius:999px;transition:width 0.4s ease}
+
+  /* CARD */
+  .card{width:100%;background:#1a1a2e;border-radius:18px;margin-bottom:24px;overflow:hidden;transition:border-color 0.3s,box-shadow 0.3s}
+  .card.q-mode{border:2px solid #7b2d2d;box-shadow:0 6px 30px rgba(123,45,45,0.35)}
+  .card.a-mode{border:2px solid #27ae60;box-shadow:0 6px 30px rgba(39,174,96,0.25)}
+  .card-header{padding:14px 24px;display:flex;align-items:center;gap:10px}
+  .card.q-mode .card-header{background:linear-gradient(135deg,#3b0f0f,#1a0808)}
+  .card.a-mode .card-header{background:linear-gradient(135deg,#1a4a2e,#0d2d1a)}
+  .card-header .emoji{font-size:20px}
+  .card-header .label{font-size:13px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+  .card.q-mode .card-header .label{color:#e05c5c}
+  .card.a-mode .card-header .label{color:#4ade80}
+  .card-body{padding:32px 28px;min-height:180px;display:flex;align-items:center;justify-content:center}
+  .card-body .q-text{color:#fff;font-size:20px;font-weight:700;text-align:center;line-height:1.6}
+  .card-body .a-block{width:100%}
+  .card-body .a-block p{margin:0 0 8px;line-height:1.6}
+  .card-body .a-block p.main{color:#fff;font-size:18px;font-weight:700;text-align:center}
+  .card-body .a-block p.detail{color:#d0d0d0;font-size:16px;font-weight:600;text-align:left}
+  .card-foot{padding:0 28px 28px}
+
+  /* BUTTONS */
+  .btn{border:none;border-radius:12px;font-weight:900;cursor:pointer;transition:opacity 0.15s,transform 0.1s;font-family:'Segoe UI',sans-serif;letter-spacing:0.4px}
+  .btn:active{transform:scale(0.97)}
+  .btn-start{width:100%;background:linear-gradient(135deg,#c0392b,#8e1a1a);color:#fff;padding:18px 40px;font-size:18px}
+  .btn-restart{width:100%;background:linear-gradient(135deg,#27ae60,#1a7a42);color:#fff;padding:18px 40px;font-size:18px}
+  .btn-reveal{width:100%;background:linear-gradient(135deg,#c0392b,#8e1a1a);color:#fff;padding:18px;font-size:17px;text-shadow:0 1px 2px rgba(0,0,0,0.4)}
+  .btn-nav{flex:1;padding:16px;font-size:16px;border-radius:12px;border:3px solid transparent;font-family:'Segoe UI',sans-serif;font-weight:900;letter-spacing:0.3px;transition:all 0.2s}
+  .btn-prev{background:#2a2a2a;color:#ffffff;border-color:#555}
+  .btn-prev:disabled{background:#1e1e1e;color:#666;border-color:#2a2a2a;cursor:not-allowed}
+  .btn-next{flex:2;background:linear-gradient(135deg,#27ae60,#1a7a42);color:#fff;border-color:#27ae60;text-shadow:0 1px 2px rgba(0,0,0,0.3)}
+  .btn-next:disabled{background:#1e1e1e;color:#666;border-color:#2a2a2a;cursor:not-allowed;text-shadow:none}
+  .nav-row{display:flex;gap:14px;width:100%}
+  .tip{color:#666;font-size:13px;margin-top:18px;text-align:center}
+</style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div class="screen active" id="startScreen">
+  <div class="start-box">
+    <div class="icon">🏥</div>
+    <h1>Medical Assistant Program</h1>
+    <h2>Week 04 · Flashcard Activity</h2>
+    <div class="info-box">
+      🎯 <strong>This activity is designed to sharpen your recall!</strong><br/><br/>
+      Flashcards are one of the most effective tools for memorizing key concepts. Go through each card, try to recall the answer on your own, then flip to check yourself. No pressure — just practice!<br/><br/>
+      <span class="count">📚 20 cards</span> covering drug types, the 9 Rights, dosage calculations, injection routes, and more.
+    </div>
+    <button class="btn btn-start" onclick="startActivity()">Start Activity 🚀</button>
+  </div>
+</div>
+
+<!-- CARD SCREEN -->
+<div class="screen" id="cardScreen">
+  <div class="prog-bar-wrap">
+    <div class="prog-labels">
+      <span class="label">MA PROGRAM · WEEK 04</span>
+      <span class="counter" id="counter">Card 1 of 20</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  </div>
+
+  <div class="card q-mode" id="card">
+    <div class="card-header">
+      <span class="emoji" id="cardEmoji">💊</span>
+      <span class="label" id="cardLabel">Question</span>
+    </div>
+    <div class="card-body" id="cardBody">
+      <p class="q-text" id="cardText"></p>
+    </div>
+    <div class="card-foot" id="cardFoot">
+      <button class="btn btn-reveal" onclick="flipCard()">👁️ Reveal Answer</button>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-nav btn-prev" id="prevBtn" onclick="prevCard()">← Previous</button>
+    <button class="btn btn-nav btn-next" id="nextBtn" onclick="nextCard()" disabled>Next Card →</button>
+  </div>
+  <p class="tip">💡 Tip: Try to recall the answer before revealing it for best results!</p>
+</div>
+
+<!-- FINISH SCREEN -->
+<div class="screen" id="finishScreen">
+  <div class="finish-box">
+    <div class="icon">🎉</div>
+    <h2>Activity Complete!</h2>
+    <p>You reviewed all <strong>20 flashcards</strong>.</p>
+    <p class="sub">Great job! The more you review these, the stronger your memory will be. Consider running through them again to boost your retention!</p>
+    <button class="btn btn-restart" onclick="restart()">🔄 Start Over</button>
+  </div>
+</div>
+
+<script>
+const cards = [
+  {q:"What is Pharmacology?",a:"The study of drugs and their interactions with the human body — covering their origin, properties, effects, uses, and elimination."},
+  {q:"What drug type kills or inhibits the growth of bacteria?",a:"Antibiotics\n• Example: Amoxicillin"},
+  {q:"What drug type relieves pain without causing loss of consciousness?",a:"Analgesics\n• Example: Acetaminophen"},
+  {q:"What drug type reduces fever?",a:"Antipyretics\n• Example: Ibuprofen"},
+  {q:"What drug type lowers blood pressure?",a:"Antihypertensives\n• Example: Lisinopril"},
+  {q:"What drug type treats depression and anxiety disorders?",a:"Antidepressants\n• Example: Fluoxetine"},
+  {q:"What drug type alleviates allergic symptoms?",a:"Antihistamines\n• Example: Diphenhydramine"},
+  {q:"What is the formula for calculating the correct medication dosage?",a:"(Desired Dose ÷ Available Dose) × Quantity = Correct Dosage\n• Example: 800 mg ÷ 200 mg per tablet = 4 tablets"},
+  {q:"What are the Nine Rights of Medication Administration?",a:"1. Right Patient\n2. Right Medication\n3. Right Dose\n4. Right Route\n5. Right Time\n6. Right Documentation\n7. Right Reason\n8. Right Response\n9. Right to Refuse"},
+  {q:"What does 'Right Patient' mean in medication administration?",a:"Verify the patient's identity using at least two identifiers (e.g., name and date of birth)."},
+  {q:"What does 'Right Documentation' require?",a:"Record the medication, dose, route, time, and your initials or name in the EHR. Include any patient education given."},
+  {q:"What should you do if a patient refuses medication?",a:"Educate the patient about the medication, document the refusal, and inform the provider. Patients have the Right to Refuse."},
+  {q:"Name the injection routes a Medical Assistant may use.",a:"• Intradermal (ID) — just beneath skin (e.g., TB test)\n• Subcutaneous (SubQ) — into fat layer (e.g., insulin)\n• Intramuscular (IM) — into muscle (e.g., vaccines)"},
+  {q:"What are the medication effects called when they are harmful and unexpected?",a:"Adverse Effects — harmful, unexpected reactions to a medication."},
+  {q:"What is an Idiosyncratic Reaction?",a:"An unusual or unexpected response to a medication that differs from the expected therapeutic, side, or adverse effects."},
+  {q:"What special considerations apply to Geriatric patients?",a:"• Slower metabolism may increase drug half-life\n• Higher risk of kidney/liver impairment\n• Greater risk of adverse effects\n• Dosages may need to be adjusted"},
+  {q:"How long should a patient be monitored after an injection?",a:"20–30 minutes, watching for allergic reactions such as hives, facial swelling, or anaphylaxis."},
+  {q:"What is the FIFO principle in medication storage?",a:"First-In, First-Out — older stock is used before newer stock to prevent medications from expiring unused."},
+  {q:"What unit conversions must a Medical Assistant know?",a:"• 1,000 mg = 1 g\n• 1 tsp = 5 mL\n\nAlways convert units before performing dosage calculations."},
+  {q:"What are three distraction techniques used when giving injections to pediatric patients?",a:"Toys, music, and counting games.\n• Equipment should be prepared out of the child's view when possible."}
+];
+
+const emojis = ["💊","🩺","💉","🧪","📋","🏥","⚕️","🔬","📝","✅"];
+let idx = 0, flipped = false;
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startActivity(){ idx=0; flipped=false; renderCard(); show('cardScreen'); }
+function restart(){ startActivity(); }
+
+function renderCard(){
+  const card = cards[idx];
+  const total = cards.length;
+  const progress = Math.round(((idx + (flipped ? 0.5 : 0)) / total) * 100);
+
+  document.getElementById('counter').textContent = `Card ${idx+1} of ${total}`;
+  document.getElementById('progFill').style.width = progress + '%';
+
+  const cardEl = document.getElementById('card');
+  const emoji = document.getElementById('cardEmoji');
+  const label = document.getElementById('cardLabel');
+  const body = document.getElementById('cardBody');
+  const foot = document.getElementById('cardFoot');
+  const nextBtn = document.getElementById('nextBtn');
+  const prevBtn = document.getElementById('prevBtn');
+
+  prevBtn.disabled = idx === 0;
+  nextBtn.disabled = !flipped;
+  nextBtn.textContent = idx + 1 === total ? 'Finish 🎉' : 'Next Card →';
+
+  if(!flipped){
+    cardEl.className = 'card q-mode';
+    emoji.textContent = emojis[idx % emojis.length];
+    label.textContent = 'Question';
+    body.innerHTML = `<p class="q-text">${card.q}</p>`;
+    foot.innerHTML = `<button class="btn btn-reveal" onclick="flipCard()">👁️ Reveal Answer</button>`;
+  } else {
+    cardEl.className = 'card a-mode';
+    emoji.textContent = '✅';
+    label.textContent = 'Answer';
+    const lines = card.a.split('\n');
+    const html = lines.map(l => {
+      const isBullet = l.startsWith('•') || /^\d+\./.test(l);
+      return `<p class="${isBullet ? 'detail' : 'main'}">${l}</p>`;
+    }).join('');
+    body.innerHTML = `<div class="a-block">${html}</div>`;
+    foot.innerHTML = '';
+  }
+}
+
+function flipCard(){ flipped=true; renderCard(); }
+
+function nextCard(){
+  if(!flipped) return;
+  if(idx+1 >= cards.length){ show('finishScreen'); return; }
+  idx++; flipped=false; renderCard();
+}
+
+function prevCard(){
+  if(idx > 0){ idx--; flipped=false; renderCard(); }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Flashcards – Week 06</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{min-height:100vh;background:linear-gradient(135deg,#1a0a0a 0%,#2d0d0d 50%,#1a0a0a 100%);display:flex;flex-direction:column;align-items:center;padding:24px 16px;font-family:'Segoe UI',sans-serif}
+  .badge{background:#8b1a1a;color:#fff;border-radius:20px;padding:4px 18px;font-size:12px;font-weight:700;letter-spacing:1px;display:inline-block;margin-bottom:6px}
+  h1{color:#fff;font-size:26px;font-weight:800;margin:6px 0 2px;text-align:center}
+  .subtitle{color:#e0a0a0;font-size:13px;text-align:center;margin-bottom:16px}
+  .progress-wrap{width:100%;max-width:600px;margin-bottom:16px}
+  .progress-labels{display:flex;justify-content:space-between;color:#ccc;font-size:12px;margin-bottom:4px}
+  .progress-bar-bg{background:#3a1010;border-radius:10px;height:8px}
+  .progress-bar{background:linear-gradient(90deg,#c0392b,#e74c3c);height:100%;border-radius:10px;transition:width .4s;width:0%}
+  .card{width:100%;max-width:600px;min-height:240px;border-radius:20px;border:2px solid #8b1a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;cursor:pointer;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:background .3s;user-select:none;text-align:center;background:linear-gradient(135deg,#2c0e0e,#4a1515)}
+  .card.flipped{background:linear-gradient(135deg,#7b1414,#a52020)}
+  .card-label{font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:12px;color:#e07070}
+  .card.flipped .card-label{color:#ffcccc}
+  .card-text{color:#fff;font-size:18px;line-height:1.6}
+  .mastered-badge{margin-top:16px;background:#1a5c1a;border-radius:10px;padding:4px 14px;color:#7eff7e;font-size:12px;font-weight:700}
+  .btn-row{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+  button{border:none;border-radius:10px;padding:12px 22px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.5px;box-shadow:0 3px 8px rgba(0,0,0,.4);transition:opacity .2s}
+  button:hover{opacity:.85}
+  .btn-prev,.btn-next{background:#5a1010;color:#fff}
+  .btn-flip{background:#8b1a1a;color:#fff}
+  .btn-got{background:#145214;color:#fff}
+  .btn-reset{background:#333;color:#ccc;font-size:12px;margin-top:12px}
+  .complete{margin-top:24px;background:#0d3d0d;border:2px solid #2e7d32;border-radius:16px;padding:16px 28px;text-align:center;max-width:500px;display:none}
+  .complete.show{display:block}
+  .complete-emoji{font-size:32px}
+  .complete h2{color:#a5d6a7;font-weight:800;font-size:18px;margin:4px 0}
+  .complete p{color:#81c784;font-size:13px}
+</style>
+</head>
+<body>
+
+<div style="text-align:center;margin-bottom:8px">
+  <div class="badge">WEEK 06 — CARDIOPULMONARY TESTING &amp; PATIENT CARE</div>
+  <h1>📋 Flashcard Review</h1>
+  <p class="subtitle">🎉 A fun activity to boost your recall! Flip each card to reveal the answer.</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-labels">
+    <span id="card-counter">Card 1 of 20</span>
+    <span id="mastered-counter">✅ 0 mastered (0%)</span>
+  </div>
+  <div class="progress-bar-bg"><div class="progress-bar" id="progress-bar"></div></div>
+</div>
+
+<div class="card" id="card" onclick="toggleFlip()">
+  <div class="card-label" id="card-label">❓ QUESTION — tap to flip</div>
+  <p class="card-text" id="card-text"></p>
+  <div class="mastered-badge" id="mastered-badge" style="display:none">✔ Mastered</div>
+</div>
+
+<div class="btn-row">
+  <button class="btn-prev" onclick="prev()">◀ Previous</button>
+  <button class="btn-flip" id="flip-btn" onclick="toggleFlip()">💡 Show Answer</button>
+  <button class="btn-got" onclick="markDone()">✅ Got It!</button>
+  <button class="btn-next" onclick="next()">Next ▶</button>
+</div>
+<button class="btn-reset" onclick="reset()">🔄 Reset Progress</button>
+
+<div class="complete" id="complete">
+  <div class="complete-emoji">🎊</div>
+  <h2>Outstanding work!</h2>
+  <p id="complete-msg"></p>
+</div>
+
+<script>
+const cards=[
+  {q:"What are the 3 red-flag symptoms that prompt ECG testing?",a:"Chest pain or irregular heartbeat, shortness of breath, and dizziness or fainting."},
+  {q:"What does an ECG measure?",a:"The electrical activity of the heart. It is non-invasive, quick, and can detect arrhythmias and previous myocardial infarctions (MI)."},
+  {q:"What are the standard ECG paper speed and gain settings?",a:"Paper speed: 25 mm/s | Gain: 10 mm/mV"},
+  {q:"Name the 4 limb leads used in a 12-lead ECG.",a:"RA (Right Arm), LA (Left Arm), RL (Right Leg), LL (Left Leg)"},
+  {q:"Where is chest lead V1 placed?",a:"At the 4th intercostal space, right sternal border — near the Angle of Louis (manubriosternal junction)."},
+  {q:"What steps prepare the skin for ECG electrode placement?",a:"Clean and dry the skin, then apply electrodes securely to ensure proper contact and reduce artifacts."},
+  {q:"What can cause artifacts on an ECG tracing?",a:"Poor electrode placement or patient movement — both can lead to misdiagnosis."},
+  {q:"What are the steps to finish an ECG?",a:"Run test → print and review → gently remove leads → disinfect equipment → document in EHR → ensure patient is okay."},
+  {q:"What does PFT stand for and what does it measure?",a:"Pulmonary Function Test — measures lung volume and airflow to screen for restrictive or obstructive disorders (e.g., asthma, COPD)."},
+  {q:"When are PFTs and peak flow tests needed?",a:"For chronic lung conditions (asthma, emphysema), pre-op testing for smokers/cardiac patients, and suspected pulmonary disease."},
+  {q:"List 4 things a patient should avoid before a PFT.",a:"Heavy meals, smoking, using inhalers, and wearing tight clothing."},
+  {q:"How many times is the PFT repeated and what is used during the test?",a:"The test is repeated 3 times. A nose clip is used to ensure all air passes through the mouthpiece."},
+  {q:"What does peak flow testing measure and when is it used?",a:"It measures air speed during exhalation to detect airway obstruction. Used in asthma management and as a quick in-office screen."},
+  {q:"Explain the 3 peak flow meter color zones.",a:"Green = asthma in good control | Yellow = asthma not in good control / getting worse | Red = asthma is severe."},
+  {q:"What result is recorded after peak flow testing?",a:"The highest reading out of three attempts is recorded."},
+  {q:"How should an anxious patient be handled during testing?",a:"Explain the procedure simply and calmly. Adapt the procedure to the patient's limitations and emotional needs."},
+  {q:"What position is used if a patient cannot lie flat for an ECG?",a:"Semi-Fowler's position (head and torso elevated at approximately 30–45 degrees)."},
+  {q:"Why is patient teaching important before pulmonary testing?",a:"Understanding the procedure increases compliance and accuracy. Patients should practice breathing technique and have their questions answered."},
+  {q:"What are the 3 key takeaways from cardiopulmonary testing?",a:"1) ECGs show heart rhythm, function & cardiac distress. 2) PFTs detect restrictive/obstructive lung disorders. 3) Peak flow measures airflow to track chronic lung status."},
+  {q:"What should be verified before performing any cardiopulmonary test?",a:"Review the EHR, check the physician's order, and verify patient identity using two identifiers."},
+];
+
+let idx=0, flipped=false, done=new Set();
+const total=cards.length;
+
+function render(){
+  const c=cards[idx];
+  const cardEl=document.getElementById('card');
+  const label=document.getElementById('card-label');
+  const text=document.getElementById('card-text');
+  const mb=document.getElementById('mastered-badge');
+  const fb=document.getElementById('flip-btn');
+
+  cardEl.classList.toggle('flipped',flipped);
+  label.textContent=flipped?'✅ ANSWER':'❓ QUESTION — tap to flip';
+  text.style.fontWeight=flipped?'500':'700';
+  text.textContent=flipped?c.a:c.q;
+  mb.style.display=done.has(idx)?'block':'none';
+  fb.textContent=flipped?'🔁 Show Question':'💡 Show Answer';
+
+  document.getElementById('card-counter').textContent=`Card ${idx+1} of ${total}`;
+  const pct=Math.round((done.size/total)*100);
+  document.getElementById('mastered-counter').textContent=`✅ ${done.size} mastered (${pct}%)`;
+  document.getElementById('progress-bar').style.width=pct+'%';
+
+  const comp=document.getElementById('complete');
+  if(done.size===total){
+    comp.classList.add('show');
+    document.getElementById('complete-msg').textContent=`You've mastered all ${total} cards for Week 06. You're ready for clinical practice!`;
+  } else {
+    comp.classList.remove('show');
+  }
+}
+
+function toggleFlip(){flipped=!flipped;render();}
+function next(){flipped=false;idx=(idx+1)%total;setTimeout(render,150);}
+function prev(){flipped=false;idx=(idx-1+total)%total;setTimeout(render,150);}
+function markDone(){done.add(idx);next();}
+function reset(){done.clear();idx=0;flipped=false;render();}
+
+render();
+</script>
+</body>
+</html>

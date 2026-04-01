@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Composition Explorer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+    font-family: sans-serif;
+    position: relative;
+    overflow-x: hidden;
+  }
+  .overlay {
+    position: fixed; inset: 0;
+    background: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1200&q=80') center/cover no-repeat;
+    opacity: 0.12; z-index: 0; pointer-events: none;
+  }
+  .wrap { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; padding: 28px 16px; }
+  .card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 18px;
+  }
+  h1 { color: #fff; font-weight: 800; font-size: 28px; margin-bottom: 8px; text-shadow: 0 2px 8px rgba(0,0,0,.5); }
+  h2 { color: #f8c291; font-weight: 700; font-size: 20px; margin-bottom: 10px; }
+  p { color: #ecf0f1; font-size: 14px; line-height: 1.7; font-weight: 500; }
+  .muted { color: #bdc3c7; font-size: 13px; }
+  .btn {
+    border: none; border-radius: 12px; padding: 14px 28px;
+    font-size: 16px; font-weight: 700; cursor: pointer;
+    margin: 6px; transition: transform .1s, opacity .1s;
+  }
+  .btn:hover { transform: scale(1.03); }
+  .btn:active { transform: scale(0.97); }
+  .btn-red { background: linear-gradient(135deg,#e74c3c,#c0392b); color:#fff; box-shadow:0 4px 15px rgba(231,76,60,.4); }
+  .btn-purple { background: linear-gradient(135deg,#6c5ce7,#a29bfe); color:#fff; }
+  .btn-teal { background: linear-gradient(135deg,#00b894,#00cec9); color:#fff; }
+  .btn-ghost { background: rgba(255,255,255,.12); color:#fff; border: 1px solid rgba(255,255,255,.3) !important; }
+  .btn-sm { padding: 8px 16px; font-size: 13px; }
+  .btn-full { width: 100%; display: block; }
+  .hidden { display: none !important; }
+
+  /* Tube */
+  .tube-wrap { display: flex; justify-content: center; margin-bottom: 20px; }
+  .tube {
+    width: 80px;
+    border: 3px solid rgba(255,255,255,.4);
+    border-radius: 0 0 18px 18px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .tube-layer { transition: all .2s; position: relative; }
+  .tube-layer:hover { filter: brightness(1.15); }
+  .tube-layer.selected { outline: 3px solid #fff; }
+
+  /* Layers grid */
+  .layers-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .layer-tile {
+    border-radius: 12px; padding: 10px; text-align: center; cursor: pointer;
+    transition: transform .15s;
+  }
+  .layer-tile:hover { transform: scale(1.04); }
+  .layer-tile .emoji { font-size: 20px; }
+  .layer-tile .lname { color:#fff; font-weight:700; font-size:13px; }
+  .layer-tile .lpct { color:#f8c291; font-weight:700; font-size:12px; }
+
+  /* Quiz */
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .opt-btn {
+    background: rgba(255,255,255,.08); border: 2px solid rgba(255,255,255,.2);
+    color: #fff; border-radius: 12px; padding: 15px 10px;
+    font-size: 14px; font-weight: 700; cursor: pointer; text-align: left;
+    transition: all .2s;
+  }
+  .opt-btn.correct { background: rgba(0,184,148,.25); border-color: #00b894; }
+  .opt-btn.wrong { background: rgba(231,76,60,.25); border-color: #e74c3c; }
+  .opt-btn:disabled { cursor: default; }
+  .progress-bar { background: rgba(255,255,255,.08); border-radius: 8px; height: 6px; margin-bottom: 14px; }
+  .progress-fill { background: linear-gradient(90deg,#e74c3c,#f8c291); height: 100%; border-radius: 8px; transition: width .4s; }
+
+  /* Drag/label */
+  .drag-layout { display: flex; gap: 18px; align-items: flex-start; }
+  .drag-tube-col { flex: 0 0 90px; }
+  .drag-tube { border: 3px solid rgba(255,255,255,.3); border-radius: 0 0 14px 14px; overflow: hidden; }
+  .drag-layer { position: relative; transition: all .2s; }
+  .drag-layer.droppable { cursor: pointer; border: 3px dashed #fff !important; }
+  .drag-layer.matched-ok { border: 3px solid #00b894 !important; }
+  .drag-layer.matched-fail { border: 3px solid #e74c3c !important; }
+  .drag-overlay {
+    position: absolute; inset: 0; display: flex;
+    align-items: center; justify-content: center;
+    background: rgba(0,0,0,.45); font-weight: 800; font-size: 12px;
+  }
+  .label-btn {
+    display: block; width: 100%; margin-bottom: 10px;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+    color: #fff; border-radius: 12px; padding: 12px 14px;
+    font-weight: 700; font-size: 14px; cursor: pointer;
+    text-align: left; transition: all .2s;
+  }
+  .label-btn:disabled { color: #555; text-decoration: line-through; background: rgba(255,255,255,.04); cursor: default; }
+  .label-btn.active-label { }
+
+  /* Animations */
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+  @keyframes pop { 0%{transform:scale(.5);opacity:0} 70%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  .fadeIn { animation: fadeIn .3s both; }
+  .pop { animation: pop .5s both; }
+  .shake { animation: shake .4s; }
+
+  /* Facts */
+  .facts-box { background: rgba(0,0,0,.2); border-radius: 12px; padding: 14px; margin: 14px 0; }
+  .fact-item { color:#ecf0f1; font-size:13px; margin: 4px 0; font-weight:500; }
+  .fun-fact { background: rgba(108,92,231,.2); border: 1px solid rgba(108,92,231,.4); border-radius: 12px; padding: 12px; }
+  .fun-fact p { color: #a29bfe; font-size: 13px; }
+
+  #celebrate { text-align:center; font-size:34px; margin: 14px 0; }
+  .score-big { color:#f8c291; font-weight:800; font-size:32px; }
+  .back-row { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+
+  /* Layer select buttons */
+  .layer-sel-row { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+  .layer-sel-btn {
+    flex:1; padding:10px 8px; font-size:13px; font-weight:700;
+    cursor:pointer; border-radius:12px; color:#fff;
+    background: rgba(255,255,255,.08); transition: all .2s;
+  }
+</style>
+</head>
+<body>
+<div class="overlay"></div>
+
+<!-- MENU -->
+<div id="screen-menu" class="wrap">
+  <div style="text-align:center;margin-bottom:28px;">
+    <div style="font-size:58px;margin-bottom:10px;">🩸</div>
+    <h1>Blood Composition Explorer</h1>
+    <p style="color:#a29bfe;font-weight:600;">Medical Assistant Program — Hematology Module</p>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+      <div style="font-size:34px;">🧪</div>
+      <div><h2 style="margin:0;">What You'll Learn</h2><p class="muted">Explore the three main layers of blood when centrifuged in a test tube</p></div>
+    </div>
+    <div class="layers-grid" id="menu-tiles"></div>
+  </div>
+  <button class="btn btn-red btn-full" onclick="showExplore()">🔬 Explore Blood Layers</button>
+  <button class="btn btn-purple btn-full" onclick="showQuiz()">🧠 Take the Quiz</button>
+  <button class="btn btn-teal btn-full" onclick="showDrag()">🏷️ Label the Layers</button>
+</div>
+
+<!-- EXPLORE -->
+<div id="screen-explore" class="wrap hidden">
+  <div class="back-row">
+    <button class="btn btn-ghost btn-sm" onclick="showMenu()">← Back</button>
+    <h1 style="font-size:20px;margin:0;">🔬 Explore Blood Layers</h1>
+  </div>
+  <div class="card" style="text-align:center;">
+    <div class="tube-wrap">
+      <div class="tube" id="explore-tube"></div>
+    </div>
+    <p id="explore-hint" style="color:#a29bfe;font-weight:600;">👆 Tap a layer in the test tube to explore it!</p>
+  </div>
+  <div id="explore-detail" class="hidden"></div>
+  <div class="layer-sel-row" id="explore-btns"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="screen-quiz" class="wrap hidden">
+  <div class="back-row">
+    <button class="btn btn-ghost btn-sm" onclick="showMenu()">← Back</button>
+    <h1 style="font-size:20px;margin:0;">🧠 Blood Composition Quiz</h1>
+  </div>
+  <div id="quiz-body"></div>
+</div>
+
+<!-- DRAG -->
+<div id="screen-drag" class="wrap hidden">
+  <div class="back-row">
+    <button class="btn btn-ghost btn-sm" onclick="showMenu()">← Back</button>
+    <h1 style="font-size:20px;margin:0;">🏷️ Label the Layers</h1>
+  </div>
+  <p style="color:#a29bfe;font-weight:600;margin-bottom:14px;"><strong>Tap a label below, then tap the matching layer in the test tube!</strong></p>
+  <div class="drag-layout">
+    <div class="drag-tube-col">
+      <div class="drag-tube" id="drag-tube"></div>
+    </div>
+    <div style="flex:1;" id="drag-labels"></div>
+  </div>
+  <div id="drag-result" class="hidden"></div>
+</div>
+
+<script>
+const components = [
+  {
+    id:"plasma", label:"Plasma", percent:55, color:"#f5e642", border:"#c9bc00", emoji:"🟡",
+    description:"The liquid portion of blood. It is mostly water (90%) and carries nutrients, hormones, proteins, and waste products throughout the body.",
+    facts:["Makes up 55% of total blood volume","Mostly water (about 90%)","Carries proteins, nutrients, hormones, and waste","Light yellow in color due to bilirubin"],
+    funFact:"If you removed all the red cells, plasma would look like pale yellow lemonade! 🍋"
+  },
+  {
+    id:"buffy", label:"Buffy Coat", percent:"<1", color:"#f0f0c0", border:"#bfbf70", emoji:"⬜",
+    description:"A thin layer between plasma and red blood cells containing white blood cells (leukocytes) and platelets. Despite its small size, it plays a massive role in immunity and clotting!",
+    facts:["Less than 1% of total blood volume","Contains leukocytes (white blood cells)","Contains thrombocytes (platelets)","Named 'buffy' because of its pale buff/cream color"],
+    funFact:"White blood cells are your body's army! One drop of blood contains 7,000–25,000 white blood cells ready to fight infections. 🛡️"
+  },
+  {
+    id:"erythrocytes", label:"Erythrocytes", percent:45, color:"#c0282a", border:"#8a0000", emoji:"🔴",
+    description:"Red blood cells (RBCs) that carry oxygen from the lungs to the body's tissues and return carbon dioxide back to the lungs. They contain hemoglobin, which gives blood its red color.",
+    facts:["Make up 45% of total blood volume","Contain hemoglobin to carry oxygen","Live about 120 days before being replaced","Produced in the red bone marrow","Lack a nucleus when mature"],
+    funFact:"Your body produces about 2 million new red blood cells every second! That's roughly 173 billion per day! 🤯"
+  }
+];
+
+const tubeLayers = [
+  {id:"plasma",    h:90,  bg:"linear-gradient(180deg,#f5e642,#d4c800)"},
+  {id:"buffy",     h:12,  bg:"linear-gradient(180deg,#f0f0c0,#e0e080)"},
+  {id:"erythrocytes", h:70, bg:"linear-gradient(180deg,#c0282a,#8a0000)"}
+];
+
+const quizQuestions = [
+  {q:"What percentage of total blood does plasma make up?",          options:["25%","45%","55%","10%"],           answer:"55%",         layer:"plasma"},
+  {q:"Which layer contains leukocytes and platelets?",               options:["Plasma","Buffy Coat","Erythrocytes","Hemoglobin"], answer:"Buffy Coat", layer:"buffy"},
+  {q:"What do erythrocytes contain to carry oxygen?",                options:["Leukocytes","Platelets","Hemoglobin","Plasma"],    answer:"Hemoglobin",  layer:"erythrocytes"},
+  {q:"What percentage of total blood do erythrocytes make up?",      options:["55%","45%","<1%","30%"],           answer:"45%",         layer:"erythrocytes"},
+  {q:"What is the approximate percentage of the buffy coat layer?",  options:["5%","10%","<1%","20%"],            answer:"<1%",         layer:"buffy"},
+  {q:"What color is plasma?",                                         options:["Red","Blue","Clear/White","Light Yellow"], answer:"Light Yellow", layer:"plasma"},
+];
+
+// STATE
+let selectedLayer = null;
+let quizIdx = 0, quizScore = 0, quizChosen = null, quizDone = false;
+let dragTarget = null, dragLabeled = {}, dragScore = 0, dragDone = false;
+
+// SCREENS
+function showMenu()   { switchScreen("menu"); }
+function showExplore(){ switchScreen("explore"); renderExplore(); }
+function showQuiz()   { resetQuiz(); switchScreen("quiz"); renderQuiz(); }
+function showDrag()   { resetDrag(); switchScreen("drag"); renderDrag(); }
+
+function switchScreen(name) {
+  ["menu","explore","quiz","drag"].forEach(s => {
+    document.getElementById("screen-"+s).classList.toggle("hidden", s !== name);
+  });
+}
+
+// ---- MENU ----
+(function buildMenuTiles() {
+  const grid = document.getElementById("menu-tiles");
+  components.forEach(c => {
+    const d = document.createElement("div");
+    d.className = "layer-tile";
+    d.style.background = c.color+"22";
+    d.style.border = `2px solid ${c.color}`;
+    d.innerHTML = `<div class="emoji">${c.emoji}</div><div class="lname">${c.label}</div><div class="lpct">${c.percent}%</div>`;
+    d.onclick = () => showExplore();
+    grid.appendChild(d);
+  });
+})();
+
+// ---- EXPLORE ----
+function renderExplore() {
+  const tube = document.getElementById("explore-tube");
+  tube.innerHTML = "";
+  tubeLayers.forEach(layer => {
+    const d = document.createElement("div");
+    d.className = "tube-layer" + (selectedLayer === layer.id ? " selected" : "");
+    d.style.height = layer.h+"px";
+    d.style.background = layer.bg;
+    d.onclick = () => { selectedLayer = selectedLayer === layer.id ? null : layer.id; renderExplore(); };
+    tube.appendChild(d);
+  });
+
+  const hint = document.getElementById("explore-hint");
+  const detail = document.getElementById("explore-detail");
+  if (!selectedLayer) {
+    hint.classList.remove("hidden");
+    detail.classList.add("hidden");
+    detail.innerHTML = "";
+  } else {
+    hint.classList.add("hidden");
+    const c = components.find(x => x.id === selectedLayer);
+    detail.classList.remove("hidden");
+    detail.innerHTML = `
+      <div class="card fadeIn" style="border:2px solid ${c.color};">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+          <div style="width:48px;height:48px;background:${c.color};border-radius:50%;border:3px solid ${c.border};flex-shrink:0;"></div>
+          <div>
+            <h2 style="margin:0;">${c.emoji} ${c.label}</h2>
+            <span style="background:${c.color}33;color:${c.id==='erythrocytes'?'#ff8a80':c.color};font-weight:700;padding:2px 10px;border-radius:8px;font-size:12px;">${c.percent}% of blood</span>
+          </div>
+        </div>
+        <p>${c.description}</p>
+        <div class="facts-box">
+          <p style="color:#f8c291;font-weight:700;font-size:14px;margin-bottom:8px;">📋 Key Facts:</p>
+          ${c.facts.map(f=>`<p class="fact-item">✓ ${f}</p>`).join("")}
+        </div>
+        <div class="fun-fact">
+          <p>💡 <strong>Fun Fact:</strong> ${c.funFact}</p>
+        </div>
+      </div>`;
+  }
+
+  // selector buttons
+  const btns = document.getElementById("explore-btns");
+  btns.innerHTML = "";
+  components.forEach(c => {
+    const b = document.createElement("button");
+    b.className = "layer-sel-btn";
+    b.style.border = `2px solid ${c.color}`;
+    b.textContent = `${c.emoji} ${c.label}`;
+    b.onclick = () => { selectedLayer = c.id; renderExplore(); };
+    btns.appendChild(b);
+  });
+}
+
+// ---- QUIZ ----
+function resetQuiz() { quizIdx=0; quizScore=0; quizChosen=null; quizDone=false; }
+
+function renderQuiz() {
+  const body = document.getElementById("quiz-body");
+  if (quizDone) {
+    const icon = quizScore>=5?"🏆":quizScore>=3?"👍":"📚";
+    const msg = quizScore===6?"Perfect score! You're a blood expert! 🩸":quizScore>=4?"Great job! Review the layers to master the rest!":"Keep studying — you've got this! 💪";
+    body.innerHTML = `
+      <div class="card fadeIn" style="text-align:center;">
+        <div style="font-size:60px;margin-bottom:14px;">${icon}</div>
+        <h2>Quiz Complete!</h2>
+        <p class="score-big">${quizScore}/${quizQuestions.length}</p>
+        <p style="margin-top:8px;">${msg}</p>
+        <div style="margin-top:18px;">
+          <button class="btn btn-red" onclick="resetQuiz();renderQuiz();">🔄 Retry Quiz</button>
+          <button class="btn btn-ghost" onclick="showMenu()">🏠 Main Menu</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const q = quizQuestions[quizIdx];
+  const pct = ((quizIdx+1)/quizQuestions.length*100).toFixed(0);
+  body.innerHTML = `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+        <span class="muted" style="font-weight:700;">Question ${quizIdx+1} of ${quizQuestions.length}</span>
+        <span style="color:#f8c291;font-weight:700;">⭐ Score: ${quizScore}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <p id="quiz-q" style="font-size:17px;font-weight:700;color:#f8c291;">${q.q}</p>
+    </div>
+    <div class="options-grid" id="options-grid"></div>
+    <div id="celebrate" class="hidden"></div>`;
+
+  const grid = document.getElementById("options-grid");
+  q.options.forEach(opt => {
+    const b = document.createElement("button");
+    b.className = "opt-btn";
+    b.textContent = opt;
+    b.onclick = () => handleAnswer(opt);
+    grid.appendChild(b);
+  });
+}
+
+function handleAnswer(opt) {
+  if (quizChosen) return;
+  quizChosen = opt;
+  const q = quizQuestions[quizIdx];
+  const correct = opt === q.answer;
+  if (correct) quizScore++;
+
+  document.querySelectorAll(".opt-btn").forEach(b => {
+    b.disabled = true;
+    if (b.textContent === q.answer) b.classList.add("correct");
+    else if (b.textContent === opt) b.classList.add("wrong");
+  });
+
+  if (correct) {
+    const cel = document.getElementById("celebrate");
+    cel.classList.remove("hidden");
+    cel.innerHTML = `<span class="pop">🎉 Correct!</span>`;
+  } else {
+    const qEl = document.getElementById("quiz-q");
+    if (qEl) { qEl.style.animation="none"; requestAnimationFrame(()=>{ qEl.style.animation="shake .4s"; }); }
+  }
+
+  setTimeout(() => {
+    quizChosen = null;
+    if (quizIdx+1 >= quizQuestions.length) { quizDone = true; }
+    else quizIdx++;
+    renderQuiz();
+  }, 1300);
+}
+
+// ---- DRAG ----
+function resetDrag() { dragTarget=null; dragLabeled={}; dragScore=0; dragDone=false; }
+
+function renderDrag() {
+  // tube
+  const tube = document.getElementById("drag-tube");
+  tube.innerHTML = "";
+  tubeLayers.forEach(layer => {
+    const d = document.createElement("div");
+    d.className = "drag-layer";
+    d.style.height = layer.h+"px";
+    d.style.background = layer.bg;
+    const matched = dragLabeled[layer.id];
+    if (matched !== undefined) {
+      d.classList.add(matched ? "matched-ok" : "matched-fail");
+      const ov = document.createElement("div");
+      ov.className = "drag-overlay";
+      const c = components.find(x=>x.id===matched);
+      ov.style.color = dragLabeled[layer.id]===true? "#00b894":"#e74c3c";
+      // matched stores the label id, true/false is separate
+      ov.innerHTML = "";
+      tube.appendChild(d);
+      d.appendChild(ov);
+    } else {
+      if (dragTarget) {
+        d.classList.add("droppable");
+        d.onclick = () => handleDrop(layer.id);
+      }
+      tube.appendChild(d);
+    }
+  });
+
+  // rebuild matched overlay text
+  Object.keys(dragLabeled).forEach(layerId => {
+    const info = dragLabeled[layerId];
+    const layerEl = tube.children[tubeLayers.findIndex(l=>l.id===layerId)];
+    if (layerEl) {
+      let ov = layerEl.querySelector(".drag-overlay");
+      if (!ov) { ov = document.createElement("div"); ov.className="drag-overlay"; layerEl.appendChild(ov); }
+      ov.style.color = info.correct?"#00b894":"#e74c3c";
+      const lbl = components.find(x=>x.id===info.labelId);
+      ov.textContent = (info.correct?"✓ ":"✗ ")+(lbl?.label||"");
+    }
+  });
+
+  // labels
+  const labelsDiv = document.getElementById("drag-labels");
+  labelsDiv.innerHTML = `<p class="muted" style="margin-bottom:8px;">Labels — tap one to select:</p>`;
+  components.forEach(c => {
+    const usedEntry = Object.values(dragLabeled).find(v=>v.labelId===c.id);
+    const b = document.createElement("button");
+    b.className = "label-btn";
+    b.textContent = `${c.emoji} ${c.label} — ${c.percent}% of blood`;
+    if (usedEntry !== undefined) {
+      b.disabled = true;
+    } else {
+      const active = dragTarget === c.id;
+      if (active) {
+        b.style.background = c.color+"44";
+        b.style.border = `2px solid ${c.color}`;
+      }
+      b.onclick = () => {
+        dragTarget = (dragTarget === c.id) ? null : c.id;
+        renderDrag();
+      };
+    }
+    labelsDiv.appendChild(b);
+  });
+
+  if (dragTarget) {
+    const hint = document.createElement("p");
+    hint.style.color="#f8c291"; hint.style.fontWeight="700"; hint.style.fontSize="13px"; hint.style.marginTop="10px";
+    hint.textContent="👆 Now tap the correct layer in the tube!";
+    labelsDiv.appendChild(hint);
+  }
+
+  // result
+  const res = document.getElementById("drag-result");
+  if (dragDone) {
+    res.classList.remove("hidden");
+    res.innerHTML = `
+      <div class="card fadeIn" style="text-align:center;margin-top:20px;">
+        <div style="font-size:50px;">${dragScore===3?"🏆":"📚"}</div>
+        <h2 style="margin-top:10px;">Result: ${dragScore}/3 Correct!</h2>
+        <p>${dragScore===3?"Perfect! You labeled all layers correctly!":"Almost! Review the layers and try again."}</p>
+        <button class="btn btn-red" style="margin-top:14px;" onclick="resetDrag();renderDrag();">🔄 Try Again</button>
+      </div>`;
+  } else {
+    res.classList.add("hidden");
+    res.innerHTML="";
+  }
+}
+
+function handleDrop(layerId) {
+  if (!dragTarget || dragLabeled[layerId] !== undefined) return;
+  const correct = dragTarget === layerId;
+  dragLabeled[layerId] = { labelId: dragTarget, correct };
+  if (correct) dragScore++;
+  dragTarget = null;
+  if (Object.keys(dragLabeled).length >= components.length) dragDone = true;
+  renderDrag();
+}
+</script>
+</body>
+</html>

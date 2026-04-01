@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urine Color Chart</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 50%, #e0f2f1 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+  }
+  h1 {
+    font-size: 28px;
+    font-weight: 900;
+    color: #01579b;
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  .subtitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0277bd;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .chart-container {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .tube-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    width: 90px;
+  }
+  .tube-card:hover { transform: translateY(-6px); }
+  .tube-card.active { transform: translateY(-8px); }
+  .color-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #37474f;
+    text-align: center;
+    margin-bottom: 8px;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  canvas.tube-canvas {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: box-shadow 0.2s;
+  }
+  .tube-card.active canvas.tube-canvas,
+  .tube-card:hover canvas.tube-canvas {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  .status-badge {
+    margin-top: 10px;
+    padding: 5px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    text-align: center;
+    color: #fff;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .info-panel {
+    background: #fff;
+    border-radius: 16px;
+    padding: 22px 28px;
+    max-width: 540px;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border-left: 6px solid #42a5f5;
+    min-height: 160px;
+    transition: border-color 0.3s;
+  }
+  .info-title {
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 6px;
+  }
+  .info-status {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .info-desc {
+    font-size: 14px;
+    font-weight: 600;
+    color: #455a64;
+    line-height: 1.7;
+  }
+  .info-tip {
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #f1f8e9;
+    color: #33691e;
+  }
+  .prompt { font-size: 14px; font-weight: 700; color: #546e7a; text-align: center; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<h1>💧 Urine Color Chart</h1>
+<p class="subtitle">Click a tube to learn what your hydration level means</p>
+
+<div class="chart-container" id="chart"></div>
+
+<div class="info-panel" id="infoPanel">
+  <div class="info-title" id="infoTitle" style="color:#01579b;">Select a color above</div>
+  <div class="info-status" id="infoStatus" style="color:#0288d1;">Click any tube to see details</div>
+  <div class="info-desc" id="infoDesc">Tap or click on any urine color tube above to learn what that color indicates about your hydration and health status.</div>
+  <div class="info-tip" id="infoTip">💡 Staying well hydrated is essential for kidney health, energy, and overall wellbeing.</div>
+</div>
+
+<p class="prompt">Tap a tube to explore your hydration status</p>
+
+<script>
+const data = [
+  {
+    label: "Light Yellow",
+    color: "#f9f3a0",
+    topColor: "#e8eaed",
+    status: "Hydrated",
+    badgeBg: "#43a047",
+    borderColor: "#43a047",
+    titleColor: "#2e7d32",
+    statusColor: "#388e3c",
+    desc: "Your urine is light yellow — this is the ideal color! It means you are well-hydrated and your kidneys are functioning efficiently.",
+    tip: "✅ Keep it up! Drink water regularly throughout the day to maintain this level."
+  },
+  {
+    label: "Yellow",
+    color: "#f7e33a",
+    topColor: "#e8eaed",
+    status: "Good",
+    badgeBg: "#7cb342",
+    borderColor: "#7cb342",
+    titleColor: "#33691e",
+    statusColor: "#558b2f",
+    desc: "Yellow urine is normal and indicates good hydration. Your body has a healthy fluid balance.",
+    tip: "✅ You're doing well! Continue drinking fluids regularly, especially water."
+  },
+  {
+    label: "Dark Yellow",
+    color: "#f0c419",
+    topColor: "#e8eaed",
+    status: "Light Dehydrated",
+    badgeBg: "#f9a825",
+    borderColor: "#f9a825",
+    titleColor: "#e65100",
+    statusColor: "#ef6c00",
+    desc: "Dark yellow urine suggests you are mildly dehydrated. Your body needs more fluids soon.",
+    tip: "⚠️ Drink a glass of water now and aim for 8–10 cups of water throughout the day."
+  },
+  {
+    label: "Amber",
+    color: "#e8930a",
+    topColor: "#e8eaed",
+    status: "Dehydrated",
+    badgeBg: "#fb8c00",
+    borderColor: "#fb8c00",
+    titleColor: "#bf360c",
+    statusColor: "#d84315",
+    desc: "Amber-colored urine is a warning sign of dehydration. Your kidneys are conserving water, concentrating urine more than usual.",
+    tip: "⚠️ Drink water immediately. Avoid caffeinated drinks and aim to urinate every 2–3 hours."
+  },
+  {
+    label: "Brown",
+    color: "#8b5a00",
+    topColor: "#e8eaed",
+    status: "Very Dehydrated",
+    badgeBg: "#e53935",
+    borderColor: "#e53935",
+    titleColor: "#b71c1c",
+    statusColor: "#c62828",
+    desc: "Brown urine is a serious sign of severe dehydration or possibly a medical condition such as liver disease or rhabdomyolysis. Immediate action is needed.",
+    tip: "🚨 Drink water urgently. If color persists after rehydration, consult a doctor immediately."
+  },
+  {
+    label: "Red",
+    color: "#c0392b",
+    topColor: "#e8eaed",
+    status: "Severe / Medical",
+    badgeBg: "#b71c1c",
+    borderColor: "#b71c1c",
+    titleColor: "#7f0000",
+    statusColor: "#c62828",
+    desc: "Red or pink urine may indicate blood in the urine (hematuria), which can be caused by kidney stones, infection, injury, or other medical conditions. This may also be caused by certain foods like beets.",
+    tip: "🚨 Seek medical attention promptly. Do not ignore red urine unless you've recently eaten beets or certain dyes."
+  }
+];
+
+let activeIndex = -1;
+
+function drawTube(canvas, fillColor, topColor) {
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  const tubeX = w * 0.2, tubeW = w * 0.6;
+  const capH = h * 0.12, bodyTop = h * 0.08, bodyH = h * 0.82;
+  const radius = tubeW / 2;
+
+  ctx.fillStyle = '#e8eaed';
+  ctx.beginPath();
+  ctx.roundRect(tubeX, bodyTop, tubeW, capH + 10, [6, 6, 0, 0]);
+  ctx.fill();
+
+  ctx.fillStyle = fillColor;
+  ctx.beginPath();
+  ctx.roundRect(tubeX, bodyTop + capH, tubeW, bodyH - capH, [0, 0, radius, radius]);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.roundRect(tubeX, bodyTop, tubeW, bodyH, [6, 6, radius, radius]);
+  ctx.stroke();
+
+  ctx.fillStyle = 'rgba(255,255,255,0.25)';
+  ctx.beginPath();
+  ctx.roundRect(tubeX + tubeW * 0.1, bodyTop + capH + 6, tubeW * 0.2, bodyH - capH - 20, [4, 4, 4, 4]);
+  ctx.fill();
+}
+
+function renderChart() {
+  const container = document.getElementById('chart');
+  data.forEach((d, i) => {
+    const card = document.createElement('div');
+    card.className = 'tube-card';
+    card.id = 'card-' + i;
+
+    const lbl = document.createElement('div');
+    lbl.className = 'color-label';
+    lbl.textContent = d.label;
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'tube-canvas';
+    canvas.width = 80;
+    canvas.height = 180;
+
+    const badge = document.createElement('div');
+    badge.className = 'status-badge';
+    badge.style.background = d.badgeBg;
+    badge.textContent = d.status;
+
+    card.appendChild(lbl);
+    card.appendChild(canvas);
+    card.appendChild(badge);
+    card.addEventListener('click', () => selectTube(i));
+    container.appendChild(card);
+
+    drawTube(canvas, d.color, d.topColor);
+  });
+}
+
+function selectTube(i) {
+  if (activeIndex === i) return;
+
+  document.querySelectorAll('.tube-card').forEach((c, idx) => {
+    c.classList.toggle('active', idx === i);
+  });
+
+  activeIndex = i;
+  const d = data[i];
+  const panel = document.getElementById('infoPanel');
+  panel.style.borderColor = d.borderColor;
+
+  document.getElementById('infoTitle').textContent = d.label;
+  document.getElementById('infoTitle').style.color = d.titleColor;
+  document.getElementById('infoStatus').textContent = 'Status: ' + d.status;
+  document.getElementById('infoStatus').style.color = d.statusColor;
+  document.getElementById('infoDesc').textContent = d.desc;
+  document.getElementById('infoTip').textContent = d.tip;
+}
+
+renderChart();
+</script>
+</body>
+</html>

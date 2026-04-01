@@ -1,0 +1,203 @@
+Index.html.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PPE Donning Order</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:sans-serif;background:#f0f4f8;min-height:100vh;padding:20px}
+h1{text-align:center;font-size:1.3rem;font-weight:600;color:#1e293b;margin-bottom:6px}
+p.sub{text-align:center;font-size:.9rem;color:#64748b;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:700px;margin:0 auto}
+@media(min-width:600px){.grid{grid-template-columns:repeat(4,1fr)}}
+.card{background:#fff;border-radius:14px;border:2px solid #e2e8f0;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;user-select:none;position:relative}
+.card:hover{border-color:#94a3b8;transform:translateY(-2px)}
+.card.selected{border-color:#3b82f6;background:#eff6ff}
+.card.correct{border-color:#22c55e;background:#f0fdf4;animation:pop .3s ease}
+.card.wrong{border-color:#ef4444;background:#fef2f2;animation:shake .4s ease}
+.card.disabled{cursor:default;pointer-events:none}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#3b82f6;color:#fff;font-size:.75rem;font-weight:700;padding:2px 10px;border-radius:20px;display:none}
+.card.correct .badge{background:#22c55e;display:block}
+.card.wrong .badge{background:#ef4444;display:block}
+.ppe-img{width:80px;height:80px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center}
+.ppe-img svg{width:100%;height:100%}
+.card-label{font-size:.8rem;font-weight:600;color:#334155;margin-bottom:4px}
+.card-desc{font-size:.7rem;color:#64748b;line-height:1.3}
+.order-row{display:flex;align-items:center;justify-content:center;gap:8px;max-width:700px;margin:0 auto 18px;flex-wrap:wrap}
+.step-slot{width:44px;height:44px;border-radius:50%;border:2px dashed #cbd5e1;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:#94a3b8;transition:all .3s}
+.step-slot.filled{border-style:solid;border-color:#3b82f6;color:#3b82f6;background:#eff6ff}
+.step-slot.correct-slot{border-color:#22c55e;color:#22c55e;background:#f0fdf4}
+.step-slot.wrong-slot{border-color:#ef4444;color:#ef4444;background:#fef2f2}
+.arrow{color:#cbd5e1;font-size:1.1rem}
+#feedback{text-align:center;font-size:1rem;font-weight:600;min-height:28px;margin-bottom:14px;transition:opacity .3s}
+.feedback-correct{color:#16a34a}
+.feedback-wrong{color:#dc2626}
+#reset-btn{display:block;margin:18px auto 0;padding:9px 28px;background:#3b82f6;color:#fff;border:none;border-radius:10px;font-size:.95rem;font-weight:600;cursor:pointer;transition:background .2s}
+#reset-btn:hover{background:#2563eb}
+.score-bar{text-align:center;font-size:.85rem;color:#64748b;margin-top:10px}
+.complete-msg{text-align:center;background:#f0fdf4;border:2px solid #22c55e;border-radius:14px;padding:16px;max-width:700px;margin:16px auto 0;display:none}
+.complete-msg h2{color:#16a34a;font-size:1.1rem;margin-bottom:6px}
+.complete-msg p{font-size:.85rem;color:#4b7c5f}
+</style>
+</head>
+<body>
+
+<h1>PPE Donning Order Activity</h1>
+<p class="sub">Click each PPE item in the correct order to put it on. Can you get it right?</p>
+
+<div class="order-row" id="slots"></div>
+
+<div id="feedback"></div>
+
+<div class="grid" id="cards"></div>
+
+<div class="complete-msg" id="complete">
+  <h2>✓ Perfect! All PPE donned correctly!</h2>
+  <p>You followed the correct PPE donning sequence:<br><strong>Gown → Mask → Goggles/Visor → Gloves</strong></p>
+</div>
+
+<div class="score-bar" id="score">Steps completed: 0 / 4</div>
+
+<button id="reset-btn" onclick="resetGame()">↺ Try Again</button>
+
+<script>
+const items = [
+  {
+    id:"gown", order:1, label:"Isolation Gown", desc:"Tie at neck & waist",
+    svg:`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="22" y="10" width="36" height="55" rx="8" fill="#e0e7ef" stroke="#94a3b8" stroke-width="2"/>
+      <line x1="40" y1="10" x2="40" y2="65" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <path d="M22 25 Q10 30 12 50" stroke="#94a3b8" stroke-width="2" fill="none"/>
+      <path d="M58 25 Q70 30 68 50" stroke="#94a3b8" stroke-width="2" fill="none"/>
+      <circle cx="40" cy="13" r="5" fill="#fff" stroke="#94a3b8" stroke-width="1.5"/>
+      <line x1="36" y1="65" x2="30" y2="75" stroke="#94a3b8" stroke-width="1.5"/>
+      <line x1="44" y1="65" x2="50" y2="75" stroke="#94a3b8" stroke-width="1.5"/>
+    </svg>`
+  },
+  {
+    id:"mask", order:2, label:"Surgical Mask", desc:"Mould over nose bridge",
+    svg:`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 28 Q40 20 65 28 L65 55 Q40 65 15 55 Z" fill="#d1e9f6" stroke="#5ba4d4" stroke-width="2"/>
+      <line x1="15" y1="35" x2="65" y2="35" stroke="#5ba4d4" stroke-width="1.2"/>
+      <line x1="15" y1="44" x2="65" y2="44" stroke="#5ba4d4" stroke-width="1.2"/>
+      <line x1="8" y1="30" x2="3" y2="28" stroke="#5ba4d4" stroke-width="1.5"/>
+      <line x1="8" y1="50" x2="3" y2="52" stroke="#5ba4d4" stroke-width="1.5"/>
+      <line x1="72" y1="30" x2="77" y2="28" stroke="#5ba4d4" stroke-width="1.5"/>
+      <line x1="72" y1="50" x2="77" y2="52" stroke="#5ba4d4" stroke-width="1.5"/>
+      <path d="M30 28 Q40 24 50 28" stroke="#5ba4d4" stroke-width="1.5" fill="none"/>
+    </svg>`
+  },
+  {
+    id:"visor", order:3, label:"Goggles / Face Shield", desc:"Fit over eyes & forehead",
+    svg:`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="10" y="22" width="60" height="36" rx="10" fill="#e8f4fb" stroke="#60a5fa" stroke-width="2"/>
+      <rect x="16" y="28" width="22" height="18" rx="6" fill="#bfdbfe" stroke="#60a5fa" stroke-width="1.5"/>
+      <rect x="42" y="28" width="22" height="18" rx="6" fill="#bfdbfe" stroke="#60a5fa" stroke-width="1.5"/>
+      <line x1="38" y1="37" x2="42" y2="37" stroke="#60a5fa" stroke-width="2"/>
+      <line x1="10" y1="37" x2="4" y2="37" stroke="#60a5fa" stroke-width="2"/>
+      <line x1="70" y1="37" x2="76" y2="37" stroke="#60a5fa" stroke-width="2"/>
+    </svg>`
+  },
+  {
+    id:"gloves", order:4, label:"Gloves", desc:"Pull over gown cuffs",
+    svg:`<svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 55 L18 30 Q18 20 26 20 Q30 20 30 28 L30 35 Q33 25 37 25 Q41 25 40 35 L40 30 Q40 22 44 22 Q48 22 48 30 L47 36 Q48 27 52 27 Q56 27 55 37 L53 55 Q50 65 35 65 Q22 65 20 55Z" fill="#93c5fd" stroke="#3b82f6" stroke-width="1.8"/>
+      <rect x="18" y="55" width="37" height="10" rx="5" fill="#bfdbfe" stroke="#3b82f6" stroke-width="1.5"/>
+    </svg>`
+  }
+];
+
+let currentStep = 0;
+let wrongAttempt = false;
+
+function buildSlots(){
+  const sl = document.getElementById('slots');
+  sl.innerHTML = '';
+  items.forEach((_,i)=>{
+    if(i>0){const a=document.createElement('span');a.className='arrow';a.textContent='→';sl.appendChild(a);}
+    const d=document.createElement('div');
+    d.className='step-slot';
+    d.id='slot-'+i;
+    d.textContent=(i+1);
+    sl.appendChild(d);
+  });
+}
+
+function buildCards(){
+  const grid=document.getElementById('cards');
+  grid.innerHTML='';
+  const shuffled=[...items].sort(()=>Math.random()-.5);
+  shuffled.forEach(item=>{
+    const c=document.createElement('div');
+    c.className='card';
+    c.id='card-'+item.id;
+    c.innerHTML=`
+      <div class="badge" id="badge-${item.id}"></div>
+      <div class="ppe-img">${item.svg}</div>
+      <div class="card-label">${item.label}</div>
+      <div class="card-desc">${item.desc}</div>
+    `;
+    c.addEventListener('click',()=>handleClick(item,c));
+    grid.appendChild(c);
+  });
+}
+
+function handleClick(item,card){
+  if(card.classList.contains('disabled')||card.classList.contains('correct')) return;
+  const fb=document.getElementById('feedback');
+  if(item.order===currentStep+1){
+    currentStep++;
+    card.classList.add('correct','disabled');
+    const badge=document.getElementById('badge-'+item.id);
+    badge.textContent='Step '+item.order;
+    const slot=document.getElementById('slot-'+(item.order-1));
+    slot.classList.add('correct-slot');
+    fb.className='feedback-correct';
+    fb.textContent='✓ Correct! '+item.label+' is step '+item.order+'.';
+    updateScore();
+    if(currentStep===items.length) showComplete();
+  } else {
+    card.classList.add('wrong');
+    const badge=document.getElementById('badge-'+item.id);
+    badge.textContent='Wrong';
+    const slot=document.getElementById('slot-'+currentStep);
+    slot.classList.add('wrong-slot');
+    fb.className='feedback-wrong';
+    const expected=items.find(i=>i.order===currentStep+1);
+    fb.textContent='✗ Not quite — step '+(currentStep+1)+' should be '+expected.label+'.';
+    setTimeout(()=>{
+      card.classList.remove('wrong');
+      badge.textContent='';
+      badge.style.display='';
+      slot.classList.remove('wrong-slot');
+    },900);
+  }
+}
+
+function updateScore(){
+  document.getElementById('score').textContent='Steps completed: '+currentStep+' / '+items.length;
+}
+
+function showComplete(){
+  document.getElementById('complete').style.display='block';
+  document.getElementById('feedback').textContent='';
+}
+
+function resetGame(){
+  currentStep=0;
+  document.getElementById('feedback').textContent='';
+  document.getElementById('complete').style.display='none';
+  updateScore();
+  buildSlots();
+  buildCards();
+}
+
+buildSlots();
+buildCards();
+</script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); background: #111827; color: #F9FAFB; }
+  .container { padding: 1.5rem 1rem; max-width: 720px; margin: 0 auto; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 8px; }
+  .badge-purple { background: #2D2A5E; color: #C4BFFF; }
+  .badge-teal { background: #0D3D30; color: #6EECC8; }
+  .badge-amber { background: #3D2200; color: #FFC87A; }
+  .badge-blue { background: #0C2340; color: #7EC8FF; }
+  .badge-green { background: #142A06; color: #A3E063; }
+  .scenario-card { background: #1F2937; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; border: 1px solid #374151; }
+  .patient-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .avatar { width: 48px; height: 48px; border-radius: 50%; background: #2D2A5E; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: #C4BFFF; flex-shrink: 0; }
+  .patient-name { font-size: 16px; font-weight: 700; color: #F9FAFB; }
+  .patient-sub { font-size: 13px; font-weight: 500; color: #9CA3AF; margin-top: 2px; }
+  .progress-bar-wrap { background: #1F2937; border-radius: 20px; height: 8px; margin-bottom: 4px; overflow: hidden; border: 1px solid #374151; }
+  .progress-bar { height: 8px; border-radius: 20px; background: #10B981; transition: width 0.4s; }
+  .step-label { font-size: 12px; font-weight: 600; color: #9CA3AF; margin-bottom: 1rem; }
+  .question-card { background: #1F2937; border: 1px solid #374151; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+  .question-text { font-size: 15px; font-weight: 700; color: #F9FAFB; margin-bottom: 1rem; line-height: 1.55; }
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-btn { background: #111827; border: 1px solid #374151; border-radius: 8px; padding: 10px 14px; font-size: 14px; font-weight: 600; color: #E5E7EB; cursor: pointer; text-align: left; transition: background 0.15s, border-color 0.15s; }
+  .choice-btn:hover { background: #1F2937; border-color: #6B7280; }
+  .choice-btn.correct { background: #142A06; border-color: #4ADE80; color: #A3E063; }
+  .choice-btn.wrong { background: #2A0A0A; border-color: #EF4444; color: #FCA5A5; }
+  .choice-btn.reveal { background: #142A06; border-color: #4ADE80; color: #A3E063; }
+  .choice-btn:disabled { cursor: default; }
+  .feedback-box { border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 600; line-height: 1.6; margin-top: 10px; }
+  .feedback-good { background: #142A06; color: #A3E063; border: 1px solid #4ADE80; }
+  .feedback-bad { background: #2A0A0A; color: #FCA5A5; border: 1px solid #EF4444; }
+  .next-btn { margin-top: 1rem; background: #1F2937; border: 1px solid #4B5563; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer; color: #E5E7EB; transition: background 0.15s; }
+  .next-btn:hover { background: #374151; }
+  .score-card { background: #1F2937; border: 1px solid #374151; border-radius: 12px; padding: 2rem 1.5rem; text-align: center; }
+  .score-big { font-size: 48px; font-weight: 800; color: #10B981; }
+  .score-label { font-size: 14px; font-weight: 700; color: #9CA3AF; margin-top: 4px; }
+  .restart-btn { margin-top: 1.5rem; background: #0D3D30; border: 1px solid #10B981; border-radius: 8px; padding: 10px 24px; font-size: 14px; cursor: pointer; color: #6EECC8; font-weight: 700; }
+  .restart-btn:hover { background: #134e3a; }
+  .telehealth-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; background: #0C2340; color: #7EC8FF; border-radius: 20px; padding: 3px 10px; margin-left: 6px; }
+</style>
+
+<div class="container">
+  <div id="app"></div>
+</div>
+
+<script>
+const SCENARIOS = [
+  {
+    id: 'in-person',
+    type: 'In-Person Visit',
+    patient: { initials: 'MR', name: 'Maria Reyes', age: 42, reason: 'Chest discomfort, came in this morning' },
+    questions: [
+      {
+        po: 'PO1', topic: 'Chief Complaint',
+        q: 'Maria walks in and says she\'s been feeling "off." What\'s your FIRST step?',
+        choices: ['Ask her to describe the exact location and onset of her discomfort', 'Take her blood pressure immediately', 'Tell the doctor she\'s here and wait', 'Start filling out her insurance forms'],
+        correct: 0,
+        feedback: { good: 'Correct! Documenting the chief complaint starts with letting the patient describe what brought them in — in their own words. Location, onset, and nature of pain are key first details.', bad: 'The chief complaint must come first. Your job is to let the patient describe their issue before any vitals or paperwork.' }
+      },
+      {
+        po: 'PO1', topic: 'Medical History',
+        q: 'Maria mentions she has chest discomfort. Which set of questions best covers a full medical history?',
+        choices: ['Has she had this before? Any conditions, surgeries, allergies, or family history of heart disease?', 'Does she smoke? What\'s her weight?', 'Ask only about current medications', 'Just ask if she has insurance'],
+        correct: 0,
+        feedback: { good: 'Excellent! A full history includes past illnesses, surgeries, allergies, family history, medications, and social history. You covered the critical bases.', bad: 'A complete medical history is much broader — it includes past conditions, surgeries, family history, allergies, medications, and social history.' }
+      },
+      {
+        po: 'PO1', topic: 'Additional Information',
+        q: 'You\'ve documented the chief complaint and history. What additional information should you gather?',
+        choices: ['Review of systems — ask about related symptoms like shortness of breath, dizziness, or nausea', 'Ask about her favorite foods', 'Tell her the doctor will ask the rest', 'Only document what she volunteers'],
+        correct: 0,
+        feedback: { good: 'Perfect! A review of systems uncovers related symptoms the patient might not think to mention. This additional info is critical for clinical decision-making.', bad: 'Gathering additional info means doing a review of systems — asking about symptoms beyond the chief complaint to paint a full picture.' }
+      }
+    ]
+  },
+  {
+    id: 'telehealth',
+    type: 'Telehealth Visit',
+    telehealth: true,
+    patient: { initials: 'DJ', name: 'David Jin', age: 60, reason: 'Follow-up for hypertension, video call scheduled' },
+    questions: [
+      {
+        po: 'PO2', topic: 'Prepare the Patient',
+        q: 'David\'s telehealth appointment is in 5 minutes. How should you prepare him?',
+        choices: ['Confirm he has a working camera, is in a private quiet space, has his medication list and home BP readings ready', 'Just send a link and wait for the doctor', 'Tell him to call back if the video doesn\'t work', 'Ask him to come into the clinic instead'],
+        correct: 0,
+        feedback: { good: 'Great! Patient preparation for telehealth includes verifying technology, ensuring privacy, and making sure the patient has key information like their meds and home readings ready.', bad: 'Telehealth preparation is essential — the patient needs a working setup, a private space, and their relevant health info handy before the provider joins.' }
+      },
+      {
+        po: 'PO2', topic: 'Conduct Interview',
+        q: 'The video call is connected. How should you conduct David\'s pre-visit interview?',
+        choices: ['Greet him, verify identity and DOB, ask what brings him in today, and screen for any new or urgent symptoms', 'Only ask about his blood pressure reading', 'Wait for the doctor to do all of this', 'Ask if he can hear you clearly and hang up'],
+        correct: 0,
+        feedback: { good: 'Excellent! A telehealth interview follows the same structure as in-person — verify identity, document the reason for visit, and screen for urgent concerns before handing off to the provider.', bad: 'The pre-visit telehealth interview should mirror an in-person intake — identity check, chief complaint, and a symptom screen are all your responsibility.' }
+      },
+      {
+        po: 'PO2', topic: 'Collect Additional Information',
+        q: 'David says his BP has been "a little high at home." What additional info should you collect?',
+        choices: ['Home BP log values, times taken, which arm, any recent changes in salt intake, stress, or medications', 'Just note he said "a little high" and move on', 'Tell him the doctor will ask', 'Schedule a new in-person appointment instead'],
+        correct: 0,
+        feedback: { good: 'Spot on! Collecting specific data — BP readings, timing, arm used, and lifestyle factors — gives the provider actionable clinical information during the telehealth visit.', bad: 'Vague notes aren\'t enough. You need specific home readings, context, and lifestyle changes so the provider can make informed decisions remotely.' }
+      },
+      {
+        po: 'PO2', topic: 'Transition the Patient',
+        q: 'You\'ve finished your interview. How do you properly transition David to the provider?',
+        choices: ['Summarize what you\'ve collected, let David know the doctor is joining, and stay on standby in case needed', 'Just leave the call without saying anything', 'Tell David to call the clinic if he needs anything and close the call', 'Ask David to send an email to the provider'],
+        correct: 0,
+        feedback: { good: 'Perfect handoff! Summarizing findings, setting the patient\'s expectations, and staying available shows professional teamwork and keeps care seamless in telehealth settings.', bad: 'A proper transition means briefing the patient that the provider is coming, summarizing what was discussed, and maintaining availability — don\'t just disappear.' }
+      }
+    ]
+  }
+];
+
+let scenarioIdx = 0, questionIdx = 0, score = 0, answered = false;
+
+function scenario() { return SCENARIOS[scenarioIdx]; }
+function question() { return scenario().questions[questionIdx]; }
+function totalQuestions() { return SCENARIOS.reduce((a,s) => a + s.questions.length, 0); }
+function globalQ() {
+  let c = 0;
+  for (let i = 0; i < scenarioIdx; i++) c += SCENARIOS[i].questions.length;
+  return c + questionIdx;
+}
+function poBadgeColor(po) { return po === 'PO1' ? 'badge-purple' : 'badge-blue'; }
+
+function render() {
+  const app = document.getElementById('app');
+  const tq = totalQuestions();
+  const gq = globalQ();
+
+  if (scenarioIdx >= SCENARIOS.length) {
+    const pct = Math.round(score / tq * 100);
+    let msg = pct === 100 ? 'Outstanding! You nailed every question.' : pct >= 70 ? 'Great work! Review any missed steps.' : 'Keep practicing — review PO1 and PO2 thoroughly.';
+    app.innerHTML = `
+      <div class="score-card">
+        <div class="score-big">${score}/${tq}</div>
+        <div class="score-label">Final Score — ${pct}%</div>
+        <p style="font-size:14px;font-weight:600;color:#9CA3AF;margin-top:12px;line-height:1.6;">${msg}</p>
+        <button class="restart-btn" onclick="restart()">Try again</button>
+      </div>`;
+    return;
+  }
+
+  const s = scenario();
+  const q = question();
+  const progress = Math.round((gq / tq) * 100);
+
+  app.innerHTML = `
+    <div class="scenario-card">
+      <div class="patient-header">
+        <div class="avatar">${s.patient.initials}</div>
+        <div>
+          <div class="patient-name">${s.patient.name}, ${s.patient.age}
+            ${s.telehealth ? '<span class="telehealth-badge">Telehealth</span>' : ''}
+          </div>
+          <div class="patient-sub">${s.patient.reason}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-bar-wrap"><div class="progress-bar" style="width:${progress}%"></div></div>
+    <div class="step-label">Question ${gq + 1} of ${tq} &nbsp;·&nbsp; <span class="badge ${poBadgeColor(q.po)}">${q.po}</span> ${q.topic}</div>
+
+    <div class="question-card">
+      <div class="question-text">${q.q}</div>
+      <div class="choices" id="choices">
+        ${q.choices.map((c, i) => `<button class="choice-btn" id="c${i}" onclick="choose(${i})">${c}</button>`).join('')}
+      </div>
+      <div id="feedback"></div>
+      <div id="next-wrap"></div>
+    </div>`;
+}
+
+function choose(idx) {
+  if (answered) return;
+  answered = true;
+  const q = question();
+  const fb = document.getElementById('feedback');
+  const nw = document.getElementById('next-wrap');
+
+  for (let i = 0; i < q.choices.length; i++) {
+    const btn = document.getElementById('c' + i);
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add(idx === q.correct ? 'correct' : 'reveal');
+    else if (i === idx) btn.classList.add('wrong');
+  }
+
+  if (idx === q.correct) {
+    score++;
+    fb.innerHTML = `<div class="feedback-box feedback-good">✓ ${q.feedback.good}</div>`;
+  } else {
+    fb.innerHTML = `<div class="feedback-box feedback-bad">✗ ${q.feedback.bad}</div>`;
+  }
+
+  const isLastInScenario = questionIdx === scenario().questions.length - 1;
+  const isLastAll = scenarioIdx === SCENARIOS.length - 1 && isLastInScenario;
+  const nextLabel = isLastAll ? 'See my score' : isLastInScenario ? 'Next scenario →' : 'Next question →';
+  nw.innerHTML = `<button class="next-btn" onclick="next()">${nextLabel}</button>`;
+}
+
+function next() {
+  answered = false;
+  const s = scenario();
+  if (questionIdx < s.questions.length - 1) {
+    questionIdx++;
+  } else {
+    scenarioIdx++;
+    questionIdx = 0;
+  }
+  render();
+}
+
+function restart() {
+  scenarioIdx = 0; questionIdx = 0; score = 0; answered = false;
+  render();
+}
+
+render();
+</script>

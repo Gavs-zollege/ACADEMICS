@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Drug Types & Their Effects</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0f1923; color: #e8f0f8; padding: 20px; }
+  .hero { background: linear-gradient(135deg, #1a2d42 0%, #1e2d1e 50%, #1a2535 100%); border-radius: 16px; padding: 2rem 1.5rem 1rem; text-align: center; margin-bottom: 1.5rem; border: 1.5px solid #2e5a8a; }
+  .hero h1 { font-size: 22px; font-weight: 800; color: #7ec8f5; margin-bottom: 6px; }
+  .hero p { font-size: 15px; color: #a0c8e8; font-weight: 700; }
+  .score-bar { display: flex; justify-content: space-between; align-items: center; background: #1e1a08; border: 1.5px solid #c8a020; border-radius: 10px; padding: 10px 18px; margin-bottom: 1.5rem; }
+  .score-bar span { font-size: 15px; font-weight: 800; color: #f0d060; }
+  .score-bar .badge { background: #c8a020; color: #0a0800; border-radius: 20px; padding: 4px 14px; font-weight: 800; font-size: 14px; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .tab-btn { flex: 1; min-width: 100px; padding: 10px 8px; border-radius: 10px; border: 2px solid #2e4a6a; font-size: 13px; font-weight: 800; cursor: pointer; transition: all 0.2s; background: #162030; color: #90bde0; }
+  .tab-btn.active { background: #1e5fa0; color: #fff; border-color: #4090d0; }
+  .tab-btn:hover:not(.active) { border-color: #4090d0; background: #1e3050; }
+  .section { display: none; }
+  .section.visible { display: block; }
+  .flashcard-wrap { perspective: 800px; width: 100%; max-width: 520px; margin: 0 auto 1.5rem; }
+  .flashcard { width: 100%; height: 220px; position: relative; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(.4,0,.2,1); cursor: pointer; border-radius: 16px; }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; text-align: center; border: 2px solid transparent; }
+  .card-front { background: #142035; border-color: #2e70b0; }
+  .card-back { background: #0f2518; border-color: #3a8030; transform: rotateY(180deg); }
+  .card-emoji { font-size: 44px; margin-bottom: 10px; }
+  .card-title { font-size: 20px; font-weight: 800; color: #7ec8f5; margin-bottom: 6px; }
+  .card-sub { font-size: 14px; font-weight: 700; color: #90b8d8; }
+  .card-back .card-title { color: #7ed890; font-size: 16px; }
+  .card-back .card-sub { color: #a0d8b0; font-size: 13px; margin-top: 6px; font-weight: 700; }
+  .card-hint { font-size: 12px; color: #607890; margin-top: 12px; font-weight: 700; }
+  .card-nav { display: flex; justify-content: space-between; align-items: center; max-width: 520px; margin: 0 auto 1.5rem; }
+  .card-nav button { background: #1e5fa0; color: #fff; border: none; border-radius: 8px; padding: 8px 22px; font-size: 14px; font-weight: 800; cursor: pointer; }
+  .card-nav button:disabled { background: #2a3540; color: #506070; cursor: default; }
+  .card-counter { font-size: 14px; font-weight: 800; color: #7ec8f5; }
+  .quiz-q { font-size: 17px; font-weight: 800; color: #7ec8f5; margin-bottom: 1rem; padding: 14px 18px; background: #142035; border-radius: 12px; border-left: 5px solid #3a90d0; line-height: 1.5; }
+  .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .quiz-opt { background: #162030; border: 2px solid #2a5080; border-radius: 10px; padding: 12px 10px; font-size: 14px; font-weight: 800; color: #90bde0; cursor: pointer; transition: all 0.18s; text-align: center; }
+  .quiz-opt:hover:not(.disabled) { background: #1e3a58; border-color: #4090d0; color: #c0e0f8; }
+  .quiz-opt.correct { background: #0f2a18; border-color: #40a840; color: #70e890; }
+  .quiz-opt.wrong { background: #2a0f0f; border-color: #c03030; color: #f08080; }
+  .quiz-opt.disabled { cursor: default; }
+  .quiz-feedback { font-size: 14px; font-weight: 800; min-height: 28px; margin-bottom: 8px; padding: 6px 12px; border-radius: 8px; }
+  .quiz-feedback.ok { background: #0f2a18; color: #70e890; }
+  .quiz-feedback.no { background: #2a0f0f; color: #f08080; }
+  .quiz-next { background: #1e5fa0; color: #fff; border: none; border-radius: 8px; padding: 10px 26px; font-size: 14px; font-weight: 800; cursor: pointer; display: none; }
+  .quiz-prog { font-size: 13px; font-weight: 700; color: #7090a8; margin-bottom: 10px; }
+  .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
+  .match-col-title { font-size: 13px; font-weight: 800; color: #7090a8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: center; }
+  .match-item { background: #162030; border: 2px solid #2a5080; border-radius: 10px; padding: 11px 8px; font-size: 13px; font-weight: 800; color: #90bde0; cursor: pointer; transition: all 0.18s; text-align: center; user-select: none; }
+  .match-item:hover:not(.matched):not(.disabled) { background: #1e3a58; border-color: #4090d0; }
+  .match-item.selected { background: #1e5fa0; color: #fff; border-color: #60a8e0; }
+  .match-item.matched { background: #0f2a18; border-color: #40a840; color: #70e890; cursor: default; }
+  .match-item.wrong-flash { background: #2a0f0f; border-color: #c03030; }
+  .match-msg { font-size: 14px; font-weight: 800; color: #70e890; text-align: center; min-height: 24px; }
+  .match-reset { background: #162030; color: #90bde0; border: 2px solid #2a5080; border-radius: 8px; padding: 8px 22px; font-size: 13px; font-weight: 800; cursor: pointer; display: block; margin: 10px auto 0; }
+  .match-reset:hover { background: #1e3a58; border-color: #4090d0; }
+  .final-box { text-align: center; padding: 2rem; background: #1a1500; border-radius: 16px; border: 2px solid #c8a020; }
+  .final-box h2 { font-size: 26px; font-weight: 800; color: #f0d060; margin-bottom: 8px; }
+  .final-box p { font-size: 16px; color: #d0b840; font-weight: 700; margin-bottom: 1rem; }
+  .final-stars { font-size: 40px; letter-spacing: 4px; margin-bottom: 1rem; }
+  .restart-btn { background: #1e5fa0; color: #fff; border: none; border-radius: 10px; padding: 12px 30px; font-size: 15px; font-weight: 800; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div style="font-size:40px;margin-bottom:8px;">💊🩺🧪</div>
+  <h1>Drug Types & Their Effects</h1>
+  <p>Medical Assistant Training — Interactive Activity</p>
+</div>
+
+<div class="score-bar">
+  <span>🏅 Your Score</span>
+  <span class="badge" id="score-display">0 pts</span>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('flashcards',this)">📋 Flashcards</button>
+  <button class="tab-btn" onclick="switchTab('quiz',this)">🧠 Quiz</button>
+  <button class="tab-btn" onclick="switchTab('match',this)">🔗 Match-Up</button>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="sec-flashcards" class="section visible">
+  <div class="flashcard-wrap">
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="card-face card-front">
+        <div class="card-emoji" id="fc-emoji">😔</div>
+        <div class="card-title" id="fc-name">Antidepressants</div>
+        <div class="card-sub" id="fc-sub">Tap to reveal!</div>
+        <div class="card-hint">👆 Tap to flip</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-emoji">✅</div>
+        <div class="card-title" id="fc-back-title">Definition</div>
+        <div class="card-sub" id="fc-back-def"></div>
+        <div class="card-sub" id="fc-back-ex" style="margin-top:8px;color:#60a8e0;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="card-nav">
+    <button onclick="prevCard()" id="btn-prev" disabled>◀ Prev</button>
+    <span class="card-counter" id="card-counter">1 / 5</span>
+    <button onclick="nextCard()" id="btn-next">Next ▶</button>
+  </div>
+  <p style="text-align:center;font-size:13px;font-weight:700;color:#607080;">Study all 5 drug types, then test yourself!</p>
+</div>
+
+<!-- QUIZ -->
+<div id="sec-quiz" class="section">
+  <div class="quiz-prog" id="quiz-prog">Question 1 of 8</div>
+  <div class="quiz-q" id="quiz-q">Loading…</div>
+  <div class="quiz-opts" id="quiz-opts"></div>
+  <div class="quiz-feedback" id="quiz-fb"></div>
+  <button class="quiz-next" id="quiz-next" onclick="nextQuestion()">Next Question ▶</button>
+  <div id="quiz-final" style="display:none;"></div>
+</div>
+
+<!-- MATCH -->
+<div id="sec-match" class="section">
+  <p style="font-size:14px;font-weight:800;color:#7ec8f5;margin-bottom:12px;text-align:center;">🔗 Match each drug type with its correct action!</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;">
+    <div class="match-col-title">💊 Drug Type</div>
+    <div class="match-col-title">🎯 Action</div>
+  </div>
+  <div class="match-grid">
+    <div id="left-col"></div>
+    <div id="right-col"></div>
+  </div>
+  <div class="match-msg" id="match-msg"></div>
+  <button class="match-reset" onclick="resetMatch()">🔄 Reset Match</button>
+</div>
+
+<script>
+const drugs = [
+  { name:"Antidepressants", emoji:"😔", def:"Treat depression and anxiety disorders by balancing brain chemicals.", ex:"Example: Fluoxetine (Prozac)", action:"Treat depression & anxiety" },
+  { name:"Antihistamines", emoji:"🤧", def:"Block histamine receptors to alleviate allergic symptoms like sneezing and itching.", ex:"Example: Diphenhydramine (Benadryl)", action:"Alleviate allergic symptoms" },
+  { name:"Analgesics", emoji:"🤕", def:"Relieve pain without causing loss of consciousness.", ex:"Example: Acetaminophen (Tylenol)", action:"Relieve pain" },
+  { name:"Antipyretics", emoji:"🤒", def:"Reduce elevated body temperature (fever) by acting on the hypothalamus.", ex:"Example: Ibuprofen (Advil)", action:"Reduce fever" },
+  { name:"Antihypertensives", emoji:"❤️", def:"Lower blood pressure to reduce risk of heart attack and stroke.", ex:"Example: Lisinopril (Zestril)", action:"Lower blood pressure" },
+];
+
+let score = 0;
+function addScore(n) { score += n; document.getElementById('score-display').textContent = score + ' pts'; }
+
+function switchTab(t, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-'+t).classList.add('visible');
+  btn.classList.add('active');
+  if (t==='quiz') loadQuestion();
+  if (t==='match') initMatch();
+}
+
+let cardIdx=0, cardFlipped=false;
+function renderCard() {
+  cardFlipped=false;
+  document.getElementById('flashcard').classList.remove('flipped');
+  const d=drugs[cardIdx];
+  document.getElementById('fc-emoji').textContent=d.emoji;
+  document.getElementById('fc-name').textContent=d.name;
+  document.getElementById('fc-sub').textContent='Tap to reveal!';
+  document.getElementById('fc-back-title').textContent=d.name;
+  document.getElementById('fc-back-def').textContent=d.def;
+  document.getElementById('fc-back-ex').textContent=d.ex;
+  document.getElementById('card-counter').textContent=(cardIdx+1)+' / '+drugs.length;
+  document.getElementById('btn-prev').disabled=cardIdx===0;
+  document.getElementById('btn-next').disabled=cardIdx===drugs.length-1;
+}
+function flipCard() { cardFlipped=!cardFlipped; document.getElementById('flashcard').classList.toggle('flipped',cardFlipped); if(cardFlipped) addScore(2); }
+function nextCard() { if(cardIdx<drugs.length-1){ cardIdx++; renderCard(); } }
+function prevCard() { if(cardIdx>0){ cardIdx--; renderCard(); } }
+renderCard();
+
+const questions = [
+  { q:"Which drug type is used to LOWER BLOOD PRESSURE?", opts:["Antipyretics","Antihypertensives","Antihistamines","Analgesics"], ans:1 },
+  { q:"A patient has a fever of 103°F. Which drug class should the nurse reach for?", opts:["Analgesics","Antidepressants","Antipyretics","Antihypertensives"], ans:2 },
+  { q:"Fluoxetine (Prozac) belongs to which drug class?", opts:["Antihistamines","Analgesics","Antipyretics","Antidepressants"], ans:3 },
+  { q:"Which class RELIEVES PAIN without causing unconsciousness?", opts:["Analgesics","Antipyretics","Antidepressants","Antihistamines"], ans:0 },
+  { q:"A patient has hives and is sneezing nonstop after bee sting. Which drug class helps?", opts:["Antihypertensives","Antipyretics","Antidepressants","Antihistamines"], ans:3 },
+  { q:"Ibuprofen can act as BOTH a pain reliever AND which other type?", opts:["Antidepressant","Antihistamine","Antipyretic","Antihypertensive"], ans:2 },
+  { q:"Which drug type acts on the HYPOTHALAMUS to cool the body?", opts:["Antidepressants","Antihypertensives","Analgesics","Antipyretics"], ans:3 },
+  { q:"Lisinopril is an example of which drug class?", opts:["Analgesics","Antipyretics","Antihypertensives","Antihistamines"], ans:2 },
+];
+let qIdx=0, qAnswered=false, qCorrect=0;
+function loadQuestion() {
+  if(qIdx>=questions.length){ showQuizFinal(); return; }
+  qAnswered=false;
+  const q=questions[qIdx];
+  document.getElementById('quiz-prog').textContent='Question '+(qIdx+1)+' of '+questions.length;
+  document.getElementById('quiz-q').textContent=q.q;
+  document.getElementById('quiz-fb').textContent='';
+  document.getElementById('quiz-fb').className='quiz-feedback';
+  document.getElementById('quiz-next').style.display='none';
+  const opts=document.getElementById('quiz-opts');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='quiz-opt'; b.textContent=o; b.onclick=()=>selectOpt(i); opts.appendChild(b); });
+}
+function selectOpt(i) {
+  if(qAnswered) return;
+  qAnswered=true;
+  const q=questions[qIdx];
+  const btns=document.querySelectorAll('.quiz-opt');
+  btns.forEach(b=>b.classList.add('disabled'));
+  const fb=document.getElementById('quiz-fb');
+  if(i===q.ans){ btns[i].classList.add('correct'); fb.textContent='✅ Correct! Well done!'; fb.className='quiz-feedback ok'; qCorrect++; addScore(10); }
+  else { btns[i].classList.add('wrong'); btns[q.ans].classList.add('correct'); fb.textContent='❌ Not quite! The correct answer is highlighted.'; fb.className='quiz-feedback no'; }
+  document.getElementById('quiz-next').style.display='inline-block';
+}
+function nextQuestion() { qIdx++; loadQuestion(); }
+function showQuizFinal() {
+  document.getElementById('quiz-q').style.display='none';
+  document.getElementById('quiz-opts').style.display='none';
+  document.getElementById('quiz-fb').style.display='none';
+  document.getElementById('quiz-next').style.display='none';
+  const stars=qCorrect>=7?'⭐⭐⭐':qCorrect>=5?'⭐⭐':'⭐';
+  document.getElementById('quiz-final').style.display='block';
+  document.getElementById('quiz-final').innerHTML=`<div class="final-box"><div class="final-stars">${stars}</div><h2>Quiz Complete!</h2><p>You got <strong>${qCorrect} out of ${questions.length}</strong> correct!</p><button class="restart-btn" onclick="restartQuiz()">🔄 Try Again</button></div>`;
+}
+function restartQuiz() {
+  qIdx=0; qCorrect=0;
+  document.getElementById('quiz-q').style.display='';
+  document.getElementById('quiz-opts').style.display='';
+  document.getElementById('quiz-fb').style.display='';
+  document.getElementById('quiz-final').style.display='none';
+  loadQuestion();
+}
+
+let selLeft=null, selRight=null, matchedPairs=0;
+const leftOrder=[0,1,2,3,4], rightOrder=[2,4,0,3,1];
+function initMatch() {
+  matchedPairs=0; selLeft=null; selRight=null;
+  document.getElementById('match-msg').textContent='';
+  const L=document.getElementById('left-col'), R=document.getElementById('right-col');
+  L.innerHTML=''; R.innerHTML='';
+  leftOrder.forEach(i=>{ const d=document.createElement('div'); d.className='match-item'; d.textContent=drugs[i].name; d.dataset.idx=i; d.dataset.side='left'; d.onclick=()=>selectMatch(d,'left'); L.appendChild(d); });
+  rightOrder.forEach(i=>{ const d=document.createElement('div'); d.className='match-item'; d.textContent=drugs[i].action; d.dataset.idx=i; d.dataset.side='right'; d.onclick=()=>selectMatch(d,'right'); R.appendChild(d); });
+}
+function selectMatch(el,side) {
+  if(el.classList.contains('matched')) return;
+  if(side==='left'){ document.querySelectorAll('.match-item[data-side="left"]').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); selLeft=el; }
+  else { document.querySelectorAll('.match-item[data-side="right"]').forEach(e=>e.classList.remove('selected')); el.classList.add('selected'); selRight=el; }
+  if(selLeft&&selRight) {
+    if(selLeft.dataset.idx===selRight.dataset.idx){
+      selLeft.classList.remove('selected'); selLeft.classList.add('matched');
+      selRight.classList.remove('selected'); selRight.classList.add('matched');
+      matchedPairs++; addScore(8);
+      document.getElementById('match-msg').textContent=matchedPairs===5?'🎉 All matched! Perfect score!':'✅ Matched! Keep going!';
+      document.getElementById('match-msg').style.color='#70e890';
+    } else {
+      selLeft.classList.add('wrong-flash'); selRight.classList.add('wrong-flash');
+      document.getElementById('match-msg').textContent='❌ Not a match. Try again!';
+      document.getElementById('match-msg').style.color='#f08080';
+      setTimeout(()=>{ if(selLeft){selLeft.classList.remove('selected','wrong-flash');} if(selRight){selRight.classList.remove('selected','wrong-flash');} selLeft=null; selRight=null; },700);
+      return;
+    }
+    selLeft=null; selRight=null;
+  }
+}
+function resetMatch() { initMatch(); }
+</script>
+</body>
+</html>

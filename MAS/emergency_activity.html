@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Steps in an Emergency</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 700px;
+  }
+
+  /* ── TITLE CARD ── */
+  #title-screen {
+    background: linear-gradient(160deg, #e53935, #b71c1c);
+    border-radius: 24px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border: 4px solid #ff6f6f;
+  }
+
+  #title-screen .icon { font-size: 80px; margin-bottom: 16px; }
+
+  #title-screen h1 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 2px 3px 0 rgba(0,0,0,0.4);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  #title-screen p {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffd6d6;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    background: rgba(0,0,0,0.2);
+    padding: 14px 18px;
+    border-radius: 12px;
+  }
+
+  /* ── STEP CARD ── */
+  .step-card {
+    border-radius: 24px;
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border: 4px solid rgba(255,255,255,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .step-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .step-num {
+    display: inline-block;
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    border: 3px solid rgba(255,255,255,0.6);
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 50px;
+    margin-bottom: 14px;
+  }
+
+  .step-icon { font-size: 90px; margin-bottom: 14px; display: block; }
+
+  .step-title {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 2px 3px 0 rgba(0,0,0,0.35);
+    margin-bottom: 14px;
+  }
+
+  .step-desc {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.92);
+    background: rgba(0,0,0,0.22);
+    border-radius: 14px;
+    padding: 14px 18px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .tip-box {
+    background: rgba(255,255,255,0.18);
+    border: 2px dashed rgba(255,255,255,0.55);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 24px;
+  }
+
+  .tip-box span { font-size: 1.1rem; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: rgba(255,255,255,0.2);
+    border-radius: 99px;
+    height: 12px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #fff;
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── BUTTONS ── */
+  .btn-row {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .btn {
+    padding: 14px 34px;
+    border-radius: 50px;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 900;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+    letter-spacing: 0.5px;
+  }
+
+  .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.4); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-primary { background: #fff; color: #111; }
+  .btn-secondary { background: rgba(255,255,255,0.22); color: #fff; border: 2px solid rgba(255,255,255,0.6); }
+  .btn-success  { background: #00e676; color: #004d1f; }
+  .btn-restart  { background: #fff; color: #b71c1c; }
+
+  /* ── QUIZ SCREEN ── */
+  #quiz-screen .question {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 1px 2px 0 rgba(0,0,0,0.3);
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  .choices { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+
+  .choice-btn {
+    background: rgba(255,255,255,0.15);
+    border: 3px solid rgba(255,255,255,0.4);
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: #fff;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .choice-btn:hover { background: rgba(255,255,255,0.28); transform: translateX(4px); }
+  .choice-btn.correct { background: #00c853; border-color: #00e676; color: #fff; }
+  .choice-btn.wrong   { background: #d32f2f; border-color: #ff5252; color: #fff; }
+
+  .feedback {
+    font-size: 1.05rem;
+    font-weight: 900;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.good { background: rgba(0,200,83,0.25); color: #b9ffd4; border: 2px solid #00c853; }
+  .feedback.bad  { background: rgba(211,47,47,0.25); color: #ffc5c5; border: 2px solid #d32f2f; }
+
+  /* ── COMPLETE SCREEN ── */
+  #complete-screen {
+    background: linear-gradient(160deg, #1b5e20, #2e7d32);
+    border-radius: 24px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    border: 4px solid #66bb6a;
+  }
+  #complete-screen .big-icon { font-size: 90px; margin-bottom: 10px; }
+  #complete-screen h2 { font-size: 2rem; font-weight: 900; color: #fff; text-shadow: 2px 2px 0 rgba(0,0,0,0.3); margin-bottom: 12px; }
+  #complete-screen p  { font-size: 1.05rem; font-weight: 800; color: #c8e6c9; margin-bottom: 24px; line-height: 1.7; }
+
+  .score-badge {
+    display: inline-block;
+    background: #fff;
+    color: #1b5e20;
+    font-size: 2rem;
+    font-weight: 900;
+    padding: 14px 36px;
+    border-radius: 50px;
+    margin-bottom: 26px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- TITLE SCREEN -->
+  <div id="title-screen">
+    <div class="icon">🚨</div>
+    <h1>First Steps in an Emergency</h1>
+    <p>⚠️ The initial response is <u>critical</u>.<br>Safety first — for YOU and the patient.<br>If you're unsure, <strong>GET HELP IMMEDIATELY!</strong></p>
+    <button class="btn btn-primary" onclick="startLesson()">▶ Start Learning</button>
+  </div>
+
+  <!-- STEP CARDS -->
+  <div id="step-screen" class="hidden">
+    <div id="step-card" class="step-card"></div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen" class="hidden step-card" style="background:linear-gradient(135deg,#4527a0,#7b1fa2);">
+    <div class="step-num">🧠</div>
+    <div class="step-title" style="font-size:1.5rem;">Quick Quiz!</div>
+    <div class="progress-wrap"><div class="progress-fill" id="quiz-progress"></div></div>
+    <div class="question" id="q-text"></div>
+    <div class="choices" id="q-choices"></div>
+    <div class="feedback" id="q-feedback"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary hidden" id="next-q-btn" onclick="nextQuestion()">Next Question ➡</button>
+    </div>
+  </div>
+
+  <!-- COMPLETE SCREEN -->
+  <div id="complete-screen" class="hidden">
+    <div class="big-icon">🏆</div>
+    <h2>You're Emergency Ready!</h2>
+    <div class="score-badge" id="score-display"></div>
+    <p>Great work, future Medical Assistant!<br>Remember: <strong>Stay calm. Act fast. Save lives.</strong> 💪</p>
+    <div class="btn-row">
+      <button class="btn btn-restart" onclick="restartAll()">🔄 Start Over</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const steps = [
+  {
+    color: "linear-gradient(135deg,#b71c1c,#e53935)",
+    border: "#ff8a80",
+    icon: "🔍",
+    num: 1,
+    title: "Assess the Scene for Safety",
+    desc: "Before you touch anything — STOP and LOOK! Check for hazards like fire, gas leaks, traffic, or violence. Never rush in if the scene is unsafe. A hurt rescuer can't help anyone!",
+    tip: "💡 Pro Tip: Use your eyes and ears — look, listen, smell before stepping in."
+  },
+  {
+    color: "linear-gradient(135deg,#1a237e,#1565c0)",
+    border: "#82b1ff",
+    icon: "📞",
+    num: 2,
+    title: "Call for Help / Activate EMS",
+    desc: "Call 911 (or your local emergency number) IMMEDIATELY. Shout for help if needed. State your location, what happened, and how many are injured. Don't hang up first!",
+    tip: "💡 Pro Tip: Point to ONE person and say 'YOU — call 911 now!' to avoid bystander freeze."
+  },
+  {
+    color: "linear-gradient(135deg,#004d40,#00695c)",
+    border: "#69f0ae",
+    icon: "🤝",
+    num: 3,
+    title: "Stay Calm & Reassure the Patient",
+    desc: "Your calm energy is CONTAGIOUS — in a good way! Speak clearly, maintain eye contact, and tell the patient: 'I'm here, help is on the way.' Panic makes everything worse.",
+    tip: "💡 Pro Tip: Take one slow breath before speaking — it steadies your voice and your mind."
+  },
+  {
+    color: "linear-gradient(135deg,#e65100,#f57c00)",
+    border: "#ffd180",
+    icon: "🩺",
+    num: 4,
+    title: "Begin Appropriate Interventions",
+    desc: "Only perform procedures you are TRAINED and authorized to do. This may include controlling bleeding, positioning, CPR, or using an AED. Do what you know — do it confidently!",
+    tip: "💡 Pro Tip: Never attempt an intervention you haven't been trained for — it can cause more harm."
+  },
+  {
+    color: "linear-gradient(135deg,#4a148c,#6a1b9a)",
+    border: "#ea80fc",
+    icon: "📋",
+    num: 5,
+    title: "Document Everything",
+    desc: "Time, actions, observations — WRITE IT DOWN as soon as possible. Accurate documentation protects the patient AND you. Record what you saw, what you did, and when.",
+    tip: "💡 Pro Tip: Even mental notes help — jot down time of collapse, interventions, and patient response."
+  }
+];
+
+const questions = [
+  {
+    q: "🔍 What is the VERY FIRST thing you should do when arriving at an emergency scene?",
+    choices: ["Start CPR immediately", "Assess the scene for safety", "Call the patient's family", "Look for a defibrillator"],
+    correct: 1,
+    explain: "✅ Always check for hazards FIRST — your safety matters too!"
+  },
+  {
+    q: "📞 When calling 911, what is the most important first piece of information to give?",
+    choices: ["Your name", "The patient's age", "Your LOCATION", "The patient's insurance"],
+    correct: 2,
+    explain: "✅ Location first! Dispatchers need to know WHERE to send help."
+  },
+  {
+    q: "🤝 A patient is panicking. What is the BEST way to help calm them?",
+    choices: ["Tell them to stop overreacting", "Ignore them and focus on the injury", "Speak calmly and say 'Help is on the way'", "Leave to find more supplies"],
+    correct: 2,
+    explain: "✅ Calm, reassuring words reduce anxiety and help the patient cooperate."
+  },
+  {
+    q: "🩺 You arrive on scene and recognize a skill you haven't been fully trained on. You should:",
+    choices: ["Try it anyway — it's an emergency!", "Only perform interventions you are trained and authorized to do", "Walk away", "Ask the patient what to do"],
+    correct: 1,
+    explain: "✅ Only trained interventions! Untrained actions can seriously harm a patient."
+  },
+  {
+    q: "📋 Why is documentation so important in an emergency?",
+    choices: ["It fills time while waiting", "It protects the patient and the responder, and ensures continuity of care", "It's required only if the patient asks", "It's done only after the patient is discharged"],
+    correct: 1,
+    explain: "✅ Good documentation protects everyone and ensures proper handoff of care."
+  }
+];
+
+let currentStep = 0;
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+function startLesson() {
+  document.getElementById('title-screen').classList.add('hidden');
+  document.getElementById('step-screen').classList.remove('hidden');
+  showStep(0);
+}
+
+function showStep(i) {
+  currentStep = i;
+  const s = steps[i];
+  const total = steps.length;
+  const pct = Math.round(((i+1)/total)*100);
+
+  document.getElementById('step-card').innerHTML = `
+    <div class="step-card" style="background:${s.color};border-color:${s.border}">
+      <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div class="step-num">${s.num}</div>
+      <span class="step-icon">${s.icon}</span>
+      <div class="step-title">${s.title}</div>
+      <div class="step-desc">${s.desc}</div>
+      <div class="tip-box"><span>🌟</span> ${s.tip}</div>
+      <div class="btn-row">
+        ${i > 0 ? `<button class="btn btn-secondary" onclick="showStep(${i-1})">◀ Back</button>` : ''}
+        ${i < total-1
+          ? `<button class="btn btn-primary" onclick="showStep(${i+1})">Next Step ➡</button>`
+          : `<button class="btn btn-success" onclick="startQuiz()">🧠 Take the Quiz!</button>`
+        }
+      </div>
+    </div>
+  `;
+}
+
+function startQuiz() {
+  document.getElementById('step-screen').classList.add('hidden');
+  document.getElementById('quiz-screen').classList.remove('hidden');
+  currentQ = 0; score = 0; answered = false;
+  showQuestion();
+}
+
+function showQuestion() {
+  answered = false;
+  const q = questions[currentQ];
+  const pct = Math.round(((currentQ)/questions.length)*100);
+  document.getElementById('quiz-progress').style.width = pct + '%';
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-feedback').className = 'feedback';
+  document.getElementById('q-feedback').textContent = '';
+  document.getElementById('next-q-btn').classList.add('hidden');
+
+  const choicesDiv = document.getElementById('q-choices');
+  choicesDiv.innerHTML = '';
+  q.choices.forEach((c, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c;
+    btn.onclick = () => selectAnswer(idx);
+    choicesDiv.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const btns = document.querySelectorAll('.choice-btn');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+  const fb = document.getElementById('q-feedback');
+
+  if (idx === q.correct) {
+    btns[idx].classList.add('correct');
+    fb.className = 'feedback show good';
+    fb.textContent = q.explain;
+    score++;
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.className = 'feedback show bad';
+    fb.textContent = '❌ Not quite! ' + q.explain;
+  }
+
+  const nextBtn = document.getElementById('next-q-btn');
+  nextBtn.classList.remove('hidden');
+  nextBtn.textContent = currentQ < questions.length - 1 ? 'Next Question ➡' : '🏆 See My Score!';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showComplete();
+  } else {
+    showQuestion();
+  }
+}
+
+function showComplete() {
+  document.getElementById('quiz-screen').classList.add('hidden');
+  const screen = document.getElementById('complete-screen');
+  screen.classList.remove('hidden');
+  const pct = Math.round((score/questions.length)*100);
+  let emoji = pct === 100 ? '🌟 Perfect Score!' : pct >= 80 ? '🎉 Excellent!' : pct >= 60 ? '👍 Good Work!' : '📚 Keep Studying!';
+  document.getElementById('score-display').textContent = `${score} / ${questions.length}  ${emoji}`;
+}
+
+function restartAll() {
+  document.getElementById('complete-screen').classList.add('hidden');
+  document.getElementById('title-screen').classList.remove('hidden');
+}
+</script>
+</body>
+</html>

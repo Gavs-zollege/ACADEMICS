@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Specimen Collection Training</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #dbeafe 0%, #ffffff 50%, #dcfce7 100%);
+    font-family: 'Segoe UI', sans-serif;
+    padding: 16px;
+  }
+  .container { max-width: 640px; margin: 0 auto; }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 24px; }
+  .header h1 { font-size: 1.8rem; font-weight: 900; color: #1e40af; margin-bottom: 10px; }
+  .badges { display: flex; justify-content: center; gap: 16px; }
+  .badge { font-weight: 700; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 0.95rem; }
+  .badge-blue { background: #2563eb; }
+  .badge-green { background: #16a34a; }
+
+  /* Progress Bar */
+  .progress-track { background: #e5e7eb; border-radius: 999px; height: 16px; margin-bottom: 24px; }
+  .progress-fill {
+    height: 16px; border-radius: 999px;
+    background: linear-gradient(to right, #3b82f6, #22c55e);
+    transition: width 0.5s ease;
+  }
+
+  /* Card */
+  .card {
+    background: #fff; border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+    padding: 28px; border: 4px solid #bfdbfe;
+  }
+  .card-center { text-align: center; margin-bottom: 24px; }
+  .emoji-big { font-size: 4rem; display: block; margin-bottom: 12px; }
+  .step-title { font-size: 1.5rem; font-weight: 800; color: #1e40af; margin-bottom: 10px; }
+  .step-desc { font-size: 1.05rem; font-weight: 700; color: #374151; }
+
+  /* Question */
+  .question { font-size: 1.15rem; font-weight: 800; color: #1e40af; text-align: center; margin-bottom: 16px; }
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .option-btn {
+    width: 100%; background: #eff6ff; border: 2px solid #bfdbfe;
+    border-radius: 12px; padding: 14px 16px; text-align: left;
+    font-weight: 700; font-size: 0.95rem; color: #1f2937;
+    cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+  }
+  .option-btn:hover { background: #dbeafe; border-color: #60a5fa; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+  /* Feedback */
+  .feedback { text-align: center; }
+  .feedback-correct { background: #f0fdf4; border: 4px solid #4ade80; border-radius: 12px; padding: 24px; }
+  .feedback-wrong { background: #fef2f2; border: 4px solid #f87171; border-radius: 12px; padding: 24px; }
+  .feedback-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+  .feedback-title-correct { font-size: 1.4rem; font-weight: 800; color: #166534; margin-bottom: 8px; }
+  .feedback-title-wrong { font-size: 1.4rem; font-weight: 800; color: #991b1b; margin-bottom: 8px; }
+  .feedback-tip-correct { font-size: 1rem; font-weight: 700; color: #15803d; }
+  .feedback-tip-wrong { font-size: 1rem; font-weight: 700; color: #b91c1c; margin-bottom: 10px; }
+  .feedback-correct-ans { font-size: 0.95rem; font-weight: 700; color: #374151; }
+  .next-label { margin-top: 14px; font-size: 1rem; font-weight: 700; color: #2563eb; }
+
+  /* Tip box */
+  .tip-box {
+    margin-top: 24px; background: #fefce8;
+    border: 4px solid #fde68a; border-radius: 12px; padding: 16px; text-align: center;
+  }
+  .tip-box .tip-icon { font-size: 1.5rem; display: block; margin-bottom: 6px; }
+  .tip-box p { font-weight: 700; color: #92400e; }
+
+  /* Complete screen */
+  .complete-card {
+    background: #fff; border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+    padding: 40px 28px; border: 4px solid #bfdbfe; text-align: center;
+  }
+  .complete-icon { font-size: 4rem; display: block; margin-bottom: 16px; }
+  .complete-title { font-size: 2rem; font-weight: 900; color: #1e40af; margin-bottom: 12px; }
+  .complete-score { font-size: 1.5rem; font-weight: 800; color: #16a34a; margin-bottom: 12px; }
+  .complete-msg { font-size: 1.1rem; font-weight: 700; color: #374151; margin-bottom: 24px; }
+  .reminders-box { background: #eff6ff; border-radius: 12px; padding: 20px; margin-bottom: 24px; text-align: left; }
+  .reminders-box h3 { font-size: 1.1rem; font-weight: 800; color: #1e40af; margin-bottom: 12px; text-align: center; }
+  .reminders-box p { font-weight: 700; color: #1f2937; margin-bottom: 6px; }
+  .retry-btn {
+    background: #2563eb; color: #fff; font-weight: 800;
+    font-size: 1.05rem; padding: 12px 32px; border: none;
+    border-radius: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: background 0.2s;
+  }
+  .retry-btn:hover { background: #1d4ed8; }
+
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container" id="app">
+
+  <!-- GAME SCREEN -->
+  <div id="game-screen">
+    <div class="header">
+      <h1>🧪 SPECIMEN COLLECTION TRAINING 🧪</h1>
+      <div class="badges">
+        <span class="badge badge-blue" id="step-badge">Step 1 of 4</span>
+        <span class="badge badge-green" id="score-badge">Score: 0/100</span>
+      </div>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:25%"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-center">
+        <span class="emoji-big" id="step-emoji"></span>
+        <div class="step-title" id="step-title"></div>
+        <div class="step-desc" id="step-desc"></div>
+      </div>
+
+      <!-- Question -->
+      <div id="question-block">
+        <div class="question" id="question-text"></div>
+        <div class="options" id="options-list"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div id="feedback-block" class="feedback hidden"></div>
+    </div>
+
+    <div class="tip-box">
+      <span class="tip-icon">💡</span>
+      <p>TIP: Follow each step carefully for safe specimen collection!</p>
+    </div>
+  </div>
+
+  <!-- COMPLETE SCREEN -->
+  <div id="complete-screen" class="hidden">
+    <div class="complete-card">
+      <span class="complete-icon">🎯</span>
+      <div class="complete-title">TRAINING COMPLETE!</div>
+      <div class="complete-score" id="final-score">Final Score: 0/100</div>
+      <div class="complete-msg" id="final-msg"></div>
+      <div class="reminders-box">
+        <h3>KEY REMINDERS:</h3>
+        <p>🧽 Always disinfect workspace first</p>
+        <p>☣️ Use proper biohazard disposal</p>
+        <p>📦 Follow storage guidelines</p>
+        <p>📝 Document everything</p>
+      </div>
+      <button class="retry-btn" onclick="resetGame()">TRY AGAIN</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const steps = [
+    {
+      emoji: "🧽",
+      title: "🧽 DISINFECT WORKSPACE",
+      desc: "First step: Clean and disinfect your workspace properly",
+      question: "What should you use to disinfect your workspace?",
+      options: [
+        { text: "70% Alcohol or approved disinfectant", correct: true },
+        { text: "Regular soap and water", correct: false },
+        { text: "Just a dry cloth", correct: false },
+        { text: "Hand sanitizer only", correct: false }
+      ],
+      tip: "Always start with a clean, disinfected surface!"
+    },
+    {
+      emoji: "☣️",
+      title: "🗑️ DISPOSE PROPERLY",
+      desc: "Safely dispose of swabs, pipettes, and gloves in biohazard containers",
+      question: "Where should contaminated materials go?",
+      options: [
+        { text: "Regular trash bin", correct: false },
+        { text: "Biohazard waste container", correct: true },
+        { text: "Recycling bin", correct: false },
+        { text: "Leave on counter", correct: false }
+      ],
+      tip: "Biohazard materials need special disposal!"
+    },
+    {
+      emoji: "🧊",
+      title: "📦 STORE KITS SAFELY",
+      desc: "Store collection kits according to manufacturer guidelines",
+      question: "How should specimen kits be stored?",
+      options: [
+        { text: "In direct sunlight", correct: false },
+        { text: "According to manufacturer guidelines", correct: true },
+        { text: "In any available space", correct: false },
+        { text: "Mixed with other supplies", correct: false }
+      ],
+      tip: "Follow storage instructions to maintain kit integrity!"
+    },
+    {
+      emoji: "📋",
+      title: "📝 RECORD & NOTIFY",
+      desc: "Document the procedure and notify the healthcare provider",
+      question: "What's the final step after collection?",
+      options: [
+        { text: "Just store the specimen", correct: false },
+        { text: "Record procedure and notify provider", correct: true },
+        { text: "Send specimen without documentation", correct: false },
+        { text: "Wait for someone else to handle it", correct: false }
+      ],
+      tip: "Documentation and communication are crucial!"
+    }
+  ];
+
+  let currentStep = 0;
+  let score = 0;
+
+  function renderStep() {
+    const s = steps[currentStep];
+    document.getElementById('step-badge').textContent = `Step ${currentStep + 1} of ${steps.length}`;
+    document.getElementById('score-badge').textContent = `Score: ${score}/100`;
+    document.getElementById('progress-fill').style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+    document.getElementById('step-emoji').textContent = s.emoji;
+    document.getElementById('step-title').textContent = s.title;
+    document.getElementById('step-desc').textContent = s.desc;
+    document.getElementById('question-text').textContent = s.question;
+
+    const optList = document.getElementById('options-list');
+    optList.innerHTML = '';
+    s.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = `${String.fromCharCode(65 + i)}. ${opt.text}`;
+      btn.onclick = () => handleAnswer(opt);
+      optList.appendChild(btn);
+    });
+
+    document.getElementById('question-block').classList.remove('hidden');
+    document.getElementById('feedback-block').classList.add('hidden');
+    document.getElementById('feedback-block').innerHTML = '';
+  }
+
+  function handleAnswer(opt) {
+    if (opt.correct) score += 25;
+    document.getElementById('score-badge').textContent = `Score: ${score}/100`;
+
+    const s = steps[currentStep];
+    const fb = document.getElementById('feedback-block');
+    fb.innerHTML = '';
+
+    if (opt.correct) {
+      fb.innerHTML = `
+        <div class="feedback-correct">
+          <span class="feedback-icon">✅</span>
+          <div class="feedback-title-correct">CORRECT!</div>
+          <div class="feedback-tip-correct">${s.tip}</div>
+        </div>
+        <div class="next-label">Moving to next step...</div>
+      `;
+    } else {
+      const correctText = s.options.find(o => o.correct).text;
+      fb.innerHTML = `
+        <div class="feedback-wrong">
+          <span class="feedback-icon">❌</span>
+          <div class="feedback-title-wrong">TRY AGAIN NEXT TIME!</div>
+          <div class="feedback-tip-wrong">${s.tip}</div>
+          <div class="feedback-correct-ans">Correct answer: ${correctText}</div>
+        </div>
+        <div class="next-label">Moving to next step...</div>
+      `;
+    }
+
+    document.getElementById('question-block').classList.add('hidden');
+    fb.classList.remove('hidden');
+
+    setTimeout(() => {
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        renderStep();
+      } else {
+        showComplete();
+      }
+    }, 2000);
+  }
+
+  function showComplete() {
+    document.getElementById('game-screen').classList.add('hidden');
+    document.getElementById('complete-screen').classList.remove('hidden');
+    document.getElementById('final-score').textContent = `Final Score: ${score}/100`;
+    document.getElementById('final-msg').textContent = getScoreMessage();
+  }
+
+  function getScoreMessage() {
+    if (score === 100) return "🏆 Perfect! You're ready for specimen collection!";
+    if (score >= 75) return "🎉 Great job! You understand the process well!";
+    if (score >= 50) return "👍 Good work! Review the areas you missed.";
+    return "📚 Keep studying! Practice makes perfect!";
+  }
+
+  function resetGame() {
+    currentStep = 0;
+    score = 0;
+    document.getElementById('complete-screen').classList.add('hidden');
+    document.getElementById('game-screen').classList.remove('hidden');
+    renderStep();
+  }
+
+  // Init
+  renderStep();
+</script>
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical Emergency Quiz</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    color: #fff;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    font-size: 2em;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px #e94560;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #a0c4ff;
+    font-size: 1em;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  /* MENU */
+  #menu { display: block; }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .em-card {
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 18px;
+    padding: 22px 18px;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
+    text-align: center;
+  }
+  .em-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    background: rgba(233,69,96,0.25);
+    border-color: #e94560;
+  }
+  .em-card .icon { font-size: 3.5em; margin-bottom: 10px; }
+  .em-card h2 { font-size: 1.15em; font-weight: 900; color: #fff; margin-bottom: 6px; }
+  .em-card p { font-size: 0.85em; font-weight: 700; color: #a0c4ff; }
+
+  /* QUIZ */
+  #quiz { display: none; max-width: 700px; margin: 0 auto; }
+  .quiz-header {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+  }
+  #back-btn {
+    background: rgba(255,255,255,0.15);
+    border: none; color: #fff; font-size: 1.4em;
+    border-radius: 50%; width: 42px; height: 42px;
+    cursor: pointer; font-weight: 900;
+    transition: background 0.2s;
+  }
+  #back-btn:hover { background: #e94560; }
+  .quiz-title { font-size: 1.4em; font-weight: 900; color: #fff; }
+  .quiz-icon { font-size: 2em; }
+
+  .progress-bar {
+    background: rgba(255,255,255,0.15);
+    border-radius: 50px; height: 12px; margin-bottom: 20px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 50px;
+    background: linear-gradient(90deg, #e94560, #f5a623);
+    transition: width 0.4s;
+  }
+
+  .q-box {
+    background: rgba(255,255,255,0.10);
+    border-radius: 18px; padding: 24px;
+    margin-bottom: 18px;
+    border: 2px solid rgba(255,255,255,0.15);
+  }
+  .q-emoji { font-size: 3.5em; text-align: center; margin-bottom: 10px; }
+  .q-text { font-size: 1.1em; font-weight: 900; color: #fff; margin-bottom: 18px; text-align: center; }
+  .options { display: grid; gap: 10px; }
+  .opt-btn {
+    background: rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.2);
+    color: #fff; font-size: 0.95em; font-weight: 800;
+    padding: 13px 16px; border-radius: 12px;
+    cursor: pointer; text-align: left;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+  }
+  .opt-btn:hover:not(:disabled) {
+    background: rgba(160,196,255,0.25);
+    border-color: #a0c4ff;
+    transform: scale(1.02);
+  }
+  .opt-btn.correct { background: rgba(0,200,100,0.4)!important; border-color: #00c864!important; }
+  .opt-btn.wrong   { background: rgba(233,69,96,0.4)!important;  border-color: #e94560!important; }
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback {
+    text-align: center; font-size: 1em; font-weight: 900;
+    padding: 12px; border-radius: 12px; margin-top: 12px;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.good { background: rgba(0,200,100,0.25); color: #00ff88; }
+  .feedback.bad  { background: rgba(233,69,96,0.25);  color: #ff6b6b; }
+
+  #next-btn {
+    display: none; width: 100%;
+    background: linear-gradient(90deg, #e94560, #f5a623);
+    border: none; color: #fff; font-size: 1em; font-weight: 900;
+    padding: 14px; border-radius: 12px; cursor: pointer;
+    margin-top: 10px; transition: opacity 0.2s;
+  }
+  #next-btn:hover { opacity: 0.85; }
+
+  /* SCORE */
+  #score-screen {
+    display: none; text-align: center; max-width: 500px; margin: 0 auto;
+    background: rgba(255,255,255,0.08);
+    border-radius: 22px; padding: 40px 30px;
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+  #score-screen .big-emoji { font-size: 5em; margin-bottom: 10px; }
+  #score-screen h2 { font-size: 1.8em; font-weight: 900; margin-bottom: 8px; }
+  #score-screen .score-val { font-size: 3em; font-weight: 900; color: #f5a623; }
+  #score-screen p { font-size: 1em; font-weight: 700; color: #a0c4ff; margin: 10px 0 20px; }
+  #retry-btn, #home-btn {
+    padding: 12px 28px; font-size: 1em; font-weight: 900;
+    border: none; border-radius: 12px; cursor: pointer; margin: 6px;
+    transition: opacity 0.2s;
+  }
+  #retry-btn { background: linear-gradient(90deg,#e94560,#f5a623); color:#fff; }
+  #home-btn  { background: rgba(255,255,255,0.15); color:#fff; }
+  #retry-btn:hover, #home-btn:hover { opacity: 0.8; }
+</style>
+</head>
+<body>
+
+<h1>🚨 Medical Emergency Challenge</h1>
+<p class="subtitle">🩺 Pick an emergency — test your knowledge! 🩺</p>
+
+<!-- MENU -->
+<div id="menu">
+  <div class="card-grid" id="card-grid"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-header">
+    <button id="back-btn" onclick="showMenu()">←</button>
+    <span class="quiz-icon" id="quiz-icon"></span>
+    <span class="quiz-title" id="quiz-title"></span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="q-box">
+    <div class="q-emoji" id="q-emoji"></div>
+    <div class="q-text" id="q-text"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+  <button id="next-btn" onclick="nextQ()">Next Question ➡️</button>
+</div>
+
+<!-- SCORE -->
+<div id="score-screen">
+  <div class="big-emoji" id="score-emoji"></div>
+  <h2 id="score-title"></h2>
+  <div class="score-val" id="score-val"></div>
+  <p id="score-msg"></p>
+  <button id="retry-btn" onclick="retryQuiz()">🔄 Try Again</button>
+  <button id="home-btn" onclick="showMenu()">🏠 Home</button>
+</div>
+
+<script>
+const topics = [
+  {
+    id: "syncope", icon: "😵", name: "Syncope (Fainting)",
+    desc: "When patients suddenly lose consciousness",
+    qs: [
+      { emoji:"😴", q:"What is syncope?", opts:["Fainting / temporary loss of consciousness","A type of seizure","A severe allergic reaction","Low blood sugar"], ans:0 },
+      { emoji:"🧍", q:"What is the FIRST thing you should do when a patient faints?", opts:["Give them water immediately","Help them lie flat and elevate their legs","Call 911 right away","Shake them to wake them up"], ans:1 },
+      { emoji:"🩸", q:"What is a common cause of syncope?", opts:["Too much sugar","Drop in blood pressure","High fever","Broken bone"], ans:1 },
+      { emoji:"💡", q:"How should a fainting patient be positioned?", opts:["Sitting upright","Standing up","Lying flat with legs raised","On their stomach"], ans:2 },
+      { emoji:"✅", q:"After a patient recovers from fainting, what should you do?", opts:["Send them home immediately","Monitor vitals and document the event","Give them a snack","Ask them to exercise"], ans:1 }
+    ]
+  },
+  {
+    id: "seizure", icon: "⚡", name: "Seizures",
+    desc: "Abnormal electrical activity in the brain",
+    qs: [
+      { emoji:"🧠", q:"What causes a seizure?", opts:["Allergic reaction","Abnormal electrical activity in the brain","Low oxygen from asthma","Blocked arteries"], ans:1 },
+      { emoji:"🙅", q:"What should you NEVER put in a seizing patient's mouth?", opts:["A thermometer","Your fingers or any object","A tongue depressor","A stethoscope"], ans:1 },
+      { emoji:"⏱️", q:"How long does a typical seizure last?", opts:["30–60 minutes","1–3 hours","A few seconds to 2 minutes","Only a split second"], ans:2 },
+      { emoji:"🛡️", q:"What is the MOST important thing to do during a seizure?", opts:["Restrain the patient's arms","Keep the patient safe from injury","Give them medication immediately","Make them stand up"], ans:1 },
+      { emoji:"🚑", q:"When should you call 911 for a seizure?", opts:["Every single time","Only if the patient asks","If it lasts more than 5 minutes or patient doesn't wake up","Never, seizures are always mild"], ans:2 }
+    ]
+  },
+  {
+    id: "hypoglycemia", icon: "🍬", name: "Hypoglycemia",
+    desc: "Dangerously low blood sugar levels",
+    qs: [
+      { emoji:"📉", q:"Hypoglycemia means:", opts:["High blood pressure","High blood sugar","Low blood sugar","Low heart rate"], ans:2 },
+      { emoji:"😰", q:"Which is a common symptom of hypoglycemia?", opts:["High fever","Shakiness, sweating, and confusion","Chest pain","Difficulty breathing"], ans:1 },
+      { emoji:"🧃", q:"If a hypoglycemic patient is conscious, what do you give them?", opts:["Water only","A fast-acting sugar like juice or glucose tablets","A high-protein meal","Nothing — just rest"], ans:1 },
+      { emoji:"📊", q:"What blood glucose level is generally considered hypoglycemic?", opts:["Below 70 mg/dL","Below 120 mg/dL","Below 200 mg/dL","Below 300 mg/dL"], ans:0 },
+      { emoji:"🚫", q:"What should you NEVER do if a patient is unconscious from hypoglycemia?", opts:["Call for help","Check blood sugar","Give food or liquid by mouth","Document the event"], ans:2 }
+    ]
+  },
+  {
+    id: "asthma", icon: "🫁", name: "Asthma Attack",
+    desc: "Sudden airway restriction and breathing difficulty",
+    qs: [
+      { emoji:"😮‍💨", q:"What happens during an asthma attack?", opts:["Blood sugar drops rapidly","Airways swell and narrow, making breathing hard","The heart stops pumping","Blood pressure drops suddenly"], ans:1 },
+      { emoji:"💨", q:"What is the first-line treatment for an asthma attack?", opts:["Epinephrine injection","Rescue inhaler (bronchodilator)","CPR","Oxygen mask only"], ans:1 },
+      { emoji:"🪑", q:"What position helps an asthma patient breathe easier?", opts:["Lying flat on back","Sitting upright leaning slightly forward","Standing with arms raised","On their left side"], ans:1 },
+      { emoji:"⚠️", q:"Which is a sign that an asthma attack is becoming SEVERE?", opts:["They can speak full sentences","Wheezing stops and patient is silent","Mild coughing","Slight shortness of breath"], ans:1 },
+      { emoji:"🌬️", q:"Asthma attacks are triggered by:", opts:["Drinking cold water only","Allergens, exercise, smoke, or cold air","Eating too much sugar","Too much sleep"], ans:1 }
+    ]
+  },
+  {
+    id: "anaphylaxis", icon: "🐝", name: "Anaphylaxis",
+    desc: "Life-threatening severe allergic reaction",
+    qs: [
+      { emoji:"🤧", q:"Anaphylaxis is:", opts:["A mild rash from a bee sting","A life-threatening severe allergic reaction","A type of fainting episode","A blood sugar emergency"], ans:1 },
+      { emoji:"💉", q:"What is the FIRST treatment for anaphylaxis?", opts:["Antihistamine pill","Inhaler","Epinephrine (EpiPen)","Cold compress"], ans:2 },
+      { emoji:"🦺", q:"Where is an EpiPen injected?", opts:["In the arm vein","In the outer thigh","In the stomach","In the neck"], ans:1 },
+      { emoji:"😶", q:"Which is a symptom of anaphylaxis?", opts:["Throat swelling and difficulty breathing","Mild itchy eyes only","Slight headache","Low-grade fever"], ans:0 },
+      { emoji:"🚨", q:"After giving epinephrine for anaphylaxis, you should:", opts:["Send the patient home to rest","Always call 911 and monitor closely","Give another EpiPen immediately","Have the patient walk it off"], ans:1 }
+    ]
+  },
+  {
+    id: "cardiac", icon: "❤️", name: "Cardiac Arrest",
+    desc: "The heart suddenly stops beating",
+    qs: [
+      { emoji:"💔", q:"Cardiac arrest means:", opts:["The heart is beating too fast","The heart has completely stopped","Blood pressure is too high","The patient is having a panic attack"], ans:1 },
+      { emoji:"🤜", q:"What should you do FIRST when someone collapses in cardiac arrest?", opts:["Wait and observe","Check if they are responsive and call 911","Give them water","Elevate their legs"], ans:1 },
+      { emoji:"🫀", q:"Where do you place your hands for CPR chest compressions?", opts:["On the stomach","On the center of the chest (sternum)","On the left shoulder","On the lower back"], ans:1 },
+      { emoji:"⚡", q:"What does an AED do?", opts:["Measures blood pressure","Delivers a shock to help restart the heart","Gives the patient oxygen","Checks blood sugar"], ans:1 },
+      { emoji:"🔢", q:"What is the correct rate for CPR chest compressions?", opts:["30 compressions per minute","60 compressions per minute","100–120 compressions per minute","200 compressions per minute"], ans:2 }
+    ]
+  }
+];
+
+let currentTopic = null, qIndex = 0, score = 0;
+
+function buildMenu() {
+  const grid = document.getElementById('card-grid');
+  grid.innerHTML = '';
+  topics.forEach(t => {
+    grid.innerHTML += `
+      <div class="em-card" onclick="startQuiz('${t.id}')">
+        <div class="icon">${t.icon}</div>
+        <h2>${t.name}</h2>
+        <p>${t.desc}</p>
+      </div>`;
+  });
+}
+
+function showMenu() {
+  document.getElementById('menu').style.display = 'block';
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('score-screen').style.display = 'none';
+}
+
+function startQuiz(id) {
+  currentTopic = topics.find(t => t.id === id);
+  qIndex = 0; score = 0;
+  document.getElementById('menu').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  document.getElementById('score-screen').style.display = 'none';
+  document.getElementById('quiz-icon').textContent = currentTopic.icon;
+  document.getElementById('quiz-title').textContent = currentTopic.name;
+  loadQ();
+}
+
+function loadQ() {
+  const qs = currentTopic.qs;
+  const q = qs[qIndex];
+  const pct = (qIndex / qs.length) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('q-emoji').textContent = q.emoji;
+  document.getElementById('q-text').textContent = `Q${qIndex+1}: ${q.q}`;
+  const optDiv = document.getElementById('options');
+  optDiv.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    optDiv.innerHTML += `<button class="opt-btn" onclick="answer(this,${i})">${o}</button>`;
+  });
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback'; fb.textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+}
+
+function answer(btn, idx) {
+  const q = currentTopic.qs[qIndex];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('feedback');
+  if (idx === q.ans) {
+    btn.classList.add('correct');
+    score++;
+    fb.textContent = '✅ Correct! Great job!';
+    fb.className = 'feedback show good';
+  } else {
+    btn.classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    fb.textContent = `❌ Not quite! The correct answer is: "${q.opts[q.ans]}"`;
+    fb.className = 'feedback show bad';
+  }
+  document.getElementById('next-btn').style.display = 'block';
+  document.getElementById('next-btn').textContent =
+    qIndex + 1 < currentTopic.qs.length ? 'Next Question ➡️' : '🏁 See My Score!';
+}
+
+function nextQ() {
+  qIndex++;
+  if (qIndex < currentTopic.qs.length) { loadQ(); }
+  else { showScore(); }
+}
+
+function showScore() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('score-screen').style.display = 'block';
+  const total = currentTopic.qs.length;
+  const pct = score / total;
+  let emoji, title, msg;
+  if (pct === 1)      { emoji='🏆'; title='PERFECT SCORE!'; msg='You are a Medical Emergency SUPERSTAR! 🌟'; }
+  else if (pct >= .6) { emoji='👍'; title='Great Work!';     msg='Keep studying — you\'re almost there! 💪'; }
+  else                { emoji='📚'; title='Keep Practicing!'; msg='Review the topic and try again — you\'ve got this! 🩺'; }
+  document.getElementById('score-emoji').textContent = emoji;
+  document.getElementById('score-title').textContent = title;
+  document.getElementById('score-val').textContent = `${score} / ${total}`;
+  document.getElementById('score-msg').textContent = msg;
+}
+
+function retryQuiz() { startQuiz(currentTopic.id); }
+
+buildMenu();
+</script>
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Safety: Biohazard Exposure Response</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            height: 8px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: #4ecdc4;
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 25px;
+        }
+
+        .question-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.3);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .scenario-card {
+            background: #f8f9fa;
+            border-left: 5px solid #ff6b6b;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .scenario-title {
+            color: #2c3e50;
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .scenario-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .scenario-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #34495e;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            border-color: #4ecdc4;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .option-letter {
+            background: #4ecdc4;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .option.correct {
+            border-color: #27ae60;
+            background: #d5f4e6;
+        }
+
+        .option.incorrect {
+            border-color: #e74c3c;
+            background: #fadbd8;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d5f4e6;
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+
+        .feedback.incorrect {
+            background: #fadbd8;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .score-card {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .score-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: white;
+            color: #4ecdc4;
+            border: 2px solid white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            background: transparent;
+            color: white;
+        }
+
+        .protocol-reminder {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .protocol-title {
+            color: #856404;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .protocol-steps {
+            color: #856404;
+            line-height: 1.6;
+        }
+
+        .protocol-steps ol {
+            margin-left: 20px;
+        }
+
+        .protocol-steps li {
+            margin-bottom: 8px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="question-counter">
+                Question <span id="current-question">1</span> of <span id="total-questions">8</span>
+            </div>
+            <h1>🧬 Lab Safety Challenge</h1>
+            <p>Master Biohazard Exposure Response Protocols</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="content" id="content">
+            <div class="protocol-reminder">
+                <div class="protocol-title">
+                    ⚠️ Remember: Biohazard Exposure Protocol
+                </div>
+                <div class="protocol-steps">
+                    <ol>
+                        <li><strong>Wash area immediately</strong> - Remove contamination quickly</li>
+                        <li><strong>Report incident</strong> - Notify supervisor/safety officer</li>
+                        <li><strong>Follow post-exposure protocols (PEP)</strong> - Complete required procedures</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="scenario-card" id="question-card">
+                <!-- Questions will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                scenario: "Blood Splash to Face",
+                icon: "🩸",
+                text: "While drawing blood from a patient, the tube breaks and blood splashes onto your face and into your eyes. What should be your FIRST action?",
+                options: [
+                    "Complete the blood draw first, then clean up",
+                    "Immediately flush eyes and face with clean water for 15 minutes",
+                    "Call your supervisor before doing anything else",
+                    "Apply antiseptic to your face and continue working"
+                ],
+                correct: 1,
+                explanation: "✅ Correct! Immediate decontamination is the first priority. Flush exposed areas with clean water for at least 15 minutes to remove the biological material before it can cause infection."
+            },
+            {
+                scenario: "Needle Stick Injury",
+                icon: "💉",
+                text: "You accidentally stick yourself with a used needle while disposing of medical waste. After washing the wound, what's your next step?",
+                options: [
+                    "Apply a bandage and continue working",
+                    "Report the incident to your supervisor immediately",
+                    "Wait until the end of your shift to seek help",
+                    "Clean the needle and continue using it"
+                ],
+                correct: 1,
+                explanation: "✅ Correct! After immediate wound care, reporting the incident is crucial for proper documentation and to initiate post-exposure protocols, including potential testing and preventive treatment."
+            },
+            {
+                scenario: "Chemical Spill on Skin",
+                icon: "🧪",
+                text: "A laboratory chemical splashes on your arm while you're working. The area starts to burn slightly. What should you do first?",
+                options: [
+                    "Apply ice to the affected area",
+                    "Remove contaminated clothing and flush skin with water for 15-20 minutes",
+                    "Cover the area with a sterile bandage",
+                    "Apply neutralizing solution immediately"
+                ],
+                correct: 1,
+                explanation: "✅ Correct! Remove contaminated clothing and flush with copious amounts of water. Never apply ice or neutralizing solutions as they can worsen chemical burns."
+            },
+            {
+                scenario: "Infectious Material Inhalation",
+                icon: "😷",
+                text: "You're working in the lab when a container of potentially infectious material breaks, creating an aerosol. You may have inhaled some particles. What should you do?",
+                options: [
+                    "Hold your breath and continue working",
+                    "Leave the area immediately and get fresh air",
+                    "Put on a mask and clean up the spill right away",
+                    "Gargle with antiseptic mouthwash"
+                ],
+                correct: 1,
+                explanation: "✅ Correct! Leave the contaminated area immediately to prevent further exposure. Get fresh air and then report the incident for proper evaluation and follow-up care."
+            },
+            {
+                scenario: "Broken Glass with Blood",
+                icon: "🩸",
+                text: "While cleaning up broken glass from a blood collection tube, you cut your hand and it starts bleeding. There's visible blood on the glass fragment. What's the proper sequence of actions?",
+                options: [
+                    "Pick up all glass pieces first, then treat the wound",
+                    "Wash the wound, apply pressure to stop bleeding, then report the incident",
+                    "Apply antiseptic immediately and continue cleaning",
+                    "Call emergency services immediately"
+                ],
+                correct: 1,
+                explanation: "✅ Correct! Treat your wound first (wash and stop bleeding), then report the incident. This ensures both immediate safety and proper documentation for post-exposure evaluation."
+            },
+            {
+                scenario: "Post-Exposure Protocol Decision",
+                icon: "📋",
+                text: "After a potential HIV exposure incident, your supervisor asks about Post-Exposure Prophylaxis (PEP). When should PEP ideally be started?",
+                options: [
+                    "Within 72 hours, but preferably within 2 hours",
+                    "Only if symptoms develop within a week",
+                    "After waiting for initial test results",
+                    "It doesn't matter when it's started"
+                ],
+                correct: 0,
+                explanation: "✅ Correct! PEP is most effective when started as soon as possible, ideally within 2 hours but no later than 72 hours after exposure. Time is critical for effectiveness."
+            },
+            {
+                scenario: "Documentation Requirements",
+                icon: "📝",
+                text: "You've had a biohazard exposure and completed immediate first aid. Which information is MOST important to document for the incident report?",
+                options: [
+                    "Only the time of the incident",
+                    "Just the type of biological material involved",
+                    "Time, type of exposure, first aid given, and source patient information if available",
+                    "Only your personal medical history"
+                ],
+                correct: 2,
+                explanation: "✅ Correct! Complete documentation includes time, type of exposure, immediate actions taken, and source information. This helps determine appropriate follow-up care and prevention measures."
+            },
+            {
+                scenario: "Multiple Exposure Scenario",
+                icon: "⚡",
+                text: "During an emergency situation, you have blood on your hands, a small cut on your finger, and may have inhaled aerosols. What's the correct priority order for your response?",
+                options: [
+                    "Report incident, wash hands, treat cut",
+                    "Wash hands and cut immediately, get fresh air, then report",
+                    "Treat cut first, then wash hands, then get fresh air",
+                    "Call supervisor first before doing anything"
+                ],
+                correct: 1,
+                explanation: "✅ Correct! Address immediate contamination first (wash hands and cut), ensure you're in fresh air, then report. Immediate decontamination takes priority to prevent further absorption or infection."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            const question = questions[currentQuestion];
+            const questionCard = document.getElementById('question-card');
+            
+            document.getElementById('current-question').textContent = currentQuestion + 1;
+            document.getElementById('total-questions').textContent = questions.length;
+            
+            const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = progressPercent + '%';
+            
+            questionCard.innerHTML = `
+                <div class="scenario-title">
+                    <span class="scenario-icon">${question.icon}</span>
+                    ${question.scenario}
+                </div>
+                <div class="scenario-text">${question.text}</div>
+                <div class="options" id="options">
+                    ${question.options.map((option, index) => `
+                        <div class="option" onclick="selectOption(${index})">
+                            <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                            <div>${option}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="feedback" id="feedback"></div>
+                <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+                    ${currentQuestion === questions.length - 1 ? 'See Results' : 'Next Question'} →
+                </button>
+            `;
+            
+            answered = false;
+        }
+
+        function selectOption(selectedIndex) {
+            if (answered) return;
+            
+            const question = questions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            
+            answered = true;
+            
+            options.forEach((option, index) => {
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && index !== question.correct) {
+                    option.classList.add('incorrect');
+                }
+                option.style.cursor = 'default';
+            });
+            
+            if (selectedIndex === question.correct) {
+                score++;
+                feedback.className = 'feedback correct';
+                feedback.textContent = question.explanation;
+                options[selectedIndex].classList.add('pulse');
+            } else {
+                feedback.className = 'feedback incorrect';
+                feedback.innerHTML = `❌ Incorrect. ${question.explanation}`;
+            }
+            
+            feedback.style.display = 'block';
+            nextBtn.style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / questions.length) * 100);
+            let message, emoji;
+            
+            if (percentage >= 90) {
+                message = "Outstanding! You're a Lab Safety Expert!";
+                emoji = "🏆";
+            } else if (percentage >= 75) {
+                message = "Great job! You have strong safety knowledge!";
+                emoji = "🌟";
+            } else if (percentage >= 60) {
+                message = "Good effort! Review the protocols and try again!";
+                emoji = "📚";
+            } else {
+                message = "Keep studying! Safety is crucial in healthcare!";
+                emoji = "💪";
+            }
+            
+            document.getElementById('content').innerHTML = `
+                <div class="score-card">
+                    <div style="font-size: 4em; margin-bottom: 20px;">${emoji}</div>
+                    <h2>${message}</h2>
+                    <div class="score-number">${score}/${questions.length}</div>
+                    <div style="font-size: 1.2em; margin-bottom: 20px;">
+                        You scored ${percentage}% on biohazard exposure protocols
+                    </div>
+                    <div style="font-size: 1em; opacity: 0.9; margin-bottom: 30px;">
+                        Remember: <strong>Wash → Report → Follow PEP</strong>
+                    </div>
+                    <button class="restart-btn" onclick="restartQuiz()">
+                        🔄 Take Quiz Again
+                    </button>
+                </div>
+                
+                <div class="protocol-reminder" style="margin-top: 30px;">
+                    <div class="protocol-title">
+                        🎯 Key Takeaways for Lab Safety
+                    </div>
+                    <div class="protocol-steps">
+                        <ul style="margin-left: 20px; color: #856404;">
+                            <li><strong>Speed matters:</strong> Immediate decontamination prevents infection</li>
+                            <li><strong>Report everything:</strong> Proper documentation protects you legally</li>
+                            <li><strong>Follow up:</strong> Post-exposure protocols can be life-saving</li>
+                            <li><strong>Prevention is key:</strong> Always use appropriate PPE and safety procedures</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+            loadQuestion();
+        }
+
+        // Initialize the quiz
+        loadQuestion();
+    </script>
+</body>
+</html>

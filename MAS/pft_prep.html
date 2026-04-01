@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PFT Pre-Test Prep</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0a2540; min-height: 100vh; padding: 20px; }
+  .pft-wrap { max-width: 640px; margin: 0 auto; }
+  .pft-title { text-align: center; font-size: 22px; font-weight: 700; color: #7ec8f7; margin-bottom: 0.5rem; }
+  .pft-subtitle { text-align: center; font-size: 14px; color: #a8d4f5; margin-bottom: 1.5rem; font-weight: 600; }
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .prep-card { background: #0f3460; border-radius: 14px; padding: 1.2rem 0.8rem; text-align: center; border: 2px solid #2a6aad; cursor: pointer; transition: transform 0.15s, border-color 0.15s, background 0.15s; }
+  .prep-card:hover { transform: translateY(-3px); border-color: #7ec8f7; }
+  .prep-card .icon { font-size: 48px; margin-bottom: 8px; line-height: 1; }
+  .prep-card .label { font-size: 14px; font-weight: 700; color: #d6eeff; line-height: 1.4; }
+  .prep-card.flipped { background: #1a5fa0; border-color: #7ec8f7; }
+  .prep-card.flipped .label { color: #ffffff; }
+  .quiz-box { background: #0f3460; border-radius: 14px; border: 2px solid #2a6aad; padding: 1.25rem 1.25rem 1rem; margin-bottom: 1.5rem; }
+  .quiz-q { font-size: 15px; font-weight: 700; color: #a8d4f5; margin-bottom: 1rem; }
+  .quiz-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .quiz-opt { background: #0a2540; border: 1.5px solid #2a6aad; border-radius: 10px; padding: 0.6rem 0.8rem; font-size: 13px; font-weight: 700; color: #7ec8f7; cursor: pointer; transition: background 0.15s, border-color 0.15s; text-align: center; }
+  .quiz-opt:hover { background: #163a5f; border-color: #7ec8f7; }
+  .quiz-opt.correct { background: #1a3d0a; border-color: #5faa1a; color: #c5f0a0; }
+  .quiz-opt.wrong { background: #3d0a0a; border-color: #e24b4a; color: #ffd0d0; }
+  .feedback { margin-top: 10px; font-size: 14px; font-weight: 700; min-height: 22px; text-align: center; }
+  .feedback.ok { color: #7ed44c; }
+  .feedback.err { color: #ff7b7b; }
+  .score-bar { display: flex; align-items: center; gap: 12px; background: #0f3460; border-radius: 12px; padding: 0.75rem 1rem; border: 2px solid #2a6aad; margin-bottom: 1.2rem; }
+  .score-label { font-size: 13px; font-weight: 700; color: #a8d4f5; white-space: nowrap; }
+  .bar-track { flex: 1; height: 10px; background: #0a2540; border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 10px; background: #378ADD; border-radius: 6px; transition: width 0.4s; }
+  .score-num { font-size: 14px; font-weight: 700; color: #7ec8f7; white-space: nowrap; }
+  .lungs-svg { display: block; margin: 0 auto 1rem; }
+  .section-hdr { font-size: 16px; font-weight: 700; color: #a8d4f5; margin: 0 0 0.75rem; text-align: center; }
+  .reset-btn { display: block; margin: 0 auto; background: #1a5fa0; color: #ffffff; border: none; border-radius: 10px; padding: 0.6rem 1.8rem; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+  .reset-btn:hover { background: #2a7fcf; }
+</style>
+</head>
+<body>
+<div class="pft-wrap">
+  <div class="pft-title">PFT Pre-Test Prep</div>
+  <div class="pft-subtitle">Test your knowledge — tap the cards, answer the quiz!</div>
+
+  <svg class="lungs-svg" width="120" height="90" viewBox="0 0 120 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="54" y="4" width="12" height="28" rx="6" fill="#378ADD"/>
+    <ellipse cx="32" cy="56" rx="28" ry="28" fill="#1a5fa0"/>
+    <ellipse cx="88" cy="56" rx="28" ry="28" fill="#1a5fa0"/>
+    <path d="M54 28 Q40 32 26 44" stroke="#7ec8f7" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M66 28 Q80 32 94 44" stroke="#7ec8f7" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <ellipse cx="32" cy="58" rx="16" ry="18" fill="#2a6aad"/>
+    <ellipse cx="88" cy="58" rx="16" ry="18" fill="#2a6aad"/>
+    <text x="60" y="88" font-size="9" font-weight="700" fill="#a8d4f5" text-anchor="middle">Healthy Lungs</text>
+  </svg>
+
+  <div class="section-hdr">Flip each card to reveal the rule</div>
+
+  <div class="cards-grid" id="flipCards">
+    <div class="prep-card" onclick="flipCard(this,'Avoid heavy meals 4 hours before the test')">
+      <div class="icon">🍔</div>
+      <div class="label">No heavy meals</div>
+    </div>
+    <div class="prep-card" onclick="flipCard(this,'No smoking for at least 4 hours before testing')">
+      <div class="icon">🚬</div>
+      <div class="label">No smoking</div>
+    </div>
+    <div class="prep-card" onclick="flipCard(this,'Hold bronchodilator inhalers as directed before the PFT')">
+      <div class="icon">💨</div>
+      <div class="label">No inhalers</div>
+    </div>
+    <div class="prep-card" onclick="flipCard(this,'Wear loose, comfortable clothing — nothing tight around the chest!')">
+      <div class="icon">👕</div>
+      <div class="label">Loose clothing</div>
+    </div>
+    <div class="prep-card" onclick="flipCard(this,'Review the EHR and verify the patient\'s identity before starting')">
+      <div class="icon">📋</div>
+      <div class="label">Check EHR &amp; ID</div>
+    </div>
+    <div class="prep-card" onclick="flipCard(this,'Good patient prep = better test quality. Review instructions clearly!')">
+      <div class="icon">✅</div>
+      <div class="label">Prep affects quality</div>
+    </div>
+  </div>
+
+  <div id="scoreSection" style="display:none">
+    <div class="score-bar">
+      <span class="score-label">Quiz score</span>
+      <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+      <span class="score-num" id="scoreNum">0 / 5</span>
+    </div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-q" id="quizQ">Loading question...</div>
+    <div class="quiz-opts" id="quizOpts"></div>
+    <div class="feedback" id="fb"></div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">Start over</button>
+</div>
+
+<script>
+const questions = [
+  { q:"How long before a PFT should a patient avoid heavy meals?", opts:["1 hour","4 hours","8 hours","30 minutes"], ans:1 },
+  { q:"Which clothing is recommended for a PFT appointment?", opts:["Tight jeans","Loose comfortable clothes","Formal suit","It doesn't matter"], ans:1 },
+  { q:"Why do we verify patient identity before a PFT?", opts:["It's optional","To bill insurance faster","Accuracy and patient safety","To save time"], ans:2 },
+  { q:"What should patients hold (avoid) before a PFT, besides food and smoking?", opts:["Water","Bronchodilator inhalers","Antacids","All medications"], ans:1 },
+  { q:"Why does patient prep matter for PFT results?", opts:["It doesn't matter","Poor prep can affect test accuracy","It only affects comfort","The machine adjusts automatically"], ans:1 },
+];
+
+const origLabels = ['No heavy meals','No smoking','No inhalers','Loose clothing','Check EHR &amp; ID','Prep affects quality'];
+let curr=0, score=0, answered=false;
+
+function showQ() {
+  if(curr>=questions.length){
+    document.getElementById('quizQ').textContent = score===questions.length ? "Perfect score! You're PFT-ready!" : `Quiz complete! You scored ${score} out of ${questions.length}. Great work!`;
+    document.getElementById('quizOpts').innerHTML='';
+    document.getElementById('fb').textContent='';
+    updateScore(); return;
+  }
+  const q=questions[curr];
+  document.getElementById('quizQ').textContent=(curr+1)+'. '+q.q;
+  const opts=document.getElementById('quizOpts');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('div');
+    btn.className='quiz-opt'; btn.textContent=o;
+    btn.onclick=()=>pick(i,btn,q.ans);
+    opts.appendChild(btn);
+  });
+  document.getElementById('fb').textContent='';
+  document.getElementById('fb').className='feedback';
+  answered=false;
+}
+
+function pick(i, btn, ans) {
+  if(answered) return;
+  answered=true;
+  document.querySelectorAll('.quiz-opt')[ans].className='quiz-opt correct';
+  const fb=document.getElementById('fb');
+  if(i===ans){ score++; fb.textContent='Correct! Well done!'; fb.className='feedback ok'; }
+  else { btn.className='quiz-opt wrong'; fb.textContent='Not quite — the correct answer is highlighted!'; fb.className='feedback err'; }
+  updateScore();
+  setTimeout(()=>{ curr++; showQ(); }, 1800);
+}
+
+function updateScore() {
+  document.getElementById('scoreSection').style.display='block';
+  const pct=Math.round(score/questions.length*100);
+  document.getElementById('barFill').style.width=pct+'%';
+  document.getElementById('scoreNum').textContent=score+' / '+questions.length;
+}
+
+function flipCard(el, msg) {
+  if(el.classList.contains('flipped')){
+    el.classList.remove('flipped');
+    el.querySelector('.label').innerHTML=origLabels[Array.from(el.parentNode.children).indexOf(el)];
+  } else {
+    el.classList.add('flipped');
+    el.querySelector('.label').textContent=msg;
+  }
+}
+
+function resetAll() {
+  curr=0; score=0; answered=false;
+  document.getElementById('scoreSection').style.display='none';
+  document.getElementById('barFill').style.width='0%';
+  document.getElementById('scoreNum').textContent='0 / 5';
+  document.querySelectorAll('.prep-card').forEach((c,i)=>{ c.className='prep-card'; c.querySelector('.label').innerHTML=origLabels[i]; });
+  showQ();
+}
+
+showQ();
+</script>
+</body>
+</html>

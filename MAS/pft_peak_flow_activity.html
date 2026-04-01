@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PFT & Peak Flow Challenge</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #e8f4fd; min-height: 100vh; padding: 20px; }
+  .game-wrap { max-width: 600px; margin: 0 auto; }
+  .title { text-align: center; font-size: 22px; font-weight: 700; color: #0c447c; margin-bottom: 6px; }
+  .subtitle { text-align: center; font-size: 14px; color: #185fa5; margin-bottom: 1.5rem; font-weight: 600; }
+  .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 1.5rem; }
+  .card { background: white; border-radius: 14px; padding: 16px 12px; text-align: center; cursor: pointer; border: 3px solid transparent; transition: transform 0.15s, border-color 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .card:hover { transform: scale(1.04); }
+  .card.correct { border-color: #1d9e75; background: #e1f5ee; animation: pop 0.3s ease; }
+  .card.wrong { border-color: #e24b4a; background: #fcebeb; animation: shake 0.3s ease; }
+  .card-emoji { font-size: 42px; display: block; margin-bottom: 8px; }
+  .card-label { font-size: 13px; font-weight: 700; color: #0c447c; line-height: 1.3; }
+  .question-box { background: white; border-radius: 14px; padding: 16px; margin-bottom: 1.2rem; text-align: center; border: 2px solid #b5d4f4; }
+  .question-text { font-size: 16px; font-weight: 700; color: #042c53; margin: 0; }
+  .feedback { text-align: center; font-size: 15px; font-weight: 700; padding: 10px; border-radius: 10px; margin-bottom: 1rem; min-height: 42px; }
+  .feedback.correct { background: #e1f5ee; color: #0f6e56; }
+  .feedback.wrong { background: #fcebeb; color: #a32d2d; }
+  .feedback.idle { background: #e6f1fb; color: #185fa5; }
+  .score-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .score-pill { background: #185fa5; color: white; font-weight: 700; font-size: 13px; padding: 5px 14px; border-radius: 20px; }
+  .progress-pill { background: #0f6e56; color: white; font-weight: 700; font-size: 13px; padding: 5px 14px; border-radius: 20px; }
+  .next-btn { display: block; width: 100%; padding: 12px; background: #185fa5; color: white; font-size: 16px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; margin-top: 6px; transition: background 0.15s; }
+  .next-btn:hover { background: #0c447c; }
+  .next-btn:disabled { background: #b5d4f4; cursor: default; }
+  .end-screen { text-align: center; padding: 2rem 1rem; }
+  .end-emoji { font-size: 64px; display: block; margin-bottom: 12px; }
+  .end-score { font-size: 32px; font-weight: 700; color: #0c447c; margin-bottom: 8px; }
+  .end-msg { font-size: 16px; font-weight: 600; color: #185fa5; margin-bottom: 1.5rem; }
+  .restart-btn { background: #1d9e75; color: white; font-weight: 700; font-size: 16px; border: none; padding: 12px 32px; border-radius: 12px; cursor: pointer; }
+  .restart-btn:hover { background: #0f6e56; }
+  @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.08)} 100%{transform:scale(1.04)} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+</style>
+</head>
+<body>
+<div class="game-wrap" id="app">
+  <div class="title">🫁 PFT & Peak Flow Challenge!</div>
+  <div class="subtitle">Match each scenario to the correct reason PFT or Peak Flow is needed</div>
+  <div class="score-bar">
+    <span class="score-pill" id="score-display">Score: 0</span>
+    <span class="progress-pill" id="progress-display">Question 1 / 8</span>
+  </div>
+  <div class="question-box">
+    <p class="question-text" id="question-text">Loading...</p>
+  </div>
+  <div class="feedback idle" id="feedback-box">Pick the best answer below!</div>
+  <div class="cards-grid" id="cards-grid"></div>
+  <button class="next-btn" id="next-btn" disabled onclick="nextQuestion()">Next Question →</button>
+</div>
+
+<script>
+const questions = [
+  { q:"A patient says: 'I've been coughing and wheezing for months. My doctor thinks it might be asthma or COPD.' Why would PFT be ordered?", correct:"Diagnosis of Lung Disease", choices:["Diagnosis of Lung Disease","Measuring Severity","Evaluating Treatment","Investigating Symptoms"], explanation:"PFT helps identify and diagnose specific lung conditions like asthma, COPD, and more!" },
+  { q:"A patient with known asthma asks: 'How bad is my asthma right now?' The doctor wants a number to grade their condition.", correct:"Measuring Severity", choices:["Diagnosis of Lung Disease","Measuring Severity","Evaluating Treatment","Investigating Symptoms"], explanation:"PFT and peak flow scores help grade how mild or severe a patient's lung condition is!" },
+  { q:"A COPD patient has been on a new inhaler for 3 months. The doctor wants to know if the medication is actually working.", correct:"Evaluating Treatment", choices:["Diagnosis of Lung Disease","Measuring Severity","Evaluating Treatment","Investigating Symptoms"], explanation:"Testing before and after treatment shows if the therapy is improving lung function!" },
+  { q:"A patient complains of shortness of breath when climbing stairs. The cause is unknown — could be heart or lungs.", correct:"Investigating Symptoms", choices:["Diagnosis of Lung Disease","Measuring Severity","Evaluating Treatment","Investigating Symptoms"], explanation:"PFT helps investigate unexplained respiratory symptoms to find the root cause!" },
+  { q:"A firefighter needs a baseline lung test before starting their job, and yearly checks after smoke exposure.", correct:"Measuring Severity", choices:["Measuring Severity","Diagnosing Lung Disease","Evaluating Treatment","Investigating Symptoms"], explanation:"Regular peak flow tracking measures if exposure is impacting lung function over time!" },
+  { q:"An asthma patient's controller medication was doubled last month. The doctor checks if airflow has improved.", correct:"Evaluating Treatment", choices:["Investigating Symptoms","Measuring Severity","Evaluating Treatment","Diagnosis of Lung Disease"], explanation:"Peak flow before and after medication change evaluates whether the new dose is working!" },
+  { q:"A child has a persistent night-time cough. The pediatrician suspects a lung issue but isn't sure which one.", correct:"Diagnosis of Lung Disease", choices:["Evaluating Treatment","Measuring Severity","Investigating Symptoms","Diagnosis of Lung Disease"], explanation:"PFT can help confirm or rule out a specific lung disease in the child!" },
+  { q:"A patient woke up feeling tight in the chest. The nurse wants to quickly check if their airflow is dangerously low.", correct:"Investigating Symptoms", choices:["Diagnosis of Lung Disease","Measuring Severity","Evaluating Treatment","Investigating Symptoms"], explanation:"Peak flow is fast and bedside-ready — perfect for quickly investigating sudden symptoms!" },
+];
+
+const emojiMap = {"Diagnosis":"🔬","Measuring":"📊","Evaluating":"💊","Investigating":"🔍","Diagnosing":"🔬"};
+let current=0, score=0, answered=false;
+
+function shuffle(arr) { return arr.slice().sort(()=>Math.random()-0.5); }
+
+function loadQuestion() {
+  answered=false;
+  const q=questions[current];
+  document.getElementById('question-text').textContent=q.q;
+  document.getElementById('score-display').textContent='Score: '+score;
+  document.getElementById('progress-display').textContent='Question '+(current+1)+' / '+questions.length;
+  document.getElementById('feedback-box').textContent='Pick the best answer below!';
+  document.getElementById('feedback-box').className='feedback idle';
+  document.getElementById('next-btn').disabled=true;
+  document.getElementById('next-btn').textContent='Next Question →';
+  const grid=document.getElementById('cards-grid');
+  grid.innerHTML='';
+  shuffle(q.choices).forEach(choice=>{
+    const card=document.createElement('div');
+    card.className='card';
+    const em=emojiMap[choice.split(' ')[0]]||'🫁';
+    card.innerHTML=`<span class="card-emoji">${em}</span><span class="card-label">${choice}</span>`;
+    card.onclick=()=>checkAnswer(card,choice);
+    grid.appendChild(card);
+  });
+}
+
+function checkAnswer(card, choice) {
+  if(answered) return;
+  answered=true;
+  const correct=questions[current].correct;
+  const fb=document.getElementById('feedback-box');
+  if(choice===correct){
+    card.className='card correct'; score++;
+    fb.textContent='✅ Correct! '+questions[current].explanation;
+    fb.className='feedback correct';
+  } else {
+    card.className='card wrong';
+    fb.textContent='❌ Not quite! The answer is: '+correct+'. '+questions[current].explanation;
+    fb.className='feedback wrong';
+    document.querySelectorAll('.card').forEach(c=>{ if(c.querySelector('.card-label').textContent===correct) c.className='card correct'; });
+  }
+  document.getElementById('score-display').textContent='Score: '+score;
+  const btn=document.getElementById('next-btn');
+  btn.disabled=false;
+  if(current===questions.length-1) btn.textContent='See My Results 🎉';
+}
+
+function nextQuestion() {
+  current++;
+  if(current>=questions.length) showEnd();
+  else loadQuestion();
+}
+
+function showEnd() {
+  const pct=Math.round(score/questions.length*100);
+  let em='😊', msg='Good effort — keep practicing!';
+  if(pct===100){em='🏆';msg="Perfect score! You're a PFT pro!";}
+  else if(pct>=75){em='🌟';msg='Great job! You really know your stuff!';}
+  else if(pct>=50){em='💪';msg='Solid work! Review the cases and try again!';}
+  document.getElementById('app').innerHTML=`
+    <div class="end-screen">
+      <span class="end-emoji">${em}</span>
+      <div class="end-score">${score} / ${questions.length} correct</div>
+      <div class="end-msg">${msg}</div>
+      <div style="background:white;border-radius:14px;padding:16px;margin-bottom:1.5rem;border:2px solid #b5d4f4;">
+        <div style="font-weight:700;font-size:15px;color:#042c53;margin-bottom:10px;">🫁 Quick Review: When is PFT & Peak Flow Needed?</div>
+        <div style="text-align:left;font-size:13px;font-weight:600;color:#185fa5;line-height:2;">
+          🔬 <strong>Diagnosis</strong> — Identify lung diseases like asthma & COPD<br>
+          📊 <strong>Severity</strong> — Grade how mild or serious a condition is<br>
+          💊 <strong>Treatment</strong> — Check if medications are actually working<br>
+          🔍 <strong>Symptoms</strong> — Investigate unexplained breathing problems
+        </div>
+      </div>
+      <button class="restart-btn" onclick="restart()">🔄 Play Again</button>
+    </div>`;
+}
+
+function restart() {
+  current=0; score=0;
+  document.getElementById('app').innerHTML=`
+    <div class="title">🫁 PFT & Peak Flow Challenge!</div>
+    <div class="subtitle">Match each scenario to the correct reason PFT or Peak Flow is needed</div>
+    <div class="score-bar">
+      <span class="score-pill" id="score-display">Score: 0</span>
+      <span class="progress-pill" id="progress-display">Question 1 / 8</span>
+    </div>
+    <div class="question-box"><p class="question-text" id="question-text">Loading...</p></div>
+    <div class="feedback idle" id="feedback-box">Pick the best answer below!</div>
+    <div class="cards-grid" id="cards-grid"></div>
+    <button class="next-btn" id="next-btn" disabled onclick="nextQuestion()">Next Question →</button>`;
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

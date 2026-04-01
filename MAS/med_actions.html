@@ -1,0 +1,351 @@
+med_actions.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medication Actions</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #1a1a2e 100%);
+    font-family: system-ui, sans-serif;
+    padding: 24px 16px;
+    position: relative;
+    overflow-x: hidden;
+  }
+  .particle {
+    position: fixed; border-radius: 50%;
+    background: #fff; pointer-events: none;
+  }
+  #app { max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header .icon { font-size: 36px; margin-bottom: 6px; }
+  .header h1 { font-size: 26px; font-weight: 900; color: #fff; letter-spacing: 1px; text-shadow: 0 2px 12px rgba(0,0,0,.5); }
+  .header p { color: #a8d8ea; font-weight: 700; font-size: 14px; margin-top: 6px; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* MENU */
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 28px; }
+  .cat-card { border-radius: 14px; padding: 14px 10px; text-align: center; }
+  .cat-card .emoji { font-size: 26px; }
+  .cat-card .name { font-weight: 900; font-size: 13px; margin-top: 4px; }
+  .btn-row { display: flex; flex-direction: column; gap: 14px; }
+  .btn { border: none; border-radius: 14px; padding: 18px 24px; color: #fff; font-weight: 900; font-size: 18px; cursor: pointer; letter-spacing: .5px; width: 100%; }
+  .btn-blue { background: linear-gradient(90deg, #4A90D9, #5BC0EB); box-shadow: 0 4px 20px #4A90D955; }
+  .btn-green { background: linear-gradient(90deg, #2BAE8E, #1D9E75); box-shadow: 0 4px 20px #2BAE8E55; }
+  .hint-text { color: #a8d8ea; text-align: center; font-size: 13px; font-weight: 700; margin-top: 20px; }
+
+  /* NAV BAR */
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .btn-back { background: rgba(255,255,255,.1); border: 1.5px solid rgba(255,255,255,.3); border-radius: 10px; padding: 8px 16px; color: #fff; font-weight: 800; cursor: pointer; font-size: 13px; }
+  .nav-info { color: #a8d8ea; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+  .score-badge { background: #2BAE8E; border-radius: 20px; padding: 4px 12px; color: #fff; font-weight: 900; font-size: 13px; }
+
+  /* FLASHCARD */
+  .flashcard {
+    border-radius: 20px; padding: 36px 28px; min-height: 280px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; transition: background .3s;
+  }
+  .flashcard.front { color: #fff; }
+  .flashcard.front h2 { font-size: 28px; font-weight: 900; margin: 10px 0; text-shadow: 0 2px 8px rgba(0,0,0,.4); }
+  .flashcard.front p { opacity: .85; font-weight: 700; font-size: 14px; }
+  .flashcard.back h2 { font-size: 22px; font-weight: 900; margin: 8px 0 12px; }
+  .flashcard.back .def { font-weight: 800; font-size: 16px; color: #333; line-height: 1.5; margin-bottom: 14px; }
+  .example-box { border-radius: 10px; padding: 10px 14px; width: 100%; }
+  .example-box span.label { font-weight: 900; font-size: 13px; }
+  .example-box span.val { font-weight: 700; color: #444; font-size: 13px; }
+  .tip-box { margin-top: 10px; background: rgba(0,0,0,.07); border-radius: 8px; padding: 8px 12px; width: 100%; }
+  .tip-box span.label { font-weight: 900; color: #888; font-size: 12px; }
+  .tip-box span.val { font-weight: 700; color: #555; font-size: 12px; }
+  .fc-btns { display: flex; gap: 12px; margin-top: 20px; }
+  .btn-nav { flex: 1; background: rgba(255,255,255,.12); border: 1.5px solid rgba(255,255,255,.25); border-radius: 12px; padding: 14px; color: #fff; font-weight: 900; cursor: pointer; font-size: 15px; }
+  .btn-nav:disabled { opacity: .4; cursor: not-allowed; }
+  .dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; cursor: pointer; background: rgba(255,255,255,.25); transition: background .2s; }
+
+  /* QUIZ */
+  .scenario-box { background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.2); border-radius: 16px; padding: 22px 20px; margin-bottom: 20px; }
+  .scenario-box p { color: #e0f0ff; font-weight: 800; font-size: 17px; line-height: 1.6; }
+  .classify-label { color: #a8d8ea; font-weight: 800; font-size: 13px; text-align: center; margin-bottom: 14px; letter-spacing: 1px; }
+  .answer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .answer-btn { border-radius: 12px; padding: 14px 10px; cursor: pointer; text-align: center; transition: all .25s; border: 2px solid; }
+  .answer-btn .emoji { font-size: 22px; }
+  .answer-btn .name { font-weight: 900; font-size: 13px; margin-top: 4px; }
+  .feedback { margin-top: 16px; border-radius: 14px; padding: 14px 18px; }
+  .feedback .fb-title { font-weight: 900; font-size: 16px; margin-bottom: 6px; }
+  .feedback .fb-def { font-weight: 700; font-size: 14px; color: #444; }
+  .btn-next { display: block; width: 100%; margin-top: 14px; border: none; border-radius: 14px; padding: 16px; color: #fff; font-weight: 900; font-size: 16px; cursor: pointer; background: linear-gradient(90deg, #4A90D9, #5BC0EB); }
+
+  /* RESULTS */
+  .result-header { text-align: center; margin-bottom: 24px; }
+  .result-header .big-icon { font-size: 60px; }
+  .result-header h2 { color: #fff; font-size: 30px; font-weight: 900; margin: 10px 0 4px; }
+  .result-header p { color: #a8d8ea; font-weight: 800; font-size: 16px; }
+  .answer-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .answer-item { border-radius: 12px; padding: 12px 16px; border: 1.5px solid; }
+  .answer-item .item-row { display: flex; align-items: flex-start; gap: 8px; }
+  .answer-item .scenario-text { font-weight: 800; font-size: 13px; color: #333; margin-bottom: 4px; line-height: 1.4; }
+  .answer-item .answer-label { font-weight: 900; font-size: 12px; }
+  .result-btns { display: flex; gap: 12px; }
+  .result-btns .btn { font-size: 15px; padding: 16px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="header">
+    <div class="icon">💉</div>
+    <h1>MEDICATION ACTIONS</h1>
+    <p>Medical Assistant Interactive Activity</p>
+  </div>
+  <div id="screen"></div>
+</div>
+
+<script>
+const categories = [
+  { id:"therapeutic", label:"Therapeutic", emoji:"💊", color:"#4A90D9", light:"#EAF4FF", border:"#4A90D9",
+    def:"The desired, intended effect of a medication — what it's supposed to do.",
+    example:"Aspirin reducing fever", hint:"Think: what the doctor WANTS the drug to do." },
+  { id:"side", label:"Side Effects", emoji:"😴", color:"#9B6DCA", light:"#F3EEFF", border:"#9B6DCA",
+    def:"Predictable but unwanted effects that occur alongside the therapeutic effect.",
+    example:"Drowsiness from antihistamines", hint:"Think: EXPECTED but NOT desired." },
+  { id:"adverse", label:"Adverse Effects", emoji:"⚠️", color:"#E07B39", light:"#FFF4EC", border:"#E07B39",
+    def:"Harmful or unexpected reactions to a medication that are not anticipated.",
+    example:"Liver damage from acetaminophen overuse", hint:"Think: UNEXPECTED harm." },
+  { id:"toxic", label:"Toxic Effects", emoji:"☠️", color:"#D94F4F", light:"#FFF0F0", border:"#D94F4F",
+    def:"Dangerous effects that occur due to overdose or drug accumulation in the body.",
+    example:"Heart arrhythmia from digoxin toxicity", hint:"Think: TOO MUCH drug = DANGER." },
+  { id:"idiosyncratic", label:"Idiosyncratic", emoji:"❓", color:"#2BAE8E", light:"#E8FBF5", border:"#2BAE8E",
+    def:"Unusual or unexpected responses unique to an individual — often unpredictable.",
+    example:"Malignant hyperthermia from anesthesia", hint:"Think: WEIRD reaction, unique to that person." },
+];
+
+const scenarios = [
+  { text:"A patient takes metformin for diabetes and their blood sugar normalizes.", answer:"therapeutic" },
+  { text:"A patient on antibiotics develops a mild stomach upset but continues treatment.", answer:"side" },
+  { text:"A child accidentally takes triple the dose of acetaminophen — now showing signs of liver failure.", answer:"toxic" },
+  { text:"A patient on penicillin develops a sudden severe allergic reaction no one expected.", answer:"adverse" },
+  { text:"A patient given a standard dose of codeine experiences extreme respiratory depression — a reaction seen in very few people.", answer:"idiosyncratic" },
+  { text:"Blood pressure medication successfully lowers a patient's hypertension to the target range.", answer:"therapeutic" },
+  { text:"An antihistamine causes drowsiness in a patient — listed on the label.", answer:"side" },
+  { text:"A patient accumulates too much digoxin over weeks, causing dangerous heart rhythm changes.", answer:"toxic" },
+  { text:"A patient develops unexpected kidney damage after starting a new NSAID.", answer:"adverse" },
+  { text:"One patient metabolizes warfarin 5x faster than normal — a trait unique to them.", answer:"idiosyncratic" },
+];
+
+let state = {
+  screen: "menu",
+  flashIndex: 0,
+  flipped: false,
+  quizOrder: [],
+  quizIndex: 0,
+  selected: null,
+  score: 0,
+  answers: [],
+};
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - .5); }
+
+function setState(patch) {
+  Object.assign(state, patch);
+  render();
+}
+
+function startQuiz() {
+  setState({ screen:"quiz", quizOrder:shuffle(scenarios), quizIndex:0, selected:null, score:0, answers:[] });
+}
+
+function handleAnswer(id) {
+  if (state.selected) return;
+  const q = state.quizOrder[state.quizIndex];
+  const correct = id === q.answer;
+  setState({
+    selected: id,
+    score: state.score + (correct ? 1 : 0),
+    answers: [...state.answers, { scenario:q.text, chosen:id, correct, correctAnswer:q.answer }]
+  });
+}
+
+function nextQuestion() {
+  if (state.quizIndex + 1 >= state.quizOrder.length) { setState({ screen:"result" }); }
+  else { setState({ quizIndex: state.quizIndex + 1, selected: null }); }
+}
+
+// --- RENDER FUNCTIONS ---
+
+function renderMenu() {
+  const cards = categories.map(c => `
+    <div class="cat-card" style="background:${c.light};border:2.5px solid ${c.border};box-shadow:0 4px 18px ${c.color}33">
+      <div class="emoji">${c.emoji}</div>
+      <div class="name" style="color:${c.color}">${c.label}</div>
+    </div>`).join("");
+
+  return `
+    <div class="cat-grid">${cards}</div>
+    <div class="btn-row">
+      <button class="btn btn-blue" onclick="setState({screen:'flashcard',flashIndex:0,flipped:false})">🃏 STUDY FLASHCARDS</button>
+      <button class="btn btn-green" onclick="startQuiz()">🏆 TAKE THE QUIZ</button>
+    </div>
+    <p class="hint-text">Study the flashcards first, then test yourself with the quiz!</p>`;
+}
+
+function renderFlashcard() {
+  const c = categories[state.flashIndex];
+  const { flashIndex, flipped } = state;
+
+  const cardContent = flipped ? `
+    <div class="flashcard back" style="background:${c.light};border:3px solid ${c.border};box-shadow:0 8px 32px ${c.color}44">
+      <div style="font-size:36px">${c.emoji}</div>
+      <h2 style="color:${c.color}">${c.label}</h2>
+      <p class="def">${c.def}</p>
+      <div class="example-box" style="background:${c.color}22">
+        <span class="label" style="color:${c.color}">EXAMPLE: </span>
+        <span class="val">${c.example}</span>
+      </div>
+      <div class="tip-box">
+        <span class="label">💡 MEMORY TIP: </span>
+        <span class="val">${c.hint}</span>
+      </div>
+    </div>` : `
+    <div class="flashcard front" style="background:linear-gradient(135deg,${c.color}DD,${c.color}99);border:3px solid ${c.border};box-shadow:0 8px 32px ${c.color}44">
+      <div style="font-size:56px">${c.emoji}</div>
+      <h2>${c.label}</h2>
+      <p>Tap to reveal definition</p>
+    </div>`;
+
+  const dots = categories.map((_, i) => `
+    <div class="dot" onclick="setState({flashIndex:${i},flipped:false})"
+      style="background:${i===flashIndex ? c.color : 'rgba(255,255,255,.25)'}"></div>`).join("");
+
+  const readyBtn = flashIndex === categories.length - 1
+    ? `<button class="btn btn-green" style="margin-top:20px" onclick="startQuiz()">🏆 READY? TAKE THE QUIZ →</button>` : "";
+
+  return `
+    <div class="nav">
+      <button class="btn-back" onclick="setState({screen:'menu'})">← MENU</button>
+      <span class="nav-info">${flashIndex+1} / ${categories.length}</span>
+    </div>
+    <div onclick="setState({flipped:${!flipped}})">${cardContent}</div>
+    <div class="fc-btns">
+      <button class="btn-nav" onclick="setState({flashIndex:${Math.max(0,flashIndex-1)},flipped:false})" ${flashIndex===0?"disabled":""}>← PREV</button>
+      <button class="btn-nav" onclick="setState({flashIndex:${Math.min(categories.length-1,flashIndex+1)},flipped:false})" ${flashIndex===categories.length-1?"disabled":""}>NEXT →</button>
+    </div>
+    <div class="dots">${dots}</div>
+    ${readyBtn}`;
+}
+
+function renderQuiz() {
+  const q = state.quizOrder[state.quizIndex];
+  const { selected, score, quizIndex, quizOrder } = state;
+
+  const answerBtns = categories.map(c => {
+    let bg = c.light, border = `2px solid ${c.border}`, nameColor = c.color;
+    if (selected) {
+      if (c.id === q.answer) { bg="#d4f8e8"; border="3px solid #2BAE8E"; nameColor="#1a7a5e"; }
+      else if (c.id === selected) { bg="#ffe0e0"; border="3px solid #D94F4F"; nameColor="#a33"; }
+      else { bg="rgba(255,255,255,.05)"; border="1.5px solid rgba(255,255,255,.1)"; nameColor="#888"; }
+    }
+    return `
+      <button class="answer-btn" onclick="handleAnswer('${c.id}')" ${selected?"disabled":""}
+        style="background:${bg};border:${border};${selected?"cursor:default":""}">
+        <div class="emoji">${c.emoji}</div>
+        <div class="name" style="color:${nameColor}">${c.label}</div>
+      </button>`;
+  }).join("");
+
+  let feedback = "";
+  if (selected) {
+    const correct = selected === q.answer;
+    const correctCat = categories.find(c => c.id === q.answer);
+    feedback = `
+      <div class="feedback" style="background:${correct?"#d4f8e8":"#ffe0e0"};border:2px solid ${correct?"#2BAE8E":"#D94F4F"}">
+        <p class="fb-title" style="color:${correct?"#1a7a5e":"#a33"}">
+          ${correct ? "✅ CORRECT!" : `❌ NOT QUITE — The answer is: ${correctCat.label}`}
+        </p>
+        <p class="fb-def">${correctCat.def}</p>
+      </div>
+      <button class="btn-next" onclick="nextQuestion()">
+        ${quizIndex+1 >= quizOrder.length ? "🏁 SEE RESULTS" : "NEXT QUESTION →"}
+      </button>`;
+  }
+
+  return `
+    <div class="nav">
+      <button class="btn-back" onclick="setState({screen:'menu'})">← MENU</button>
+      <div class="nav-info">
+        <span>Q${quizIndex+1}/${quizOrder.length}</span>
+        <span class="score-badge">✓ ${score}</span>
+      </div>
+    </div>
+    <div class="scenario-box"><p>🩺 ${q.text}</p></div>
+    <p class="classify-label">CLASSIFY THIS MEDICATION ACTION:</p>
+    <div class="answer-grid">${answerBtns}</div>
+    ${feedback}`;
+}
+
+function renderResult() {
+  const { score, answers } = state;
+  const total = scenarios.length;
+  const icon = score>=9?"🏆":score>=7?"⭐":score>=5?"👍":"📚";
+  const msg = score>=9?"OUTSTANDING! You're ready for clinicals! 🎉":
+              score>=7?"GREAT WORK! A little more review and you've got this!":
+              score>=5?"GOOD EFFORT! Review the flashcards and try again.":
+              "KEEP STUDYING! The flashcards will help — you've got this!";
+
+  const items = answers.map(a => {
+    const cat = categories.find(c => c.id === a.correctAnswer);
+    return `
+      <div class="answer-item" style="background:${a.correct?"#d4f8e8":"#ffe0e0"};border-color:${a.correct?"#2BAE8E":"#D94F4F"}">
+        <div class="item-row">
+          <span style="font-size:16px">${a.correct?"✅":"❌"}</span>
+          <div>
+            <p class="scenario-text">${a.scenario}</p>
+            <span class="answer-label" style="color:${a.correct?"#1a7a5e":"#a33"}">
+              ${a.correct?`Correct: ${cat.label}`:`Answer: ${cat.label} ${cat.emoji}`}
+            </span>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+
+  return `
+    <div class="result-header">
+      <div class="big-icon">${icon}</div>
+      <h2>${score} / ${total}</h2>
+      <p>${msg}</p>
+    </div>
+    <div class="answer-list">${items}</div>
+    <div class="result-btns">
+      <button class="btn btn-green" onclick="startQuiz()">🔄 RETRY QUIZ</button>
+      <button class="btn btn-blue" onclick="setState({screen:'flashcard',flashIndex:0,flipped:false})">🃏 FLASHCARDS</button>
+    </div>`;
+}
+
+function render() {
+  const el = document.getElementById("screen");
+  switch(state.screen) {
+    case "menu":      el.innerHTML = renderMenu(); break;
+    case "flashcard": el.innerHTML = renderFlashcard(); break;
+    case "quiz":      el.innerHTML = renderQuiz(); break;
+    case "result":    el.innerHTML = renderResult(); break;
+  }
+}
+
+// Particles
+const pData = Array.from({length:18},(_,i)=>({
+  left:`${(i*37+10)%100}%`, top:`${(i*53+5)%100}%`,
+  size:3+(i%4), opacity:.08+(i%5)*.04
+}));
+pData.forEach(p => {
+  const d = document.createElement("div");
+  d.className = "particle";
+  Object.assign(d.style, { left:p.left, top:p.top, width:p.size+"px", height:p.size+"px", opacity:p.opacity });
+  document.body.appendChild(d);
+});
+
+render();
+</script>
+</body>
+</html>

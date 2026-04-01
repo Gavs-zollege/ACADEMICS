@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA Lab Testing Flashcards</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: #0a0f1e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 16px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #f1f5f9;
+  }
+  .header-box {
+    background: linear-gradient(135deg, #7f1d1d, #991b1b);
+    border-radius: 12px;
+    padding: 14px 28px;
+    margin-bottom: 14px;
+    display: inline-block;
+    text-align: center;
+  }
+  .header-sub { font-size: 13px; font-weight: 700; letter-spacing: 3px; color: #fca5a5; margin-bottom: 4px; }
+  .header-title { font-size: 22px; font-weight: 800; color: #fff; }
+  .subtitle {
+    color: #94a3b8; font-size: 15px; font-weight: 600;
+    background: #1e293b; border-radius: 8px; padding: 10px 18px;
+    max-width: 700px; text-align: center; margin-bottom: 20px;
+  }
+  .subtitle span { color: #fbbf24; }
+  .progress-wrap { width: 100%; max-width: 680px; margin-bottom: 20px; }
+  .progress-labels { display: flex; justify-content: space-between; margin-bottom: 7px; }
+  .prog-left { font-size: 13px; font-weight: 700; color: #94a3b8; }
+  .prog-right { font-size: 13px; font-weight: 700; color: #4ade80; }
+  .prog-track { height: 10px; background: #1e293b; border-radius: 99px; overflow: hidden; }
+  .prog-bar { height: 100%; background: linear-gradient(90deg, #16a34a, #4ade80); border-radius: 99px; transition: width 0.4s ease; }
+  .card {
+    width: 100%; max-width: 680px;
+    background: #111827;
+    border-radius: 18px;
+    border: 3px solid #334155;
+    padding: 30px 28px;
+    min-height: 280px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    margin-bottom: 22px;
+    box-shadow: 0 0 30px #33415533;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .badge {
+    display: inline-block;
+    color: #fff; font-weight: 800; font-size: 13px;
+    letter-spacing: 1.5px; padding: 5px 14px;
+    border-radius: 99px; text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .question { font-size: 20px; font-weight: 800; color: #f1f5f9; line-height: 1.5; margin-bottom: 24px; flex: 1; }
+  .flip-btn {
+    color: #fff; border: none; border-radius: 12px;
+    padding: 16px 24px; font-size: 18px; font-weight: 800;
+    cursor: pointer; width: 100%; letter-spacing: 0.5px;
+    transition: transform 0.15s;
+  }
+  .flip-btn:hover { transform: scale(1.02); }
+  .answer-box {
+    background: #1e293b; border: 2px solid #334155;
+    border-radius: 12px; padding: 18px 20px; display: none;
+  }
+  .answer-label { font-size: 13px; font-weight: 800; color: #4ade80; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
+  .answer-text { font-size: 17px; font-weight: 700; color: #e2e8f0; line-height: 1.7; white-space: pre-line; }
+  .nav { display: flex; gap: 14px; width: 100%; max-width: 680px; flex-wrap: wrap; }
+  .nav-btn {
+    flex: 1; min-width: 120px;
+    background: #1e293b; color: #f1f5f9;
+    border: 2px solid #334155; border-radius: 12px;
+    padding: 15px 10px; font-size: 17px; font-weight: 800;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .nav-btn:hover { background: #273548; }
+  .restart-btn {
+    flex: 1; min-width: 120px;
+    background: #7f1d1d; color: #fca5a5;
+    border: 2px solid #991b1b; border-radius: 12px;
+    padding: 15px 10px; font-size: 17px; font-weight: 800;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .restart-btn:hover { background: #991b1b; }
+  .complete {
+    margin-top: 22px;
+    background: linear-gradient(135deg, #14532d, #15803d);
+    border-radius: 14px; padding: 18px 28px;
+    text-align: center; max-width: 680px; width: 100%;
+    box-shadow: 0 0 24px #4ade8066; display: none;
+  }
+  .complete-emoji { font-size: 28px; margin-bottom: 6px; }
+  .complete-title { font-size: 20px; font-weight: 800; color: #bbf7d0; }
+  .complete-sub { font-size: 15px; font-weight: 600; color: #86efac; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div style="text-align:center; margin-bottom:20px; max-width:700px; width:100%;">
+  <div class="header-box">
+    <div class="header-sub">MEDICAL ASSISTANT PROGRAM</div>
+    <div class="header-title">Week 03 · Lab Testing Flashcards</div>
+  </div>
+  <div class="subtitle">🎯 This fun activity boosts your <span>recall & retention</span> of key lab testing concepts. Flip each card to reveal the answer!</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-labels">
+    <span class="prog-left" id="cardCounter">Card 1 of 15</span>
+    <span class="prog-right" id="seenLabel">0 reviewed · 0% done</span>
+  </div>
+  <div class="prog-track">
+    <div class="prog-bar" id="progBar" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="card" id="card">
+  <div>
+    <span class="badge" id="badge"></span>
+    <div class="question" id="question"></div>
+  </div>
+  <div>
+    <button class="flip-btn" id="flipBtn" onclick="flip()">👆 Tap to Reveal Answer</button>
+    <div class="answer-box" id="answerBox">
+      <div class="answer-label">✅ Answer</div>
+      <div class="answer-text" id="answerText"></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn" onclick="go(-1)">← Previous</button>
+  <button class="restart-btn" onclick="reset()">🔄 Restart</button>
+  <button class="nav-btn" onclick="go(1)">Next →</button>
+</div>
+
+<div class="complete" id="complete">
+  <div class="complete-emoji">🎉</div>
+  <div class="complete-title" id="completeTitle"></div>
+  <div class="complete-sub">Great work! Restart to practice again for even better recall.</div>
+</div>
+
+<script>
+const cards = [
+  { q: "What is the primary purpose of laboratory testing in patient care?", a: "To support the health history and physical exam — aiding in diagnosis, treatment planning, and monitoring of conditions.", category: "Lab Basics" },
+  { q: "What are the three core responsibilities of a Medical Assistant in lab testing?", a: "1. Patient education & preparation\n2. Safe specimen collection & handling\n3. Ensuring proper labeling, transport, and documentation", category: "MA Role" },
+  { q: "What infection control rule applies to ALL test supplies?", a: "Never use expired or previously opened test supplies — accuracy depends on correct collection and handling.", category: "Infection Control" },
+  { q: "What bacteria does the Rapid Strep Test detect?", a: "Group A Streptococcus — the bacteria responsible for bacterial sore throat (strep throat).", category: "Strep Test" },
+  { q: "When swabbing for a throat specimen, which areas must you AVOID?", a: "Avoid the lips, teeth, tongue, and cheeks. Swab only the tonsils, tonsillar pillars, and both sides of the throat.", category: "Strep Test" },
+  { q: "What four steps must be done before and during any rapid test?", a: "1. Confirm provider order\n2. Use PPE & check expiration dates\n3. Perform positive/negative controls\n4. Label specimen & document in EHR", category: "Procedure Highlights" },
+  { q: "What patient position is used for nasopharyngeal (NP) specimen collection?", a: "Semi-Fowler's position — the patient's head is tilted back to allow the swab to be inserted parallel to the palate.", category: "NP Collection" },
+  { q: "How long should you rotate the swab during NP collection, and why?", a: "Rotate for 10–15 seconds to absorb secretions. This ensures enough viral/bacterial material is collected for accurate testing.", category: "NP Collection" },
+  { q: "What does FOBT stand for, and what does it detect?", a: "Fecal Occult Blood Test — it detects hidden (non-visible) blood in stool, which can be a sign of cancer or ulcers.", category: "FOBT" },
+  { q: "Name THREE foods or substances patients must avoid before FOBT.", a: "Red meats, turnips, horseradish, vitamin C, and NSAIDs — all can cause false positive or false negative results.", category: "FOBT" },
+  { q: "What color change indicates a POSITIVE FOBT result?", a: "A bluish color change on the test card indicates a positive result. Always verify the control window for test validity.", category: "FOBT" },
+  { q: "What hormone does the HCG urine pregnancy test detect?", a: "Human Chorionic Gonadotropin (hCG) — the hormone produced during pregnancy.", category: "HCG Test" },
+  { q: "When is the best time to collect urine for an HCG test, and why?", a: "First morning urine — it contains the highest concentration of hCG, giving the most accurate result.", category: "HCG Test" },
+  { q: "What five items must be documented after an HCG pregnancy test?", a: "Date, time, result (positive/negative/invalid), LMP (Last Menstrual Period), and the provider must be notified.", category: "HCG Test" },
+  { q: "List the four post-procedure duties after any lab test.", a: "1. Disinfect the workspace\n2. Dispose of swabs, pipettes, and gloves appropriately\n3. Store kits per guidelines\n4. Record procedure and notify the provider", category: "Post-Procedure" },
+];
+
+const catColors = {
+  "Lab Basics": "#2563eb", "MA Role": "#7c3aed", "Infection Control": "#dc2626",
+  "Strep Test": "#b45309", "Procedure Highlights": "#0f766e", "NP Collection": "#be185d",
+  "FOBT": "#15803d", "HCG Test": "#1d4ed8", "Post-Procedure": "#6d28d9"
+};
+
+let idx = 0, seen = new Set();
+
+function render() {
+  const c = cards[idx];
+  const color = catColors[c.category] || "#334155";
+  document.getElementById('cardCounter').textContent = `Card ${idx + 1} of ${cards.length}`;
+  document.getElementById('seenLabel').textContent = `${seen.size} reviewed · ${Math.round(seen.size/cards.length*100)}% done`;
+  document.getElementById('progBar').style.width = `${Math.round(seen.size/cards.length*100)}%`;
+  document.getElementById('badge').textContent = c.category;
+  document.getElementById('badge').style.background = color;
+  document.getElementById('question').textContent = c.q;
+  document.getElementById('card').style.borderColor = color;
+  document.getElementById('card').style.boxShadow = `0 0 30px ${color}44`;
+  document.getElementById('flipBtn').style.background = `linear-gradient(135deg, ${color}, ${color}cc)`;
+  document.getElementById('flipBtn').style.boxShadow = `0 4px 18px ${color}66`;
+  document.getElementById('flipBtn').style.display = 'block';
+  document.getElementById('answerBox').style.display = 'none';
+  document.getElementById('answerText').textContent = c.a;
+  document.getElementById('complete').style.display = seen.size === cards.length ? 'block' : 'none';
+  if (seen.size === cards.length) {
+    document.getElementById('completeTitle').textContent = `You reviewed all ${cards.length} cards!`;
+  }
+}
+
+function flip() {
+  seen.add(idx);
+  document.getElementById('flipBtn').style.display = 'none';
+  document.getElementById('answerBox').style.display = 'block';
+  document.getElementById('seenLabel').textContent = `${seen.size} reviewed · ${Math.round(seen.size/cards.length*100)}% done`;
+  document.getElementById('progBar').style.width = `${Math.round(seen.size/cards.length*100)}%`;
+  if (seen.size === cards.length) {
+    document.getElementById('complete').style.display = 'block';
+    document.getElementById('completeTitle').textContent = `You reviewed all ${cards.length} cards!`;
+  }
+}
+
+function go(dir) {
+  idx = (idx + dir + cards.length) % cards.length;
+  render();
+}
+
+function reset() {
+  idx = 0; seen = new Set();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

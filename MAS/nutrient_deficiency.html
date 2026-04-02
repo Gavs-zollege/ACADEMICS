@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Signs of Nutrient Deficiency</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#232840; min-height:100vh; font-family:system-ui,sans-serif; color:#f0f4ff; padding:2rem 1rem; }
+  .quiz-title { text-align:center; font-size:22px; font-weight:700; color:#eef2ff; margin-bottom:0.4rem; }
+  .quiz-sub { text-align:center; font-size:14px; font-weight:600; color:#9aadd4; margin-bottom:2rem; }
+  .progress-bar-bg { background:#323a58; border-radius:8px; height:8px; margin-bottom:2rem; }
+  .progress-bar-fill { height:8px; border-radius:8px; background:#5b8dee; transition:width 0.4s; }
+  .card { background:#2d3450; border-radius:14px; border:0.5px solid #444e72; padding:1.5rem; max-width:620px; margin:0 auto; }
+  .q-number { font-size:12px; color:#7aa3f5; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.75rem; }
+  .q-text { font-size:18px; font-weight:700; color:#eef2ff; line-height:1.5; margin-bottom:1.5rem; }
+  .icon-row { display:flex; justify-content:center; margin-bottom:1.5rem; }
+  .icon-circle { width:72px; height:72px; border-radius:50%; background:#3a4268; display:flex; align-items:center; justify-content:center; font-size:32px; }
+  .options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .opt-btn { background:#3a4268; border:1.5px solid #4a5580; border-radius:10px; color:#dce4f8; font-size:15px; font-weight:700; padding:14px 12px; cursor:pointer; transition:all 0.18s; text-align:left; }
+  .opt-btn:hover { background:#434e7a; border-color:#5b8dee; color:#eef2ff; }
+  .opt-btn.correct { background:#1a3a28; border-color:#3ecf80; color:#5eeaa0; }
+  .opt-btn.wrong { background:#3a1e22; border-color:#e05a5a; color:#f07070; }
+  .opt-btn.disabled { pointer-events:none; }
+  .feedback { margin-top:1.2rem; padding:12px 16px; border-radius:10px; font-size:14px; font-weight:600; line-height:1.5; display:none; }
+  .feedback.show { display:block; }
+  .feedback.correct { background:#1a3a28; color:#5eeaa0; border:1px solid #3ecf80; }
+  .feedback.wrong { background:#3a1e22; color:#f07070; border:1px solid #e05a5a; }
+  .next-btn { margin-top:1.2rem; width:100%; background:#5b8dee; border:none; border-radius:10px; color:#fff; font-size:15px; font-weight:700; padding:14px; cursor:pointer; display:none; transition:background 0.15s; }
+  .next-btn:hover { background:#4a7bdc; }
+  .next-btn.show { display:block; }
+  .score-card { text-align:center; padding:1rem 0; }
+  .score-big { font-size:56px; font-weight:700; color:#7aa3f5; }
+  .score-label { font-size:16px; font-weight:700; color:#9aadd4; margin-bottom:1rem; }
+  .score-msg { font-size:18px; font-weight:700; color:#eef2ff; margin-bottom:1.5rem; }
+  .restart-btn { background:#5b8dee; border:none; border-radius:10px; color:#fff; font-size:15px; font-weight:700; padding:14px 2rem; cursor:pointer; }
+  .restart-btn:hover { background:#4a7bdc; }
+  .badge-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:1.5rem; }
+  .badge { padding:6px 14px; border-radius:20px; font-size:13px; font-weight:700; }
+  .badge.green { background:#1a3a28; color:#5eeaa0; }
+  .badge.red { background:#3a1e22; color:#f07070; }
+</style>
+</head>
+<body>
+  <div class="quiz-title">Signs of Nutrient Deficiency</div>
+  <div class="quiz-sub">Medical Assistant Training — Match the sign to its nutrient deficiency</div>
+  <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress" style="width:0%"></div></div>
+  <div class="card" id="quiz-card"></div>
+
+<script>
+const questions=[
+  {icon:"💇",question:"A patient reports clumps of hair falling out daily. Which nutrient deficiency is most commonly linked to severe hair loss?",options:["Vitamin C","Iron / Biotin","Vitamin D","Calcium"],answer:1,explanation:"Iron deficiency (anemia) and Biotin (B7) deficiency are leading causes of severe hair loss. Low ferritin starves hair follicles of oxygen."},
+  {icon:"🩹",question:"A diabetic patient's minor cuts take weeks to close. Slow-healing wounds are a classic sign of deficiency in which nutrient?",options:["Potassium","Magnesium","Vitamin C","Vitamin B12"],answer:2,explanation:"Vitamin C is essential for collagen synthesis. Without it, the body cannot properly rebuild tissue, dramatically slowing wound healing."},
+  {icon:"❤️",question:"An EKG shows an irregular heartbeat in a patient with a poor diet. Which electrolyte deficiency most directly causes cardiac arrhythmias?",options:["Iron","Zinc","Magnesium / Potassium","Vitamin A"],answer:2,explanation:"Magnesium and Potassium regulate electrical impulses in the heart. Deficiency of either can cause arrhythmias, palpitations, and even cardiac arrest."},
+  {icon:"💅",question:"A patient shows brittle, ridged nails and dry, snapping hair. Which deficiency is the most likely culprit?",options:["Vitamin E","Iron / Biotin","Vitamin K","Sodium"],answer:1,explanation:"Brittle hair and nails are hallmark signs of Iron and Biotin (B7) deficiencies, both of which are critical for keratin production."},
+  {icon:"👁️",question:"A patient struggles to see in low-light conditions (night blindness). Which nutrient deficiency causes this vision impairment?",options:["Vitamin A","Vitamin B6","Omega-3","Iodine"],answer:0,explanation:"Vitamin A is essential for producing rhodopsin, the pigment in the eye used in low-light vision. Deficiency is the leading cause of preventable blindness worldwide."},
+  {icon:"🦴",question:"A post-menopausal patient has frequent fractures. Which deficiency contributes most to bone fragility?",options:["Magnesium","Vitamin B12","Vitamin D / Calcium","Zinc"],answer:2,explanation:"Vitamin D and Calcium work together for bone density. Without Vitamin D, calcium cannot be properly absorbed, weakening bones over time."},
+];
+
+let current=0, score=0, answered=false, results=[];
+
+function render(){
+  const el=document.getElementById('quiz-card');
+  document.getElementById('progress').style.width=(current/questions.length*100)+'%';
+  if(current>=questions.length){ renderScore(el); return; }
+  const q=questions[current];
+  el.innerHTML=`
+    <div class="q-number">Question ${current+1} of ${questions.length}</div>
+    <div class="icon-row"><div class="icon-circle">${q.icon}</div></div>
+    <div class="q-text">${q.question}</div>
+    <div class="options">${q.options.map((o,i)=>`<button class="opt-btn" onclick="pick(${i})" id="opt${i}">${o}</button>`).join('')}</div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="next()">${current<questions.length-1?'Next Question →':'See My Results →'}</button>`;
+  answered=false;
+}
+
+function pick(i){
+  if(answered) return; answered=true;
+  const q=questions[current];
+  const isCorrect=i===q.answer;
+  if(isCorrect) score++;
+  results.push(isCorrect);
+  for(let j=0;j<q.options.length;j++){
+    const btn=document.getElementById('opt'+j);
+    btn.classList.add('disabled');
+    if(j===q.answer) btn.classList.add('correct');
+    else if(j===i&&!isCorrect) btn.classList.add('wrong');
+  }
+  const fb=document.getElementById('feedback');
+  fb.className='feedback show '+(isCorrect?'correct':'wrong');
+  fb.innerHTML=(isCorrect?'✔ Correct! ':'✘ Not quite. ')+q.explanation;
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function next(){current++;render();}
+
+function renderScore(el){
+  document.getElementById('progress').style.width='100%';
+  const pct=Math.round(score/questions.length*100);
+  const msg=pct>=83?"Outstanding! You're ready for clinical rotations.":pct>=50?"Good effort! Review the missed concepts below.":"Keep studying — nutrient signs are high-yield exam material!";
+  el.innerHTML=`
+    <div class="score-card">
+      <div class="score-big">${score}/${questions.length}</div>
+      <div class="score-label">Score: ${pct}%</div>
+      <div class="score-msg">${msg}</div>
+      <div class="badge-row">${questions.map((q,i)=>`<div class="badge ${results[i]?'green':'red'}">${results[i]?'✔':'✘'} Q${i+1}</div>`).join('')}</div>
+      <button class="restart-btn" onclick="restart()">Retake Quiz</button>
+    </div>`;
+}
+
+function restart(){current=0;score=0;results=[];render();}
+render();
+</script>
+</body>
+</html>

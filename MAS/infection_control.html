@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Infection Control Quiz</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#0f1117; color:#f0f2f5; font-family:system-ui,sans-serif; padding:1rem; min-height:100vh; }
+  .quiz-wrap { padding:1rem 0; max-width:640px; margin:0 auto; }
+  .scenario-card { background:#1a1d27; border-radius:12px; padding:1.25rem; margin-bottom:1rem; border:1px solid #2e3245; }
+  .scenario-emoji { font-size:26px; margin-bottom:10px; display:block; }
+  .scenario-text { font-size:15px; font-weight:600; color:#e8eaf0; line-height:1.7; margin:0 0 1rem; }
+  .options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .opt-btn { background:#22263a; border:1px solid #3a3f58; border-radius:9px; padding:11px 13px; font-size:13px; font-weight:600; color:#d4d8e8; cursor:pointer; text-align:left; transition:background 0.15s,border-color 0.15s; line-height:1.5; }
+  .opt-btn:hover:not(:disabled) { background:#2c3150; border-color:#5a6080; }
+  .opt-btn.correct { background:#0d2e1f; border-color:#1e9e60; color:#4ade9a; font-weight:700; }
+  .opt-btn.wrong { background:#2e0f0f; border-color:#9e2020; color:#f87171; font-weight:700; }
+  .feedback { margin-top:13px; font-size:13px; font-weight:600; padding:11px 13px; border-radius:9px; line-height:1.6; display:none; }
+  .feedback.show { display:block; }
+  .feedback.correct-fb { background:#0d2e1f; border:1px solid #1e9e60; color:#4ade9a; }
+  .feedback.wrong-fb { background:#2e0f0f; border:1px solid #9e2020; color:#f87171; }
+  .progress-bar { height:7px; background:#1e2235; border-radius:4px; margin-bottom:1.25rem; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:4px; background:#1fbd78; transition:width 0.4s ease; }
+  .score-display { display:flex; gap:10px; margin-bottom:1.25rem; }
+  .score-chip { font-size:12px; font-weight:700; color:#a0a8c0; background:#1a1d27; border-radius:8px; padding:5px 12px; border:1px solid #2e3245; }
+  .nav-row { display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+  .nav-btn { background:#1a1d27; border:1px solid #3a3f58; border-radius:9px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; color:#d4d8e8; transition:background 0.15s; }
+  .nav-btn:disabled { opacity:0.3; cursor:default; }
+  .nav-btn:hover:not(:disabled) { background:#22263a; }
+  .q-counter { font-size:15px; letter-spacing:3px; }
+  .result-screen { text-align:center; padding:2.5rem 1rem; }
+  .result-score { font-size:52px; font-weight:800; color:#f0f2f5; margin:0.5rem 0; }
+  .result-label { font-size:16px; font-weight:700; color:#a0a8c0; margin-bottom:1.5rem; }
+  .result-msg { font-size:15px; font-weight:600; line-height:1.8; color:#d4d8e8; margin-bottom:1.5rem; max-width:360px; margin-left:auto; margin-right:auto; }
+  .retry-btn { background:#1a1d27; border:1px solid #3a3f58; border-radius:9px; padding:11px 28px; font-size:14px; font-weight:700; cursor:pointer; color:#d4d8e8; transition:background 0.15s; }
+  .retry-btn:hover { background:#22263a; }
+  .badge { display:inline-block; font-size:36px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+<div class="quiz-wrap" id="app"></div>
+
+<script>
+const Qs=[
+  {icon:"🩺",scene:"You just finished taking a patient's blood pressure. Before moving to the next patient, what should you do?",opts:["Move to next patient right away","Wash hands before and after contact","Only wear gloves next time","Use hand sanitizer only if hands look dirty"],answer:1,tip:"Hand hygiene before AND after every patient contact is the #1 way to stop infection spread. Soap and water or alcohol-based hand rub are both effective."},
+  {icon:"💉",scene:"You're about to perform a blood draw on a patient. What PPE is required?",opts:["No PPE needed for a quick draw","Mask only","Gloves for the procedure","Full gown and face shield every time"],answer:2,tip:"Gloves must be worn during any procedure involving blood or bodily fluids. They protect both you and the patient from cross-contamination."},
+  {icon:"🧴",scene:"You used a spray disinfectant on the exam table after a patient. What is the correct next step?",opts:["Immediately wipe it dry","Allow the surface to air-dry completely","Spray again right away just to be safe","Skip — it looks clean already"],answer:1,tip:"Disinfectants need contact (dwell) time to kill pathogens. Always let surfaces air-dry — wiping too early reduces effectiveness."},
+  {icon:"🏷️",scene:"Two patients need ear drops today. You accidentally grab Patient B's bottle for Patient A. What risk does this represent?",opts:["No real risk — drops are sterile","Cross-contamination between patients","Only a problem if they have the same illness","A supply waste issue, not safety issue"],answer:1,tip:"Using one patient's medications or supplies on another is cross-contamination. Always verify the patient label and use separate supplies per patient."},
+  {icon:"🗑️",scene:"After removing used gloves, what is the MOST important immediate next step?",opts:["Put on a fresh pair of gloves","Wash your hands thoroughly","Wipe hands with a paper towel","Apply lotion to prevent dryness"],answer:1,tip:"Gloves are NOT a substitute for hand washing! Hands must be washed after removing gloves because bacteria can transfer through microscopic glove holes."},
+  {icon:"🧪",scene:"You need to clean both a urine sample cup and a blood pressure cuff. Which statement is correct?",opts:["Use the same cloth for both to save time","Clean each item with a separate disinfectant wipe","Only clean whichever looks visibly dirty","Blood pressure cuffs never need cleaning"],answer:1,tip:"Each item must be cleaned separately to prevent cross-contamination between different surfaces and body fluid exposure."},
+];
+
+let cur=0, score=0, answered=[];
+
+function render(){
+  const app=document.getElementById('app');
+  if(cur>=Qs.length){renderResult(app);return;}
+  const q=Qs[cur];
+  const isAnswered=answered[cur]!==undefined;
+  const chosen=answered[cur];
+  const isCorrect=chosen===q.answer;
+  app.innerHTML=`
+    <div class="progress-bar"><div class="progress-fill" style="width:${(cur/Qs.length)*100}%"></div></div>
+    <div class="score-display">
+      <span class="score-chip">Question ${cur+1} of ${Qs.length}</span>
+      <span class="score-chip">Score: ${score}</span>
+    </div>
+    <div class="scenario-card">
+      <span class="scenario-emoji">${q.icon}</span>
+      <p class="scenario-text">${q.scene}</p>
+      <div class="options">
+        ${q.opts.map((o,i)=>{
+          let cls='opt-btn';
+          if(isAnswered){if(i===q.answer)cls+=' correct';else if(i===chosen&&!isCorrect)cls+=' wrong';}
+          return `<button class="${cls}" ${isAnswered?'disabled':''} onclick="pick(${i})">${o}</button>`;
+        }).join('')}
+      </div>
+      <div class="feedback ${isAnswered?'show':''} ${isAnswered?(isCorrect?'correct-fb':'wrong-fb'):''}">
+        ${isAnswered?(isCorrect?'✓ Correct! ':'✗ Not quite. ')+q.tip:''}
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="go(-1)" ${cur===0?'disabled':''}>← Back</button>
+      <span class="q-counter">${Array.from({length:Qs.length},(_,i)=>answered[i]!==undefined?(answered[i]===Qs[i].answer?'🟢':'🔴'):'⚪').join(' ')}</span>
+      <button class="nav-btn" onclick="go(1)" ${!isAnswered?'disabled':''}>Next →</button>
+    </div>`;
+}
+
+function pick(i){
+  if(answered[cur]!==undefined) return;
+  answered[cur]=i;
+  if(i===Qs[cur].answer) score++;
+  render();
+}
+
+function go(dir){cur+=dir;render();}
+
+function renderResult(app){
+  const pct=Math.round(score/Qs.length*100);
+  let badge,msg;
+  if(pct===100){badge='🏆';msg="Perfect score! You're a natural at infection control. Your patients are in great hands.";}
+  else if(pct>=66){badge='🌟';msg="Great work! You've got a solid grasp of infection control basics. Review the ones you missed and you'll be fully ready.";}
+  else{badge='📋';msg="Keep practicing! Infection control is a critical skill. Review each principle and try again — you've got this.";}
+  app.innerHTML=`
+    <div class="result-screen">
+      <div class="badge">${badge}</div>
+      <div class="result-score">${score}/${Qs.length}</div>
+      <div class="result-label">${pct}% correct</div>
+      <div class="result-msg">${msg}</div>
+      <button class="retry-btn" onclick="restart()">Try again</button>
+    </div>`;
+}
+
+function restart(){cur=0;score=0;answered=[];render();}
+render();
+</script>
+</body>
+</html>

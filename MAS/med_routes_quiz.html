@@ -1,79 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Medication Routes Quiz</title>
 <style>
-  body { margin: 0; font-family: var(--font-sans, sans-serif); background: #1a1a2e; color: #e8e8f0; }
-  .quiz-wrap { padding: 1rem; }
-  .score-bar { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-  .score-card { background: #252540; border: 1px solid #3a3a5c; border-radius: 10px; padding: 10px 20px; text-align: center; flex: 1; min-width: 80px; }
-  .score-card .num { font-size: 26px; font-weight: 700; color: #f0f0ff; }
-  .score-card .lbl { font-size: 13px; font-weight: 600; color: #9090b8; }
-  .question-box { background: #252540; border: 1px solid #3a3a5c; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; }
-  .q-label { font-size: 13px; font-weight: 600; color: #8888b0; margin-bottom: 8px; }
-  .q-text { font-size: 18px; font-weight: 700; color: #f0f0ff; margin-bottom: 1.2rem; line-height: 1.4; }
-  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .opt-btn { background: #2e2e50; border: 1px solid #4a4a70; border-radius: 10px; padding: 14px 10px; font-size: 15px; font-weight: 700; color: #d8d8f0; cursor: pointer; transition: background 0.15s; text-align: center; }
-  .opt-btn:hover:not(:disabled) { background: #3a3a60; border-color: #6a6a98; }
-  .opt-btn.correct { background: #1a3d1a; border-color: #4caf50; color: #a5e8a5; }
-  .opt-btn.wrong { background: #3d1a1a; border-color: #e24b4a; color: #f5a5a5; }
-  .opt-btn:disabled { cursor: default; }
-  .feedback { font-size: 15px; font-weight: 700; margin: 12px 0 0; min-height: 22px; line-height: 1.5; }
-  .feedback.correct { color: #6ee06e; }
-  .feedback.wrong { color: #f08080; }
-  .emoji-icon { font-size: 36px; display: block; margin-bottom: 8px; }
-  .next-btn { margin-top: 1rem; width: 100%; padding: 14px; font-size: 16px; font-weight: 700; border-radius: 10px; border: 1px solid #4a4a70; background: #2e2e50; color: #d8d8f0; cursor: pointer; }
-  .next-btn:hover { background: #3a3a60; }
-  .result-box { text-align: center; padding: 2rem 1rem; }
-  .result-box .big { font-size: 48px; font-weight: 800; color: #f0f0ff; }
-  .result-box .msg { font-size: 18px; font-weight: 600; color: #9090c0; margin: 8px 0 20px; }
-  .restart-btn { padding: 14px 32px; font-size: 16px; font-weight: 700; border-radius: 10px; border: 1px solid #4a4a70; background: #2e2e50; color: #d8d8f0; cursor: pointer; }
-  .restart-btn:hover { background: #3a3a60; }
-  .progress { height: 6px; background: #2e2e50; border-radius: 4px; margin-bottom: 1.2rem; overflow: hidden; }
-  .progress-fill { height: 100%; background: #1D9E75; border-radius: 4px; transition: width 0.3s; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,sans-serif;background:#1a1a2e;color:#e8e8f0;min-height:100vh;padding:1rem;}
+  .quiz-wrap{max-width:680px;margin:0 auto;}
+  .score-bar{display:flex;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap;}
+  .score-card{background:#252540;border:1px solid #3a3a5c;border-radius:10px;padding:10px 20px;text-align:center;flex:1;min-width:80px;}
+  .score-card .num{font-size:26px;font-weight:700;color:#f0f0ff;}
+  .score-card .lbl{font-size:13px;font-weight:600;color:#9090b8;}
+  .question-box{background:#252540;border:1px solid #3a3a5c;border-radius:14px;padding:1.25rem;margin-bottom:1rem;}
+  .q-label{font-size:13px;font-weight:600;color:#8888b0;margin-bottom:8px;}
+  .q-text{font-size:18px;font-weight:700;color:#f0f0ff;margin-bottom:1.2rem;line-height:1.4;}
+  .options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opt-btn{background:#2e2e50;border:1px solid #4a4a70;border-radius:10px;padding:14px 10px;font-size:15px;font-weight:700;color:#d8d8f0;cursor:pointer;transition:background 0.15s;text-align:center;}
+  .opt-btn:hover:not(:disabled){background:#3a3a60;border-color:#6a6a98;}
+  .opt-btn.correct{background:#1a3d1a;border-color:#4caf50;color:#a5e8a5;}
+  .opt-btn.wrong{background:#3d1a1a;border-color:#e24b4a;color:#f5a5a5;}
+  .opt-btn:disabled{cursor:default;}
+  .feedback{font-size:15px;font-weight:700;margin:12px 0 0;min-height:22px;line-height:1.5;}
+  .feedback.correct{color:#6ee06e;}
+  .feedback.wrong{color:#f08080;}
+  .emoji-icon{font-size:36px;display:block;margin-bottom:8px;}
+  .next-btn{margin-top:1rem;width:100%;padding:14px;font-size:16px;font-weight:700;border-radius:10px;border:1px solid #4a4a70;background:#2e2e50;color:#d8d8f0;cursor:pointer;}
+  .next-btn:hover{background:#3a3a60;}
+  .result-box{text-align:center;padding:2rem 1rem;}
+  .result-box .big{font-size:48px;font-weight:800;color:#f0f0ff;}
+  .result-box .msg{font-size:18px;font-weight:600;color:#9090c0;margin:8px 0 20px;}
+  .restart-btn{padding:14px 32px;font-size:16px;font-weight:700;border-radius:10px;border:1px solid #4a4a70;background:#2e2e50;color:#d8d8f0;cursor:pointer;}
+  .restart-btn:hover{background:#3a3a60;}
+  .progress{height:6px;background:#2e2e50;border-radius:4px;margin-bottom:1.2rem;overflow:hidden;}
+  .progress-fill{height:100%;background:#1D9E75;border-radius:4px;transition:width 0.3s;}
+  .ref-card{background:#1a2a40;border:1px solid #2a4a70;border-radius:16px;padding:1.5rem 1.25rem 1.25rem;}
+  .ref-header{text-align:center;margin-bottom:1.5rem;}
+  .ref-header .main-icon{font-size:48px;display:block;margin-bottom:10px;}
+  .ref-header h2{font-size:22px;font-weight:800;color:#f0f8ff;margin-bottom:6px;}
+  .ref-header p{font-size:14px;font-weight:600;color:#6090b8;max-width:420px;margin:0 auto;}
+  .section-label{font-size:11px;font-weight:800;color:#4a8ab8;text-transform:uppercase;letter-spacing:1.5px;margin:1.2rem 0 10px;padding-left:4px;border-left:3px solid #1D9E75;}
+  .routes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;justify-items:center;}
+  .route-pill{background:#1e3050;border:1px solid #2e5080;border-radius:12px;padding:14px 8px;text-align:center;width:100%;transition:transform .15s,border-color .15s;}
+  .route-pill:hover{transform:translateY(-2px);border-color:#5a90c8;}
+  .route-pill .r-icon{font-size:28px;display:block;margin-bottom:6px;}
+  .route-pill .r-name{font-size:13px;font-weight:800;color:#7ac0f8;}
+  .route-pill .r-note{font-size:11px;font-weight:600;color:#6090b0;margin-top:3px;line-height:1.3;}
+  .badge{display:inline-block;background:#1D9E75;color:#fff;font-size:10px;font-weight:800;border-radius:6px;padding:2px 6px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.4px;}
+  .parenteral-box{background:#0f2030;border:1.5px solid #1D9E75;border-radius:10px;padding:12px 16px;text-align:center;margin-top:4px;}
+  .parenteral-box .p-title{font-size:12px;font-weight:800;color:#1D9E75;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .parenteral-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .p-pill{background:#1a3a50;border:1px solid #2a6a80;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:#7ac0f8;}
+  .parenteral-box .p-note{font-size:11px;color:#4a8090;margin-top:6px;font-weight:600;}
+  .start-btn{margin-top:1.5rem;width:100%;padding:16px;font-size:17px;font-weight:800;border-radius:12px;border:none;background:linear-gradient(135deg,#1D9E75,#178C65);color:#fff;cursor:pointer;letter-spacing:0.3px;box-shadow:0 4px 16px rgba(29,158,117,0.3);}
+  .start-btn:hover{background:linear-gradient(135deg,#178C65,#136b50);}
+  .action-btns{display:flex;gap:10px;margin-top:12px;}
+  .action-btn{flex:1;padding:11px;font-size:14px;font-weight:700;border-radius:10px;cursor:pointer;border:1px solid #3a3a5c;background:#252540;color:#d8d8f0;transition:background 0.15s;}
+  .action-btn:hover{background:#2e2e50;}
 
-  /* Reference card */
-  .ref-card { background: #1a2a40; border: 1px solid #2a4a70; border-radius: 14px; padding: 1.4rem 1.2rem 1rem; margin-bottom: 1.5rem; }
-  .ref-card h2 { margin: 0 0 4px; font-size: 15px; font-weight: 800; color: #7ac0f8; text-transform: uppercase; letter-spacing: 0.5px; }
-  .ref-card p { margin: 0 0 1rem; font-size: 13px; font-weight: 600; color: #6090b8; }
-  .routes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
-  .route-pill { background: #1e3050; border: 1px solid #2e5080; border-radius: 10px; padding: 10px 8px; text-align: center; }
-  .route-pill .r-icon { font-size: 26px; display: block; margin-bottom: 4px; }
-  .route-pill .r-name { font-size: 12px; font-weight: 800; color: #7ac0f8; }
-  .route-pill .r-note { font-size: 11px; font-weight: 600; color: #6090b0; margin-top: 2px; }
-  .badge { display: inline-block; background: #1D9E75; color: #fff; font-size: 10px; font-weight: 800; border-radius: 6px; padding: 2px 6px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
-  .parenteral-label { grid-column: 1 / -1; background: #1a2e40; border: 1px dashed #3a6080; border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 800; color: #7ac0f8; text-align: center; margin-top: 2px; }
-  .start-btn { margin-top: 1.2rem; width: 100%; padding: 14px; font-size: 16px; font-weight: 800; border-radius: 10px; border: none; background: #1D9E75; color: #fff; cursor: pointer; letter-spacing: 0.3px; }
-  .start-btn:hover { background: #178C65; }
 </style>
 </head>
 <body>
 <div class="quiz-wrap">
   <div id="intro-screen">
     <div class="ref-card">
-      <div class="badge">Study First</div>
-      <h2>Routes for Medication Administration</h2>
-      <p>Review these routes before starting the quiz. Pay attention to what makes each one unique!</p>
+      <div class="ref-header">
+        <span class="main-icon">💉</span>
+        <h2>Routes of Medication Administration</h2>
+        <p>Review all routes below before starting the quiz. Pay attention to what makes each one unique!</p>
+      </div>
+
+      <div class="section-label">Enteral Routes — via GI tract</div>
       <div class="routes-grid">
         <div class="route-pill"><span class="r-icon">💊</span><div class="r-name">Oral (PO)</div><div class="r-note">Swallowed, GI absorption</div></div>
         <div class="route-pill"><span class="r-icon">👅</span><div class="r-name">Sublingual</div><div class="r-note">Under the tongue</div></div>
+        <div class="route-pill"><span class="r-icon">💊</span><div class="r-name">Rectal</div><div class="r-note">Suppository / enema</div></div>
+      </div>
+
+      <div class="section-label">Parenteral Routes — bypass GI tract</div>
+      <div class="routes-grid">
         <div class="route-pill"><span class="r-icon">🩸</span><div class="r-name">IV</div><div class="r-note">Into a vein — fastest</div></div>
         <div class="route-pill"><span class="r-icon">💉</span><div class="r-name">Intramuscular</div><div class="r-note">Deep into muscle</div></div>
         <div class="route-pill"><span class="r-icon">🔬</span><div class="r-name">Subcutaneous</div><div class="r-note">Into fatty tissue</div></div>
-        <div class="route-pill"><span class="r-icon">🩺</span><div class="r-name">Intradermal</div><div class="r-note">Into the dermis (skin)</div></div>
-        <div class="parenteral-label">⬆️ IV, IM, SubQ & Intradermal = PARENTERAL (bypass GI tract)</div>
+        <div class="route-pill"><span class="r-icon">🩺</span><div class="r-name">Intradermal</div><div class="r-note">Into the dermis</div></div>
+      </div>
+      <div class="parenteral-box" style="margin-top:10px;">
+        <div class="p-title">⚡ Parenteral = bypasses the GI tract</div>
+        <div class="parenteral-pills">
+          <span class="p-pill">IV</span><span class="p-pill">IM</span><span class="p-pill">SubQ</span><span class="p-pill">Intradermal</span>
+        </div>
+        <div class="p-note">Fastest absorption — no first-pass metabolism</div>
+      </div>
+
+      <div class="section-label">Other Routes</div>
+      <div class="routes-grid">
         <div class="route-pill"><span class="r-icon">🌬️</span><div class="r-name">Inhalation</div><div class="r-note">Into the lungs</div></div>
         <div class="route-pill"><span class="r-icon">🧴</span><div class="r-name">Topical</div><div class="r-note">On skin surface</div></div>
-        <div class="route-pill"><span class="r-icon">💊</span><div class="r-name">Rectal</div><div class="r-note">Suppository / enema</div></div>
         <div class="route-pill"><span class="r-icon">👂</span><div class="r-name">Otic</div><div class="r-note">Into the ear</div></div>
         <div class="route-pill"><span class="r-icon">👁️</span><div class="r-name">Ophthalmic</div><div class="r-note">Into the eye</div></div>
       </div>
+
       <button class="start-btn" onclick="showQuiz()">I'm Ready — Start the Quiz! →</button>
     </div>
   </div>
 
   <div id="quiz-screen" style="display:none">
-    <div class="score-bar">
+    <div class="action-btns">
+      <button class="action-btn" onclick="start()">🔄 Restart Quiz</button>
+      <button class="action-btn" onclick="showIntro()">📋 Review Routes</button>
+    </div>
+    <div style="margin-top:12px" class="score-bar">
       <div class="score-card"><div class="num" id="s-correct">0</div><div class="lbl">Correct</div></div>
       <div class="score-card"><div class="num" id="s-wrong">0</div><div class="lbl">Wrong</div></div>
       <div class="score-card"><div class="num" id="s-q">1</div><div class="lbl">Question</div></div>
@@ -83,110 +119,106 @@
 </div>
 
 <script>
-const questions = [
-  { icon: "💊", q: "A patient swallows a tablet with water. Which route is this?", options: ["Oral (PO)", "Sublingual", "Rectal", "Topical"], answer: 0, fact: "Oral (PO) means the medication is swallowed and absorbed in the GI tract." },
-  { icon: "💉", q: "Insulin is injected into the fatty tissue under the skin. Which route?", options: ["Intramuscular (IM)", "Intravenous (IV)", "Subcutaneous", "Intradermal"], answer: 2, fact: "Subcutaneous injections go into the fat layer just under the skin." },
-  { icon: "🩸", q: "A nurse pushes medication directly into a vein for the fastest effect. Which route?", options: ["Intramuscular (IM)", "Intravenous (IV)", "Subcutaneous", "Intradermal"], answer: 1, fact: "IV is the fastest route — medication enters the bloodstream immediately." },
-  { icon: "💉", q: "A vaccine is injected deep into the deltoid muscle of the arm. Which route?", options: ["Intradermal", "Subcutaneous", "Intravenous (IV)", "Intramuscular (IM)"], answer: 3, fact: "Most vaccines are given IM because muscles have good blood flow for absorption." },
-  { icon: "🔬", q: "A TB skin test (PPD) is injected just below the top layer of skin, making a small bleb. Which route?", options: ["Intradermal", "Subcutaneous", "Intramuscular (IM)", "Intravenous (IV)"], answer: 0, fact: "Intradermal injections go into the dermis — used for allergy and TB testing." },
-  { icon: "👅", q: "Nitroglycerin for chest pain is placed under the tongue for rapid absorption. Which route?", options: ["Oral (PO)", "Sublingual", "Topical", "Inhalation"], answer: 1, fact: "Sublingual routes bypass the digestive system for very fast action." },
-  { icon: "🌬️", q: "A patient uses an inhaler to breathe medication directly into their lungs. Which route?", options: ["Oral (PO)", "Topical", "Inhalation", "Otic"], answer: 2, fact: "Inhalation delivers medication to the lungs — great for asthma or COPD." },
-  { icon: "🧴", q: "A medicated patch is applied to the skin to deliver medication over 24 hours. Which route?", options: ["Topical", "Sublingual", "Rectal", "Oral (PO)"], answer: 0, fact: "Topical medications are applied to the skin surface for local or systemic effect." },
-  { icon: "👂", q: "Ear drops are instilled into the ear canal for an ear infection. Which route?", options: ["Ophthalmic", "Topical", "Otic", "Sublingual"], answer: 2, fact: "Otic means relating to the ear — ear drops are a common otic medication." },
-  { icon: "👁️", q: "Eye drops are administered to treat an eye infection. Which route?", options: ["Otic", "Ophthalmic", "Topical", "Intradermal"], answer: 1, fact: "Ophthalmic medications are specifically formulated for the eyes." },
-  { icon: "💊", q: "A patient receives a suppository for nausea after surgery. Which route?", options: ["Oral (PO)", "Topical", "Sublingual", "Rectal"], answer: 3, fact: "Rectal route is useful when patients can't swallow or are vomiting." },
-  { icon: "🩺", q: "Which of these routes is considered PARENTERAL?", options: ["Oral (PO)", "Sublingual", "Intramuscular (IM)", "Rectal"], answer: 2, fact: "Parenteral means any route that bypasses the GI tract — includes IV, IM, SubQ, and intradermal." }
+const questions=[
+  {icon:"💊",q:"A patient swallows a tablet with water. Which route is this?",options:["Oral (PO)","Sublingual","Rectal","Topical"],answer:0,fact:"Oral (PO) means the medication is swallowed and absorbed in the GI tract."},
+  {icon:"💉",q:"Insulin is injected into the fatty tissue under the skin. Which route?",options:["Intramuscular (IM)","Intravenous (IV)","Subcutaneous","Intradermal"],answer:2,fact:"Subcutaneous injections go into the fat layer just under the skin."},
+  {icon:"🩸",q:"A nurse pushes medication directly into a vein for the fastest effect. Which route?",options:["Intramuscular (IM)","Intravenous (IV)","Subcutaneous","Intradermal"],answer:1,fact:"IV is the fastest route — medication enters the bloodstream immediately."},
+  {icon:"💉",q:"A vaccine is injected deep into the deltoid muscle of the arm. Which route?",options:["Intradermal","Subcutaneous","Intravenous (IV)","Intramuscular (IM)"],answer:3,fact:"Most vaccines are given IM because muscles have good blood flow for absorption."},
+  {icon:"🔬",q:"A TB skin test (PPD) is injected just below the top layer of skin, making a small bleb. Which route?",options:["Intradermal","Subcutaneous","Intramuscular (IM)","Intravenous (IV)"],answer:0,fact:"Intradermal injections go into the dermis — used for allergy and TB testing."},
+  {icon:"👅",q:"Nitroglycerin for chest pain is placed under the tongue for rapid absorption. Which route?",options:["Oral (PO)","Sublingual","Topical","Inhalation"],answer:1,fact:"Sublingual routes bypass the digestive system for very fast action."},
+  {icon:"🌬️",q:"A patient uses an inhaler to breathe medication directly into their lungs. Which route?",options:["Oral (PO)","Topical","Inhalation","Otic"],answer:2,fact:"Inhalation delivers medication to the lungs — great for asthma or COPD."},
+  {icon:"🧴",q:"A medicated patch is applied to the skin to deliver medication over 24 hours. Which route?",options:["Topical","Sublingual","Rectal","Oral (PO)"],answer:0,fact:"Topical medications are applied to the skin surface for local or systemic effect."},
+  {icon:"👂",q:"Ear drops are instilled into the ear canal for an ear infection. Which route?",options:["Ophthalmic","Topical","Otic","Sublingual"],answer:2,fact:"Otic means relating to the ear — ear drops are a common otic medication."},
+  {icon:"👁️",q:"Eye drops are administered to treat an eye infection. Which route?",options:["Otic","Ophthalmic","Topical","Intradermal"],answer:1,fact:"Ophthalmic medications are specifically formulated for the eyes."},
+  {icon:"💊",q:"A patient receives a suppository for nausea after surgery. Which route?",options:["Oral (PO)","Topical","Sublingual","Rectal"],answer:3,fact:"Rectal route is useful when patients can't swallow or are vomiting."},
+  {icon:"🩺",q:"Which of these routes is considered PARENTERAL?",options:["Oral (PO)","Sublingual","Intramuscular (IM)","Rectal"],answer:2,fact:"Parenteral means any route that bypasses the GI tract — includes IV, IM, SubQ, and intradermal."},
 ];
 
-let shuffled = [], cur = 0, correct = 0, wrong = 0, answered = false;
+let shuffled=[], cur=0, correct=0, wrong=0, answered=false;
 
-function showQuiz() {
-  document.getElementById('intro-screen').style.display = 'none';
-  document.getElementById('quiz-screen').style.display = 'block';
+function showIntro(){
+  document.getElementById('intro-screen').style.display='block';
+  document.getElementById('quiz-screen').style.display='none';
+}
+
+function showQuiz(){
+  document.getElementById('intro-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
   start();
 }
 
-function shuffle(arr) {
-  let a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+function goHome(){
+  // Replace with your actual home URL
+  window.location.href='index.html';
+}
+
+function shuffle(arr){
+  let a=[...arr];
+  for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
   return a;
 }
 
-function start() {
-  shuffled = shuffle(questions);
-  cur = 0; correct = 0; wrong = 0; answered = false;
-  updateScore();
-  render();
+function start(){
+  shuffled=shuffle(questions);
+  cur=0;correct=0;wrong=0;answered=false;
+  updateScore();render();
 }
 
-function updateScore() {
-  document.getElementById('s-correct').textContent = correct;
-  document.getElementById('s-wrong').textContent = wrong;
-  document.getElementById('s-q').textContent = cur + 1 > shuffled.length ? shuffled.length : cur + 1;
+function updateScore(){
+  document.getElementById('s-correct').textContent=correct;
+  document.getElementById('s-wrong').textContent=wrong;
+  document.getElementById('s-q').textContent=cur+1>shuffled.length?shuffled.length:cur+1;
 }
 
-function render() {
-  const area = document.getElementById('quiz-area');
-  if (cur >= shuffled.length) {
-    const pct = Math.round((correct / shuffled.length) * 100);
-    let msg = pct === 100 ? "Perfect score! Outstanding!" : pct >= 80 ? "Great job! Keep it up!" : pct >= 60 ? "Good effort! Review and try again." : "Keep studying — you've got this!";
-    area.innerHTML = `<div class="result-box">
+function render(){
+  const area=document.getElementById('quiz-area');
+  if(cur>=shuffled.length){
+    const pct=Math.round(correct/shuffled.length*100);
+    const msg=pct===100?"Perfect score! Outstanding!":pct>=80?"Great job! Keep it up!":pct>=60?"Good effort! Review and try again.":"Keep studying — you've got this!";
+    area.innerHTML=`<div class="result-box">
       <div class="big">${correct}/${shuffled.length}</div>
       <div class="msg">${msg}</div>
-      <button class="restart-btn" onclick="start()">Try Again</button>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="restart-btn" onclick="start()">🔄 Try Again</button>
+        <button class="restart-btn" onclick="showIntro()" style="background:#1a2a40;border-color:#2a4a70;color:#7ac0f8;">📋 Review Routes</button>
+      </div>
     </div>`;
     return;
   }
-  const q = shuffled[cur];
-  const pct = Math.round((cur / shuffled.length) * 100);
-  area.innerHTML = `
+  const q=shuffled[cur];
+  const pct=Math.round(cur/shuffled.length*100);
+  area.innerHTML=`
     <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
     <div class="question-box">
-      <div class="q-label">Question ${cur + 1} of ${shuffled.length}</div>
+      <div class="q-label">Question ${cur+1} of ${shuffled.length}</div>
       <span class="emoji-icon">${q.icon}</span>
       <div class="q-text">${q.q}</div>
       <div class="options-grid" id="opts">
-        ${q.options.map((o, i) => `<button class="opt-btn" id="opt-${i}" onclick="pick(${i})">${o}</button>`).join('')}
+        ${q.options.map((o,i)=>`<button class="opt-btn" id="opt-${i}" onclick="pick(${i})">${o}</button>`).join('')}
       </div>
       <div class="feedback" id="fb"></div>
     </div>
-    <button class="next-btn" id="next-btn" style="display:none" onclick="next()">${cur + 1 < shuffled.length ? 'Next Question →' : 'See Results →'}</button>
-  `;
-  answered = false;
+    <button class="next-btn" id="next-btn" style="display:none" onclick="next()">${cur+1<shuffled.length?'Next Question →':'See Results →'}</button>`;
+  answered=false;
 }
 
-function pick(i) {
-  if (answered) return;
-  answered = true;
-  const q = shuffled[cur];
-  const fb = document.getElementById('fb');
-  for (let j = 0; j < q.options.length; j++) {
-    const btn = document.getElementById('opt-' + j);
-    btn.disabled = true;
-    if (j === q.answer) btn.classList.add('correct');
-    else if (j === i && i !== q.answer) btn.classList.add('wrong');
+function pick(i){
+  if(answered) return; answered=true;
+  const q=shuffled[cur];
+  const fb=document.getElementById('fb');
+  for(let j=0;j<q.options.length;j++){
+    const btn=document.getElementById('opt-'+j);
+    btn.disabled=true;
+    if(j===q.answer) btn.classList.add('correct');
+    else if(j===i&&i!==q.answer) btn.classList.add('wrong');
   }
-  if (i === q.answer) {
-    correct++;
-    fb.textContent = "Correct! " + q.fact;
-    fb.className = "feedback correct";
-  } else {
-    wrong++;
-    fb.textContent = "Not quite. " + q.fact;
-    fb.className = "feedback wrong";
-  }
+  if(i===q.answer){correct++;fb.textContent="Correct! "+q.fact;fb.className="feedback correct";}
+  else{wrong++;fb.textContent="Not quite. "+q.fact;fb.className="feedback wrong";}
   updateScore();
-  document.getElementById('next-btn').style.display = 'block';
+  document.getElementById('next-btn').style.display='block';
 }
 
-function next() {
-  cur++;
-  updateScore();
-  render();
-}
+function next(){cur++;updateScore();render();}
 </script>
 </body>
 </html>

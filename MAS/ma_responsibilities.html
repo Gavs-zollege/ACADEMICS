@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>General MA Responsibilities Quiz</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1a1a2e; min-height:100vh; padding:1rem; font-family:system-ui,sans-serif; }
+  .game-wrap { padding:1.5rem 0; max-width:680px; margin:0 auto; }
+  .score-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+  .score-pill { background:#2a2a3e; border:0.5px solid #444466; border-radius:20px; padding:6px 16px; font-size:13px; font-weight:700; color:#a0a0c0; }
+  .score-num { font-weight:800; color:#e0e0f0; }
+  .progress-track { height:4px; background:#2a2a3e; border-radius:4px; flex:1; margin:0 12px; }
+  .progress-fill { height:100%; border-radius:4px; background:#1D9E75; transition:width 0.4s ease; }
+  .section-badge { display:inline-block; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; margin-bottom:12px; }
+  .badge-front { background:#1a3a5c; color:#7ab8f5; }
+  .badge-back { background:#1e3d10; color:#88cc44; }
+  .badge-comm { background:#2a2060; color:#aa99ff; }
+  .badge-safety { background:#3d2000; color:#ffaa44; }
+  .question-card { background:#22223a; border:0.5px solid #444466; border-radius:12px; padding:1.25rem 1.5rem; margin-bottom:1rem; }
+  .q-text { font-size:15px; font-weight:900; color:#e8e8f8; margin:0 0 1rem; line-height:1.6; }
+  .options { display:grid; gap:8px; }
+  .opt-btn { background:#2c2c44; border:0.5px solid #555577; border-radius:8px; padding:10px 14px; font-size:14px; font-weight:900; color:#d0d0ee; text-align:left; cursor:pointer; transition:background 0.15s; }
+  .opt-btn:hover { background:#36365a; }
+  .opt-btn.correct { background:#1e3d10; border-color:#639922; color:#aaddaa; }
+  .opt-btn.wrong { background:#3d1010; border-color:#A32D2D; color:#ffaaaa; }
+  .opt-btn.reveal { background:#1e3d10; border-color:#639922; color:#aaddaa; }
+  .opt-btn:disabled { cursor:default; }
+  .feedback { font-size:13px; font-weight:900; margin-top:10px; padding:8px 12px; border-radius:8px; display:none; }
+  .feedback.show { display:block; }
+  .feedback.correct { background:#1e3d10; color:#aaddaa; }
+  .feedback.wrong { background:#3d1010; color:#ffaaaa; }
+  .next-btn { margin-top:14px; display:none; }
+  .next-btn.show { display:inline-block; }
+  .result-card { background:#22223a; border:0.5px solid #444466; border-radius:12px; padding:2rem; text-align:center; display:none; }
+  .result-card.show { display:block; }
+  .result-emoji { font-size:40px; margin-bottom:12px; }
+  .result-title { font-size:20px; font-weight:800; margin:0 0 8px; color:#e8e8f8; }
+  .result-sub { font-size:14px; font-weight:700; color:#a0a0c0; margin:0 0 20px; }
+  .stat-row { display:flex; gap:12px; justify-content:center; margin-bottom:20px; }
+  .stat-box { background:#2c2c44; border-radius:8px; padding:12px 20px; text-align:center; }
+  .stat-n { font-size:22px; font-weight:800; color:#e8e8f8; }
+  .stat-l { font-size:12px; font-weight:700; color:#a0a0c0; }
+</style>
+</head>
+<body>
+<div class="game-wrap">
+  <div class="score-bar">
+    <span class="score-pill">Score: <span class="score-num" id="scoreDisp">0</span></span>
+    <div class="progress-track"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    <span class="score-pill"><span class="score-num" id="qNum">1</span> / 8</span>
+  </div>
+
+  <div id="qArea">
+    <div class="question-card" id="qCard">
+      <span class="section-badge" id="badgeEl"></span>
+      <p class="q-text" id="qText"></p>
+      <div class="options" id="opts"></div>
+      <div class="feedback" id="fb"></div>
+      <button class="opt-btn next-btn" id="nextBtn" onclick="nextQ()">Next question →</button>
+    </div>
+  </div>
+
+  <div class="result-card" id="resultCard">
+    <div class="result-emoji" id="resEmoji"></div>
+    <p class="result-title" id="resTitle"></p>
+    <p class="result-sub" id="resSub"></p>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-n" id="resFinal">0/8</div><div class="stat-l">Score</div></div>
+      <div class="stat-box"><div class="stat-n" id="resPct">0%</div><div class="stat-l">Accuracy</div></div>
+    </div>
+    <button class="opt-btn" onclick="restart()" style="width:100%;text-align:center;">Play again</button>
+  </div>
+</div>
+
+<script>
+const qs=[
+  {section:"Front Office",badge:"badge-front",q:"A patient walks in without an appointment. What is the FIRST front office step?",opts:["Take their vitals immediately","Check them in and verify their insurance","Draw their blood","Schedule them for next week"],ans:1,fb:"Check-in and insurance verification are core front office duties performed before any clinical steps."},
+  {section:"Front Office",badge:"badge-front",q:"Which of these is a front office responsibility for a general MA?",opts:["Administering injections","Performing EKGs","Scheduling appointments","Rooming patients"],ans:2,fb:"Scheduling is a front office duty. Injections, EKGs, and rooming happen in the back office."},
+  {section:"Back Office",badge:"badge-back",q:"A provider asks you to get the patient ready for the exam. Which back office task do you complete FIRST?",opts:["Chart in the EMR","Take the patient's vitals","Call the pharmacy","Verify insurance"],ans:1,fb:"Taking vitals is typically the first step when rooming and preparing a patient for the provider."},
+  {section:"Back Office",badge:"badge-back",q:"Which of the following is a back office duty of a general MA?",opts:["Insurance verification","Scheduling follow-ups","Performing a 12-lead EKG","Answering incoming calls"],ans:2,fb:"Performing EKGs is a clinical/back office skill. Insurance and scheduling are front office tasks."},
+  {section:"Back Office",badge:"badge-back",q:"After drawing blood, what should the MA do with the sample?",opts:["Leave it on the counter","Dispose of it as regular waste","Label it and prepare it for lab processing","Give it directly to the patient"],ans:2,fb:"Proper labeling and handling of specimens is essential for accurate lab results and patient safety."},
+  {section:"Communication",badge:"badge-comm",q:"A provider asks you to call in a prescription refill. Which party do you contact?",opts:["The patient's insurance","The laboratory","The pharmacy","The billing department"],ans:2,fb:"MAs communicate with pharmacies to relay prescription information on behalf of providers."},
+  {section:"Communication",badge:"badge-comm",q:"Lab results come back for a patient. What is the MA's responsibility?",opts:["Diagnose the patient based on results","Notify the provider and document the results in the EMR","Tell the patient directly without telling the provider","Discard them if they look normal"],ans:1,fb:"MAs notify providers of results and document accurately. Diagnosis is outside the MA scope of practice."},
+  {section:"Infection Control",badge:"badge-safety",q:"Universal precautions mean you should wear gloves when...",opts:["Only when you can see blood","Only with patients who look sick","With all patients during any contact with body fluids","Only when the provider tells you to"],ans:2,fb:"Universal precautions treat ALL patients as potentially infectious — gloves are worn with any contact with body fluids, regardless of diagnosis."},
+];
+
+let cur=0, score=0, answered=false;
+
+function render(){
+  const q=qs[cur];
+  document.getElementById('badgeEl').textContent=q.section;
+  document.getElementById('badgeEl').className='section-badge '+q.badge;
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('qNum').textContent=cur+1;
+  document.getElementById('prog').style.width=(cur/qs.length*100)+'%';
+  answered=false;
+  const optsEl=document.getElementById('opts'); optsEl.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
+    b.onclick=()=>pick(i); optsEl.appendChild(b);
+  });
+  const fb=document.getElementById('fb'); fb.className='feedback'; fb.textContent='';
+  document.getElementById('nextBtn').className='opt-btn next-btn';
+}
+
+function pick(i){
+  if(answered) return; answered=true;
+  const q=qs[cur];
+  const btns=document.querySelectorAll('.opt-btn:not(.next-btn)');
+  btns.forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(i===q.ans){
+    score++; document.getElementById('scoreDisp').textContent=score;
+    btns[i].className='opt-btn correct';
+    fb.className='feedback correct show'; fb.textContent='Correct! '+q.fb;
+  } else {
+    btns[i].className='opt-btn wrong'; btns[q.ans].className='opt-btn reveal';
+    fb.className='feedback wrong show'; fb.textContent='Not quite. '+q.fb;
+  }
+  document.getElementById('nextBtn').className='opt-btn next-btn show';
+}
+
+function nextQ(){ cur++; if(cur>=qs.length) showResult(); else render(); }
+
+function showResult(){
+  document.getElementById('qArea').style.display='none';
+  document.getElementById('prog').style.width='100%';
+  document.getElementById('resultCard').className='result-card show';
+  const pct=Math.round(score/qs.length*100);
+  document.getElementById('resFinal').textContent=score+'/'+qs.length;
+  document.getElementById('resPct').textContent=pct+'%';
+  let emoji,title,sub;
+  if(pct===100){emoji='⭐';title='Perfect score!';sub='You have mastered General MA Responsibilities. Ready for the specialty units!';}
+  else if(pct>=75){emoji='👏';title='Great job!';sub="Strong understanding of the MA role. Review any missed areas and you'll be clinic-ready.";}
+  else if(pct>=50){emoji='📋';title='Good effort!';sub="You're on the right track. Review front office, back office, communication, and infection control duties.";}
+  else{emoji='💉';title='Keep studying!';sub='Review General MA Responsibilities and try again.';}
+  document.getElementById('resEmoji').textContent=emoji;
+  document.getElementById('resTitle').textContent=title;
+  document.getElementById('resSub').textContent=sub;
+}
+
+function restart(){
+  cur=0;score=0;
+  document.getElementById('scoreDisp').textContent=0;
+  document.getElementById('resultCard').className='result-card';
+  document.getElementById('qArea').style.display='block';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

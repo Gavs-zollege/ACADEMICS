@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Minor Surgery Quiz</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1a1a1a; min-height:100vh; padding:1.5rem; font-family:system-ui,sans-serif; }
+  .game-wrap { max-width:680px; margin:0 auto; }
+  .score-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; }
+  .score-pill { background:#2a2a2a; border:0.5px solid #444; border-radius:10px; padding:6px 16px; font-size:14px; font-weight:700; color:#ccc; }
+  .score-pill span { font-weight:800; color:#fff; font-size:16px; }
+  .q-card { background:#242424; border:0.5px solid #3a3a3a; border-radius:12px; padding:1.25rem; margin-bottom:1.25rem; }
+  .q-text { font-size:17px; font-weight:800; color:#fff; margin-bottom:1rem; line-height:1.6; }
+  .opts { display:grid; gap:8px; }
+  .opt-btn { background:#2e2e2e; border:0.5px solid #555; border-radius:8px; padding:12px 16px; font-size:15px; font-weight:700; color:#f0f0f0; cursor:pointer; text-align:left; transition:background 0.15s; line-height:1.4; }
+  .opt-btn:hover { background:#3a3a3a; border-color:#777; }
+  .opt-btn.correct { background:#1a3a1a; border-color:#639922; color:#b8f070; }
+  .opt-btn.wrong { background:#3a1a1a; border-color:#A32D2D; color:#ffaaaa; }
+  .opt-btn:disabled { cursor:default; }
+  .feedback { font-size:14px; font-weight:700; margin-top:10px; padding:10px 14px; border-radius:8px; display:none; line-height:1.5; }
+  .feedback.show { display:block; }
+  .feedback.good { background:#1a3a1a; color:#b8f070; border:0.5px solid #639922; }
+  .feedback.bad { background:#3a1a1a; color:#ffaaaa; border:0.5px solid #A32D2D; }
+  .next-btn { display:none; margin-top:12px; width:100%; padding:11px; border:0.5px solid #666; border-radius:8px; background:#383838; color:#fff; font-size:15px; font-weight:800; cursor:pointer; }
+  .next-btn:hover { background:#444; }
+  .next-btn.show { display:block; }
+  .drag-zone { min-height:50px; border:0.5px dashed #666; border-radius:8px; padding:8px; display:flex; flex-wrap:wrap; gap:6px; background:#2a2a2a; margin-bottom:10px; }
+  .drag-zone.over { border-color:#1D9E75; background:#0d2a1f; }
+  .chip { background:#383838; border:0.5px solid #666; border-radius:8px; padding:8px 14px; font-size:14px; font-weight:700; color:#f0f0f0; cursor:grab; user-select:none; line-height:1.4; }
+  .chip:active { cursor:grabbing; }
+  .check-btn { padding:10px 22px; border:0.5px solid #666; border-radius:8px; background:#383838; font-size:15px; font-weight:800; cursor:pointer; color:#fff; }
+  .check-btn:hover { background:#444; }
+  .final-card { background:#242424; border:0.5px solid #3a3a3a; border-radius:12px; padding:2rem; text-align:center; display:none; }
+  .final-card.show { display:block; }
+  .big-score { font-size:52px; font-weight:800; color:#fff; }
+  .big-label { font-size:16px; font-weight:700; color:#ccc; margin-bottom:1.5rem; }
+  .restart-btn { padding:11px 30px; border:0.5px solid #666; border-radius:8px; background:#383838; font-size:15px; font-weight:800; cursor:pointer; color:#fff; }
+  .restart-btn:hover { background:#444; }
+  .progress-bar-wrap { height:5px; background:#333; border-radius:2px; margin-bottom:1.5rem; }
+  .progress-bar-fill { height:5px; background:#1D9E75; border-radius:2px; transition:width 0.4s; }
+  .badge { display:inline-block; font-size:12px; padding:3px 10px; border-radius:8px; font-weight:800; margin-bottom:10px; letter-spacing:0.04em; text-transform:uppercase; }
+  .badge-mc { background:#0c2a44; color:#85B7EB; }
+  .badge-sort { background:#1e1a44; color:#AFA9EC; }
+  .section-title { font-size:12px; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:#aaa; margin-bottom:10px; }
+  .stat-box { background:#2a2a2a; border:0.5px solid #3a3a3a; border-radius:8px; padding:12px 24px; }
+  .stat-label { font-size:12px; font-weight:800; color:#aaa; margin-bottom:2px; letter-spacing:0.05em; text-transform:uppercase; }
+  .stat-val { font-size:24px; font-weight:800; color:#fff; }
+</style>
+</head>
+<body>
+<div class="game-wrap" id="app"></div>
+
+<script>
+const questions=[
+  {type:"mc",badge:"Multiple choice",q:"A patient is scheduled for a skin lesion removal. Where does this procedure take place?",opts:["Operating room under general anesthesia","Outpatient exam room with local anesthesia","Hospital surgical suite","Emergency department only"],correct:1,feedback:{good:"✓ Correct! Minor surgeries are performed in the outpatient setting using only local anesthesia.",bad:"✗ Not quite. Minor surgeries happen in the outpatient exam room and use only local anesthesia — no general anesthesia needed."}},
+  {type:"mc",badge:"Multiple choice",q:"Which of the following is an example of a minor surgical procedure?",opts:["Appendectomy","Hip replacement","Incision and drainage (I&D)","Coronary bypass"],correct:2,feedback:{good:"✓ Yes! I&D is a classic minor surgery performed in the office setting.",bad:"✗ Those are major surgeries requiring an OR and general anesthesia. Incision and drainage (I&D) is the minor surgery example here."}},
+  {type:"mc",badge:"Multiple choice",q:"During a minor surgery, what is the MA's responsibility regarding the sterile field?",opts:["Perform the incision if the provider is busy","Contaminate it if needed to speed things up","Maintain the aseptic field throughout the procedure","Remove all drapes before the procedure ends"],correct:2,feedback:{good:"✓ Exactly! Maintaining the aseptic field is a critical MA responsibility to prevent infection.",bad:"✗ Maintaining asepsis is paramount. The MA must protect the sterile field at all times during the procedure."}},
+  {type:"mc",badge:"Multiple choice",q:"After a minor surgery, the MA gives the patient verbal and written discharge instructions. What else must the MA do?",opts:["Nothing — instructions are enough","Document everything in the patient record","Ask the patient to call a family member","Schedule the next available appointment only"],correct:1,feedback:{good:"✓ Right! Documentation is always the final step — if it wasn't documented, it didn't happen.",bad:"✗ Documentation is essential. The MA must record the procedure, dressings applied, and all post-op instructions given."}},
+  {type:"sort",badge:"Put in order",q:"Arrange the MA's steps in the correct order for a minor surgery visit.",items:["Prepare exam room & instruments","Educate & position the patient","Maintain aseptic field during procedure","Apply dressing & give post-op instructions","Document everything"],correct:[0,1,2,3,4],feedback:{good:"✓ Perfect order! That's the MA workflow from prep to documentation.",bad:"✗ The correct order is: Prepare room → Educate & position patient → Maintain aseptic field → Apply dressing & post-op instructions → Document."}},
+  {type:"mc",badge:"Multiple choice",q:"Which type of anesthesia is used for minor surgical procedures?",opts:["General anesthesia","Spinal anesthesia","Local anesthesia","Conscious sedation only"],correct:2,feedback:{good:"✓ Correct! Local anesthesia is the hallmark of minor surgery — just numbing the area.",bad:"✗ Minor surgeries use local anesthesia only — numbing just the surgical site, not putting the patient fully under."}},
+];
+
+let current=0, score=0, answered=false;
+function pct(){return Math.round(current/questions.length*100);}
+
+function render(){
+  const app=document.getElementById('app');
+  if(current>=questions.length){showFinal(app);return;}
+  const q=questions[current]; answered=false;
+  app.innerHTML=`
+    <div class="score-bar">
+      <div class="score-pill">Question <span>${current+1}</span> / ${questions.length}</div>
+      <div class="score-pill">Score <span>${score}</span></div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct()}%"></div></div>
+    <div class="q-card" id="qcard">
+      <div><span class="badge ${q.type==='mc'?'badge-mc':'badge-sort'}">${q.badge}</span></div>
+      <div class="q-text">${q.q}</div>
+      ${q.type==='mc'?renderMC(q):renderSort(q)}
+      <div class="feedback" id="fb"></div>
+      <button class="next-btn" id="nxt" onclick="nextQ()">${current+1<questions.length?'Next question':'See my results'} →</button>
+    </div>`;
+  if(q.type==='sort') initSort();
+}
+
+function renderMC(q){
+  return `<div class="opts">${q.opts.map((o,i)=>`<button class="opt-btn" onclick="checkMC(${i})">${o}</button>`).join('')}</div>`;
+}
+
+function checkMC(i){
+  if(answered) return; answered=true;
+  const q=questions[current];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach((b,idx)=>{b.disabled=true;if(idx===q.correct)b.classList.add('correct');else if(idx===i&&i!==q.correct)b.classList.add('wrong');});
+  const good=i===q.correct; if(good) score++;
+  const fb=document.getElementById('fb');
+  fb.textContent=q.feedback[good?'good':'bad'];
+  fb.className='feedback show '+(good?'good':'bad');
+  document.getElementById('nxt').classList.add('show');
+}
+
+function renderSort(q){
+  const shuffled=[...q.items].sort(()=>Math.random()-0.5);
+  return `
+    <div class="section-title">Drag items into the correct order</div>
+    <div class="drag-zone" id="sort-zone">${shuffled.map(item=>`<div class="chip" draggable="true" data-item="${q.items.indexOf(item)}">${item}</div>`).join('')}</div>
+    <button class="check-btn" onclick="checkSort()">Check order</button>`;
+}
+
+function initSort(){
+  const zone=document.getElementById('sort-zone'); if(!zone) return;
+  let dragged=null;
+  zone.addEventListener('dragstart',e=>{if(e.target.classList.contains('chip')){dragged=e.target;setTimeout(()=>e.target.style.opacity='0.4',0);}});
+  zone.addEventListener('dragend',e=>{if(e.target.classList.contains('chip'))e.target.style.opacity='1';dragged=null;});
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();zone.classList.remove('over');if(!dragged)return;
+    const after=getDragAfter(zone,e.clientY);
+    if(after==null)zone.appendChild(dragged);else zone.insertBefore(dragged,after);
+  });
+}
+
+function getDragAfter(container,y){
+  const chips=[...container.querySelectorAll('.chip:not([style*="0.4"])')];
+  return chips.reduce((closest,child)=>{
+    const box=child.getBoundingClientRect();
+    const offset=y-box.top-box.height/2;
+    if(offset<0&&offset>closest.offset)return{offset,el:child};
+    return closest;
+  },{offset:Number.NEGATIVE_INFINITY}).el;
+}
+
+function checkSort(){
+  if(answered)return; answered=true;
+  const q=questions[current];
+  const chips=document.querySelectorAll('#sort-zone .chip');
+  const userOrder=[...chips].map(c=>parseInt(c.dataset.item));
+  const good=JSON.stringify(userOrder)===JSON.stringify(q.correct);
+  if(good)score++;
+  const fb=document.getElementById('fb');
+  fb.textContent=q.feedback[good?'good':'bad'];
+  fb.className='feedback show '+(good?'good':'bad');
+  document.getElementById('nxt').classList.add('show');
+  document.querySelector('.check-btn').disabled=true;
+}
+
+function nextQ(){current++;render();}
+
+function showFinal(app){
+  const p=Math.round(score/questions.length*100);
+  const msg=p>=80?"Outstanding work, MA superstar!":p>=60?"Good effort — review the missed topics!":"Keep studying — you've got this!";
+  const sym=p>=80?"★":p>=60?"◎":"◌";
+  app.innerHTML=`
+    <div class="final-card show">
+      <div style="font-size:40px;margin-bottom:8px;">${sym}</div>
+      <div class="big-score">${score} / ${questions.length}</div>
+      <div class="big-label">${msg}</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;">
+        <div class="stat-box"><div class="stat-label">Score</div><div class="stat-val">${p}%</div></div>
+        <div class="stat-box"><div class="stat-label">Correct</div><div class="stat-val">${score}</div></div>
+        <div class="stat-box"><div class="stat-label">Missed</div><div class="stat-val">${questions.length-score}</div></div>
+      </div>
+      <button class="restart-btn" onclick="restart()">Try again</button>
+    </div>`;
+}
+
+function restart(){current=0;score=0;render();}
+render();
+</script>
+</body>
+</html>

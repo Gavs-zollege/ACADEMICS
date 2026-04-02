@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MA Clinical Scenarios</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1a1a2e; min-height:100vh; padding:1rem; font-family:system-ui,sans-serif; }
+  #game { padding:1rem 0; max-width:680px; margin:0 auto; }
+  .scene-card { background:#16213e; border:1px solid #0f3460; border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+  .scene-icon { font-size:28px; margin-bottom:8px; }
+  .scene-title { font-size:17px; font-weight:700; color:#e0e6f0; margin:0 0 6px; }
+  .scene-desc { font-size:15px; font-weight:500; color:#b8c4d8; margin:0 0 1rem; line-height:1.6; }
+  .choices { display:flex; flex-direction:column; gap:8px; }
+  .choice-btn { background:#0f3460; border:1px solid #1a4a7a; border-radius:8px; padding:11px 14px; font-size:14px; font-weight:600; color:#d0ddf0; cursor:pointer; text-align:left; transition:background 0.15s; }
+  .choice-btn:hover { background:#1a4a7a; }
+  .choice-btn.correct { background:#1a3d1a; border-color:#4caf50; color:#a5d6a7; }
+  .choice-btn.wrong { background:#3d1a1a; border-color:#e53935; color:#ef9a9a; }
+  .choice-btn:disabled { cursor:default; }
+  .feedback { font-size:14px; font-weight:600; padding:12px 14px; border-radius:8px; margin-top:8px; line-height:1.6; }
+  .feedback.good { background:#1a3d1a; color:#a5d6a7; border:1px solid #4caf50; }
+  .feedback.bad { background:#3d1a1a; color:#ef9a9a; border:1px solid #e53935; }
+  .score-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+  .score-pill { background:#0f3460; color:#90caf9; font-size:13px; font-weight:700; padding:4px 12px; border-radius:20px; border:1px solid #1a4a7a; }
+  .step-indicator { font-size:13px; font-weight:600; color:#8a9ab8; }
+  .next-btn { margin-top:10px; background:#0f3460; border:1px solid #1a4a7a; border-radius:8px; padding:9px 18px; font-size:14px; font-weight:600; color:#90caf9; cursor:pointer; }
+  .next-btn:hover { background:#1a4a7a; }
+  .results-card { background:#16213e; border:1px solid #0f3460; border-radius:12px; padding:1.5rem; text-align:center; }
+  .results-score { font-size:40px; font-weight:700; color:#e0e6f0; margin:0.5rem 0; }
+  .results-label { font-size:14px; font-weight:600; color:#8a9ab8; }
+  .results-msg { font-size:15px; font-weight:600; color:#b8c4d8; margin:1rem 0 1.5rem; }
+  .restart-btn { background:#0f3460; border:1px solid #1a4a7a; border-radius:8px; padding:10px 24px; font-size:14px; font-weight:600; cursor:pointer; color:#90caf9; }
+  .restart-btn:hover { background:#1a4a7a; }
+  .badge { display:inline-block; font-size:12px; font-weight:700; padding:2px 8px; border-radius:20px; margin-bottom:8px; }
+  .badge-prep { background:#0d3028; color:#4dd0a8; border:1px solid #1a5040; }
+  .badge-vitals { background:#0d1f3c; color:#64b5f6; border:1px solid #1a3a6a; }
+  .badge-edu { background:#3a2200; color:#ffb74d; border:1px solid #5a3800; }
+  .badge-assist { background:#1e1040; color:#b39ddb; border:1px solid #352070; }
+  .badge-clean { background:#252520; color:#bcaaa4; border:1px solid #403a36; }
+  .badge-greet { background:#3a0f20; color:#f48fb1; border:1px solid #5a1a35; }
+</style>
+</head>
+<body>
+<div id="game">
+  <div class="score-bar">
+    <span class="score-pill" id="score-display">Score: 0</span>
+    <span class="step-indicator" id="step-display">Scenario 1 of 6</span>
+  </div>
+  <div id="scene-area"></div>
+</div>
+
+<script>
+const scenarios=[
+  {badge:"badge-prep",badgeLabel:"Room Prep",icon:"🏥",title:"Preparing the exam room",desc:"Your next patient is coming in for a routine physical. You have 5 minutes before they arrive. What do you do first?",choices:[{text:"Check that the exam table paper is fresh, gloves are stocked, and the BP cuff is in the room.",correct:true},{text:"Sit at the nurse's station and wait for the patient to check in.",correct:false},{text:"Leave room setup for the provider — it's not your job.",correct:false},{text:"Stock only if you happen to notice something missing.",correct:false}],goodFeedback:"Exactly right! A Medical Assistant always preps the room ahead of time — fresh table paper, stocked supplies, and equipment ready. This keeps visits running smoothly.",badFeedback:"Not quite. Room preparation is a core MA responsibility. Always arrive before the patient to check table paper, gloves, and equipment so nothing delays the visit."},
+  {badge:"badge-greet",badgeLabel:"Greeting Patients",icon:"👋",title:"A nervous new patient",desc:"You call a patient from the waiting room. They seem tense and don't make eye contact. How do you greet them?",choices:[{text:"Walk past quickly and say 'follow me' to get them to the room faster.",correct:false},{text:"Greet them warmly by name, introduce yourself, and walk beside them while making small talk.",correct:true},{text:"Ask them why they look upset before even introducing yourself.",correct:false},{text:"Skip the greeting — you'll ask questions once they're seated.",correct:false}],goodFeedback:"Well done! A warm, personal greeting reduces patient anxiety. Introducing yourself and walking alongside them shows respect and builds trust right from the start.",badFeedback:"First impressions matter. Patients who are anxious need a welcoming, professional greeting — using their name, introducing yourself, and showing you're there to help."},
+  {badge:"badge-vitals",badgeLabel:"Vital Signs",icon:"💓",title:"Taking blood pressure",desc:"You're about to take a patient's blood pressure. They just rushed in and seem out of breath. What should you do?",choices:[{text:"Take it immediately so you don't fall behind schedule.",correct:false},{text:"Have the patient sit and rest for at least 5 minutes before taking the reading.",correct:true},{text:"Skip BP today since they're already stressed.",correct:false},{text:"Take it while they're standing so it's faster.",correct:false}],goodFeedback:"Perfect! Rushing a BP reading gives inaccurate results. Having the patient rest 5 minutes, seated and calm, ensures the reading reflects their true resting blood pressure.",badFeedback:"Taking BP on a patient who just rushed in will give a falsely elevated reading. Best practice is to have them sit calmly for at least 5 minutes first."},
+  {badge:"badge-edu",badgeLabel:"Patient Education",icon:"📋",title:"Explaining a diagnosis",desc:"The provider has diagnosed a patient with Type 2 diabetes and asks you to explain the discharge instructions. The patient looks overwhelmed. What do you do?",choices:[{text:"Read all instructions aloud quickly and hand them the paper.",correct:false},{text:"Tell them not to worry — it's easy to manage.",correct:false},{text:"Break it into simple steps, check for understanding after each one, and ask if they have questions.",correct:true},{text:"Suggest they look it up online when they get home.",correct:false}],goodFeedback:"Excellent! Patient education should be clear, broken into small chunks, and confirmed with 'teach-back' — asking the patient to repeat key points in their own words.",badFeedback:"An overwhelmed patient won't absorb a rushed explanation. Always simplify, pause, and confirm understanding. Emotional support is just as important as the information itself."},
+  {badge:"badge-assist",badgeLabel:"Assisting Providers",icon:"🩺",title:"During a minor procedure",desc:"The provider is performing a skin biopsy. You are assisting. Midway through, they need additional gauze but you're not sure where it is. What do you do?",choices:[{text:"Leave the room to find gauze, leaving the provider without assistance.",correct:false},{text:"Tell the provider you don't know where it is and wait for them to solve it.",correct:false},{text:"Check the room's supply drawer first, then calmly tell the provider if it's unavailable, so they can pause safely.",correct:true},{text:"Ignore it — the procedure will probably be fine without it.",correct:false}],goodFeedback:"Great teamwork! During procedures you anticipate needs in advance, but if something is missing, communicate calmly with the provider rather than abandoning your post.",badFeedback:"Never leave a provider mid-procedure without warning. The right move is to check available supplies, communicate clearly, and let the provider decide how to proceed safely."},
+  {badge:"badge-clean",badgeLabel:"Room Turnover",icon:"🧹",title:"After the procedure",desc:"The patient has left after a minor wound care procedure. There are used supplies and a soiled drape on the exam table. What is the correct order of actions?",choices:[{text:"Restock supplies, then dispose of waste, then clean surfaces.",correct:false},{text:"Dispose of sharps and biohazard waste properly, disinfect all surfaces, replace table paper, then restock.",correct:true},{text:"Call housekeeping and move on to the next patient.",correct:false},{text:"Just replace the table paper — surfaces look fine.",correct:false}],goodFeedback:"Spot on! Proper room turnover follows infection control protocol: safe disposal of sharps and biohazard waste first, then full surface disinfection, then restock.",badFeedback:"Room turnover has a safety sequence. Biohazard and sharp disposal always comes first, followed by full surface disinfection — not just table paper — before restocking."},
+];
+
+let current=0, score=0, answered=false;
+function shuffle(arr){return arr.map(v=>({v,s:Math.random()})).sort((a,b)=>a.s-b.s).map(x=>x.v);}
+
+function render(){
+  if(current>=scenarios.length){showResults();return;}
+  const s=scenarios[current]; answered=false;
+  const shuffled=shuffle(s.choices);
+  document.getElementById('score-display').textContent='Score: '+score;
+  document.getElementById('step-display').textContent='Scenario '+(current+1)+' of '+scenarios.length;
+  document.getElementById('scene-area').innerHTML=`
+    <div class="scene-card">
+      <div><span class="badge ${s.badge}">${s.badgeLabel}</span></div>
+      <div class="scene-icon">${s.icon}</div>
+      <div class="scene-title">${s.title}</div>
+      <div class="scene-desc">${s.desc}</div>
+      <div class="choices" id="choices">
+        ${shuffled.map(c=>`<button class="choice-btn" onclick="choose(this,${c.correct})">${c.text}</button>`).join('')}
+      </div>
+      <div id="feedback"></div>
+    </div>`;
+}
+
+function choose(btn,correct){
+  if(answered) return; answered=true;
+  const s=scenarios[current];
+  document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  if(correct){
+    btn.classList.add('correct'); score++;
+    document.getElementById('score-display').textContent='Score: '+score;
+    document.getElementById('feedback').innerHTML=`<div class="feedback good">✓ ${s.goodFeedback}<br><button class="next-btn" onclick="next()">Next scenario →</button></div>`;
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('feedback').innerHTML=`<div class="feedback bad">✗ ${s.badFeedback}<br><button class="next-btn" onclick="next()">Next scenario →</button></div>`;
+  }
+}
+
+function next(){current++;render();}
+
+function showResults(){
+  const pct=Math.round(score/scenarios.length*100);
+  const msg=pct===100?"Outstanding! You're ready to ace any MA clinical rotation.":pct>=67?"Great work! Review the scenarios you missed and you'll be fully prepared.":"Keep practicing — review each role area and try again!";
+  document.getElementById('scene-area').innerHTML=`
+    <div class="results-card">
+      <div style="font-size:48px;margin-bottom:8px;">🏅</div>
+      <div class="results-label">Your final score</div>
+      <div class="results-score">${score} / ${scenarios.length}</div>
+      <div class="results-label">${pct}%</div>
+      <div class="results-msg">${msg}</div>
+      <button class="restart-btn" onclick="restart()">Try again</button>
+    </div>`;
+  document.getElementById('score-display').textContent='Score: '+score;
+  document.getElementById('step-display').textContent='Complete!';
+}
+
+function restart(){current=0;score=0;render();}
+render();
+</script>
+</body>
+</html>

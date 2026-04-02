@@ -5,233 +5,182 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OB/GYN Flashcards</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { min-height: 100vh; background: #0f0f0f; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 24px 16px; }
-  #app { width: 100%; max-width: 640px; }
-
-  /* Header */
-  .header { text-align: center; margin-bottom: 18px; }
-  .badge { display: inline-block; background: #8b1a1a; color: #fff; border-radius: 8px; padding: 6px 18px; font-size: 13px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
-  .title { color: #fff; font-size: 22px; margin: 4px 0 2px; font-weight: 800; }
-  .subtitle { color: #bbb; font-size: 14px; }
-
-  /* Progress */
-  .progress-row { display: flex; justify-content: space-between; color: #aaa; font-size: 13px; margin-bottom: 6px; }
-  .progress-row .correct { color: #81c784; }
-  .progress-track { background: #333; border-radius: 99px; height: 8px; margin-bottom: 16px; }
-  .progress-fill { background: #8b1a1a; border-radius: 99px; height: 8px; transition: width 0.4s; }
-
-  /* Card */
-  .card { width: 100%; min-height: 220px; border-radius: 18px; padding: 32px 28px; cursor: pointer; transition: background 0.3s, border 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; margin-bottom: 20px; position: relative; }
-  .card.question { background: #1e1e1e; border: 2px solid #444; }
-  .card.answer  { background: #8b1a1a; border: 2px solid #c62828; }
-  .card-label { position: absolute; top: 14px; right: 18px; font-size: 12px; font-weight: 600; }
-  .card.question .card-label { color: #888; }
-  .card.answer  .card-label { color: #ffcdd2; }
-  .card-text { font-size: 18px; color: #fff; font-weight: 700; line-height: 1.6; }
-  .card.answer .card-text { font-size: 16px; font-weight: 500; }
-  .flip-hint { margin-top: 18px; font-size: 28px; }
-
-  /* Buttons */
-  .btn-row { display: flex; gap: 14px; margin-bottom: 16px; }
-  .btn { flex: 1; border-radius: 12px; padding: 18px; font-size: 17px; font-weight: 800; cursor: pointer; border: 2px solid; }
-  .btn-review { background: #3a1a1a; border-color: #c62828; color: #ff8a80; }
-  .btn-got   { background: #1e3a1e; border-color: #43a047; color: #a5d6a7; }
-  .btn-next  { background: #8b1a1a; color: #fff; border: none; border-radius: 12px; padding: 16px 40px; font-size: 18px; font-weight: 800; cursor: pointer; width: 100%; }
-  .btn-restart { background: #8b1a1a; color: #fff; border: none; border-radius: 12px; padding: 16px 36px; font-size: 17px; font-weight: 700; cursor: pointer; width: 100%; }
-
-  .feedback { text-align: center; margin-bottom: 14px; font-size: 16px; font-weight: 700; }
-  .feedback.good { color: #81c784; }
-  .feedback.bad  { color: #ef9a9a; }
-
-  /* Done screen */
-  #done { display: none; background: #1a1a1a; border-radius: 20px; padding: 48px 36px; text-align: center; border: 2px solid #8b1a1a; }
-  #done .emoji { font-size: 64px; margin-bottom: 12px; }
-  #done h2 { color: #fff; font-size: 28px; margin-bottom: 6px; }
-  #done .done-sub { color: #aaa; font-size: 15px; margin-bottom: 28px; }
-  .score-box { background: #8b1a1a; border-radius: 14px; padding: 24px; margin-bottom: 28px; }
-  .score-pct { color: #fff; font-size: 48px; font-weight: 800; }
-  .score-detail { color: #ffcdd2; font-size: 15px; margin-top: 4px; }
-  .tally-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
-  .tally { border-radius: 10px; padding: 14px 20px; }
-  .tally-got    { background: #1e3a1e; color: #81c784; }
-  .tally-review { background: #3a1a1a; color: #ef9a9a; }
-  .tally-num { font-size: 24px; font-weight: 700; }
-  .tally-lbl { font-size: 13px; }
-
-  .hidden { display: none !important; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { min-height:100vh; background:#0f0f0f; font-family:system-ui,sans-serif; display:flex; flex-direction:column; align-items:center; padding:24px 16px; }
+  #app { width:100%; max-width:640px; }
+  .header { text-align:center; margin-bottom:18px; }
+  .badge { display:inline-block; background:#8b1a1a; color:#fff; border-radius:8px; padding:6px 18px; font-size:13px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+  .title { color:#fff; font-size:22px; margin:4px 0 2px; font-weight:800; }
+  .subtitle { color:#bbb; font-size:14px; }
+  .progress-row { display:flex; justify-content:space-between; color:#aaa; font-size:13px; margin-bottom:6px; }
+  .progress-row .correct { color:#81c784; }
+  .progress-track { background:#333; border-radius:99px; height:8px; margin-bottom:16px; }
+  .progress-fill { background:#8b1a1a; border-radius:99px; height:8px; transition:width 0.4s; }
+  .card { width:100%; min-height:220px; border-radius:18px; padding:32px 28px; cursor:pointer; transition:background 0.3s,border 0.3s; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; margin-bottom:20px; position:relative; }
+  .card.question { background:#1e1e1e; border:2px solid #444; }
+  .card.answer { background:#8b1a1a; border:2px solid #c62828; }
+  .card-label { position:absolute; top:14px; right:18px; font-size:12px; font-weight:600; }
+  .card.question .card-label { color:#888; }
+  .card.answer .card-label { color:#ffcdd2; }
+  .card-text { font-size:18px; color:#fff; font-weight:700; line-height:1.6; }
+  .card.answer .card-text { font-size:16px; font-weight:500; }
+  .flip-hint { margin-top:18px; font-size:28px; }
+  .btn-row { display:flex; gap:14px; margin-bottom:16px; }
+  .btn { flex:1; border-radius:12px; padding:18px; font-size:17px; font-weight:800; cursor:pointer; border:2px solid; }
+  .btn-review { background:#3a1a1a; border-color:#c62828; color:#ff8a80; }
+  .btn-got { background:#1e3a1e; border-color:#43a047; color:#a5d6a7; }
+  .btn-next { background:#8b1a1a; color:#fff; border:none; border-radius:12px; padding:16px 40px; font-size:18px; font-weight:800; cursor:pointer; width:100%; }
+  .btn-restart { background:#8b1a1a; color:#fff; border:none; border-radius:12px; padding:16px 36px; font-size:17px; font-weight:700; cursor:pointer; width:100%; }
+  .feedback { text-align:center; margin-bottom:14px; font-size:16px; font-weight:700; }
+  .feedback.good { color:#81c784; }
+  .feedback.bad { color:#ef9a9a; }
+  #done { display:none; background:#1a1a1a; border-radius:20px; padding:48px 36px; text-align:center; border:2px solid #8b1a1a; }
+  #done .emoji { font-size:64px; margin-bottom:12px; }
+  #done h2 { color:#fff; font-size:28px; margin-bottom:6px; }
+  #done .done-sub { color:#aaa; font-size:15px; margin-bottom:28px; }
+  .score-box { background:#8b1a1a; border-radius:14px; padding:24px; margin-bottom:28px; }
+  .score-pct { color:#fff; font-size:48px; font-weight:800; }
+  .score-detail { color:#ffcdd2; font-size:15px; margin-top:4px; }
+  .tally-row { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:24px; }
+  .tally { border-radius:10px; padding:14px 20px; }
+  .tally-got { background:#1e3a1e; color:#81c784; }
+  .tally-review { background:#3a1a1a; color:#ef9a9a; }
+  .tally-num { font-size:24px; font-weight:700; }
+  .tally-lbl { font-size:13px; }
+  .hidden { display:none !important; }
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- Quiz screen -->
   <div id="quiz">
     <div class="header">
-      <div class="badge">WEEK 09 — OB/GYN PROCEDURES &amp; PATIENT SUPPORT</div>
+      <div class="badge">OB/GYN PROCEDURES &amp; PATIENT SUPPORT</div>
       <h1 class="title">🩺 OB/GYN Flashcard Activity</h1>
       <p class="subtitle">A fun activity to boost your recall and ace your exam! Flip the card to reveal the answer.</p>
     </div>
-
     <div class="progress-row">
       <span id="card-counter">Card 1 of 18</span>
       <span class="correct">✅ <span id="score-display">0</span> correct</span>
     </div>
     <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-
     <div class="card question" id="card" onclick="flipCard()">
       <div class="card-label" id="card-label">QUESTION — tap to flip</div>
       <div class="card-text" id="card-text"></div>
       <div class="flip-hint" id="flip-hint">👆</div>
     </div>
-
     <div class="btn-row hidden" id="answer-btns">
       <button class="btn btn-review" onclick="handleAnswer(false)">🔁 Need to Review</button>
-      <button class="btn btn-got"    onclick="handleAnswer(true)">✅ Got It!</button>
+      <button class="btn btn-got" onclick="handleAnswer(true)">✅ Got It!</button>
     </div>
-
     <div class="hidden" id="feedback-area">
       <div class="feedback" id="feedback-msg"></div>
       <button class="btn-next" id="next-btn" onclick="nextCard()"></button>
     </div>
   </div>
 
-  <!-- Done screen -->
   <div id="done">
     <div class="emoji">🎉</div>
     <h2>Activity Complete!</h2>
-    <p class="done-sub">Week 09 — OB/GYN Procedures &amp; Patient Support</p>
+    <p class="done-sub">OB/GYN Procedures &amp; Patient Support</p>
     <div class="score-box">
       <div class="score-pct" id="done-pct"></div>
       <div class="score-detail">You got <strong id="done-score"></strong> out of <strong id="done-total"></strong> correct</div>
     </div>
     <div class="tally-row">
-      <div class="tally tally-got">
-        <div class="tally-num" id="done-got"></div>
-        <div class="tally-lbl">Got It ✅</div>
-      </div>
-      <div class="tally tally-review">
-        <div class="tally-num" id="done-review"></div>
-        <div class="tally-lbl">Need Review 🔁</div>
-      </div>
+      <div class="tally tally-got"><div class="tally-num" id="done-got"></div><div class="tally-lbl">Got It ✅</div></div>
+      <div class="tally tally-review"><div class="tally-num" id="done-review"></div><div class="tally-lbl">Need Review 🔁</div></div>
     </div>
     <button class="btn-restart" onclick="restart()">🔄 Play Again</button>
   </div>
 </div>
 
 <script>
-const cards = [
-  { q: "What does OB stand for and what does it cover?", a: "OB stands for Obstetrics — it covers pregnancy, childbirth, and postpartum care." },
-  { q: "What does GYN stand for and what does it cover?", a: "GYN stands for Gynecology — it covers female reproductive health including exams, screenings, and treatments." },
-  { q: "What is a Pap Smear (Papanicolaou test)?", a: "A screening procedure used to detect cervical cancer and pre-cancerous changes in the cervix." },
-  { q: "What is a Pelvic Exam?", a: "A physical examination of a woman's pelvic organs, including the external genitalia, vagina, uterus, and sometimes the rectum." },
-  { q: "What is a Breast Exam?", a: "A visual inspection and manual palpation of the breasts to check for abnormalities such as lumps, skin texture changes, or nipple discharge." },
-  { q: "What is an Endometrial Biopsy?", a: "A procedure where a tissue sample is taken from the lining of the uterus (endometrium) for examination." },
-  { q: "What is Colposcopy?", a: "A procedure where a doctor uses a magnifying instrument called a colposcope to examine the cervix and vagina — often after an abnormal Pap test." },
-  { q: "How is an IUD removed?", a: "By securely grasping the threads at the external os with ring forceps and applying traction away from the cervix." },
-  { q: "How often should gynecological exams be conducted?", a: "Every 1–3 years, depending on patient history." },
-  { q: "What position is the patient placed in for a Pap/Pelvic exam?", a: "The lithotomy position — lying on the back with feet placed in stirrups." },
-  { q: "Name 4 key responsibilities of an MA during OB/GYN visits.", a: "Prepare exam rooms and supplies, greet and interview patients, take vital signs and document history, and assist providers during procedures." },
-  { q: "What supplies are needed for a Pap smear?", a: "Gloves, gown, speculum, cytobrush, and drape. The speculum should be warmed and expiration dates verified." },
-  { q: "What are 4 common OB procedures performed during pregnancy?", a: "Prenatal visits and ultrasounds, Non-Stress Tests (NST), Gestational Diabetes Screening, and Amniocentesis." },
-  { q: "What does the MA track at each prenatal (OB) visit?", a: "Weight, blood pressure, and fundal height. Urine samples are also collected." },
-  { q: "Name 5 patient education topics in OB/GYN.", a: "Menstrual health and hygiene, birth control options, STD prevention, preconception counseling, and menopause management." },
-  { q: "What are the 4 legal & ethical considerations in OB/GYN care?", a: "Informed consent, HIPAA compliance, mandatory reporting (e.g., abuse, STDs), and scope of practice." },
-  { q: "What are the 3 breast self-exam (BSE) patterns the MA teaches?", a: "Circles, Wedges, and Lines — performed monthly after menses for early detection." },
-  { q: "What steps are involved in preparing the patient for an OB/GYN exam?", a: "Explain the procedure, verify patient ID, request urination, provide gown and drape, and ensure privacy." },
+const cards=[
+  {q:"What does OB stand for and what does it cover?",a:"OB stands for Obstetrics — it covers pregnancy, childbirth, and postpartum care."},
+  {q:"What does GYN stand for and what does it cover?",a:"GYN stands for Gynecology — it covers female reproductive health including exams, screenings, and treatments."},
+  {q:"What is a Pap Smear (Papanicolaou test)?",a:"A screening procedure used to detect cervical cancer and pre-cancerous changes in the cervix."},
+  {q:"What is a Pelvic Exam?",a:"A physical examination of a woman's pelvic organs, including the external genitalia, vagina, uterus, and sometimes the rectum."},
+  {q:"What is a Breast Exam?",a:"A visual inspection and manual palpation of the breasts to check for abnormalities such as lumps, skin texture changes, or nipple discharge."},
+  {q:"What is an Endometrial Biopsy?",a:"A procedure where a tissue sample is taken from the lining of the uterus (endometrium) for examination."},
+  {q:"What is Colposcopy?",a:"A procedure where a doctor uses a magnifying instrument called a colposcope to examine the cervix and vagina — often after an abnormal Pap test."},
+  {q:"How is an IUD removed?",a:"By securely grasping the threads at the external os with ring forceps and applying traction away from the cervix."},
+  {q:"How often should gynecological exams be conducted?",a:"Every 1–3 years, depending on patient history."},
+  {q:"What position is the patient placed in for a Pap/Pelvic exam?",a:"The lithotomy position — lying on the back with feet placed in stirrups."},
+  {q:"Name 4 key responsibilities of an MA during OB/GYN visits.",a:"Prepare exam rooms and supplies, greet and interview patients, take vital signs and document history, and assist providers during procedures."},
+  {q:"What supplies are needed for a Pap smear?",a:"Gloves, gown, speculum, cytobrush, and drape. The speculum should be warmed and expiration dates verified."},
+  {q:"What are 4 common OB procedures performed during pregnancy?",a:"Prenatal visits and ultrasounds, Non-Stress Tests (NST), Gestational Diabetes Screening, and Amniocentesis."},
+  {q:"What does the MA track at each prenatal (OB) visit?",a:"Weight, blood pressure, and fundal height. Urine samples are also collected."},
+  {q:"Name 5 patient education topics in OB/GYN.",a:"Menstrual health and hygiene, birth control options, STD prevention, preconception counseling, and menopause management."},
+  {q:"What are the 4 legal & ethical considerations in OB/GYN care?",a:"Informed consent, HIPAA compliance, mandatory reporting (e.g., abuse, STDs), and scope of practice."},
+  {q:"What are the 3 breast self-exam (BSE) patterns the MA teaches?",a:"Circles, Wedges, and Lines — performed monthly after menses for early detection."},
+  {q:"What steps are involved in preparing the patient for an OB/GYN exam?",a:"Explain the procedure, verify patient ID, request urination, provide gown and drape, and ensure privacy."},
 ];
 
-let idx = 0, flipped = false, score = 0, answered = false, reviewed = 0;
-const total = cards.length;
+let idx=0, flipped=false, score=0, answered=false, reviewed=0;
+const total=cards.length;
 
-function render() {
-  const c = cards[idx];
-  document.getElementById('card-counter').textContent = `Card ${idx + 1} of ${total}`;
-  document.getElementById('score-display').textContent = score;
-  document.getElementById('progress-fill').style.width = `${(idx / total) * 100}%`;
-
-  const cardEl = document.getElementById('card');
-  const labelEl = document.getElementById('card-label');
-  const textEl  = document.getElementById('card-text');
-  const hintEl  = document.getElementById('flip-hint');
-
-  if (flipped) {
-    cardEl.className = 'card answer';
-    labelEl.textContent = 'ANSWER';
-    textEl.textContent = c.a;
-    hintEl.classList.add('hidden');
+function render(){
+  const c=cards[idx];
+  document.getElementById('card-counter').textContent=`Card ${idx+1} of ${total}`;
+  document.getElementById('score-display').textContent=score;
+  document.getElementById('progress-fill').style.width=`${(idx/total)*100}%`;
+  const cardEl=document.getElementById('card');
+  const labelEl=document.getElementById('card-label');
+  const textEl=document.getElementById('card-text');
+  const hintEl=document.getElementById('flip-hint');
+  if(flipped){
+    cardEl.className='card answer'; labelEl.textContent='ANSWER';
+    textEl.textContent=c.a; hintEl.classList.add('hidden');
   } else {
-    cardEl.className = 'card question';
-    labelEl.textContent = 'QUESTION — tap to flip';
-    textEl.textContent = c.q;
-    hintEl.classList.remove('hidden');
+    cardEl.className='card question'; labelEl.textContent='QUESTION — tap to flip';
+    textEl.textContent=c.q; hintEl.classList.remove('hidden');
   }
-
-  const answerBtns = document.getElementById('answer-btns');
-  const feedbackArea = document.getElementById('feedback-area');
-
-  if (!flipped) {
-    answerBtns.classList.add('hidden');
-    feedbackArea.classList.add('hidden');
-  } else if (!answered) {
-    answerBtns.classList.remove('hidden');
-    feedbackArea.classList.add('hidden');
+  if(!flipped){
+    document.getElementById('answer-btns').classList.add('hidden');
+    document.getElementById('feedback-area').classList.add('hidden');
+  } else if(!answered){
+    document.getElementById('answer-btns').classList.remove('hidden');
+    document.getElementById('feedback-area').classList.add('hidden');
   }
 }
 
-function flipCard() {
-  if (answered) return;
-  flipped = !flipped;
+function flipCard(){ if(answered) return; flipped=!flipped; render(); }
+
+function handleAnswer(knew){
+  if(answered) return; answered=true;
+  if(knew) score++; else reviewed++;
+  document.getElementById('answer-btns').classList.add('hidden');
+  document.getElementById('feedback-area').classList.remove('hidden');
+  const msg=document.getElementById('feedback-msg');
+  msg.className='feedback '+(knew?'good':'bad');
+  msg.textContent=knew?'🌟 Great job! Keep it up!':'💪 No worries — review it and try again later!';
+  document.getElementById('next-btn').textContent=(idx+1>=total)?'🏁 See Results':'Next Card →';
+  document.getElementById('score-display').textContent=score;
+}
+
+function nextCard(){
+  if(idx+1>=total){ showDone(); return; }
+  idx++; flipped=false; answered=false;
+  document.getElementById('answer-btns').classList.add('hidden');
+  document.getElementById('feedback-area').classList.add('hidden');
   render();
 }
 
-function handleAnswer(knew) {
-  if (answered) return;
-  answered = true;
-  if (knew) score++;
-  else reviewed++;
-
-  document.getElementById('answer-btns').classList.add('hidden');
-  const feedbackArea = document.getElementById('feedback-area');
-  feedbackArea.classList.remove('hidden');
-
-  const msg = document.getElementById('feedback-msg');
-  msg.className = 'feedback ' + (knew ? 'good' : 'bad');
-  msg.textContent = knew ? '🌟 Great job! Keep it up!' : '💪 No worries — review it and try again later!';
-
-  const nextBtn = document.getElementById('next-btn');
-  nextBtn.textContent = (idx + 1 >= total) ? '🏁 See Results' : 'Next Card →';
-  document.getElementById('score-display').textContent = score;
+function showDone(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('done').style.display='block';
+  const pct=Math.round(score/total*100);
+  document.getElementById('done-pct').textContent=pct+'%';
+  document.getElementById('done-score').textContent=score;
+  document.getElementById('done-total').textContent=total;
+  document.getElementById('done-got').textContent=score;
+  document.getElementById('done-review').textContent=reviewed;
 }
 
-function nextCard() {
-  if (idx + 1 >= total) {
-    showDone();
-  } else {
-    idx++;
-    flipped = false;
-    answered = false;
-    document.getElementById('answer-btns').classList.add('hidden');
-    document.getElementById('feedback-area').classList.add('hidden');
-    render();
-  }
-}
-
-function showDone() {
-  document.getElementById('quiz').style.display = 'none';
-  const done = document.getElementById('done');
-  done.style.display = 'block';
-  const pct = Math.round((score / total) * 100);
-  document.getElementById('done-pct').textContent = pct + '%';
-  document.getElementById('done-score').textContent = score;
-  document.getElementById('done-total').textContent = total;
-  document.getElementById('done-got').textContent = score;
-  document.getElementById('done-review').textContent = reviewed;
-}
-
-function restart() {
-  idx = 0; flipped = false; score = 0; answered = false; reviewed = 0;
-  document.getElementById('done').style.display = 'none';
-  document.getElementById('quiz').style.display = 'block';
+function restart(){
+  idx=0;flipped=false;score=0;answered=false;reviewed=0;
+  document.getElementById('done').style.display='none';
+  document.getElementById('quiz').style.display='block';
   document.getElementById('answer-btns').classList.add('hidden');
   document.getElementById('feedback-area').classList.add('hidden');
   render();

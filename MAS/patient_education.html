@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Patient Education — Quick Review</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#13151a; min-height:100vh; font-family:system-ui,sans-serif; color:#dde1ee; padding:1.5rem 1rem; }
+  #app { max-width:680px; margin:0 auto; }
+  h2 { font-size:20px; font-weight:700; color:#eceff7; margin:0 0 4px; }
+  .subtitle { font-size:14px; font-weight:500; color:#9da3b4; margin:0 0 1.5rem; }
+  .section-title { font-size:13px; font-weight:700; color:#9da3b4; text-transform:uppercase; letter-spacing:0.04em; margin:0 0 12px; }
+  .cards-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:1.5rem; }
+  .flip-card { height:110px; cursor:pointer; perspective:600px; }
+  .flip-inner { position:relative; width:100%; height:100%; transition:transform 0.45s; transform-style:preserve-3d; }
+  .flip-card.flipped .flip-inner { transform:rotateY(180deg); }
+  .flip-front, .flip-back { position:absolute; width:100%; height:100%; backface-visibility:hidden; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px; text-align:center; }
+  .flip-front { background:#252930; border:1px solid #4a4f5e; }
+  .flip-front .icon { font-size:22px; margin-bottom:6px; }
+  .flip-front .label { font-size:13px; font-weight:700; color:#dde1ee; }
+  .flip-back { background:#0f3d2b; border:1px solid #2a7a55; transform:rotateY(180deg); }
+  .flip-back .back-text { font-size:13px; font-weight:600; color:#8eefc0; line-height:1.5; }
+  .flip-hint { font-size:12px; font-weight:500; color:#9da3b4; text-align:center; margin:-8px 0 1.5rem; }
+  .quiz-box { background:#1a1d23; border-radius:12px; padding:1.25rem; margin-bottom:1.5rem; }
+  .q-text { font-size:15px; font-weight:700; color:#eceff7; margin:0 0 14px; }
+  .quiz-options { display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt { background:#252930; border:1.5px solid #4a4f5e; border-radius:8px; padding:11px 16px; font-size:14px; font-weight:600; color:#c8ccd8; cursor:pointer; text-align:left; transition:background 0.15s,border-color 0.15s; }
+  .quiz-opt:hover:not(.locked) { background:#2e3340; border-color:#7a8099; color:#eceff7; }
+  .quiz-opt.correct { background:#0f3d2b; border-color:#2a7a55; color:#8eefc0; font-weight:700; }
+  .quiz-opt.wrong { background:#3b1a1a; border-color:#a03030; color:#f08080; font-weight:700; }
+  .quiz-opt.locked { cursor:default; }
+  .q-feedback { font-size:13px; font-weight:600; margin-top:10px; min-height:18px; color:#9da3b4; }
+  .q-nav { display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+  .q-counter { font-size:13px; font-weight:600; color:#9da3b4; }
+  .q-btn { background:#2e3340; border:1.5px solid #5a6080; border-radius:8px; color:#eceff7; font-size:13px; font-weight:700; padding:8px 22px; cursor:pointer; transition:background 0.15s,border-color 0.15s; }
+  .q-btn:hover:not(:disabled) { background:#3a4055; border-color:#8890aa; }
+  .q-btn:disabled { opacity:0.35; cursor:default; }
+  .score-box { background:#1a1d23; border-radius:12px; padding:1.5rem; text-align:center; margin-bottom:1rem; display:none; }
+  .score-num { font-size:40px; font-weight:700; color:#8eefc0; }
+  .score-label { font-size:14px; font-weight:600; color:#9da3b4; margin-bottom:14px; }
+  .score-msg { font-size:14px; font-weight:600; color:#dde1ee; margin-bottom:1rem; }
+  .restart-btn { background:#0f3d2b; border:1.5px solid #2a7a55; border-radius:8px; color:#8eefc0; padding:10px 28px; font-size:14px; font-weight:700; cursor:pointer; transition:background 0.15s; }
+  .restart-btn:hover { background:#175c3f; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h2>Patient Education — Quick Review</h2>
+  <p class="subtitle">Flip cards to explore key concepts, then test your knowledge.</p>
+
+  <p class="section-title">Flip the cards to learn</p>
+  <div class="cards-grid" id="cards"></div>
+  <p class="flip-hint">Tap a card to reveal the answer</p>
+
+  <p class="section-title">Knowledge check</p>
+  <div class="quiz-box" id="quiz-box">
+    <p class="q-text" id="q-text"></p>
+    <div class="quiz-options" id="q-options"></div>
+    <p class="q-feedback" id="q-feedback"></p>
+    <div class="q-nav">
+      <span class="q-counter" id="q-counter"></span>
+      <button class="q-btn" id="q-next" disabled>Next →</button>
+    </div>
+  </div>
+
+  <div class="score-box" id="score-box">
+    <div class="score-num" id="score-num"></div>
+    <div class="score-label">correct answers</div>
+    <div class="score-msg" id="score-msg"></div>
+    <button class="restart-btn" onclick="restartQuiz()">↺ Try Again</button>
+  </div>
+</div>
+
+<script>
+const cards=[
+  {icon:"📋",label:"What is patient education?",back:"Informing & instructing patients to improve their health outcomes."},
+  {icon:"💊",label:"What topics does it cover?",back:"Prevention, treatments, medications, and lifestyle changes."},
+  {icon:"🔄",label:"Is it a one-time event?",back:"No — it's an ongoing process tailored to each individual."},
+  {icon:"📉",label:"What does it reduce?",back:"Anxiety, misinformation, readmissions, and complications."},
+  {icon:"✅",label:"What does it increase?",back:"Treatment adherence and self-management skills."},
+  {icon:"🎯",label:"Why tailor education?",back:"Each patient has unique needs, literacy levels, and health goals."},
+];
+
+const quiz=[
+  {q:"What is the main goal of patient education?",opts:["To replace doctors","To improve patient health outcomes","To reduce hospital costs only","To document medical records"],ans:1,exp:"Patient education aims to inform and guide patients toward better health outcomes."},
+  {q:"Which of these is a benefit of patient education?",opts:["More hospital visits","Higher anxiety levels","Increased treatment adherence","Less patient involvement"],ans:2,exp:"Educated patients are more likely to follow through with their treatment plans."},
+  {q:"Patient education should be…",opts:["The same for every patient","Only given once at diagnosis","Tailored to each individual","Delivered only in writing"],ans:2,exp:"Education must be personalized to each patient's needs, culture, and literacy."},
+  {q:"Which topic does patient education NOT typically cover?",opts:["Medication instructions","Lifestyle changes","Hospital billing disputes","Preventing illness"],ans:2,exp:"Billing is handled by administrative staff, not patient education."},
+  {q:"Effective patient education can help reduce:",opts:["Staff workload only","Hospital readmissions and complications","Medication costs only","Insurance premiums"],ans:1,exp:"When patients understand their care, fewer complications and readmissions occur."},
+];
+
+let qIndex=0, score=0, answered=false;
+
+const grid=document.getElementById('cards');
+cards.forEach(c=>{
+  const el=document.createElement('div'); el.className='flip-card';
+  el.innerHTML=`<div class="flip-inner"><div class="flip-front"><div class="icon">${c.icon}</div><div class="label">${c.label}</div></div><div class="flip-back"><div class="back-text">${c.back}</div></div></div>`;
+  el.onclick=()=>el.classList.toggle('flipped');
+  grid.appendChild(el);
+});
+
+function loadQ(){
+  answered=false;
+  const q=quiz[qIndex];
+  document.getElementById('q-text').textContent=(qIndex+1)+'. '+q.q;
+  document.getElementById('q-feedback').textContent='';
+  document.getElementById('q-counter').textContent='Question '+(qIndex+1)+' of '+quiz.length;
+  document.getElementById('q-next').disabled=true;
+  const opts=document.getElementById('q-options'); opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('button'); btn.className='quiz-opt'; btn.textContent=o;
+    btn.onclick=()=>selectOpt(i); opts.appendChild(btn);
+  });
+}
+
+function selectOpt(i){
+  if(answered) return; answered=true;
+  const q=quiz[qIndex];
+  document.querySelectorAll('.quiz-opt').forEach((b,idx)=>{
+    b.classList.add('locked');
+    if(idx===q.ans) b.classList.add('correct');
+    else if(idx===i&&i!==q.ans) b.classList.add('wrong');
+  });
+  const fb=document.getElementById('q-feedback');
+  if(i===q.ans){ score++; fb.style.color='#8eefc0'; fb.textContent='✓ Correct! '+q.exp; }
+  else { fb.style.color='#f08080'; fb.textContent='✗ Not quite. '+q.exp; }
+  document.getElementById('q-next').disabled=false;
+}
+
+document.getElementById('q-next').onclick=()=>{
+  qIndex++;
+  if(qIndex<quiz.length){ loadQ(); return; }
+  document.getElementById('quiz-box').style.display='none';
+  const sb=document.getElementById('score-box'); sb.style.display='block';
+  document.getElementById('score-num').textContent=score+'/'+quiz.length;
+  const msgs=["Keep reviewing — you've got this!","Good effort! Review the flip cards again.","Nice work! You're building solid knowledge.","Excellent! You really know your stuff."];
+  document.getElementById('score-msg').textContent=msgs[Math.min(Math.floor(score/quiz.length*3.99),3)];
+};
+
+function restartQuiz(){
+  qIndex=0; score=0;
+  document.getElementById('score-box').style.display='none';
+  document.getElementById('quiz-box').style.display='block';
+  loadQ();
+}
+
+loadQ();
+</script>
+</body>
+</html>

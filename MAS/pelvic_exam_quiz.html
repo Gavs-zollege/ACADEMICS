@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pelvic Exam Quiz</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1a1d23; min-height:100vh; padding:1rem; font-family:system-ui,sans-serif; }
+  .quiz-wrap { padding:1.5rem 0; max-width:720px; margin:0 auto; }
+  .progress-bar { background:#2e3340; border-radius:999px; height:8px; margin-bottom:1.5rem; overflow:hidden; }
+  .progress-fill { height:100%; background:#1D9E75; border-radius:999px; transition:width 0.4s ease; }
+  .step-label { font-size:13px; color:#9aa3b5; margin-bottom:1.5rem; font-weight:600; letter-spacing:0.03em; text-transform:uppercase; }
+  .card { background:#242831; border:1px solid #363c4a; border-radius:14px; padding:1.75rem; margin-bottom:1rem; }
+  .question-text { font-size:18px; font-weight:700; color:#f0f2f7; margin-bottom:1.2rem; line-height:1.55; }
+  .option-btn { display:block; width:100%; text-align:left; padding:14px 18px; margin-bottom:10px; font-size:15px; font-weight:600; border-radius:10px; border:1.5px solid #3a4052; background:#2d3240; color:#d8dce8; cursor:pointer; transition:background 0.15s,border-color 0.15s; line-height:1.45; }
+  .option-btn:hover:not(:disabled) { background:#353c50; border-color:#4a5270; color:#f0f2f7; }
+  .option-btn.correct { background:#1a3028; border-color:#1D9E75; color:#6ee8b8; font-weight:700; }
+  .option-btn.wrong { background:#2e1a1a; border-color:#E24B4A; color:#f09090; font-weight:700; }
+  .option-btn:disabled { cursor:default; }
+  .feedback { font-size:15px; margin-top:1rem; padding:14px 18px; border-radius:10px; font-weight:600; line-height:1.6; }
+  .feedback.correct { background:#1a3028; color:#6ee8b8; border:1px solid #1D9E75; }
+  .feedback.wrong { background:#2e1a1a; color:#f09090; border:1px solid #E24B4A; }
+  .next-btn { margin-top:1rem; padding:12px 28px; font-size:15px; font-weight:700; border-radius:10px; border:1.5px solid #1D9E75; background:#1D9E75; color:#fff; cursor:pointer; transition:background 0.15s; }
+  .next-btn:hover { background:#0F6E56; }
+  .score-card { text-align:center; padding:2rem; }
+  .score-big { font-size:56px; font-weight:700; color:#1D9E75; line-height:1; }
+  .score-label { font-size:17px; color:#9aa3b5; margin-top:8px; font-weight:600; }
+  .score-msg { font-size:19px; font-weight:700; color:#f0f2f7; margin:1.2rem 0; }
+  .restart-btn { padding:12px 28px; font-size:15px; font-weight:700; border-radius:10px; border:1.5px solid #3a4052; background:#2d3240; color:#d8dce8; cursor:pointer; margin-top:0.5rem; }
+  .restart-btn:hover { background:#353c50; }
+  .step-icon { font-size:40px; text-align:center; margin-bottom:12px; }
+</style>
+</head>
+<body>
+<div class="quiz-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+  <div class="step-label" id="step-label">Question 1 of 6</div>
+  <div id="quiz-area"></div>
+</div>
+
+<script>
+const questions=[
+  {icon:"🛏️",question:"What is the first thing a patient does at the start of a pelvic exam?",options:["Stands upright against the wall","Lies on their back with feet in stirrups","Sits on the edge of the exam table","Lies face down on the table"],correct:1,explanation:"✅ Correct! The patient lies on their back (supine position) with their feet placed in stirrups. This position gives the doctor proper access for the examination."},
+  {icon:"🔍",question:"During Step 2 of the pelvic exam, what does the doctor examine?",options:["The inside of the uterus","The patient's blood pressure","The outside of the vaginal area","The patient's ovaries using ultrasound"],correct:2,explanation:"✅ Correct! The doctor first examines the outside of the vaginal area, checking for any signs of irritation, redness, sores, or abnormal discharge."},
+  {icon:"🩺",question:"What medical instrument is used in Step 3 of the pelvic exam?",options:["Stethoscope","Otoscope","Speculum","Sphygmomanometer"],correct:2,explanation:"✅ Correct! A speculum is a duck-bill shaped instrument used to gently separate the vaginal walls so the doctor can clearly see and examine the cervix."},
+  {icon:"📋",question:"What does the doctor examine after inserting the speculum?",options:["The ovaries","The cervix","The uterus","The fallopian tubes"],correct:1,explanation:"✅ Correct! Once the speculum separates the vaginal walls, the doctor can see and examine the cervix. This is also when a Pap smear may be collected."},
+  {icon:"🫁",question:"In Step 4, the doctor inserts two fingers into the vagina while pressing down on the abdomen. What organs are they checking?",options:["Kidneys and bladder","Liver and gallbladder","Uterus and ovaries","Appendix and colon"],correct:2,explanation:"✅ Correct! This is called a bimanual exam. The doctor uses both hands to feel the size, shape, and position of the uterus and ovaries to check for any abnormalities."},
+  {icon:"📝",question:"What is the correct ORDER of the four steps in a pelvic exam?",options:["Speculum → external exam → bimanual → patient positioning","Patient positioning → external exam → speculum/cervix → bimanual exam","Bimanual exam → speculum → external exam → positioning","External exam → bimanual → patient positioning → speculum"],correct:1,explanation:"✅ Correct! The order is: (1) Patient lies back in stirrups, (2) Doctor examines external vaginal area, (3) Speculum is inserted to view the cervix, (4) Bimanual exam checks uterus and ovaries."},
+];
+
+let current=0, score=0, answered=false;
+
+function render(){
+  if(current>=questions.length){showScore();return;}
+  document.getElementById('progress').style.width=(current/questions.length*100)+'%';
+  document.getElementById('step-label').textContent=`Question ${current+1} of ${questions.length}`;
+  const q=questions[current];
+  document.getElementById('quiz-area').innerHTML=`
+    <div class="card">
+      <div class="step-icon">${q.icon}</div>
+      <div class="question-text">${q.question}</div>
+      ${q.options.map((o,i)=>`<button class="option-btn" onclick="select(${i})" id="opt-${i}">${String.fromCharCode(65+i)}.  ${o}</button>`).join('')}
+      <div id="feedback" style="display:none"></div>
+      <div id="next-wrap" style="display:none"><button class="next-btn" onclick="next()">${current<questions.length-1?'Next question →':'See my score →'}</button></div>
+    </div>`;
+  answered=false;
+}
+
+function select(i){
+  if(answered) return;
+  answered=true;
+  const q=questions[current];
+  const fb=document.getElementById('feedback');
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  if(i===q.correct){
+    document.getElementById('opt-'+i).classList.add('correct');
+    fb.className='feedback correct'; fb.textContent=q.explanation; score++;
+  } else {
+    document.getElementById('opt-'+i).classList.add('wrong');
+    document.getElementById('opt-'+q.correct).classList.add('correct');
+    fb.className='feedback wrong';
+    fb.textContent='❌ Not quite. '+q.explanation.replace('✅ Correct! ','');
+  }
+  fb.style.display='block';
+  document.getElementById('next-wrap').style.display='block';
+}
+
+function next(){current++;render();}
+
+function showScore(){
+  document.getElementById('progress').style.width='100%';
+  document.getElementById('step-label').textContent='Complete!';
+  const pct=Math.round(score/questions.length*100);
+  const msg=pct===100?'🏆 Perfect score! You nailed it!':pct>=80?'🌟 Great job! Strong understanding!':pct>=60?'👍 Good effort! Review and try again.':'📚 Keep studying — you\'ve got this!';
+  document.getElementById('quiz-area').innerHTML=`
+    <div class="card score-card">
+      <div class="score-big">${score}/${questions.length}</div>
+      <div class="score-label">${pct}% correct</div>
+      <div class="score-msg">${msg}</div>
+      <button class="restart-btn" onclick="restart()">🔄 Try again</button>
+    </div>`;
+}
+
+function restart(){current=0;score=0;render();}
+render();
+</script>
+</body>
+</html>

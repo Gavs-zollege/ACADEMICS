@@ -1,0 +1,195 @@
+<style>
+  body { background: #1a1a1a; margin: 0; padding: 1rem; }
+  #app { padding: 1rem 0; font-family: var(--font-sans, system-ui, sans-serif); max-width: 680px; margin: 0 auto; }
+  .card { background: #2a2a2a; border: 0.5px solid #444; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .badge { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 6px; font-weight: 700; margin: 2px; }
+  .badge-purple { background: #2e2a5e; color: #c4bbff; }
+  .badge-teal { background: #0d3b2e; color: #6ddbb5; }
+  .badge-amber { background: #3d2800; color: #ffcc70; }
+  .badge-coral { background: #3d1810; color: #ffaa88; }
+  .badge-blue { background: #0a2a45; color: #7ec4f8; }
+  .opt-btn { display: block; width: 100%; text-align: left; background: #2a2a2a; border: 0.5px solid #555; border-radius: 8px; padding: 10px 14px; margin: 8px 0; cursor: pointer; font-size: 14px; font-weight: 600; color: #e8e8e8; transition: background 0.15s; }
+  .opt-btn:hover { background: #333; }
+  .opt-btn.correct { background: #1a3310; border-color: #4a9020; color: #a8e070; }
+  .opt-btn.wrong { background: #3a1010; border-color: #a03030; color: #f09090; }
+  .opt-btn.missed { background: #3a2500; border-color: #a06010; color: #ffcc70; }
+  .opt-btn:disabled { cursor: default; }
+  .progress-bar { height: 6px; background: #333; border-radius: 999px; overflow: hidden; margin-bottom: 1rem; }
+  .progress-fill { height: 100%; background: #1D9E75; border-radius: 999px; transition: width 0.4s; }
+  .score-pill { font-size: 13px; font-weight: 700; color: #aaa; float: right; }
+  h2 { font-size: 18px; font-weight: 700; color: #f0f0f0; margin: 0 0 4px; }
+  h3 { font-size: 15px; font-weight: 700; color: #f0f0f0; margin: 0 0 10px; }
+  p { font-size: 14px; color: #bbb; margin: 0 0 8px; line-height: 1.6; }
+  .feedback-box { border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 13px; font-weight: 600; line-height: 1.6; }
+  .feedback-correct { background: #1a3310; color: #a8e070; border: 0.5px solid #4a9020; }
+  .feedback-wrong { background: #3a1010; color: #f09090; border: 0.5px solid #a03030; }
+  .next-btn { background: transparent; border: 0.5px solid #555; border-radius: 8px; padding: 8px 20px; margin-top: 12px; cursor: pointer; font-size: 14px; font-weight: 700; color: #e0e0e0; }
+  .next-btn:hover { background: #333; }
+  .final-card { text-align: center; padding: 2rem; }
+  .big-score { font-size: 48px; font-weight: 700; color: #1D9E75; margin: 0.5rem 0; }
+  .star { color: #EF9F27; font-size: 24px; }
+  strong { color: #f0f0f0 !important; font-weight: 700; }
+</style>
+
+<div id="app"></div>
+
+<script>
+const scenarios = [
+  {
+    patient: "Maria, 72, speaks limited English and brought her adult daughter as a translator.",
+    concern: "She keeps nodding but looks confused when you explain her medication instructions.",
+    category: "Language barriers",
+    categoryColor: "badge-coral",
+    question: "What is the BEST approach?",
+    options: [
+      { text: "Speak slowly and use the daughter to translate, then ask Maria to repeat back instructions in her own language.", correct: true },
+      { text: "Give her a detailed written pamphlet in English since she can read better than listen.", correct: false },
+      { text: "Proceed quickly — the daughter understood, so Maria will be fine.", correct: false },
+      { text: "Ask the doctor to see her again tomorrow.", correct: false }
+    ],
+    feedback: "Using a teach-back method (asking the patient to repeat instructions) confirms understanding. Always use qualified interpreters or family when possible, and verify comprehension directly with the patient."
+  },
+  {
+    patient: "James, 45, a Jehovah's Witness patient scheduled for a minor surgical procedure.",
+    concern: "The consent form includes a clause about blood transfusions in emergencies.",
+    category: "Culture and beliefs",
+    categoryColor: "badge-purple",
+    question: "What should the medical assistant do first?",
+    options: [
+      { text: "Ignore the religious preference — medical necessity overrides personal beliefs.", correct: false },
+      { text: "Flag the concern to the provider and document the patient's stated preferences carefully in his chart.", correct: true },
+      { text: "Tell him not to worry — it probably won't come up.", correct: false },
+      { text: "Ask him to sign the form quickly and move on to save time.", correct: false }
+    ],
+    feedback: "Respecting religious and cultural beliefs is a patient right. The MA should document preferences, alert the provider, and ensure informed consent is properly obtained without dismissing the patient's values."
+  },
+  {
+    patient: "Destiny, 9 years old, brought in by her father for a check-up.",
+    concern: "She refuses to open her mouth for the throat exam and starts crying.",
+    category: "Age and cognitive ability",
+    categoryColor: "badge-teal",
+    question: "Which approach is most appropriate?",
+    options: [
+      { text: "Hold her mouth open firmly — the exam is necessary.", correct: false },
+      { text: "Tell her to stop crying and be brave like a big girl.", correct: false },
+      { text: "Use child-friendly language, explain what will happen step by step, and let her hold a comfort item.", correct: true },
+      { text: "Skip the exam and document 'patient uncooperative'.", correct: false }
+    ],
+    feedback: "Pediatric patients need age-appropriate communication. Breaking down steps, using simple words, and allowing some control reduces fear. Forcing compliance can cause lasting healthcare trauma."
+  },
+  {
+    patient: "Robert, 58, just received a diagnosis of Type 2 Diabetes.",
+    concern: "He is visibly upset, staring at the floor, and has not asked any questions.",
+    category: "Emotional state",
+    categoryColor: "badge-amber",
+    question: "How should you handle patient education right now?",
+    options: [
+      { text: "Begin the full diabetes education handout immediately — the sooner he knows, the better.", correct: false },
+      { text: "Acknowledge his feelings first, give him a moment, and offer to schedule a follow-up specifically for education.", correct: true },
+      { text: "Leave the room to give him privacy and come back in 30 minutes.", correct: false },
+      { text: "Tell him many people have diabetes and it is not a big deal.", correct: false }
+    ],
+    feedback: "Patients in emotional distress have limited capacity to absorb new information. Acknowledge feelings first ('This is a lot to take in'), offer support, and reschedule education when the patient is ready."
+  },
+  {
+    patient: "Linda, 34, picking up discharge paperwork after an ER visit.",
+    concern: "She reads the aftercare instructions, then asks 'So I just take the whole bottle at once to get rid of the infection faster, right?'",
+    category: "Health literacy",
+    categoryColor: "badge-blue",
+    question: "What does this tell you, and what should you do?",
+    options: [
+      { text: "She is clearly joking — laugh it off and send her home.", correct: false },
+      { text: "Correct her gently and hand her another printed sheet.", correct: false },
+      { text: "Recognize a health literacy gap, sit down with her, and use plain language with a teach-back to review dosing step by step.", correct: true },
+      { text: "Call the doctor immediately — this is a major emergency.", correct: false }
+    ],
+    feedback: "This is a health literacy red flag. Nearly 1 in 2 adults have difficulty understanding health information. Use plain language, avoid jargon, show visuals if available, and always confirm understanding through teach-back before discharge."
+  }
+];
+
+let current = 0, score = 0, answered = false;
+
+function categoryBadge(s) {
+  return `<span class="badge ${s.categoryColor}">${s.category}</span>`;
+}
+
+function renderQuestion() {
+  const s = scenarios[current];
+  const pct = Math.round((current / scenarios.length) * 100);
+  document.getElementById('app').innerHTML = `
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <p style="font-size:13px; color:#aaa; margin-bottom:0.75rem;">
+      ${categoryBadge(s)}
+      <span class="score-pill">Score: ${score}/${current}</span>
+    </p>
+    <div class="card">
+      <h3>Patient scenario</h3>
+      <p><strong>Patient:</strong> ${s.patient}</p>
+      <p><strong>Situation:</strong> ${s.concern}</p>
+    </div>
+    <h3>${s.question}</h3>
+    <div id="options">
+      ${s.options.map((o,i) => `<button class="opt-btn" onclick="choose(${i})">${String.fromCharCode(65+i)}. ${o.text}</button>`).join('')}
+    </div>
+    <div id="feedback"></div>
+  `;
+}
+
+function choose(idx) {
+  if (answered) return;
+  answered = true;
+  const s = scenarios[current];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (s.options[i].correct) b.classList.add('correct');
+    else if (i === idx && !s.options[i].correct) b.classList.add('wrong');
+  });
+  const isCorrect = s.options[idx].correct;
+  if (isCorrect) score++;
+  const fb = document.getElementById('feedback');
+  fb.innerHTML = `
+    <div class="feedback-box ${isCorrect ? 'feedback-correct' : 'feedback-wrong'}">
+      <strong>${isCorrect ? 'Correct!' : 'Not quite.'}</strong> ${s.feedback}
+    </div>
+    <button class="next-btn" onclick="next()">${current < scenarios.length - 1 ? 'Next patient →' : 'See results →'}</button>
+  `;
+}
+
+function next() {
+  current++;
+  answered = false;
+  if (current >= scenarios.length) renderFinal();
+  else renderQuestion();
+}
+
+function renderFinal() {
+  const pct = Math.round((score / scenarios.length) * 100);
+  let stars = pct >= 80 ? 3 : pct >= 60 ? 2 : 1;
+  let msg = pct >= 80 ? "Excellent! You have strong patient assessment instincts." : pct >= 60 ? "Good effort! Review the scenarios you missed to strengthen your skills." : "Keep practicing! Every patient interaction is a chance to improve.";
+  document.getElementById('app').innerHTML = `
+    <div class="card final-card">
+      <p style="font-size:13px; color:#aaa; margin-bottom:4px;">Activity complete</p>
+      <h2>Your result</h2>
+      <div class="big-score">${score} / ${scenarios.length}</div>
+      <div style="margin:8px 0 12px;">${'<span class="star">★</span>'.repeat(stars)}${'<span style="color:#444;font-size:24px;">★</span>'.repeat(3-stars)}</div>
+      <p style="color:#e0e0e0; font-weight:600;">${msg}</p>
+      <div style="margin-top:1.25rem; display:flex; flex-wrap:wrap; gap:8px; justify-content:center;">
+        <span class="badge badge-blue">Health literacy</span>
+        <span class="badge badge-coral">Language barriers</span>
+        <span class="badge badge-purple">Culture & beliefs</span>
+        <span class="badge badge-amber">Emotional state</span>
+        <span class="badge badge-teal">Age & cognition</span>
+      </div>
+      <button class="next-btn" style="margin-top:1.25rem;" onclick="restart()">Try again ↺</button>
+    </div>
+  `;
+}
+
+function restart() {
+  current = 0; score = 0; answered = false;
+  renderQuestion();
+}
+
+renderQuestion();
+</script>

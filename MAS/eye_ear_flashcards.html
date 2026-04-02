@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eye & Ear Flashcards</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { min-height:100vh; background:linear-gradient(135deg,#1a0a0a 0%,#2d0f0f 50%,#1a0a0a 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; font-family:system-ui,sans-serif; }
+  .badge { background:linear-gradient(135deg,#8b1a1a,#c0392b); border-radius:50px; padding:8px 24px; display:inline-block; margin-bottom:10px; }
+  .badge span { color:#fff; font-weight:800; font-size:13px; letter-spacing:2px; text-transform:uppercase; }
+  h1 { color:#fff; font-size:clamp(20px,4vw,28px); font-weight:900; margin-bottom:6px; text-shadow:0 2px 8px rgba(0,0,0,.5); }
+  .subtitle { color:#f0a0a0; font-size:14px; }
+  header { text-align:center; margin-bottom:20px; }
+  .progress-wrap { width:100%; max-width:620px; margin-bottom:16px; }
+  .progress-labels { display:flex; justify-content:space-between; color:#ddd; font-size:13px; margin-bottom:6px; font-weight:600; }
+  .progress-bar-bg { background:rgba(255,255,255,.15); border-radius:20px; height:10px; }
+  .progress-bar { background:linear-gradient(90deg,#e74c3c,#f39c12); border-radius:20px; height:10px; width:0%; transition:width .4s ease; }
+  .card { width:100%; max-width:620px; min-height:220px; border-radius:20px; padding:32px 28px; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; text-align:center; box-shadow:0 12px 40px rgba(0,0,0,.5); transition:background .4s ease,transform .15s ease,border-color .4s ease; user-select:none; background:linear-gradient(135deg,#1a1a4a,#2c3e8a); border:2px solid rgba(44,62,138,.4); }
+  .card:hover { transform:scale(1.015); }
+  .card.flipped { background:linear-gradient(135deg,#1a4a2e,#27ae60); border-color:rgba(39,174,96,.4); }
+  .card-label { font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; margin-bottom:14px; color:#a8b8f0; }
+  .card.flipped .card-label { color:#a8e6c1; }
+  .card-text { color:#fff; font-size:clamp(15px,2.5vw,18px); line-height:1.6; font-weight:700; }
+  .card.flipped .card-text { font-weight:500; }
+  .card-hint { margin-top:18px; font-size:12px; font-weight:600; opacity:.8; color:#a8b8f0; }
+  .card.flipped .card-hint { color:#a8e6c1; }
+  .btns { display:flex; gap:14px; margin-top:22px; flex-wrap:wrap; justify-content:center; }
+  button { border:none; cursor:pointer; font-family:inherit; font-weight:800; font-size:16px; letter-spacing:.5px; border-radius:50px; padding:14px 32px; transition:all .2s; }
+  #btn-prev { background:rgba(255,255,255,.2); color:#fff; box-shadow:0 4px 15px rgba(0,0,0,.3); }
+  #btn-prev:disabled { background:rgba(255,255,255,.1); color:rgba(255,255,255,.35); box-shadow:none; cursor:not-allowed; }
+  #btn-flip { background:linear-gradient(135deg,#e67e22,#f39c12); color:#fff; padding:14px 36px; box-shadow:0 6px 20px rgba(230,126,34,.4); }
+  #btn-next { background:linear-gradient(135deg,#8b1a1a,#c0392b); color:#fff; box-shadow:0 6px 20px rgba(192,57,43,.4); }
+  .tip { color:rgba(255,255,255,.4); font-size:12px; margin-top:18px; text-align:center; }
+  #finished { display:none; text-align:center; max-width:520px; }
+  .finish-emoji { font-size:70px; margin-bottom:16px; }
+  #finished h2 { color:#fff; font-size:28px; font-weight:900; margin-bottom:10px; }
+  #finished p { color:#f0a0a0; font-size:16px; line-height:1.7; margin-bottom:28px; }
+  #finished p strong { color:#fff; }
+  #btn-restart { padding:16px 48px; background:linear-gradient(135deg,#8b1a1a,#c0392b); color:#fff; font-size:18px; box-shadow:0 8px 25px rgba(192,57,43,.5); }
+  #game { display:flex; flex-direction:column; align-items:center; width:100%; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge"><span>🏥 Medical Assistant Program</span></div>
+  <h1>👁️ Eye & Ear Flashcards</h1>
+  <p class="subtitle">🎉 A fun recall activity to reinforce your learning — flip each card to reveal the answer!</p>
+</header>
+
+<div id="game">
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <span id="card-counter">Card 1 of 15</span>
+      <span id="pct">7% complete</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar" id="prog-bar"></div></div>
+  </div>
+  <div class="card" id="card" onclick="flipCard()">
+    <div class="card-label" id="card-label">❓ QUESTION</div>
+    <p class="card-text" id="card-text"></p>
+    <div class="card-hint" id="card-hint">👆 Tap to reveal answer</div>
+  </div>
+  <div class="btns">
+    <button id="btn-prev" onclick="prev()" disabled>← Previous</button>
+    <button id="btn-flip" onclick="flipCard()">💡 Reveal</button>
+    <button id="btn-next" onclick="next()">Next →</button>
+  </div>
+  <p class="tip">💡 Try to answer before flipping — that's how recall works best!</p>
+</div>
+
+<div id="finished">
+  <div class="finish-emoji">🎉</div>
+  <h2>You Did It!</h2>
+  <p>You've completed all <strong>15 flashcards</strong> on Eye & Ear Procedure Techniques.<br>Keep reviewing regularly to strengthen your recall! 💪</p>
+  <button id="btn-restart" onclick="restart()">🔁 Start Over</button>
+</div>
+
+<script>
+const cards=[
+  {q:"What chart is used for distance visual acuity testing?",a:"The Snellen Chart — used at 20 feet. Results are documented as a fraction (e.g., 20/40)."},
+  {q:"What card is used for near vision testing?",a:"The Jaeger Card — held at a comfortable reading distance to assess near vision."},
+  {q:"What is the correct technique for eye drop instillation?",a:"Apply drops to the lower conjunctival sac, avoid touching the dropper to the eye, and use sterile technique."},
+  {q:"What is eye irrigation used for?",a:"To flush out debris or chemicals from the eye using a sterile solution."},
+  {q:"How should a patient be positioned during ear irrigation?",a:"Upright. The auricle (outer ear) is gently pulled up and back for adults."},
+  {q:"Name 3 common eye conditions an MA may encounter.",a:"Conjunctivitis, corneal abrasion, and foreign body presence. (Also: cataracts and glaucoma.)"},
+  {q:"Name 3 common ear conditions.",a:"Otitis media/externa, cerumen (earwax) impaction, and hearing loss. (Also: tinnitus and ruptured eardrum.)"},
+  {q:"What are the two tuning fork tests used for hearing assessment?",a:"Weber Test (lateralization) and Rinne Test (bone vs. air conduction) — both performed by the provider."},
+  {q:"What solution temperature should be used for ear irrigation?",a:"Body temperature — water that is too hot or too cold can cause dizziness or discomfort."},
+  {q:"After applying ear drops, what should the MA do?",a:"Massage the tragus gently and keep the patient lying on their side for 2–5 minutes."},
+  {q:"What are 4 infection control practices for eye/ear procedures?",a:"Wash hands before/after contact, wear gloves, disinfect otoscope/irrigation tools, and avoid cross-contamination of droppers or bottles."},
+  {q:"What must be documented after an eye or ear procedure?",a:"Procedure name, time and dosage (if applicable), patient response, provider orders, and follow-up instructions."},
+  {q:"What is audiometry?",a:"A hearing test that assesses a patient's ability to hear various sound frequencies."},
+  {q:"What are 5 responsibilities of an MA in eye/ear care?",a:"Prepare patients & equipment, assist providers, perform screenings (visual acuity/audiometry), provide patient instructions, and maintain documentation."},
+  {q:"What symptoms should a patient report after an eye or ear procedure?",a:"Pain, discharge, and any changes in vision or hearing."},
+];
+
+let idx=0, flipped=false;
+const total=cards.length;
+
+function render(){
+  const card=document.getElementById('card');
+  const pct=Math.round(((idx+1)/total)*100);
+  document.getElementById('card-counter').textContent=`Card ${idx+1} of ${total}`;
+  document.getElementById('pct').textContent=`${pct}% complete`;
+  document.getElementById('prog-bar').style.width=pct+'%';
+  document.getElementById('card-text').textContent=flipped?cards[idx].a:cards[idx].q;
+  document.getElementById('card-label').textContent=flipped?'✅ ANSWER':'❓ QUESTION';
+  document.getElementById('card-hint').textContent=flipped?'👆 Tap to see question':'👆 Tap to reveal answer';
+  document.getElementById('btn-flip').textContent=flipped?'🔄 Flip Back':'💡 Reveal';
+  document.getElementById('btn-next').textContent=idx===total-1?'🏁 Finish':'Next →';
+  document.getElementById('btn-prev').disabled=idx===0;
+  flipped?card.classList.add('flipped'):card.classList.remove('flipped');
+}
+
+function flipCard(){flipped=!flipped;render();}
+function next(){
+  if(idx<total-1){idx++;flipped=false;render();}
+  else{document.getElementById('game').style.display='none';document.getElementById('finished').style.display='block';}
+}
+function prev(){if(idx>0){idx--;flipped=false;render();}}
+function restart(){
+  idx=0;flipped=false;
+  document.getElementById('finished').style.display='none';
+  document.getElementById('game').style.display='flex';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

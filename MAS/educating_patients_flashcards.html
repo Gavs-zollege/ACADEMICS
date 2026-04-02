@@ -3,20 +3,18 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Week 10 Flashcards</title>
+<title>Patient Education Flashcards</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{min-height:100vh;background:linear-gradient(135deg,#1a0a0a 0%,#2d1010 50%,#1a0a0a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Segoe UI',sans-serif;padding:20px}
+  body{min-height:100vh;background:linear-gradient(135deg,#1a0a0a 0%,#2d1010 50%,#1a0a0a 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:system-ui,sans-serif;padding:20px}
   h1{font-size:28px;font-weight:900;color:#fff;letter-spacing:1px;text-align:center}
   .subtitle{font-size:15px;color:#f0b0b0;margin-top:6px;max-width:480px;text-align:center;line-height:1.5}
   .subtitle strong{color:#ffcccc}
   .header{text-align:center;margin-bottom:24px}
-
   .progress-wrap{width:100%;max-width:560px;margin-bottom:16px}
   .progress-labels{display:flex;justify-content:space-between;color:#f0b0b0;font-size:13px;font-weight:700;margin-bottom:6px}
   .progress-bar-bg{background:rgba(255,255,255,.1);border-radius:99px;height:8px}
   .progress-bar{background:linear-gradient(90deg,#c0392b,#e74c3c);border-radius:99px;height:8px;transition:width .4s ease}
-
   .card{cursor:pointer;width:100%;max-width:560px;min-height:260px;border:2px solid #a83232;border-radius:20px;padding:36px 32px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:background .35s ease;box-shadow:0 8px 40px rgba(168,50,50,.3)}
   .card.question{background:linear-gradient(135deg,#222,#3a1010)}
   .card.answer{background:linear-gradient(135deg,#7b1515,#a83232)}
@@ -26,7 +24,6 @@
   .card-text{font-size:17px;color:#fff;line-height:1.7;white-space:pre-line}
   .card.question .card-text{font-weight:700}
   .card.answer .card-text{font-weight:500}
-
   .btns{display:flex;gap:16px;margin-top:24px;width:100%;max-width:560px}
   .btn{flex:1;padding:16px;border-radius:12px;font-size:17px;font-weight:800;cursor:pointer;letter-spacing:.3px;border:2px solid}
   .btn-prev{background:rgba(255,255,255,.12);color:#fff;border-color:#888}
@@ -35,7 +32,6 @@
   .btn-next{background:#a83232;color:#fff;border-color:#c0392b}
   .hint{margin-top:16px;font-size:13px;color:#a06060}
   .hint strong{color:#d08080}
-
   .done{background:rgba(255,255,255,.07);border:2px solid #a83232;border-radius:20px;padding:48px 40px;text-align:center;max-width:500px;width:100%}
   .done-emoji{font-size:56px}
   .done h2{font-size:26px;font-weight:800;color:#fff;margin-top:12px}
@@ -46,35 +42,35 @@
 <body>
 
 <div class="header">
-  <h1>🩺 Week 10 Flashcards</h1>
+  <h1>🩺 Patient Education Flashcards</h1>
   <p class="subtitle">✨ This fun activity helps you <strong>build recall</strong> on key patient education topics — perfect for quizzes and real-world practice!</p>
 </div>
 
 <div id="app"></div>
 
 <script>
-const cards = [
-  { q: "What is Patient Education?", a: "The process of informing and instructing patients to improve health outcomes — covering prevention, treatments, medications, and lifestyle changes. It is ongoing and tailored to each individual." },
-  { q: "Name 4 benefits of patient education.", a: "1. Increases treatment adherence\n2. Reduces anxiety and misinformation\n3. Promotes self-management and wellness\n4. Lowers readmission and complications" },
-  { q: "What are 5 key responsibilities of a Medical Assistant in patient education?", a: "1. Reinforce the provider's instructions\n2. Answer basic questions within scope\n3. Demonstrate techniques (e.g., wound care, inhaler use)\n4. Provide brochures and instructions\n5. Document what was taught and how" },
-  { q: "What factors should you consider when assessing patient needs?", a: "• Health literacy\n• Language barriers\n• Culture and beliefs\n• Emotional state\n• Age and cognitive ability" },
-  { q: "What is the Teach-Back Method?", a: "Asking the patient to repeat instructions back in their own words. It confirms understanding, allows clarification of misunderstandings, and should always be done in a non-judgmental and supportive manner." },
-  { q: "Name 4 effective communication techniques for patient education.", a: "1. Use layman's terms (avoid medical jargon)\n2. Speak slowly and clearly\n3. Ask open-ended questions\n4. Encourage patients to ask questions" },
-  { q: "What does Culturally Competent Education involve?", a: "• Respecting cultural health beliefs\n• Avoiding assumptions\n• Using interpreters when needed\n• Being open and adaptable" },
-  { q: "What types of educational materials can a Medical Assistant use?", a: "• Pamphlets, diagrams, and videos\n• Printed instructions\n• Digital apps or websites\n• Translation services\n• Hands-on demonstrations" },
-  { q: "How should a Medical Assistant provide emotional support to a patient?", a: "• Be empathetic and nonjudgmental\n• Acknowledge concerns\n• Offer reassurance\n• Use active listening\n• Recognize when to refer to a mental health professional" },
-  { q: "What should be documented after patient education?", a: "• What was taught\n• Materials provided\n• Patient's level of understanding\n• Any refusals or questions\n• Date and time" },
-  { q: "When educating a patient about a procedure or test, what should you cover?", a: "• The purpose of the procedure\n• How to prepare (prep instructions)\n• What to expect during and after (aftercare)\n• Use visual aids or models\n• Allow time for questions" },
-  { q: "Give examples of chronic conditions an MA may educate patients about.", a: "Diabetes, hypertension, and asthma. Education focuses on medication adherence, diet, exercise, smoking cessation, and using goal-setting with follow-up." },
+const cards=[
+  {q:"What is Patient Education?",a:"The process of informing and instructing patients to improve health outcomes — covering prevention, treatments, medications, and lifestyle changes. It is ongoing and tailored to each individual."},
+  {q:"Name 4 benefits of patient education.",a:"1. Increases treatment adherence\n2. Reduces anxiety and misinformation\n3. Promotes self-management and wellness\n4. Lowers readmission and complications"},
+  {q:"What are 5 key responsibilities of a Medical Assistant in patient education?",a:"1. Reinforce the provider's instructions\n2. Answer basic questions within scope\n3. Demonstrate techniques (e.g., wound care, inhaler use)\n4. Provide brochures and instructions\n5. Document what was taught and how"},
+  {q:"What factors should you consider when assessing patient needs?",a:"• Health literacy\n• Language barriers\n• Culture and beliefs\n• Emotional state\n• Age and cognitive ability"},
+  {q:"What is the Teach-Back Method?",a:"Asking the patient to repeat instructions back in their own words. It confirms understanding, allows clarification of misunderstandings, and should always be done in a non-judgmental and supportive manner."},
+  {q:"Name 4 effective communication techniques for patient education.",a:"1. Use layman's terms (avoid medical jargon)\n2. Speak slowly and clearly\n3. Ask open-ended questions\n4. Encourage patients to ask questions"},
+  {q:"What does Culturally Competent Education involve?",a:"• Respecting cultural health beliefs\n• Avoiding assumptions\n• Using interpreters when needed\n• Being open and adaptable"},
+  {q:"What types of educational materials can a Medical Assistant use?",a:"• Pamphlets, diagrams, and videos\n• Printed instructions\n• Digital apps or websites\n• Translation services\n• Hands-on demonstrations"},
+  {q:"How should a Medical Assistant provide emotional support to a patient?",a:"• Be empathetic and nonjudgmental\n• Acknowledge concerns\n• Offer reassurance\n• Use active listening\n• Recognize when to refer to a mental health professional"},
+  {q:"What should be documented after patient education?",a:"• What was taught\n• Materials provided\n• Patient's level of understanding\n• Any refusals or questions\n• Date and time"},
+  {q:"When educating a patient about a procedure or test, what should you cover?",a:"• The purpose of the procedure\n• How to prepare (prep instructions)\n• What to expect during and after (aftercare)\n• Use visual aids or models\n• Allow time for questions"},
+  {q:"Give examples of chronic conditions an MA may educate patients about.",a:"Diabetes, hypertension, and asthma. Education focuses on medication adherence, diet, exercise, smoking cessation, and using goal-setting with follow-up."},
 ];
 
-let idx = 0, flipped = false;
+let idx=0, flipped=false;
 
 function pct(){ return Math.round(((idx+1)/cards.length)*100); }
 
 function render(){
-  const app = document.getElementById('app');
-  app.innerHTML = `
+  const app=document.getElementById('app');
+  app.innerHTML=`
     <div class="progress-wrap">
       <div class="progress-labels"><span>Card ${idx+1} of ${cards.length}</span><span>${pct()}% Complete</span></div>
       <div class="progress-bar-bg"><div class="progress-bar" style="width:${pct()}%"></div></div>
@@ -88,29 +84,27 @@ function render(){
       <button class="btn btn-reveal" id="rev">${flipped?'🔒 Hide':'👁 Reveal'}</button>
       <button class="btn btn-next" id="next">${idx===cards.length-1?'Finish 🎓':'Next →'}</button>
     </div>
-    <div class="hint">💡 Tap the card or use the <strong>Reveal</strong> button to see the answer</div>
-  `;
-  document.getElementById('card').onclick = toggle;
-  document.getElementById('rev').onclick = toggle;
-  document.getElementById('prev').onclick = prev;
-  document.getElementById('next').onclick = next;
+    <div class="hint">💡 Tap the card or use the <strong>Reveal</strong> button to see the answer</div>`;
+  document.getElementById('card').onclick=toggle;
+  document.getElementById('rev').onclick=toggle;
+  document.getElementById('prev').onclick=prev;
+  document.getElementById('next').onclick=next;
 }
 
 function renderDone(){
-  document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML=`
     <div class="done">
       <div class="done-emoji">🎉</div>
       <h2>Great Job!</h2>
       <p>You completed all ${cards.length} flashcards!<br/>Keep reviewing to strengthen your recall.</p>
       <button class="btn-restart" id="restart">🔁 Start Over</button>
-    </div>
-  `;
-  document.getElementById('restart').onclick = () => { idx=0; flipped=false; render(); };
+    </div>`;
+  document.getElementById('restart').onclick=()=>{idx=0;flipped=false;render();};
 }
 
-function toggle(){ flipped=!flipped; render(); }
-function prev(){ if(idx>0){idx--;flipped=false;render();} }
-function next(){ if(idx<cards.length-1){idx++;flipped=false;render();}else renderDone(); }
+function toggle(){flipped=!flipped;render();}
+function prev(){if(idx>0){idx--;flipped=false;render();}}
+function next(){if(idx<cards.length-1){idx++;flipped=false;render();}else renderDone();}
 
 render();
 </script>

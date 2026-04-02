@@ -1,62 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Minor Surgical Assistance Flashcards</title>
 <style>
-  .fc-wrap { padding: 1.5rem 0; font-family: var(--font-sans); background: #0f1117; border-radius: 16px; padding: 2rem 1.5rem; }
-  .fc-header { text-align: center; margin-bottom: 1.5rem; }
-  .fc-badge { display: inline-block; background: #1e3a5f; color: #7eb8f7; font-size: 13px; font-weight: 700; padding: 5px 14px; border-radius: 20px; margin-bottom: 10px; }
-  .fc-title { font-size: 22px; font-weight: 700; color: #ffffff; margin: 0 0 4px; }
-  .fc-subtitle { font-size: 14px; font-weight: 600; color: #a0aabb; margin: 0; }
-  .fc-progress { display: flex; align-items: center; gap: 10px; margin: 0 auto 1.5rem; max-width: 500px; }
-  .fc-bar-bg { flex: 1; height: 7px; background: #1e2233; border-radius: 4px; }
-  .fc-bar { height: 7px; border-radius: 4px; background: #378ADD; transition: width 0.4s; }
-  .fc-counter { font-size: 13px; font-weight: 700; color: #a0aabb; white-space: nowrap; }
-  .fc-card-area { perspective: 1000px; max-width: 520px; margin: 0 auto 1.25rem; }
-  .fc-card { width: 100%; min-height: 230px; cursor: pointer; position: relative; transform-style: preserve-3d; transition: transform 0.5s ease; border-radius: 14px; }
-  .fc-card.flipped { transform: rotateY(180deg); }
-  .fc-face { position: absolute; width: 100%; min-height: 230px; backface-visibility: hidden; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1.5rem; box-sizing: border-box; }
-  .fc-front { background: #1a1f2e; border: 1.5px solid #2e3650; }
-  .fc-back { background: #0d2a4a; border: 1.5px solid #1e4a7a; transform: rotateY(180deg); }
-  .fc-q-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #5a6a88; text-transform: uppercase; margin-bottom: 12px; }
-  .fc-q-text { font-size: 18px; font-weight: 700; color: #ffffff; text-align: center; line-height: 1.5; }
-  .fc-a-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #4a90d9; text-transform: uppercase; margin-bottom: 12px; }
-  .fc-a-text { font-size: 16px; font-weight: 700; color: #b8d9f7; text-align: center; line-height: 1.6; }
-  .fc-tap-hint { font-size: 12px; font-weight: 600; color: #3a4a66; margin-top: 14px; }
-  .fc-category { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 10px; margin-bottom: 10px; }
-  .cat-asepsis { background: #0d3028; color: #5ecfaa; }
-  .cat-instruments { background: #3a2a0a; color: #f5c060; }
-  .cat-patient { background: #2a1f50; color: #b0a0f0; }
-  .cat-roles { background: #3a1a0a; color: #f0a070; }
-  .cat-legal { background: #3a0d0d; color: #f07070; }
-  .cat-specimen { background: #1a3010; color: #80d060; }
-  .cat-wound { background: #3a1030; color: #f090c0; }
-  .cat-anesthesia { background: #0d2040; color: #70b8f7; }
-  .fc-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.25rem; }
-
-  /* ── Visible buttons ── */
-  .fc-btn {
-    padding: 12px 24px; border-radius: 10px; font-size: 16px; font-weight: 700;
-    cursor: pointer; transition: background 0.15s, transform 0.1s; border: none;
-  }
-  .fc-btn:active { transform: scale(0.97); }
-  .fc-btn-prev  { min-width: 90px;  background: #2e3a55; color: #c8d8f0; }
-  .fc-btn-prev:hover  { background: #3a4a6a; }
-  .fc-btn-next  { min-width: 90px;  background: #2e3a55; color: #c8d8f0; }
-  .fc-btn-next:hover  { background: #3a4a6a; }
-  .fc-btn-flip  { min-width: 140px; background: #185FA5; color: #ffffff; }
-  .fc-btn-flip:hover  { background: #1a72c8; }
-  .fc-btn-shuffle { background: #2a3d28; color: #80d060; font-size: 16px; font-weight: 700; padding: 10px 22px; border-radius: 10px; border: none; cursor: pointer; transition: background 0.15s, transform 0.1s; }
-  .fc-btn-shuffle:hover { background: #364d34; }
-  .fc-btn-shuffle:active { transform: scale(0.97); }
-
-  .fc-result { text-align: center; padding: 2rem 1rem; display: none; }
-  .fc-result-icon { font-size: 40px; margin-bottom: 12px; }
-  .fc-result-msg { font-size: 20px; font-weight: 700; color: #ffffff; margin-bottom: 8px; }
-  .fc-result-sub { font-size: 15px; font-weight: 600; color: #a0aabb; margin-bottom: 1.5rem; }
-  .fc-btn-restart { background: #185FA5; color: #fff; border: none; padding: 13px 30px; font-size: 17px; border-radius: 10px; cursor: pointer; font-weight: 700; }
-  .fc-btn-restart:hover { background: #1a6ebc; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#0f1117; min-height:100vh; padding:1.5rem; font-family:system-ui,sans-serif; }
+  .fc-wrap { max-width:600px; margin:0 auto; }
+  .fc-header { text-align:center; margin-bottom:1.5rem; }
+  .fc-badge { display:inline-block; background:#1e3a5f; color:#7eb8f7; font-size:13px; font-weight:700; padding:5px 14px; border-radius:20px; margin-bottom:10px; }
+  .fc-title { font-size:22px; font-weight:700; color:#fff; margin:0 0 4px; }
+  .fc-subtitle { font-size:14px; font-weight:600; color:#a0aabb; }
+  .fc-progress { display:flex; align-items:center; gap:10px; margin:0 auto 1.5rem; max-width:500px; }
+  .fc-bar-bg { flex:1; height:7px; background:#1e2233; border-radius:4px; }
+  .fc-bar { height:7px; border-radius:4px; background:#378ADD; transition:width 0.4s; }
+  .fc-counter { font-size:13px; font-weight:700; color:#a0aabb; white-space:nowrap; }
+  .fc-card-area { perspective:1000px; max-width:520px; margin:0 auto 1.25rem; }
+  .fc-card { width:100%; min-height:230px; cursor:pointer; position:relative; transform-style:preserve-3d; transition:transform 0.5s ease; border-radius:14px; }
+  .fc-card.flipped { transform:rotateY(180deg); }
+  .fc-face { position:absolute; width:100%; min-height:230px; backface-visibility:hidden; border-radius:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem 1.5rem; }
+  .fc-front { background:#1a1f2e; border:1.5px solid #2e3650; }
+  .fc-back { background:#0d2a4a; border:1.5px solid #1e4a7a; transform:rotateY(180deg); }
+  .fc-q-label { font-size:11px; font-weight:700; letter-spacing:0.1em; color:#5a6a88; text-transform:uppercase; margin-bottom:12px; }
+  .fc-q-text { font-size:18px; font-weight:700; color:#fff; text-align:center; line-height:1.5; }
+  .fc-a-label { font-size:11px; font-weight:700; letter-spacing:0.1em; color:#4a90d9; text-transform:uppercase; margin-bottom:12px; }
+  .fc-a-text { font-size:16px; font-weight:700; color:#b8d9f7; text-align:center; line-height:1.6; }
+  .fc-tap-hint { font-size:12px; font-weight:600; color:#3a4a66; margin-top:14px; }
+  .fc-category { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:10px; margin-bottom:10px; }
+  .cat-asepsis { background:#0d3028; color:#5ecfaa; }
+  .cat-instruments { background:#3a2a0a; color:#f5c060; }
+  .cat-patient { background:#2a1f50; color:#b0a0f0; }
+  .cat-roles { background:#3a1a0a; color:#f0a070; }
+  .cat-legal { background:#3a0d0d; color:#f07070; }
+  .cat-specimen { background:#1a3010; color:#80d060; }
+  .cat-wound { background:#3a1030; color:#f090c0; }
+  .cat-anesthesia { background:#0d2040; color:#70b8f7; }
+  .fc-btns { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:1.25rem; }
+  .fc-btn { padding:12px 24px; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; transition:background 0.15s,transform 0.1s; border:none; }
+  .fc-btn:active { transform:scale(0.97); }
+  .fc-btn-prev { min-width:90px; background:#2e3a55; color:#c8d8f0; }
+  .fc-btn-prev:hover { background:#3a4a6a; }
+  .fc-btn-next { min-width:90px; background:#2e3a55; color:#c8d8f0; }
+  .fc-btn-next:hover { background:#3a4a6a; }
+  .fc-btn-flip { min-width:140px; background:#185FA5; color:#fff; }
+  .fc-btn-flip:hover { background:#1a72c8; }
+  .fc-btn-shuffle { background:#2a3d28; color:#80d060; font-size:16px; font-weight:700; padding:10px 22px; border-radius:10px; border:none; cursor:pointer; transition:background 0.15s,transform 0.1s; }
+  .fc-btn-shuffle:hover { background:#364d34; }
+  .fc-btn-shuffle:active { transform:scale(0.97); }
+  .fc-result { text-align:center; padding:2rem 1rem; display:none; }
+  .fc-result-icon { font-size:40px; margin-bottom:12px; }
+  .fc-result-msg { font-size:20px; font-weight:700; color:#fff; margin-bottom:8px; }
+  .fc-result-sub { font-size:15px; font-weight:600; color:#a0aabb; margin-bottom:1.5rem; }
+  .fc-btn-restart { background:#185FA5; color:#fff; border:none; padding:13px 30px; font-size:17px; border-radius:10px; cursor:pointer; font-weight:700; }
+  .fc-btn-restart:hover { background:#1a6ebc; }
 </style>
-
+</head>
+<body>
 <div class="fc-wrap">
   <div class="fc-header">
-    <div class="fc-badge">Week 13 — Minor Surgical Assistance</div>
+    <div class="fc-badge">Minor Surgical Assistance</div>
     <p class="fc-title">Flashcard Recall Activity</p>
     <p class="fc-subtitle">Flip each card to check your answer. Use these to sharpen your memory before your next assessment!</p>
   </div>
@@ -87,7 +90,7 @@
     <button class="fc-btn fc-btn-next" onclick="nextCard()">Next →</button>
   </div>
   <div style="text-align:center;">
-    <button class="fc-btn-shuffle" onclick="shuffleDeck()">🔀  Shuffle Deck</button>
+    <button class="fc-btn-shuffle" onclick="shuffleDeck()">🔀 Shuffle Deck</button>
   </div>
 
   <div class="fc-result" id="resultScreen">
@@ -99,89 +102,66 @@
 </div>
 
 <script>
-var allCards = [
-  { q: "What does a Medical Assistant do BEFORE a minor surgical procedure?", a: "Prepare the exam room and instruments, educate and position the patient, and confirm informed consent.", cat: "cat-roles", label: "MA Roles" },
-  { q: "Name 3 examples of minor surgical procedures performed in an outpatient setting.", a: "Skin lesion removal, laceration repair, incision and drainage (I&D), nail removal, and biopsies.", cat: "cat-roles", label: "Minor Surgery" },
-  { q: "What type of anesthesia is used for minor surgeries?", a: "Local anesthesia only (e.g., lidocaine or bupivacaine), applied by infiltration or topically.", cat: "cat-anesthesia", label: "Anesthesia" },
-  { q: "What are 3 signs of an adverse reaction to local anesthesia the MA should watch for?", a: "Rash, dizziness, and breathing issues (difficulty breathing).", cat: "cat-anesthesia", label: "Anesthesia" },
-  { q: "What is the difference between medical asepsis and surgical asepsis?", a: "Medical asepsis uses handwashing and clean technique; surgical asepsis requires a sterile field, sterile gloves, and sterile instruments.", cat: "cat-asepsis", label: "Asepsis" },
-  { q: "What 3 duties does the MA perform to maintain infection control?", a: "Disinfect surfaces, check autoclave indicators, and open sterile packs properly without contamination.", cat: "cat-asepsis", label: "Asepsis" },
-  { q: "What must you do if a sterile field becomes contaminated?", a: "The contaminated field must be completely redone — it cannot be used.", cat: "cat-asepsis", label: "Sterile Field" },
-  { q: "Name 5 common surgical instruments used in minor procedures.", a: "Scalpels, scissors (suture/bandage), hemostats, needle holders, forceps, retractors, gauze, sponges, and sterile drapes.", cat: "cat-instruments", label: "Instruments" },
-  { q: "What must the MA do when passing instruments during a procedure?", a: "Pass instruments using sterile technique, while maintaining a calm and quiet environment.", cat: "cat-instruments", label: "Instruments" },
-  { q: "List 3 steps the MA takes when preparing a patient for a minor surgery.", a: "Confirm procedure and informed consent, take vitals, document history and allergies, assist with gowning, position patient, and provide reassurance.", cat: "cat-patient", label: "Patient Prep" },
-  { q: "What 5 things must be documented after a minor surgical procedure?", a: "Procedure name and reason, consent obtained, provider name, supplies used, MA actions, and patient condition after the procedure.", cat: "cat-roles", label: "Documentation" },
-  { q: "How should a surgical specimen be handled by the MA?", a: "Label the container with name, date, time, and site; complete requisition forms; use biohazard bags for transport; and log into the tracking system.", cat: "cat-specimen", label: "Specimen Handling" },
-  { q: "What are the MA's responsibilities for wound care after the procedure?", a: "Clean with antiseptic, apply sterile dressings, give verbal and written instructions, teach signs of infection, and explain when to call or return.", cat: "cat-wound", label: "Wound Care" },
-  { q: "How should sharps and bloody gauze be disposed of after a procedure?", a: "Sharps go into sharps containers; bloody gauze goes in red biohazard bags. Gloves must be disposed before touching clean surfaces.", cat: "cat-legal", label: "Biohazard Disposal" },
-  { q: "What are the MA's 4 key legal and ethical responsibilities in minor surgery?", a: "Informed consent is mandatory, maintain HIPAA confidentiality, work within MA scope of practice, and document clearly and accurately.", cat: "cat-legal", label: "Legal & Ethics" },
-  { q: "Why is it important for the MA to maintain a calm, quiet environment during surgery?", a: "To minimize patient distress, support the provider's concentration, and ensure a safe, focused surgical environment.", cat: "cat-patient", label: "Patient Care" }
+var allCards=[
+  {q:"What does a Medical Assistant do BEFORE a minor surgical procedure?",a:"Prepare the exam room and instruments, educate and position the patient, and confirm informed consent.",cat:"cat-roles",label:"MA Roles"},
+  {q:"Name 3 examples of minor surgical procedures performed in an outpatient setting.",a:"Skin lesion removal, laceration repair, incision and drainage (I&D), nail removal, and biopsies.",cat:"cat-roles",label:"Minor Surgery"},
+  {q:"What type of anesthesia is used for minor surgeries?",a:"Local anesthesia only (e.g., lidocaine or bupivacaine), applied by infiltration or topically.",cat:"cat-anesthesia",label:"Anesthesia"},
+  {q:"What are 3 signs of an adverse reaction to local anesthesia the MA should watch for?",a:"Rash, dizziness, and breathing issues (difficulty breathing).",cat:"cat-anesthesia",label:"Anesthesia"},
+  {q:"What is the difference between medical asepsis and surgical asepsis?",a:"Medical asepsis uses handwashing and clean technique; surgical asepsis requires a sterile field, sterile gloves, and sterile instruments.",cat:"cat-asepsis",label:"Asepsis"},
+  {q:"What 3 duties does the MA perform to maintain infection control?",a:"Disinfect surfaces, check autoclave indicators, and open sterile packs properly without contamination.",cat:"cat-asepsis",label:"Asepsis"},
+  {q:"What must you do if a sterile field becomes contaminated?",a:"The contaminated field must be completely redone — it cannot be used.",cat:"cat-asepsis",label:"Sterile Field"},
+  {q:"Name 5 common surgical instruments used in minor procedures.",a:"Scalpels, scissors (suture/bandage), hemostats, needle holders, forceps, retractors, gauze, sponges, and sterile drapes.",cat:"cat-instruments",label:"Instruments"},
+  {q:"What must the MA do when passing instruments during a procedure?",a:"Pass instruments using sterile technique, while maintaining a calm and quiet environment.",cat:"cat-instruments",label:"Instruments"},
+  {q:"List 3 steps the MA takes when preparing a patient for a minor surgery.",a:"Confirm procedure and informed consent, take vitals, document history and allergies, assist with gowning, position patient, and provide reassurance.",cat:"cat-patient",label:"Patient Prep"},
+  {q:"What 5 things must be documented after a minor surgical procedure?",a:"Procedure name and reason, consent obtained, provider name, supplies used, MA actions, and patient condition after the procedure.",cat:"cat-roles",label:"Documentation"},
+  {q:"How should a surgical specimen be handled by the MA?",a:"Label the container with name, date, time, and site; complete requisition forms; use biohazard bags for transport; and log into the tracking system.",cat:"cat-specimen",label:"Specimen Handling"},
+  {q:"What are the MA's responsibilities for wound care after the procedure?",a:"Clean with antiseptic, apply sterile dressings, give verbal and written instructions, teach signs of infection, and explain when to call or return.",cat:"cat-wound",label:"Wound Care"},
+  {q:"How should sharps and bloody gauze be disposed of after a procedure?",a:"Sharps go into sharps containers; bloody gauze goes in red biohazard bags. Gloves must be disposed before touching clean surfaces.",cat:"cat-legal",label:"Biohazard Disposal"},
+  {q:"What are the MA's 4 key legal and ethical responsibilities in minor surgery?",a:"Informed consent is mandatory, maintain HIPAA confidentiality, work within MA scope of practice, and document clearly and accurately.",cat:"cat-legal",label:"Legal & Ethics"},
+  {q:"Why is it important for the MA to maintain a calm, quiet environment during surgery?",a:"To minimize patient distress, support the provider's concentration, and ensure a safe, focused surgical environment.",cat:"cat-patient",label:"Patient Care"},
 ];
 
-var deck = allCards.slice();
-var idx = 0;
-var flipped = false;
+var deck=allCards.slice(), idx=0, flipped=false;
 
-function shuffle(arr) {
-  for (var i = arr.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
-  }
+function shuffle(arr){for(var i=arr.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=arr[i];arr[i]=arr[j];arr[j]=tmp;}}
+
+function render(){
+  document.getElementById('resultScreen').style.display='none';
+  document.querySelector('.fc-card-area').style.display='block';
+  document.querySelector('.fc-btns').style.display='flex';
+  document.querySelector('.fc-btn-shuffle').style.display='inline-block';
+  var c=deck[idx];
+  document.getElementById('qText').textContent=c.q;
+  document.getElementById('aText').textContent=c.a;
+  var catEl=document.getElementById('cardCategory');
+  catEl.className='fc-category '+c.cat; catEl.textContent=c.label;
+  document.getElementById('card').classList.remove('flipped'); flipped=false;
+  var pct=Math.round(((idx+1)/deck.length)*100);
+  document.getElementById('progBar').style.width=pct+'%';
+  document.getElementById('counter').textContent=(idx+1)+' / '+deck.length;
 }
 
-function render() {
-  document.getElementById('resultScreen').style.display = 'none';
-  document.querySelector('.fc-card-area').style.display = 'block';
-  document.querySelector('.fc-btns').style.display = 'flex';
-  document.querySelectorAll('.fc-btn-shuffle')[0].style.display = 'inline-block';
-  var c = deck[idx];
-  document.getElementById('qText').textContent = c.q;
-  document.getElementById('aText').textContent = c.a;
-  var catEl = document.getElementById('cardCategory');
-  catEl.className = 'fc-category ' + c.cat;
-  catEl.textContent = c.label;
-  var card = document.getElementById('card');
-  card.classList.remove('flipped');
-  flipped = false;
-  var pct = Math.round(((idx + 1) / deck.length) * 100);
-  document.getElementById('progBar').style.width = pct + '%';
-  document.getElementById('counter').textContent = (idx + 1) + ' / ' + deck.length;
+function flipCard(){
+  var card=document.getElementById('card');
+  if(flipped){card.classList.remove('flipped');flipped=false;}
+  else{card.classList.add('flipped');flipped=true;}
 }
 
-function flipCard() {
-  var card = document.getElementById('card');
-  if (flipped) { card.classList.remove('flipped'); flipped = false; }
-  else { card.classList.add('flipped'); flipped = true; }
+function nextCard(){if(idx<deck.length-1){idx++;render();}else{showResult();}}
+function prevCard(){if(idx>0){idx--;render();}}
+function shuffleDeck(){shuffle(deck);idx=0;render();}
+
+function showResult(){
+  document.getElementById('resultScreen').style.display='block';
+  document.querySelector('.fc-card-area').style.display='none';
+  document.querySelector('.fc-btns').style.display='none';
+  document.querySelector('.fc-btn-shuffle').style.display='none';
+  document.getElementById('progBar').style.width='100%';
+  document.getElementById('counter').textContent=deck.length+' / '+deck.length;
 }
 
-function nextCard() {
-  if (idx < deck.length - 1) { idx++; render(); }
-  else { showResult(); }
-}
-
-function prevCard() {
-  if (idx > 0) { idx--; render(); }
-}
-
-function shuffleDeck() {
-  shuffle(deck);
-  idx = 0;
-  render();
-}
-
-function showResult() {
-  document.getElementById('resultScreen').style.display = 'block';
-  document.querySelector('.fc-card-area').style.display = 'none';
-  document.querySelector('.fc-btns').style.display = 'none';
-  document.querySelectorAll('.fc-btn-shuffle')[0].style.display = 'none';
-  document.getElementById('progBar').style.width = '100%';
-  document.getElementById('counter').textContent = deck.length + ' / ' + deck.length;
-}
-
-function restartDeck() {
-  idx = 0;
-  render();
-}
-
+function restartDeck(){idx=0;render();}
 render();
 </script>
+</body>
+</html>

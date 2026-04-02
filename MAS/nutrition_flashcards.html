@@ -6,7 +6,7 @@
 <title>Nutrition Flashcards</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',sans-serif;min-height:100vh;background:#0f0f0f;color:#fff;padding:20px 16px}
+  body{font-family:system-ui,sans-serif;min-height:100vh;background:#0f0f0f;color:#fff;padding:20px 16px}
   .header{text-align:center;margin-bottom:18px}
   .week{font-size:13px;color:#c0a060;font-weight:700;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
   .title{font-size:24px;font-weight:800;color:#fff;margin-bottom:6px}
@@ -41,10 +41,9 @@
 </style>
 </head>
 <body>
-
 <div id="app">
   <div class="header">
-    <div class="week">📅 Week 08 — Nutrition Essentials for Medical Assistants</div>
+    <div class="week">🥗 Nutrition Essentials for Medical Assistants</div>
     <div class="title">🩺 Nutrition Flashcard Activity</div>
     <div class="subtitle">A fun recall activity to help you lock in key nutrition concepts! Flip each card, then mark whether you knew it. 🧠✨</div>
   </div>
@@ -83,7 +82,7 @@
 </div>
 
 <script>
-const cards = [
+const cards=[
   {q:"What is Nutrition?",a:"The study of how the body uses food — involving intake, digestion, absorption, and metabolism to provide energy, growth, and repair."},
   {q:"What are the Six Essential Nutrients?",a:"Carbohydrates, Proteins, Fats, Vitamins, Minerals, and Water."},
   {q:"What is the primary role of Carbohydrates?",a:"They are the body's primary energy source."},
@@ -105,7 +104,7 @@ const cards = [
   {q:"What condition requires a Gluten-Free Diet?",a:"Celiac disease."},
   {q:"Name 4 chronic diseases that a healthy diet helps prevent.",a:"Heart disease, Type 2 diabetes, obesity, and certain cancers."},
   {q:"What are 4 roles of a Medical Assistant in nutrition care?",a:"Support nutritional screening, record dietary concerns in EHR, monitor chronic conditions, and reinforce provider dietary instructions."},
-  {q:"In the case study, what are the nutrition red flags for the Type 2 diabetic patient?",a:"Skipping meals and drinking sugary sodas — both cause dangerous blood sugar fluctuations."},
+  {q:"What are the nutrition red flags for a Type 2 diabetic patient?",a:"Skipping meals and drinking sugary sodas — both cause dangerous blood sugar fluctuations."},
 ];
 
 let idx=0, flipped=false, score=0, answered=false;
@@ -116,12 +115,10 @@ function render(){
   document.getElementById('cardText').textContent=flipped?c.a:c.q;
   document.getElementById('cardBadge').textContent=flipped?'💡 Answer':'❓ Question';
   document.getElementById('tapHint').textContent=flipped?'Tap to see question':'Tap to reveal answer';
-  const card=document.getElementById('card');
-  card.className='card '+(flipped?'answer':'question');
+  document.getElementById('card').className='card '+(flipped?'answer':'question');
   document.getElementById('progressFill').style.width=`${(idx/total)*100}%`;
   document.getElementById('progressText').textContent=`Card ${idx+1} of ${total}`;
-  const mr=document.getElementById('markRow');
-  mr.className=flipped?'mark-row':'mark-row hidden';
+  document.getElementById('markRow').className=flipped?'mark-row':'mark-row hidden';
   const nb=document.getElementById('nextBtn');
   nb.className=answered?'next-btn':'next-btn hidden';
   nb.textContent=idx+1>=total?'See Results 🎉':'Next Card →';
@@ -134,10 +131,9 @@ function render(){
 function flipCard(){if(!flipped){flipped=true;render();}}
 
 function mark(knew){
-  if(answered)return;
-  if(knew)score++;
-  answered=true;
-  render();
+  if(answered) return;
+  if(knew) score++;
+  answered=true; render();
 }
 
 function nextCard(){
@@ -150,11 +146,11 @@ function showResult(){
   document.getElementById('app').querySelector('.card-wrap').style.display='none';
   document.getElementById('markRow').style.display='none';
   document.getElementById('scoreBar').style.display='none';
-  const pct=Math.round((score/total)*100);
+  const pct=Math.round(score/total*100);
   document.getElementById('resultEmoji').textContent=pct>=80?'🌟':pct>=50?'💪':'📖';
   document.getElementById('resultScore').textContent=`${score} / ${total}`;
   document.getElementById('resultPct').textContent=`${pct}% Recalled`;
-  document.getElementById('resultMsg').textContent=pct>=80?'Excellent recall! You\'re ready for the next level.':pct>=50?'Good effort! A few more reviews and you\'ll ace it.':'Keep studying — practice makes perfect!';
+  document.getElementById('resultMsg').textContent=pct>=80?"Excellent recall! You're ready for the next level.":pct>=50?'Good effort! A few more reviews and you\'ll ace it.':'Keep studying — practice makes perfect!';
   document.getElementById('resultBox').style.display='block';
 }
 

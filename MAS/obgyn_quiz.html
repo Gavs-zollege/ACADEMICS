@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Introduction to OB/GYN</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1e2f42; font-family:system-ui,sans-serif; color:#e8f4fd; min-height:100vh; }
+  .wrap { padding:1.5rem 1rem; max-width:680px; margin:0 auto; }
+  .header { background:#243d54; border-radius:12px; padding:1.25rem 1.5rem; margin-bottom:1.5rem; text-align:center; }
+  .header h1 { margin:0 0 4px; font-size:22px; font-weight:700; color:#f0f8ff; }
+  .header p { margin:0; font-size:14px; font-weight:600; color:#a0c8e8; }
+  .score-bar { display:flex; gap:12px; margin-bottom:1.5rem; }
+  .score-card { flex:1; background:#2a3f56; border-radius:10px; padding:12px; text-align:center; }
+  .score-card .num { font-size:24px; font-weight:700; color:#f0f8ff; }
+  .score-card .lbl { font-size:12px; font-weight:600; color:#a0c8e8; margin-top:2px; }
+  .q-card { background:#2a3f56; border-radius:12px; padding:1.25rem 1.5rem; margin-bottom:1rem; border:1px solid #3a5570; }
+  .q-num { font-size:12px; font-weight:700; color:#a0c8e8; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em; }
+  .q-text { font-size:17px; font-weight:700; color:#f0f8ff; margin-bottom:1rem; line-height:1.55; }
+  .opts { display:flex; flex-direction:column; gap:8px; }
+  .opt { background:#304b65; border:1px solid #3a5570; border-radius:8px; padding:11px 14px; font-size:15px; font-weight:600; color:#ddeef8; cursor:pointer; text-align:left; transition:background 0.15s,border-color 0.15s; }
+  .opt:hover:not(:disabled) { background:#3a5a78; border-color:#5a90ba; }
+  .opt.correct { background:#1a4a2e; border-color:#3aab6a; color:#90eab0; }
+  .opt.wrong { background:#4a1e1e; border-color:#b03a3a; color:#f0a0a0; }
+  .opt:disabled { cursor:default; }
+  .feedback { margin-top:10px; font-size:14px; font-weight:600; padding:9px 13px; border-radius:6px; line-height:1.5; }
+  .feedback.ok { background:#1a4a2e; color:#90eab0; }
+  .feedback.no { background:#4a1e1e; color:#f0a0a0; }
+  .next-btn { margin-top:12px; background:#1e6a9e; border:none; border-radius:8px; padding:10px 20px; color:#f0f8ff; font-size:15px; font-weight:700; cursor:pointer; }
+  .next-btn:hover { background:#2882be; }
+  .finish-card { background:#2a3f56; border-radius:12px; padding:2rem; text-align:center; }
+  .finish-card .big { font-size:52px; font-weight:700; color:#f0f8ff; }
+  .finish-card .msg { font-size:16px; font-weight:600; color:#a0c8e8; margin:8px 0 20px; }
+  .restart-btn { background:#1e6a9e; border:none; border-radius:8px; padding:12px 28px; color:#f0f8ff; font-size:16px; font-weight:700; cursor:pointer; }
+  .restart-btn:hover { background:#2882be; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>Introduction to OB/GYN</h1>
+    <p>Obstetrics &amp; Gynecology — Medical Assistant Program</p>
+  </div>
+  <div class="score-bar">
+    <div class="score-card"><div class="num" id="s-correct">0</div><div class="lbl">Correct</div></div>
+    <div class="score-card"><div class="num" id="s-q">1 / 10</div><div class="lbl">Question</div></div>
+    <div class="score-card"><div class="num" id="s-score">0%</div><div class="lbl">Score</div></div>
+  </div>
+  <div id="main"></div>
+</div>
+
+<script>
+const qs=[
+  {q:"What is the primary purpose of prenatal visits?",opts:["Monitor the health of mother and baby during pregnancy","Diagnose gynecological infections","Perform hormone therapy","Screen for cervical cancer"],ans:0,exp:"Prenatal visits monitor both maternal and fetal health throughout pregnancy."},
+  {q:"What does an obstetric ultrasound typically help assess?",opts:["Pap smear results","Fetal growth, position, and heartbeat","IUD placement only","Endometrial thickness after menopause"],ans:1,exp:"Ultrasounds during pregnancy assess fetal development, position, and heartbeat."},
+  {q:"A Non-Stress Test (NST) is used to evaluate:",opts:["The mother's blood pressure","Fetal heart rate in response to movement","Risk of gestational diabetes","Cervical dilation"],ans:1,exp:"An NST monitors fetal heart rate patterns to assess baby's well-being."},
+  {q:"Gestational diabetes screening is typically done by testing:",opts:["Urine protein levels","Blood glucose after a glucose drink","Amniotic fluid","Fetal heart rate"],ans:1,exp:"A glucose challenge test measures blood sugar to screen for gestational diabetes."},
+  {q:"Amniocentesis is a procedure that involves:",opts:["Inserting an IUD into the uterus","Removing a tissue sample from the cervix","Withdrawing amniotic fluid to test for chromosomal abnormalities","Examining the uterine lining"],ans:2,exp:"Amniocentesis extracts amniotic fluid to screen for genetic or chromosomal conditions."},
+  {q:"A Pap smear is primarily used to screen for:",opts:["Pregnancy","Cervical cancer and abnormal cervical cells","Ovarian cysts","Gestational diabetes"],ans:1,exp:"A Pap smear (Pap test) collects cervical cells to detect precancerous or cancerous changes."},
+  {q:"During a pelvic exam, the provider assesses:",opts:["Only the external genitalia","The uterus, ovaries, and surrounding pelvic organs","The kidneys and bladder only","Blood glucose levels"],ans:1,exp:"A pelvic exam evaluates the reproductive organs including the uterus and ovaries."},
+  {q:"A breast exam performed by a provider is used to:",opts:["Check blood pressure in the arm","Detect lumps, abnormalities, or early signs of breast cancer","Measure hormone levels","Screen for gestational diabetes"],ans:1,exp:"Clinical breast exams check for lumps or changes that may indicate breast disease or cancer."},
+  {q:"An endometrial biopsy involves:",opts:["Removing the entire uterus","Taking a small tissue sample from the uterine lining","Inserting a device into the cervix only","Performing a Pap smear"],ans:1,exp:"An endometrial biopsy samples the uterine lining to check for abnormal cells or cancer."},
+  {q:"What is colposcopy used for?",opts:["Inserting or removing an IUD","A closer examination of the cervix after an abnormal Pap result","Screening for gestational diabetes","Monitoring fetal heart rate"],ans:1,exp:"Colposcopy uses a magnifying instrument to closely examine the cervix for abnormal tissue."},
+];
+
+let cur=0, correct=0, answered=false;
+
+function updateStats(){
+  document.getElementById('s-correct').textContent=correct;
+  document.getElementById('s-q').textContent=(Math.min(cur+1,10))+' / 10';
+  document.getElementById('s-score').textContent=cur===0?'0%':Math.round(correct/cur*100)+'%';
+}
+
+function renderQ(){
+  answered=false; updateStats();
+  const d=qs[cur];
+  document.getElementById('main').innerHTML=`
+    <div class="q-card">
+      <div class="q-num">Question ${cur+1} of 10</div>
+      <div class="q-text">${d.q}</div>
+      <div class="opts" id="opts">
+        ${d.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div id="fb"></div>
+      <div id="nb"></div>
+    </div>`;
+}
+
+function pick(i){
+  if(answered) return;
+  answered=true;
+  const d=qs[cur];
+  const btns=document.querySelectorAll('.opt');
+  btns.forEach(b=>b.disabled=true);
+  if(i===d.ans){ btns[i].classList.add('correct'); correct++; document.getElementById('fb').innerHTML=`<div class="feedback ok">✓ Correct! ${d.exp}</div>`; }
+  else { btns[i].classList.add('wrong'); btns[d.ans].classList.add('correct'); document.getElementById('fb').innerHTML=`<div class="feedback no">✗ Not quite. ${d.exp}</div>`; }
+  cur++;
+  document.getElementById('nb').innerHTML=cur<10
+    ?`<button class="next-btn" onclick="renderQ()">Next question →</button>`
+    :`<button class="next-btn" onclick="finish()">See my results →</button>`;
+}
+
+function finish(){
+  const pct=Math.round(correct/10*100);
+  const msg=pct>=80?"Great job! You know your OB/GYN basics!":pct>=60?"Good effort! Review the topics you missed.":"Keep studying — you'll get there!";
+  document.getElementById('main').innerHTML=`
+    <div class="finish-card">
+      <div class="big">${correct}/10</div>
+      <div class="msg">${pct}% — ${msg}</div>
+      <button class="restart-btn" onclick="restart()">Try again</button>
+    </div>`;
+  document.getElementById('s-q').textContent='10 / 10';
+  document.getElementById('s-score').textContent=pct+'%';
+  document.getElementById('s-correct').textContent=correct;
+}
+
+function restart(){cur=0;correct=0;renderQ();}
+renderQ();
+</script>
+</body>
+</html>

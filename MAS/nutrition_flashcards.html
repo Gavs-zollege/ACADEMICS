@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nutrition Flashcards</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',sans-serif;min-height:100vh;background:#0f0f0f;color:#fff;padding:20px 16px}
+  .header{text-align:center;margin-bottom:18px}
+  .week{font-size:13px;color:#c0a060;font-weight:700;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase}
+  .title{font-size:24px;font-weight:800;color:#fff;margin-bottom:6px}
+  .subtitle{font-size:13.5px;color:#aaa;max-width:520px;margin:0 auto;line-height:1.5}
+  .progress{max-width:560px;margin:0 auto 18px}
+  .progress-bar{height:8px;background:#333;border-radius:8px;overflow:hidden;margin-bottom:5px}
+  .progress-fill{height:100%;background:linear-gradient(90deg,#c0392b,#e74c3c);border-radius:8px;transition:width 0.4s}
+  .progress-text{font-size:12px;color:#888;text-align:right}
+  .card-wrap{max-width:560px;margin:0 auto 18px;cursor:pointer}
+  .card{border-radius:16px;padding:32px 28px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 8px 30px rgba(0,0,0,.5);transition:background 0.3s}
+  .card.question{background:#7b1c2e}
+  .card.answer{background:#1a3a5c}
+  .card-badge{font-size:12px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+  .card-text{font-size:18px;font-weight:600;line-height:1.55;color:#fff;flex:1}
+  .tap-hint{font-size:11px;color:rgba(255,255,255,.4);margin-top:16px;text-align:right}
+  .mark-row{max-width:560px;margin:0 auto 12px;text-align:center}
+  .mark-label{font-size:14px;color:#bbb;margin-bottom:10px;font-weight:600}
+  .mark-btns{display:flex;gap:12px;justify-content:center;margin-bottom:14px}
+  .mark-btn{padding:13px 22px;border-radius:10px;border:none;cursor:pointer;font-weight:800;font-size:15px;transition:transform 0.1s,opacity 0.2s}
+  .mark-btn:disabled{opacity:.6;cursor:default}
+  .yes-btn{background:#1e7e34;color:#fff}
+  .no-btn{background:#7b1c2e;color:#fff}
+  .next-btn{background:#c0392b;color:#fff;border:none;border-radius:10px;padding:13px 30px;font-weight:800;font-size:16px;cursor:pointer;letter-spacing:.5px}
+  .score-bar{text-align:center;color:#777;font-size:13px;margin-top:4px}
+  .result-box{max-width:480px;margin:20px auto;background:#1a1a1a;border-radius:20px;padding:40px 28px;text-align:center;display:none}
+  .result-emoji{font-size:52px;margin-bottom:12px}
+  .result-score{font-size:48px;font-weight:900;color:#e74c3c;margin-bottom:4px}
+  .result-pct{font-size:20px;color:#c0a060;font-weight:700;margin-bottom:14px}
+  .result-msg{font-size:15px;color:#bbb;line-height:1.6;margin-bottom:24px}
+  .restart-btn{background:#c0392b;color:#fff;border:none;border-radius:10px;padding:14px 32px;font-weight:800;font-size:16px;cursor:pointer}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="header">
+    <div class="week">📅 Week 08 — Nutrition Essentials for Medical Assistants</div>
+    <div class="title">🩺 Nutrition Flashcard Activity</div>
+    <div class="subtitle">A fun recall activity to help you lock in key nutrition concepts! Flip each card, then mark whether you knew it. 🧠✨</div>
+  </div>
+
+  <div class="progress">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText">Card 1 of 22</div>
+  </div>
+
+  <div class="card-wrap" onclick="flipCard()">
+    <div class="card question" id="card">
+      <div class="card-badge" id="cardBadge">❓ Question</div>
+      <div class="card-text" id="cardText"></div>
+      <div class="tap-hint" id="tapHint">Tap to reveal answer</div>
+    </div>
+  </div>
+
+  <div class="mark-row hidden" id="markRow">
+    <div class="mark-label">Did you know this?</div>
+    <div class="mark-btns">
+      <button class="mark-btn yes-btn" id="yesBtn" onclick="mark(true)">✅ Yes, I knew it!</button>
+      <button class="mark-btn no-btn" id="noBtn" onclick="mark(false)">❌ Still learning</button>
+    </div>
+    <button class="next-btn hidden" id="nextBtn" onclick="nextCard()">Next Card →</button>
+  </div>
+
+  <div class="score-bar" id="scoreBar">Score so far: <strong>0</strong> / 0</div>
+
+  <div class="result-box" id="resultBox">
+    <div class="result-emoji" id="resultEmoji"></div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-pct" id="resultPct"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Try Again</button>
+  </div>
+</div>
+
+<script>
+const cards = [
+  {q:"What is Nutrition?",a:"The study of how the body uses food — involving intake, digestion, absorption, and metabolism to provide energy, growth, and repair."},
+  {q:"What are the Six Essential Nutrients?",a:"Carbohydrates, Proteins, Fats, Vitamins, Minerals, and Water."},
+  {q:"What is the primary role of Carbohydrates?",a:"They are the body's primary energy source."},
+  {q:"What is the main function of Proteins?",a:"Building and repairing body tissues."},
+  {q:"What role do Fats play in the body?",a:"Energy storage and maintaining cell structure."},
+  {q:"What do Vitamins do in the body?",a:"They regulate body processes."},
+  {q:"What is the role of Minerals?",a:"They build bones and aid in metabolism."},
+  {q:"What does Water do for the body?",a:"It regulates body temperature and removes waste."},
+  {q:"What are Macronutrients?",a:"Carbohydrates, Proteins, and Fats — nutrients needed in large amounts."},
+  {q:"What are Micronutrients?",a:"Vitamins and Minerals — nutrients needed in smaller amounts."},
+  {q:"What are the signs of Iron Deficiency Anemia?",a:"Fatigue and pale skin."},
+  {q:"What are the signs of Vitamin D Deficiency?",a:"Bone pain and muscle weakness."},
+  {q:"What is the risk of Calcium Deficiency?",a:"Increased risk of osteoporosis."},
+  {q:"What are signs of Protein Deficiency?",a:"Poor wound healing and hair loss."},
+  {q:"What diet is used for patients with Type 2 Diabetes?",a:"A diabetic diet focused on controlling blood sugar levels."},
+  {q:"What is a Low Sodium Diet used for?",a:"Managing hypertension and congestive heart failure (CHF)."},
+  {q:"What does a Renal Diet restrict?",a:"Potassium, phosphorus, and sodium."},
+  {q:"When is a Clear Liquid or Full Liquid diet used?",a:"Before or after medical procedures."},
+  {q:"What condition requires a Gluten-Free Diet?",a:"Celiac disease."},
+  {q:"Name 4 chronic diseases that a healthy diet helps prevent.",a:"Heart disease, Type 2 diabetes, obesity, and certain cancers."},
+  {q:"What are 4 roles of a Medical Assistant in nutrition care?",a:"Support nutritional screening, record dietary concerns in EHR, monitor chronic conditions, and reinforce provider dietary instructions."},
+  {q:"In the case study, what are the nutrition red flags for the Type 2 diabetic patient?",a:"Skipping meals and drinking sugary sodas — both cause dangerous blood sugar fluctuations."},
+];
+
+let idx=0, flipped=false, score=0, answered=false;
+const total=cards.length;
+
+function render(){
+  const c=cards[idx];
+  document.getElementById('cardText').textContent=flipped?c.a:c.q;
+  document.getElementById('cardBadge').textContent=flipped?'💡 Answer':'❓ Question';
+  document.getElementById('tapHint').textContent=flipped?'Tap to see question':'Tap to reveal answer';
+  const card=document.getElementById('card');
+  card.className='card '+(flipped?'answer':'question');
+  document.getElementById('progressFill').style.width=`${(idx/total)*100}%`;
+  document.getElementById('progressText').textContent=`Card ${idx+1} of ${total}`;
+  const mr=document.getElementById('markRow');
+  mr.className=flipped?'mark-row':'mark-row hidden';
+  const nb=document.getElementById('nextBtn');
+  nb.className=answered?'next-btn':'next-btn hidden';
+  nb.textContent=idx+1>=total?'See Results 🎉':'Next Card →';
+  document.getElementById('yesBtn').disabled=answered;
+  document.getElementById('noBtn').disabled=answered;
+  const shown=idx+(answered?1:0);
+  document.getElementById('scoreBar').innerHTML=`Score so far: <strong>${score}</strong> / ${shown}`;
+}
+
+function flipCard(){if(!flipped){flipped=true;render();}}
+
+function mark(knew){
+  if(answered)return;
+  if(knew)score++;
+  answered=true;
+  render();
+}
+
+function nextCard(){
+  if(idx+1>=total){showResult();return;}
+  idx++;flipped=false;answered=false;render();
+}
+
+function showResult(){
+  document.getElementById('app').querySelector('.progress').style.display='none';
+  document.getElementById('app').querySelector('.card-wrap').style.display='none';
+  document.getElementById('markRow').style.display='none';
+  document.getElementById('scoreBar').style.display='none';
+  const pct=Math.round((score/total)*100);
+  document.getElementById('resultEmoji').textContent=pct>=80?'🌟':pct>=50?'💪':'📖';
+  document.getElementById('resultScore').textContent=`${score} / ${total}`;
+  document.getElementById('resultPct').textContent=`${pct}% Recalled`;
+  document.getElementById('resultMsg').textContent=pct>=80?'Excellent recall! You\'re ready for the next level.':pct>=50?'Good effort! A few more reviews and you\'ll ace it.':'Keep studying — practice makes perfect!';
+  document.getElementById('resultBox').style.display='block';
+}
+
+function restart(){
+  idx=0;flipped=false;score=0;answered=false;
+  document.getElementById('resultBox').style.display='none';
+  document.getElementById('app').querySelector('.progress').style.display='';
+  document.getElementById('app').querySelector('.card-wrap').style.display='';
+  document.getElementById('scoreBar').style.display='';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

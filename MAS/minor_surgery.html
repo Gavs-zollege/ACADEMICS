@@ -1,0 +1,301 @@
+<style>
+  :root {
+    --color-background-primary: #1a1a2e;
+    --color-background-secondary: #16213e;
+    --color-border-tertiary: #2a2a4a;
+    --color-border-secondary: #3a3a5c;
+    --color-text-primary: #f0f0ff;
+    --color-text-secondary: #b0b0d0;
+    --color-text-tertiary: #7070a0;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --font-sans: system-ui, sans-serif;
+  }
+  body { background: #12122a; margin: 0; padding: 1rem; }
+  * { box-sizing: border-box; }
+  .game-wrap { padding: 1rem 0; font-family: var(--font-sans); }
+  .score-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+  .score-pill { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 6px 16px; font-size: 14px; font-weight: 700; color: var(--color-text-secondary); }
+  .score-pill span { font-weight: 700; color: #a89fff; }
+  .section-title { font-size: 13px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .mode-tabs { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .tab { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 8px 18px; font-size: 14px; font-weight: 700; cursor: pointer; color: var(--color-text-secondary); }
+  .tab.active { background: #2d2880; border-color: #7b74e8; color: #c4bfff; font-weight: 700; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; }
+  .q-text { font-size: 16px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 1rem; }
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .choice { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 14px; font-weight: 700; cursor: pointer; color: var(--color-text-primary); background: var(--color-background-secondary); text-align: left; }
+  .choice:hover { background: #1e1e40; }
+  .choice.correct { background: #1a3a1a; border-color: #4caf50; color: #90ee90; }
+  .choice.wrong { background: #3a1a1a; border-color: #e57373; color: #ffaaaa; }
+  .feedback { font-size: 14px; font-weight: 700; margin-top: 0.75rem; padding: 10px 14px; border-radius: var(--border-radius-md); }
+  .feedback.ok { background: #1a3a1a; color: #90ee90; }
+  .feedback.bad { background: #3a1a1a; color: #ffaaaa; }
+  .next-btn { margin-top: 1rem; background: #534AB7; color: #d0ccff; border: none; border-radius: var(--border-radius-md); padding: 10px 24px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: var(--font-sans); }
+  .next-btn:hover { background: #6a60d0; }
+  .sort-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .sort-item { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 14px; font-weight: 700; cursor: grab; background: var(--color-background-secondary); color: var(--color-text-primary); display: flex; align-items: center; gap: 10px; user-select: none; }
+  .sort-item .handle { color: var(--color-text-tertiary); font-size: 16px; }
+  .sort-item.dragging { opacity: 0.4; }
+  .check-btn { background: #534AB7; color: #d0ccff; border: none; border-radius: var(--border-radius-md); padding: 10px 24px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 1rem; font-family: var(--font-sans); }
+  .check-btn:hover { background: #6a60d0; }
+  .match-item { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 13px; font-weight: 700; cursor: pointer; background: var(--color-background-secondary); color: var(--color-text-primary); min-height: 48px; display: flex; align-items: center; }
+  .match-item.selected { background: #2d2880; border-color: #7b74e8; color: #c4bfff; }
+  .match-item.matched-ok { background: #1a3a1a; border-color: #4caf50; color: #90ee90; cursor: default; }
+  .match-item.matched-bad { background: #3a1a1a; border-color: #e57373; color: #ffaaaa; }
+  .result-card { text-align: center; padding: 2rem; }
+  .result-score { font-size: 48px; font-weight: 700; color: #a89fff; }
+  .result-msg { font-size: 16px; font-weight: 700; color: var(--color-text-secondary); margin: 0.5rem 0 1.5rem; }
+  .restart-btn { background: #534AB7; color: #d0ccff; border: none; border-radius: var(--border-radius-md); padding: 10px 28px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: var(--font-sans); }
+  .badge { font-size: 12px; font-weight: 700; border-radius: 99px; padding: 3px 10px; display: inline-block; }
+  .badge-purple { background: #2d2880; color: #c4bfff; }
+  .badge-teal { background: #0f3028; color: #5eead4; }
+  .badge-coral { background: #3a1a0a; color: #fdba74; }
+  .progress { height: 6px; background: var(--color-background-secondary); border-radius: 99px; margin-bottom: 1.25rem; }
+  .progress-fill { height: 6px; background: #7b74e8; border-radius: 99px; transition: width 0.3s; }
+</style>
+
+<div class="game-wrap">
+  <div class="score-bar">
+    <div>
+      <div style="font-size: 20px; font-weight: 700; color: var(--color-text-primary);">Minor surgery MA challenge</div>
+      <div style="font-size: 13px; font-weight: 700; color: var(--color-text-secondary); margin-top: 2px">Test your knowledge across 3 activities</div>
+    </div>
+    <div class="score-pill">Score: <span id="score-display">0</span></div>
+  </div>
+
+  <div class="mode-tabs">
+    <div class="tab active" onclick="switchMode('quiz')" id="tab-quiz">Quiz</div>
+    <div class="tab" onclick="switchMode('sort')" id="tab-sort">Order the steps</div>
+    <div class="tab" onclick="switchMode('match')" id="tab-match">Match it up</div>
+  </div>
+
+  <div id="main-content"></div>
+</div>
+
+<script>
+const quizData = [
+  { q: "Which type of anesthesia is used for minor surgery?", choices: ["General anesthesia", "Spinal anesthesia", "Local anesthesia", "Sedation only"], ans: 2, exp: "Minor surgeries use local anesthesia only — the patient stays awake and only the site is numbed." },
+  { q: "Which of the following is an example of a minor surgical procedure?", choices: ["Appendectomy", "Laceration repair", "Hip replacement", "Open heart surgery"], ans: 1, exp: "Laceration repair (suturing a cut) is a classic minor surgical procedure done in an exam room." },
+  { q: "Where are minor surgeries typically performed?", choices: ["Operating room", "ICU", "Outpatient exam room", "Emergency department"], ans: 2, exp: "Minor surgeries are done in an outpatient setting — usually an exam room in a clinic or office." },
+  { q: "What is 'I&D' in minor surgery?", choices: ["Inject and drain", "Incision and drainage", "Irrigate and dress", "Inspect and document"], ans: 1, exp: "I&D stands for Incision and Drainage — cutting open an abscess to drain the infection." },
+  { q: "Which MA task happens AFTER the procedure?", choices: ["Prepare the sterile field", "Position the patient", "Apply dressings and give post-op instructions", "Set up instruments"], ans: 2, exp: "Post-procedure, the MA applies dressings and educates the patient on wound care and follow-up." },
+  { q: "What does 'maintaining aseptic technique' mean?", choices: ["Keeping the room cold", "Preventing contamination of the sterile field", "Giving the patient antibiotics", "Timing the procedure"], ans: 1, exp: "Aseptic technique means preventing microorganism contamination to reduce infection risk." },
+  { q: "Which is NOT part of the MA's role in minor surgery?", choices: ["Educate the patient", "Perform the incision", "Document the procedure", "Assist the provider"], ans: 1, exp: "Only licensed providers perform incisions. MAs assist, document, and support — not operate." },
+];
+
+const sortSteps = [
+  "Prepare the exam room and instruments",
+  "Educate and position the patient",
+  "Maintain the aseptic field during procedure",
+  "Assist the provider during the procedure",
+  "Apply dressings after the procedure",
+  "Give post-op instructions",
+  "Document everything",
+];
+
+const matchPairs = [
+  { term: "Skin lesion removal", def: "Removes abnormal skin growths (moles, cysts, tags)" },
+  { term: "Laceration repair", def: "Suturing or closing a cut or wound" },
+  { term: "Biopsy", def: "Tissue sample taken for lab analysis" },
+  { term: "Nail removal", def: "Removal of an ingrown or damaged nail" },
+  { term: "Incision & drainage", def: "Cutting open an abscess to drain infection" },
+  { term: "Local anesthesia", def: "Numbs only the surgery site, patient stays awake" },
+];
+
+let mode = 'quiz', score = 0, qIndex = 0, answered = false;
+let sortOrder = [], matchSelected = null, matchState = {}, matchDone = false;
+
+function switchMode(m) {
+  mode = m;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + m).classList.add('active');
+  if (m === 'quiz') { qIndex = 0; answered = false; renderQuiz(); }
+  else if (m === 'sort') renderSort();
+  else renderMatch();
+}
+
+function updateScore(n) { score += n; document.getElementById('score-display').textContent = score; }
+
+function renderQuiz() {
+  if (qIndex >= quizData.length) { renderResult('quiz'); return; }
+  const q = quizData[qIndex];
+  const pct = Math.round((qIndex / quizData.length) * 100);
+  document.getElementById('main-content').innerHTML = `
+    <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div style="font-size:12px;font-weight:700;color:var(--color-text-secondary);margin-bottom:0.75rem">Question ${qIndex+1} of ${quizData.length}</div>
+    <div class="card">
+      <div class="q-text">${q.q}</div>
+      <div class="choices" id="choices">
+        ${q.choices.map((c,i)=>`<button class="choice" onclick="answerQuiz(${i})">${c}</button>`).join('')}
+      </div>
+      <div id="feedback"></div>
+    </div>
+  `;
+  answered = false;
+}
+
+function answerQuiz(i) {
+  if (answered) return;
+  answered = true;
+  const q = quizData[qIndex];
+  const btns = document.querySelectorAll('.choice');
+  btns[i].classList.add(i === q.ans ? 'correct' : 'wrong');
+  btns[q.ans].classList.add('correct');
+  btns.forEach(b => b.style.cursor = 'default');
+  const correct = i === q.ans;
+  if (correct) updateScore(10);
+  document.getElementById('feedback').innerHTML = `
+    <div class="feedback ${correct ? 'ok' : 'bad'}">${correct ? '✓ Correct! ' : '✗ Not quite. '}${q.exp}</div>
+    <button class="next-btn" onclick="nextQ()">${qIndex + 1 < quizData.length ? 'Next question' : 'See results'}</button>
+  `;
+}
+
+function nextQ() { qIndex++; answered = false; renderQuiz(); }
+
+function renderSort() {
+  sortOrder = [...Array(sortSteps.length).keys()];
+  shuffle(sortOrder);
+  renderSortUI();
+}
+
+function renderSortUI() {
+  document.getElementById('main-content').innerHTML = `
+    <div class="card">
+      <div class="q-text">Drag to put the MA steps in the correct order</div>
+      <div class="sort-wrap" id="sort-list">
+        ${sortOrder.map((si, pos) => `
+          <div class="sort-item" draggable="true" data-pos="${pos}" data-si="${si}" id="si-${pos}">
+            <span class="handle">&#9776;</span>${sortSteps[si]}
+          </div>`).join('')}
+      </div>
+      <button class="check-btn" onclick="checkSort()">Check my order</button>
+      <div id="sort-feedback"></div>
+    </div>
+  `;
+  setupDrag();
+}
+
+let dragSrc = null;
+function setupDrag() {
+  document.querySelectorAll('.sort-item').forEach(el => {
+    el.addEventListener('dragstart', e => { dragSrc = el; el.classList.add('dragging'); });
+    el.addEventListener('dragend', e => { el.classList.remove('dragging'); });
+    el.addEventListener('dragover', e => { e.preventDefault(); });
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      if (dragSrc === el) return;
+      const list = document.getElementById('sort-list');
+      const items = [...list.querySelectorAll('.sort-item')];
+      const from = items.indexOf(dragSrc), to = items.indexOf(el);
+      if (from < to) list.insertBefore(dragSrc, el.nextSibling);
+      else list.insertBefore(dragSrc, el);
+      sortOrder = [...list.querySelectorAll('.sort-item')].map(x => parseInt(x.dataset.si));
+    });
+  });
+}
+
+function checkSort() {
+  let correct = 0;
+  sortOrder.forEach((si, pos) => { if (si === pos) correct++; });
+  const all = correct === sortSteps.length;
+  if (all) updateScore(20);
+  else if (correct >= 4) updateScore(10);
+  const items = document.querySelectorAll('.sort-item');
+  sortOrder.forEach((si, pos) => {
+    items[pos].style.borderColor = si === pos ? '#4caf50' : '#e57373';
+    items[pos].style.background = si === pos ? '#1a3a1a' : '#3a1a1a';
+    items[pos].style.color = si === pos ? '#90ee90' : '#ffaaaa';
+  });
+  document.getElementById('sort-feedback').innerHTML = `
+    <div class="feedback ${all ? 'ok' : 'bad'}" style="margin-top:0.75rem">
+      ${all ? '✓ Perfect order! +20 points' : `You got ${correct}/${sortSteps.length} steps correct. ${correct >= 4 ? '+10 pts for a good effort!' : 'Try again for points!'}`}
+    </div>
+    ${!all ? `<button class="check-btn" onclick="renderSort()" style="margin-top:0.5rem">Try again</button>` : ''}
+  `;
+}
+
+function renderMatch() {
+  matchSelected = null; matchState = {}; matchDone = false;
+  const shuffledTerms = shuffle([...matchPairs.map(p => p.term)]);
+  const shuffledDefs = shuffle([...matchPairs.map(p => p.def)]);
+  document.getElementById('main-content').innerHTML = `
+    <div class="card">
+      <div class="q-text">Match each procedure or term to its description</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
+        <div>
+          <div class="section-title">Terms</div>
+          <div style="display:flex;flex-direction:column;gap:8px" id="terms-col">
+            ${shuffledTerms.map(t => `<div class="match-item" id="term-${esc(t)}" onclick="matchClick('term','${esc(t)}')">${t}</div>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="section-title">Descriptions</div>
+          <div style="display:flex;flex-direction:column;gap:8px" id="defs-col">
+            ${shuffledDefs.map(d => `<div class="match-item" id="def-${esc(d)}" onclick="matchClick('def','${esc(d)}')">${d}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div id="match-feedback" style="margin-top:0.75rem"></div>
+    </div>
+  `;
+}
+
+function esc(s) { return s.replace(/[^a-zA-Z0-9]/g,'_'); }
+
+function matchClick(type, id) {
+  if (matchDone) return;
+  const el = document.getElementById(type+'-'+id);
+  if (!matchSelected) {
+    matchSelected = { type, id, el };
+    el.classList.add('selected');
+  } else if (matchSelected.type === type) {
+    matchSelected.el.classList.remove('selected');
+    matchSelected = { type, id, el };
+    el.classList.add('selected');
+  } else {
+    const other = matchSelected;
+    let term, def;
+    if (type === 'def') { term = other.id; def = id; }
+    else { term = id; def = other.id; }
+    const pair = matchPairs.find(p => esc(p.term) === term);
+    const correct = pair && esc(pair.def) === def;
+    const cls = correct ? 'matched-ok' : 'matched-bad';
+    el.classList.remove('selected'); other.el.classList.remove('selected');
+    el.classList.add(cls); other.el.classList.add(cls);
+    if (correct) {
+      updateScore(5);
+      matchState[term] = true;
+      if (Object.keys(matchState).length === matchPairs.length) {
+        matchDone = true;
+        document.getElementById('match-feedback').innerHTML = `<div class="feedback ok">✓ All matched! Excellent work, MA!</div>`;
+      }
+    } else {
+      setTimeout(() => { el.classList.remove(cls); other.el.classList.remove(cls); }, 900);
+    }
+    matchSelected = null;
+  }
+}
+
+function renderResult() {
+  document.getElementById('main-content').innerHTML = `
+    <div class="card result-card">
+      <div style="font-size:14px;font-weight:700;color:var(--color-text-secondary);margin-bottom:0.25rem">Quiz complete!</div>
+      <div class="result-score">${score}</div>
+      <div class="result-msg">total points earned — great job, future MA!</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:1.5rem">
+        <span class="badge badge-purple">Minor surgery basics</span>
+        <span class="badge badge-teal">Aseptic technique</span>
+        <span class="badge badge-coral">MA role awareness</span>
+      </div>
+      <button class="restart-btn" onclick="restartAll()">Play again</button>
+      <button class="restart-btn" style="margin-left:8px;background:var(--color-background-secondary);color:var(--color-text-primary);border:0.5px solid var(--color-border-secondary)" onclick="sendPrompt('Can you quiz me more on minor surgery and the MA role?')">More questions ↗</button>
+    </div>
+  `;
+}
+
+function restartAll() { score = 0; document.getElementById('score-display').textContent = 0; qIndex = 0; answered = false; switchMode('quiz'); }
+function shuffle(arr) { for (let i = arr.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+renderQuiz();
+</script>

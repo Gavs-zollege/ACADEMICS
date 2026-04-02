@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA Flashcards</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0a0a 0%, #2d1010 50%, #1a0a0a 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px; font-family: 'Segoe UI', sans-serif;
+  }
+  .header { text-align: center; margin-bottom: 28px; }
+  .badge {
+    display: inline-block; background: rgba(255,255,255,0.08);
+    border-radius: 50px; padding: 6px 18px; margin-bottom: 12px;
+    color: #f5c6c6; font-size: 13px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+  h1 { color: #fff; font-size: clamp(22px,4vw,32px); font-weight: 800; margin-bottom: 8px; }
+  .subtitle { color: #d4a0a0; font-size: 15px; max-width: 520px; line-height: 1.5; }
+  .subtitle strong { color: #f5c6c6; }
+
+  .progress-wrap { width: 100%; max-width: 640px; margin-bottom: 20px; }
+  .progress-labels { display: flex; justify-content: space-between; margin-bottom: 6px; color: #d4a0a0; font-size: 13px; }
+  .progress-bar { background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; overflow: hidden; }
+  .progress-fill {
+    background: linear-gradient(90deg, #c0392b, #e74c3c);
+    height: 100%; border-radius: 10px; width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .card {
+    width: 100%; max-width: 640px; min-height: 240px;
+    border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 36px 40px; cursor: pointer;
+    transition: background 0.4s ease, border-color 0.4s ease;
+    border: 2px solid #e8d5d5;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f0f0 100%);
+    position: relative;
+  }
+  .card.flipped {
+    background: linear-gradient(135deg, #7b0000 0%, #a30000 100%);
+    border-color: #e74c3c;
+  }
+  .card-label {
+    position: absolute; top: 14px; right: 18px;
+    background: rgba(180,0,0,0.08);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 12px; font-weight: 700;
+    color: #a30000; letter-spacing: 0.5px;
+    transition: all 0.3s;
+  }
+  .card.flipped .card-label { background: rgba(255,255,255,0.15); color: #ffcccc; }
+  .card-text {
+    text-align: center; font-size: clamp(15px,2.2vw,19px);
+    font-weight: 700; color: #1a0000; line-height: 1.6;
+    transition: color 0.3s;
+  }
+  .card.flipped .card-text { font-weight: 500; color: #fff; }
+  .card-hint { margin-top: 20px; font-size: 12px; color: rgba(100,0,0,0.35); font-style: italic; transition: color 0.3s; }
+  .card.flipped .card-hint { color: rgba(255,255,255,0.5); }
+
+  .buttons { display: flex; gap: 14px; margin-top: 28px; flex-wrap: wrap; justify-content: center; }
+  .btn-nav {
+    padding: 14px 32px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.1); color: #fff;
+    font-size: 16px; font-weight: 800; cursor: pointer;
+    letter-spacing: 0.5px; transition: background 0.2s;
+  }
+  .btn-nav:hover { background: rgba(255,255,255,0.2); }
+  .btn-flip {
+    padding: 14px 36px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #fff; font-size: 16px; font-weight: 800; cursor: pointer;
+    letter-spacing: 0.5px; box-shadow: 0 4px 20px rgba(231,76,60,0.4);
+    transition: transform 0.2s;
+  }
+  .btn-flip:hover { transform: scale(1.04); }
+  .btn-reset {
+    margin-top: 18px; background: none; border: none;
+    color: #d4a0a0; font-size: 14px; font-weight: 700;
+    cursor: pointer; text-decoration: underline; letter-spacing: 0.5px;
+  }
+  .done-banner {
+    margin-top: 24px;
+    background: linear-gradient(135deg, #1a5c1a, #27ae60);
+    border-radius: 16px; padding: 20px 36px; text-align: center;
+    box-shadow: 0 8px 30px rgba(39,174,96,0.4); max-width: 500px;
+    display: none;
+  }
+  .done-banner.visible { display: block; }
+  .done-banner .emoji { font-size: 32px; margin-bottom: 6px; }
+  .done-banner p { color: #fff; font-weight: 800; font-size: 18px; margin-bottom: 4px; }
+  .done-banner small { color: rgba(255,255,255,0.75); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="badge">🩺 Medical Assistant Program · Week 12</div>
+  <h1>Recall Activity Flashcards</h1>
+  <p class="subtitle">This fun activity sharpens your <strong>recall skills</strong> — a key habit for every great Medical Assistant. Tap each card to reveal the answer!</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-labels">
+    <span id="card-count">Card 1 of 12</span>
+    <span id="review-count">0 reviewed · 0%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+</div>
+
+<div class="card" id="card" onclick="flipCard()">
+  <div class="card-label" id="card-label">❓ QUESTION</div>
+  <p class="card-text" id="card-text"></p>
+  <p class="card-hint" id="card-hint">Tap to reveal the answer</p>
+</div>
+
+<div class="buttons">
+  <button class="btn-nav" onclick="prevCard()">← PREV</button>
+  <button class="btn-flip" id="flip-btn" onclick="flipCard()">💡 REVEAL ANSWER</button>
+  <button class="btn-nav" onclick="nextCard()">NEXT →</button>
+</div>
+<button class="btn-reset" onclick="resetCards()">↺ RESTART FROM CARD 1</button>
+
+<div class="done-banner" id="done-banner">
+  <div class="emoji">🎉</div>
+  <p>Great work! All cards reviewed!</p>
+  <small>Keep practicing to strengthen your recall. You've got this! 💪</small>
+</div>
+
+<script>
+const cards = [
+  { q: "What type of practice does a General MA typically work in?", a: "Primary care or family medicine — covering a wide range of patient ages and conditions." },
+  { q: "Name 3 back-office duties of a General MA.", a: "Taking vitals, performing lab tests, patient education, and assisting with procedures." },
+  { q: "What are the 3 national certifications a Medical Assistant can earn?", a: "CMA (Certified Medical Assistant), RMA (Registered Medical Assistant), and CCMA (Certified Clinical Medical Assistant)." },
+  { q: "In Cardiology, what monitoring device is attached to a patient to record heart activity over time?", a: "A Holter monitor — used for continuous cardiac monitoring outside the clinical setting." },
+  { q: "What is a key emotional skill needed when working in Pediatric specialty assisting?", a: "Using calming techniques to help children feel comfortable and reduce anxiety during exams." },
+  { q: "Name 2 procedures an OB/GYN MA assists with.", a: "Pap smears, pelvic exams, prenatal visit documentation, and preparing instruments for IUDs or biopsies." },
+  { q: "In Dermatology, what is the MA responsible for regarding specimens?", a: "Proper sterile technique and specimen handling after procedures like biopsies and lesion removals." },
+  { q: "What should an Orthopedic MA educate patients about after an injury?", a: "Activity restrictions, use of mobility aids (splints/casts), and the importance of follow-up care." },
+  { q: "In Allergy & Immunology, what emergency device must MAs educate patients on?", a: "Epinephrine auto-injectors (EpiPens) — used in case of severe allergic reactions." },
+  { q: "Name 4 pillars of professionalism that apply across ALL specialties.", a: "Confidentiality, adherence to scope of practice, culturally competent care, and empathy/adaptability." },
+  { q: "What are the 4 documentation best practices for Medical Assistants?", a: "Accurate charting, correct medical terminology, timely and legible entries, and promptly reporting abnormal findings." },
+  { q: "What does 'Universal Precautions' mean in a clinical setting?", a: "Treating all patients' blood and bodily fluids as potentially infectious — using gloves, masks, and other PPE consistently." },
+];
+
+let idx = 0, flipped = false, done = new Set();
+
+function render() {
+  const card = cards[idx];
+  const el = document.getElementById('card');
+  const pct = Math.round((done.size / cards.length) * 100);
+
+  document.getElementById('card-text').textContent = flipped ? card.a : card.q;
+  document.getElementById('card-hint').textContent = flipped ? "Tap to see the question" : "Tap to reveal the answer";
+  document.getElementById('card-label').textContent = flipped ? "✅ ANSWER" : "❓ QUESTION";
+  document.getElementById('flip-btn').textContent = flipped ? "🔄 FLIP BACK" : "💡 REVEAL ANSWER";
+  document.getElementById('card-count').textContent = `Card ${idx + 1} of ${cards.length}`;
+  document.getElementById('review-count').textContent = `${done.size} reviewed · ${pct}%`;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('done-banner').classList.toggle('visible', done.size === cards.length);
+  el.classList.toggle('flipped', flipped);
+}
+
+function flipCard() { flipped = !flipped; render(); }
+
+function nextCard() {
+  done.add(idx);
+  idx = (idx + 1) % cards.length;
+  flipped = false;
+  render();
+}
+
+function prevCard() {
+  idx = (idx - 1 + cards.length) % cards.length;
+  flipped = false;
+  render();
+}
+
+function resetCards() {
+  idx = 0; flipped = false; done.clear(); render();
+}
+
+render();
+</script>
+</body>
+</html>

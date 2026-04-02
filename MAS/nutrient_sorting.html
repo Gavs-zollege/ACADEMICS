@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nutrient Sorting Challenge</title>
+<style>
+  * { box-sizing:border-box; }
+  body { background:#0f1117; margin:0; padding:20px; font-family:system-ui,sans-serif; min-height:100vh; }
+  .game-wrap { max-width:520px; margin:0 auto; }
+  h2 { font-size:21px; font-weight:700; color:#f0f4ff; margin:0 0 4px; }
+  .subtitle { font-size:15px; color:#a0a8c0; margin:0 0 1.5rem; font-weight:500; }
+  .subtitle strong { color:#c8d4ff; }
+  .score-bar { display:flex; gap:12px; margin-bottom:1.5rem; }
+  .score-card { background:#1a1e2e; border:1px solid #2a2f45; border-radius:10px; padding:10px 18px; text-align:center; flex:1; }
+  .score-label { font-size:12px; font-weight:600; color:#7880a0; margin-bottom:2px; text-transform:uppercase; letter-spacing:0.04em; }
+  .score-val { font-size:24px; font-weight:700; color:#e8eeff; }
+  .question-card { background:#161b2e; border:1px solid #2a3050; border-radius:14px; padding:1.5rem; margin-bottom:1rem; }
+  .nutrient-name { font-size:28px; font-weight:800; color:#f0f4ff; text-align:center; margin-bottom:6px; }
+  .nutrient-hint { font-size:14px; font-weight:500; color:#8890b0; text-align:center; margin-bottom:1.5rem; min-height:20px; }
+  .choices { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .choice-btn { background:#1e2438; border:1.5px solid #333a58; border-radius:10px; padding:16px 10px; font-size:14px; font-weight:700; color:#d8e0ff; cursor:pointer; transition:background 0.15s,border-color 0.15s; text-align:center; line-height:1.4; }
+  .choice-btn:hover:not(:disabled) { background:#262d48; border-color:#4a54a0; }
+  .choice-btn.correct { background:#0d2e14; border-color:#3a8f50; color:#7de89a; }
+  .choice-btn.wrong { background:#2e0d0d; border-color:#a03a3a; color:#f08080; }
+  .choice-btn:disabled { cursor:not-allowed; opacity:0.9; }
+  .feedback { font-size:15px; font-weight:700; text-align:center; min-height:24px; margin-top:1rem; color:#d0d8f8; }
+  .feedback.correct { color:#6fda8a; }
+  .feedback.wrong { color:#f07878; }
+  .fact-box { background:#111827; border-left:3px solid #4a8fd4; border-radius:0 6px 6px 0; padding:10px 14px; margin-top:1rem; font-size:13px; font-weight:500; color:#90aad8; display:none; line-height:1.6; }
+  .next-btn { display:none; width:100%; margin-top:1rem; padding:13px; background:#1e2848; border:1.5px solid #3a4878; border-radius:10px; font-size:14px; font-weight:700; color:#c8d4ff; cursor:pointer; transition:background 0.15s; }
+  .next-btn:hover { background:#262f58; }
+  .progress-wrap { margin-bottom:1rem; }
+  .progress-label { font-size:12px; font-weight:600; color:#7880a0; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em; }
+  .progress-bar { height:7px; background:#1a1e2e; border-radius:99px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#3a6fd8,#6a9fef); border-radius:99px; transition:width 0.3s; }
+  .results-card { background:#161b2e; border:1px solid #2a3050; border-radius:14px; padding:2rem; text-align:center; display:none; }
+  .results-emoji { font-size:44px; margin-bottom:10px; }
+  .results-title { font-size:24px; font-weight:800; margin:0 0 6px; color:#f0f4ff; }
+  .results-sub { font-size:14px; font-weight:500; color:#7880a0; margin-bottom:1.5rem; }
+  .results-score { font-size:38px; font-weight:800; color:#5a9ef5; margin-bottom:4px; }
+  .restart-btn { padding:13px 32px; background:#1e2848; border:1.5px solid #3a4878; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; color:#c8d4ff; transition:background 0.15s; }
+  .restart-btn:hover { background:#262f58; }
+  .category-badge { display:inline-block; font-size:11px; font-weight:700; padding:3px 10px; border-radius:99px; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.06em; }
+  .badge-macro { background:#2e1f08; color:#f5b25a; border:1px solid #6b4010; }
+  .badge-micro { background:#081e1a; color:#4de8c0; border:1px solid #0a5040; }
+</style>
+</head>
+<body>
+<div class="game-wrap">
+  <h2>Nutrient Sorting Challenge</h2>
+  <p class="subtitle">Identify whether each nutrient is a <strong>Macronutrient</strong> or <strong>Micronutrient</strong></p>
+
+  <div class="score-bar">
+    <div class="score-card"><div class="score-label">Score</div><div class="score-val" id="score">0</div></div>
+    <div class="score-card"><div class="score-label">Correct</div><div class="score-val" id="correct-count">0</div></div>
+    <div class="score-card"><div class="score-label">Remaining</div><div class="score-val" id="remaining">10</div></div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="prog-label">Question 1 of 10</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="question-card" id="q-card">
+    <div style="text-align:center;"><span class="category-badge" id="cat-badge"></span></div>
+    <div class="nutrient-name" id="nutrient-name">—</div>
+    <div class="nutrient-hint" id="nutrient-hint"></div>
+    <div class="choices">
+      <button class="choice-btn" id="btn-macro" onclick="answer('macro')">⚡ Macronutrient<br><span style="font-size:11px;font-weight:500;opacity:0.75;">Needed in large amounts</span></button>
+      <button class="choice-btn" id="btn-micro" onclick="answer('micro')">🔬 Micronutrient<br><span style="font-size:11px;font-weight:500;opacity:0.75;">Needed in small amounts</span></button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="fact-box" id="fact-box"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQ()">Next question →</button>
+  </div>
+
+  <div class="results-card" id="results-card">
+    <div class="results-emoji" id="res-emoji">🎉</div>
+    <div class="results-title" id="res-title">Great work!</div>
+    <div class="results-sub" id="res-sub">Here's how you did:</div>
+    <div class="results-score" id="res-score">10 / 10</div>
+    <div style="font-size:13px;font-weight:500;color:#6870a0;margin-bottom:1.5rem;" id="res-msg"></div>
+    <button class="restart-btn" onclick="restart()">Play again</button>
+  </div>
+</div>
+
+<script>
+const questions=[
+  {name:"Carbohydrates",type:"macro",hint:"Your body's primary energy source — found in bread, rice & pasta",fact:"Carbohydrates provide 4 kcal per gram and are the brain's preferred fuel source."},
+  {name:"Protein",type:"macro",hint:"Essential for building and repairing muscles and tissues",fact:"Proteins are made of amino acids. There are 20 amino acids — 9 are essential and must come from food."},
+  {name:"Fat",type:"macro",hint:"Needed for hormone production, brain health & fat-soluble vitamins",fact:"Fats provide 9 kcal per gram — more than double carbohydrates or proteins."},
+  {name:"Vitamin C",type:"micro",hint:"A water-soluble vitamin found in citrus fruits and bell peppers",fact:"Vitamin C (ascorbic acid) is an antioxidant that supports immune function and collagen synthesis."},
+  {name:"Iron",type:"micro",hint:"A mineral critical for red blood cell production",fact:"Iron deficiency is the most common nutritional deficiency worldwide, leading to anemia."},
+  {name:"Vitamin D",type:"micro",hint:"Known as the 'sunshine vitamin' — supports bone health",fact:"Vitamin D helps the body absorb calcium. The skin produces it when exposed to sunlight."},
+  {name:"Calcium",type:"micro",hint:"The most abundant mineral in the body — found in dairy products",fact:"About 99% of the body's calcium is stored in bones and teeth. It also helps muscles contract."},
+  {name:"Fiber",type:"macro",hint:"A type of carbohydrate that aids digestion and gut health",fact:"Dietary fiber is not digested by the body but feeds beneficial gut bacteria and regulates bowel movements."},
+  {name:"Zinc",type:"micro",hint:"A trace mineral that supports immune function and wound healing",fact:"Zinc is involved in over 300 enzymatic reactions in the body and supports DNA synthesis."},
+  {name:"B12 Vitamin",type:"micro",hint:"Critical for nerve function — mainly found in animal products",fact:"Vitamin B12 deficiency is common in vegans and vegetarians, and can cause neurological damage if untreated."},
+];
+
+let idx=0, score=0, correct=0, answered=false;
+const shuffled=[...questions].sort(()=>Math.random()-0.5);
+
+function loadQ(){
+  if(idx>=shuffled.length){showResults();return;}
+  const q=shuffled[idx]; answered=false;
+  document.getElementById('nutrient-name').textContent=q.name;
+  document.getElementById('nutrient-hint').textContent=q.hint;
+  document.getElementById('feedback').textContent='';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('fact-box').style.display='none';
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('btn-macro').className='choice-btn';
+  document.getElementById('btn-micro').className='choice-btn';
+  document.getElementById('btn-macro').disabled=false;
+  document.getElementById('btn-micro').disabled=false;
+  const badge=document.getElementById('cat-badge');
+  badge.textContent=''; badge.className='category-badge';
+  document.getElementById('prog-label').textContent='Question '+(idx+1)+' of '+shuffled.length;
+  document.getElementById('prog-fill').style.width=(idx/shuffled.length*100)+'%';
+  document.getElementById('remaining').textContent=shuffled.length-idx;
+}
+
+function answer(choice){
+  if(answered) return; answered=true;
+  const q=shuffled[idx];
+  const isCorrect=choice===q.type;
+  document.getElementById('btn-macro').disabled=true;
+  document.getElementById('btn-micro').disabled=true;
+  document.getElementById(q.type==='macro'?'btn-macro':'btn-micro').classList.add('correct');
+  if(!isCorrect) document.getElementById(choice==='macro'?'btn-macro':'btn-micro').classList.add('wrong');
+  const fb=document.getElementById('feedback');
+  if(isCorrect){
+    fb.textContent='✓ Correct! Well done!'; fb.className='feedback correct';
+    score+=10; correct++;
+    document.getElementById('score').textContent=score;
+    document.getElementById('correct-count').textContent=correct;
+  } else {
+    fb.textContent='✗ Not quite — '+q.name+' is a '+(q.type==='macro'?'Macronutrient':'Micronutrient')+'.';
+    fb.className='feedback wrong';
+  }
+  const badge=document.getElementById('cat-badge');
+  badge.textContent=q.type==='macro'?'Macronutrient':'Micronutrient';
+  badge.className='category-badge '+(q.type==='macro'?'badge-macro':'badge-micro');
+  document.getElementById('fact-box').textContent='📚 Did you know? '+q.fact;
+  document.getElementById('fact-box').style.display='block';
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextQ(){idx++;loadQ();}
+
+function showResults(){
+  document.getElementById('q-card').style.display='none';
+  document.getElementById('prog-fill').style.width='100%';
+  document.getElementById('results-card').style.display='block';
+  const pct=Math.round(correct/shuffled.length*100);
+  document.getElementById('res-score').textContent=correct+' / '+shuffled.length+' correct';
+  let emoji='🎉',title='Excellent work!',msg='You have a strong grasp of macronutrients and micronutrients!';
+  if(pct<50){emoji='📖';title='Keep studying!';msg="Review the nutrient categories and try again — you've got this!";}
+  else if(pct<80){emoji='👍';title='Good effort!';msg="You're on the right track! A little more review and you'll master this.";}
+  document.getElementById('res-emoji').textContent=emoji;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-msg').textContent=msg;
+}
+
+function restart(){
+  idx=0;score=0;correct=0;answered=false;
+  shuffled.sort(()=>Math.random()-0.5);
+  document.getElementById('score').textContent=0;
+  document.getElementById('correct-count').textContent=0;
+  document.getElementById('results-card').style.display='none';
+  document.getElementById('q-card').style.display='block';
+  loadQ();
+}
+
+loadQ();
+</script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :root {
+    --bg: #0f1117;
+    --bg2: #1a1d27;
+    --bg3: #22263a;
+    --border: #2e3248;
+    --border2: #3a3f5c;
+    --text: #f0f2ff;
+    --text2: #b0b8d8;
+    --info-bg: #0d2040; --info-text: #60aaff; --info-border: #1a4080;
+    --warn-bg: #2a1e00; --warn-text: #ffb830; --warn-border: #5a3e00;
+    --ok-bg: #0a2210; --ok-text: #4cde7a; --ok-border: #1a5030;
+    --err-bg: #280a0a; --err-text: #ff6b6b; --err-border: #5a1a1a;
+  }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .badge { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 6px; font-weight: 700; letter-spacing: .02em; }
+  .badge-info  { background: var(--info-bg);  color: var(--info-text);  border: 1px solid var(--info-border); }
+  .badge-warn  { background: var(--warn-bg);  color: var(--warn-text);  border: 1px solid var(--warn-border); }
+  .badge-ok    { background: var(--ok-bg);    color: var(--ok-text);    border: 1px solid var(--ok-border); }
+  .badge-err   { background: var(--err-bg);   color: var(--err-text);   border: 1px solid var(--err-border); }
+  h2 { font-size: 20px; font-weight: 700; color: var(--text); margin: 0 0 4px; }
+  h3 { font-size: 16px; font-weight: 700; color: var(--text); margin: 0 0 8px; }
+  p  { font-size: 14px; font-weight: 500; color: var(--text2); margin: 0 0 8px; line-height: 1.6; }
+  .opt-btn {
+    display: block; width: 100%; text-align: left;
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 11px 15px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 8px; color: var(--text);
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .opt-btn:hover { background: #2c3150; border-color: #5060a0; }
+  .opt-btn:disabled { cursor: default; }
+  .opt-btn.correct { background: var(--ok-bg);  border-color: var(--ok-border);  color: var(--ok-text); }
+  .opt-btn.wrong   { background: var(--err-bg); border-color: var(--err-border); color: var(--err-text); }
+  .opt-btn.reveal  { background: var(--ok-bg);  border-color: var(--ok-border);  color: var(--ok-text); opacity: 0.65; }
+  .action-btn {
+    background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 9px 18px; font-size: 14px; font-weight: 700;
+    cursor: pointer; color: var(--text); margin-right: 8px; transition: background 0.15s;
+  }
+  .action-btn:hover { background: #2c3150; }
+  .action-btn.primary { border-color: var(--info-border); color: var(--info-text); }
+  .feedback { font-size: 13px; font-weight: 600; padding: 10px 14px; border-radius: 8px; margin-top: 8px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.ok   { background: var(--ok-bg);   color: var(--ok-text);   border: 1px solid var(--ok-border); }
+  .feedback.no   { background: var(--err-bg);  color: var(--err-text);  border: 1px solid var(--err-border); }
+  .feedback.info { background: var(--info-bg); color: var(--info-text); border: 1px solid var(--info-border); }
+  .score-bar-wrap { background: var(--bg3); border-radius: 99px; height: 8px; margin: 8px 0 4px; }
+  .score-bar { background: var(--ok-text); height: 8px; border-radius: 99px; transition: width 0.4s; }
+  .rom-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .rom-row label { font-size: 13px; font-weight: 600; color: var(--text2); width: 120px; flex-shrink: 0; }
+  .rom-row input[type=range] { flex: 1; accent-color: var(--info-text); }
+  .rom-row span { font-size: 13px; font-weight: 700; min-width: 42px; text-align: right; color: var(--text); }
+  .pain-row { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0; }
+  .pain-btn { border: 1px solid var(--border2); border-radius: 8px; padding: 6px 12px; font-size: 13px; font-weight: 600; cursor: pointer; background: var(--bg3); color: var(--text); transition: all 0.15s; }
+  .pain-btn.sel { border-color: var(--err-border); background: var(--err-bg); color: var(--err-text); }
+  .tab-row { display: flex; gap: 6px; margin-bottom: 1rem; }
+  .tab { border: 1px solid var(--border2); border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer; background: var(--bg2); color: var(--text2); transition: all 0.15s; }
+  .tab.active { background: var(--info-bg); color: var(--info-text); border-color: var(--info-border); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .menu-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+  .menu-card:hover { border-color: var(--info-border); background: #1e2235; }
+  .wrap { padding: 1rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <div style="margin-bottom:1.5rem;">
+    <span class="badge badge-info">Orthopedic MA Training</span>
+    <h2 style="margin-top:8px;">Ortho Clinic Sim</h2>
+    <p>Practice real orthopedic medical assistant skills across 4 interactive stations.</p>
+  </div>
+  <div class="grid2">
+    <div class="menu-card" onclick="goTo('quiz')">
+      <div style="font-size:22px;margin-bottom:6px;">🦴</div>
+      <h3 style="margin-bottom:4px;">Injury ID Quiz</h3>
+      <p style="margin:0;">Identify fractures, sprains & common orthopedic injuries from patient descriptions.</p>
+    </div>
+    <div class="menu-card" onclick="goTo('rom')">
+      <div style="font-size:22px;margin-bottom:6px;">📐</div>
+      <h3 style="margin-bottom:4px;">ROM Documenter</h3>
+      <p style="margin:0;">Record range of motion and pain levels for a patient chart.</p>
+    </div>
+    <div class="menu-card" onclick="goTo('splint')">
+      <div style="font-size:22px;margin-bottom:6px;">🩹</div>
+      <h3 style="margin-bottom:4px;">Splint & Cast Match</h3>
+      <p style="margin:0;">Match the right support device to each patient's injury.</p>
+    </div>
+    <div class="menu-card" onclick="goTo('edu')">
+      <div style="font-size:22px;margin-bottom:6px;">📋</div>
+      <h3 style="margin-bottom:4px;">Patient Education</h3>
+      <p style="margin:0;">Choose the correct activity restrictions and follow-up instructions.</p>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+    <button class="action-btn" onclick="goTo('home')">← Back</button>
+    <span class="badge badge-info">🦴 Injury ID Quiz</span>
+  </div>
+  <div id="quiz-content"></div>
+  <div style="margin-top:1rem;">
+    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:4px;">
+      <span id="q-counter">Question 1 of 5</span>
+      <span id="q-score-lbl">Score: 0</span>
+    </div>
+    <div class="score-bar-wrap"><div class="score-bar" id="q-bar" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- ROM -->
+<div id="rom" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+    <button class="action-btn" onclick="goTo('home')">← Back</button>
+    <span class="badge badge-warn">📐 ROM Documenter</span>
+  </div>
+  <div class="card">
+    <span class="badge badge-err" style="margin-bottom:8px;display:inline-block;">Patient: Maria G., 52 F</span>
+    <p><strong style="font-weight:700;color:var(--text);">Reason:</strong> Post-op right knee, 4 weeks after ACL repair. Assess current ROM and pain.</p>
+  </div>
+  <div class="tab-row">
+    <div class="tab active" id="tab-rom" onclick="switchTab('rom-section','tab-rom','pain-section','tab-pain')">Range of Motion</div>
+    <div class="tab" id="tab-pain" onclick="switchTab('pain-section','tab-pain','rom-section','tab-rom')">Pain Assessment</div>
+  </div>
+  <div id="rom-section">
+    <div class="card">
+      <h3>Right knee ROM</h3>
+      <div class="rom-row"><label>Flexion</label><input type="range" min="0" max="145" value="80" oninput="updROM('flex',this.value)"><span id="flex-val">80°</span></div>
+      <div class="rom-row"><label>Extension</label><input type="range" min="-20" max="10" value="-5" oninput="updROM('ext',this.value)"><span id="ext-val">-5°</span></div>
+    </div>
+    <div class="card">
+      <h3>Left knee (unaffected)</h3>
+      <div class="rom-row"><label>Flexion</label><input type="range" min="0" max="145" value="135" oninput="updROM('lf',this.value)"><span id="lf-val">135°</span></div>
+    </div>
+    <button class="action-btn primary" onclick="checkROM()">Generate Chart Note ↗</button>
+    <div class="feedback info" id="rom-fb"></div>
+  </div>
+  <div id="pain-section" style="display:none;">
+    <div class="card">
+      <h3>Pain scale (0–10)</h3>
+      <p>Select the patient's reported pain level:</p>
+      <div class="pain-row" id="pain-btns"></div>
+      <p id="pain-desc" style="margin-top:8px;min-height:18px;"></p>
+    </div>
+    <div class="card">
+      <h3>Pain characteristics</h3>
+      <p>Select all that apply:</p>
+      <div id="char-btns" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    </div>
+    <button class="action-btn primary" onclick="checkPain()">Save to Chart ↗</button>
+    <div class="feedback info" id="pain-fb"></div>
+  </div>
+</div>
+
+<!-- SPLINT -->
+<div id="splint" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+    <button class="action-btn" onclick="goTo('home')">← Back</button>
+    <span class="badge badge-err">🩹 Splint & Cast Match</span>
+  </div>
+  <div id="splint-content"></div>
+</div>
+
+<!-- EDU -->
+<div id="edu" class="screen">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+    <button class="action-btn" onclick="goTo('home')">← Back</button>
+    <span class="badge badge-ok">📋 Patient Education</span>
+  </div>
+  <div id="edu-content"></div>
+</div>
+
+</div>
+<script>
+const quizData=[
+  {case:"A 17-year-old soccer player heard a 'pop' and can't bear weight. Swelling began within 2 hours. The knee feels unstable.",choices:["Grade II ankle sprain","ACL tear","Patellar fracture","Meniscus contusion"],answer:1,explain:"Rapid swelling, audible pop, and instability strongly suggest an ACL tear — common in cutting sports."},
+  {case:"An office worker tripped and landed on an outstretched hand. X-ray shows a break at the distal radius near the wrist.",choices:["Boxer's fracture","Colles' fracture","Scaphoid fracture","Ulnar styloid fracture"],answer:1,explain:"A Colles' fracture is a distal radius break from a fall on an outstretched hand — very common in adults."},
+  {case:"A runner reports pain and swelling over the lateral ankle after rolling it inward. Able to bear weight with discomfort.",choices:["Jones fracture","Lateral ankle sprain","Achilles tendon rupture","Stress fracture"],answer:1,explain:"Inversion mechanism + lateral pain + weight-bearing = lateral ankle sprain. Ottawa rules help rule out fracture."},
+  {case:"A 68-year-old woman fell from standing height. Hip pain, shortened and externally rotated leg, unable to walk.",choices:["Acetabular fracture","Hip dislocation","Femoral neck fracture","IT band syndrome"],answer:2,explain:"Femoral neck fracture is classic in older osteoporotic patients after a ground-level fall. External rotation and shortening are key signs."},
+  {case:"A construction worker reports pain in the thumb after a direct blow. Tenderness in the anatomical snuffbox.",choices:["Thumb UCL tear","Scaphoid fracture","Bennett fracture","De Quervain's tenosynovitis"],answer:1,explain:"Anatomical snuffbox tenderness is the hallmark of a scaphoid fracture — must be treated seriously even if X-ray is normal initially."},
+];
+const splintData=[
+  {case:"A child with a non-displaced distal radius fracture — needs immobilization but swelling still present.",options:["Short arm cast","Posterior long arm splint","Ulnar gutter splint","Thumb spica cast"],answer:1,explain:"A posterior long arm splint allows for swelling (unlike a circumferential cast) while immobilizing the fracture. Cast is applied later once swelling resolves."},
+  {case:"A boxer's fracture (5th metacarpal neck) — needs the ring and little finger immobilized.",options:["Thumb spica cast","Ulnar gutter splint","Volar wrist splint","Short arm cast"],answer:1,explain:"An ulnar gutter splint immobilizes the 4th and 5th metacarpals — perfect for boxer's fractures."},
+  {case:"A patient with an acute ankle sprain needs support and protection for ambulation.",options:["Posterior ankle splint","Walking boot / CAM walker","Short leg cast","Knee immobilizer"],answer:1,explain:"A CAM walker (walking boot) provides support while allowing the patient to be weight-bearing, ideal for ankle sprains."},
+  {case:"Scaphoid fracture — needs the wrist and thumb immobilized.",options:["Ulnar gutter splint","Thumb spica cast","Short arm cast","Volar wrist splint"],answer:1,explain:"The thumb spica cast immobilizes both the wrist and the CMC/MCP thumb joint — required to protect the scaphoid's precarious blood supply."},
+];
+const eduData=[
+  {case:"A patient is discharged after a short leg cast for an ankle fracture. Which instruction is MOST important?",options:["Start jogging after 1 week if pain is better","Elevate the leg and monitor for increased pain, numbness, or tightness","Take ibuprofen only if swelling appears","Remove the cast at home if it feels too tight"],answer:1,explain:"Compartment syndrome warning signs (pain, numbness, tightness) must be taught to every patient in a new cast. Never tell patients to remove a cast at home."},
+  {case:"A patient with a Grade II ankle sprain asks when to return to sports. What is your best answer?",options:["As soon as pain is gone","After 24 hours of rest","When full ROM and strength return — typically 2–6 weeks — and cleared by the provider","Tomorrow if they tape it"],answer:2,explain:"Return to sport requires restored ROM, strength, and provider clearance. Pain relief alone is not sufficient — re-injury risk is high."},
+  {case:"A patient in a new short arm cast calls reporting their fingers are numb and the cast feels very tight. What should you do?",options:["Advise them to elevate and call back tomorrow","Tell them to loosen the ace wrap","Instruct them to come in immediately — possible compartment syndrome","Reassure them this is normal with new casts"],answer:2,explain:"Numbness + tightness = possible compartment syndrome. This is an orthopedic emergency. Always instruct patients to come in immediately."},
+  {case:"A patient just received crutches for a non-weight-bearing restriction. Which teaching point is essential?",options:["Place crutches in the axilla (armpit) for support","Keep the affected foot touching the ground lightly","Support weight on the handgrips, not the axilla — to avoid nerve damage","Take them off during stairs"],answer:2,explain:"Axillary crutch palsy (radial nerve damage) is a real complication. Weight must go through the hands/handgrips, not the armpit."},
+];
+
+let qIdx=0,qScore=0,sIdx=0,eIdx=0,painSel=null;
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='quiz'){qIdx=0;qScore=0;renderQuiz();}
+  if(id==='splint'){sIdx=0;renderSplint();}
+  if(id==='edu'){eIdx=0;renderEdu();}
+  if(id==='rom'){initROM();}
+}
+
+function renderQuiz(){
+  const d=quizData[qIdx],total=quizData.length;
+  document.getElementById('q-counter').textContent=`Question ${qIdx+1} of ${total}`;
+  document.getElementById('q-score-lbl').textContent=`Score: ${qScore}`;
+  document.getElementById('q-bar').style.width=(qScore/total*100)+'%';
+  let html=`<div class="card"><span class="badge badge-warn" style="margin-bottom:8px;display:inline-block;">Case ${qIdx+1}</span><p style="color:var(--text);font-size:15px;font-weight:600;line-height:1.6;">${d.case}</p><p style="margin-bottom:12px;font-size:13px;">What is the most likely injury?</p>`;
+  d.choices.forEach((c,i)=>{html+=`<button class="opt-btn" id="q-opt-${i}" onclick="answerQuiz(${i})">${c}</button>`;});
+  html+=`<div class="feedback" id="q-fb"></div></div>`;
+  document.getElementById('quiz-content').innerHTML=html;
+}
+
+function answerQuiz(i){
+  const d=quizData[qIdx];
+  document.querySelectorAll('[id^=q-opt-]').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('q-fb');
+  fb.classList.add('show');
+  if(i===d.answer){document.getElementById(`q-opt-${i}`).classList.add('correct');fb.className='feedback show ok';fb.textContent='Correct! '+d.explain;qScore++;}
+  else{document.getElementById(`q-opt-${i}`).classList.add('wrong');document.getElementById(`q-opt-${d.answer}`).classList.add('reveal');fb.className='feedback show no';fb.textContent='Not quite. '+d.explain;}
+  document.getElementById('q-score-lbl').textContent=`Score: ${qScore}`;
+  document.getElementById('q-bar').style.width=(qScore/quizData.length*100)+'%';
+  setTimeout(()=>{qIdx++;if(qIdx<quizData.length){renderQuiz();}else{showQuizEnd();}},2200);
+}
+
+function showQuizEnd(){
+  const pct=Math.round(qScore/quizData.length*100);
+  document.getElementById('quiz-content').innerHTML=`<div class="card" style="text-align:center;"><div style="font-size:40px;margin-bottom:8px;">${pct>=80?'🏆':pct>=60?'👍':'📚'}</div><h2 style="margin-bottom:4px;">Quiz complete!</h2><p>You scored <strong style="font-weight:700;color:var(--text);">${qScore} / ${quizData.length}</strong> (${pct}%)</p><p style="margin-bottom:1rem;">${pct>=80?'Excellent work — great injury identification!':pct>=60?'Good effort! Review the cases you missed.':'Keep studying — injury patterns take practice!'}</p><button class="action-btn primary" onclick="qIdx=0;qScore=0;renderQuiz()">Retry Quiz</button><button class="action-btn" onclick="goTo('home')">Main Menu</button></div>`;
+}
+
+function renderSplint(){
+  const d=splintData[sIdx];
+  let html=`<div class="card"><span class="badge badge-err" style="margin-bottom:8px;display:inline-block;">Case ${sIdx+1} of ${splintData.length}</span><p style="color:var(--text);font-size:15px;font-weight:600;line-height:1.6;">${d.case}</p><p style="font-size:13px;margin-bottom:12px;">Which support device is most appropriate?</p>`;
+  d.options.forEach((o,i)=>{html+=`<button class="opt-btn" id="s-opt-${i}" onclick="answerSplint(${i})">${o}</button>`;});
+  html+=`<div class="feedback" id="s-fb"></div></div>`;
+  document.getElementById('splint-content').innerHTML=html;
+}
+
+function answerSplint(i){
+  const d=splintData[sIdx];
+  document.querySelectorAll('[id^=s-opt-]').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('s-fb');
+  fb.classList.add('show');
+  if(i===d.answer){document.getElementById(`s-opt-${i}`).classList.add('correct');fb.className='feedback show ok';fb.textContent='Correct! '+d.explain;}
+  else{document.getElementById(`s-opt-${i}`).classList.add('wrong');document.getElementById(`s-opt-${d.answer}`).classList.add('reveal');fb.className='feedback show no';fb.textContent='Not quite. '+d.explain;}
+  setTimeout(()=>{sIdx++;if(sIdx<splintData.length){renderSplint();}else{document.getElementById('splint-content').innerHTML=`<div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:8px;">🩹</div><h2>Station complete!</h2><p>Great work matching devices to injuries.</p><button class="action-btn primary" onclick="sIdx=0;renderSplint()">Retry</button><button class="action-btn" onclick="goTo('home')">Main Menu</button></div>`;}},2200);
+}
+
+function renderEdu(){
+  const d=eduData[eIdx];
+  let html=`<div class="card"><span class="badge badge-ok" style="margin-bottom:8px;display:inline-block;">Scenario ${eIdx+1} of ${eduData.length}</span><p style="color:var(--text);font-size:15px;font-weight:600;line-height:1.6;">${d.case}</p>`;
+  d.options.forEach((o,i)=>{html+=`<button class="opt-btn" id="e-opt-${i}" onclick="answerEdu(${i})">${o}</button>`;});
+  html+=`<div class="feedback" id="e-fb"></div></div>`;
+  document.getElementById('edu-content').innerHTML=html;
+}
+
+function answerEdu(i){
+  const d=eduData[eIdx];
+  document.querySelectorAll('[id^=e-opt-]').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('e-fb');
+  fb.classList.add('show');
+  if(i===d.answer){document.getElementById(`e-opt-${i}`).classList.add('correct');fb.className='feedback show ok';fb.textContent='Correct! '+d.explain;}
+  else{document.getElementById(`e-opt-${i}`).classList.add('wrong');document.getElementById(`e-opt-${d.answer}`).classList.add('reveal');fb.className='feedback show no';fb.textContent='Not quite. '+d.explain;}
+  setTimeout(()=>{eIdx++;if(eIdx<eduData.length){renderEdu();}else{document.getElementById('edu-content').innerHTML=`<div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:8px;">📋</div><h2>All scenarios done!</h2><p>Patient education is critical to safe recovery.</p><button class="action-btn primary" onclick="eIdx=0;renderEdu()">Retry</button><button class="action-btn" onclick="goTo('home')">Main Menu</button></div>`;}},2200);
+}
+
+function initROM(){
+  const chars=['Sharp','Aching','Throbbing','Burning','Stiffness','Swelling'];
+  let painHtml='';
+  for(let i=0;i<=10;i++){painHtml+=`<button class="pain-btn" id="pain-${i}" onclick="selPain(${i})">${i}</button>`;}
+  document.getElementById('pain-btns').innerHTML=painHtml;
+  let charHtml='';
+  chars.forEach(c=>{charHtml+=`<button class="pain-btn" id="char-${c}" onclick="toggleChar(this,'${c}')">${c}</button>`;});
+  document.getElementById('char-btns').innerHTML=charHtml;
+}
+
+function selPain(n){
+  painSel=n;
+  for(let i=0;i<=10;i++){document.getElementById('pain-'+i).classList.toggle('sel',i===n);}
+  const descs=['No pain','Minimal','Mild','Noticeable','Moderate','Distracting','Moderate-severe','Severe','Very severe','Excruciating','Worst possible'];
+  document.getElementById('pain-desc').textContent=`"${descs[n]}" (${n}/10)`;
+}
+function toggleChar(btn){btn.classList.toggle('sel');}
+function updROM(id,val){const map={flex:'flex-val',ext:'ext-val',lf:'lf-val'};document.getElementById(map[id]).textContent=val+'°';}
+function switchTab(showId,showTab,hideId,hideTab){
+  document.getElementById(showId).style.display='block';
+  document.getElementById(hideId).style.display='none';
+  document.getElementById(showTab).classList.add('active');
+  document.getElementById(hideTab).classList.remove('active');
+}
+function checkROM(){
+  const flex=document.getElementById('flex-val').textContent,ext=document.getElementById('ext-val').textContent,lf=document.getElementById('lf-val').textContent;
+  const fb=document.getElementById('rom-fb');
+  fb.className='feedback info show';
+  fb.textContent=`Chart note generated: R knee — Flexion: ${flex}, Extension: ${ext}. L knee (baseline) — Flexion: ${lf}. Deficit noted: right flexion limited compared to uninvolved side. Provider notified.`;
+}
+function checkPain(){
+  const fb=document.getElementById('pain-fb');
+  const chars=[...document.querySelectorAll('#char-btns .sel')].map(b=>b.textContent).join(', ');
+  if(painSel===null){fb.className='feedback no show';fb.textContent='Please select a pain level first.';return;}
+  fb.className='feedback info show';
+  fb.textContent=`Documented: Pain ${painSel}/10${chars?', characterized as: '+chars:''}. Recorded in patient chart for provider review.`;
+}
+</script>
+</body>
+</html>

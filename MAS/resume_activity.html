@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Resume Fill-in Activity</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#13131a; min-height:100vh; padding:1.25rem; font-family:system-ui,sans-serif; }
+  .wrap { max-width:680px; margin:0 auto; background:#1a1a1f; border-radius:12px; padding:1.25rem; }
+  .resume-card { background:#23232b; border:0.5px solid #3a3a45; border-radius:12px; padding:1.5rem; margin-bottom:1rem; }
+  .drop-zone { display:inline-block; min-width:120px; height:26px; line-height:24px; border-bottom:2px solid #378ADD; background:#0c2a44; color:#85B7EB; border-radius:4px; padding:0 8px; font-size:12px; font-weight:700; text-align:center; vertical-align:middle; cursor:default; transition:background 0.15s,border-color 0.15s; }
+  .drop-zone.drag-over { background:#1a3f66; border-color:#85B7EB; outline:2px dashed #378ADD; }
+  .drop-zone.filled { background:#1a3a1a; border-color:#639922; color:#97C459; cursor:pointer; }
+  .drop-zone.filled:hover { background:#1f421f; }
+  .drop-zone.wrong-flash { background:#3a1a1a; border-color:#E24B4A; color:#F09595; animation:shake 0.35s; }
+  .chip { display:inline-block; background:#2a2a33; border:0.5px solid #55556a; border-radius:8px; padding:7px 13px; font-size:12px; font-weight:700; color:#d0d0e8; cursor:grab; margin:4px; user-select:none; transition:background 0.12s,opacity 0.15s,transform 0.1s; }
+  .chip:active { cursor:grabbing; transform:scale(1.05); }
+  .chip:hover { background:#33333e; }
+  .chip.used { opacity:0.18; pointer-events:none; }
+  .chip.dragging { opacity:0.4; }
+  .resume-name { font-size:20px; font-weight:700; color:#f0f0f5; margin:0 0 2px; }
+  .resume-contact { font-size:12px; font-weight:600; color:#9090a8; margin:0 0 1rem; }
+  .resume-line { font-size:13px; font-weight:600; color:#d8d8e8; line-height:2.1; margin:0; }
+  .section-title { font-size:13px; font-weight:700; color:#e0e0f0; margin:0 0 6px; border-bottom:0.5px solid #3a3a45; padding-bottom:4px; }
+  .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin:0 0 8px; color:#8080a0; }
+  .divider { border:none; border-top:0.5px solid #3a3a45; margin:12px 0; }
+  .stat { background:#23232b; border-radius:8px; padding:10px 14px; text-align:center; flex:1; }
+  .stat-num { font-size:22px; font-weight:700; color:#f0f0f5; }
+  .stat-lbl { font-size:11px; font-weight:600; color:#8080a0; }
+  .feedback-msg { font-size:13px; font-weight:600; color:#9090b0; min-height:18px; margin-top:6px; }
+  #done-msg { font-size:15px; font-weight:700; color:#97C459; background:#1a3a1a; border-radius:8px; padding:10px 16px; display:none; margin-top:8px; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div style="display:flex;gap:10px;margin-bottom:1rem;">
+    <div class="stat"><div class="stat-num" id="s-filled">0</div><div class="stat-lbl">filled in</div></div>
+    <div class="stat"><div class="stat-num" id="s-total">12</div><div class="stat-lbl">total blanks</div></div>
+    <div class="stat"><div class="stat-num" id="s-pct">0%</div><div class="stat-lbl">complete</div></div>
+  </div>
+
+  <p style="font-size:13px;font-weight:600;color:#8080a0;margin:0 0 10px;">Drag a word from the bank and drop it onto a blank in the resume. Drop a filled blank back to the bank to try again.</p>
+
+  <div class="resume-card">
+    <p class="resume-name">Jordan Smith</p>
+    <p class="resume-contact">Dallas, TX &nbsp;|&nbsp; (555) 123-4567 &nbsp;|&nbsp; jordansmith@email.com</p>
+
+    <p class="section-title">Professional Summary</p>
+    <p class="resume-line">
+      Compassionate and detail-oriented
+      <span class="drop-zone" id="b0" data-answer="Certified Medical Assistant"></span>
+      graduate with hands-on
+      <span class="drop-zone" id="b1" data-answer="clinical"></span>
+      training. Skilled in patient care,
+      <span class="drop-zone" id="b2" data-answer="phlebotomy"></span>,
+      EKG administration, and electronic health records.
+    </p>
+
+    <hr class="divider">
+    <p class="section-title">Core Skills</p>
+    <p class="resume-line">
+      Clinical: Vital Signs,
+      <span class="drop-zone" id="b3" data-answer="Phlebotomy"></span>,
+      EKG, Injections,
+      <span class="drop-zone" id="b4" data-answer="Sterilization"></span><br>
+      Administrative:
+      <span class="drop-zone" id="b5" data-answer="EHR/EMR"></span>,
+      Scheduling, Medical Coding,
+      <span class="drop-zone" id="b6" data-answer="Insurance Verification"></span>
+    </p>
+
+    <hr class="divider">
+    <p class="section-title">Experience — ABC Family Clinic &nbsp; Jan–Mar 2026</p>
+    <p class="resume-line">
+      Assisted with patient intake, recording
+      <span class="drop-zone" id="b7" data-answer="vital signs"></span>
+      and medical histories. Performed
+      <span class="drop-zone" id="b8" data-answer="specimen collection"></span>
+      with 100% adherence to safety protocols. Documented info in the
+      <span class="drop-zone" id="b9" data-answer="EHR"></span>
+      system.
+    </p>
+
+    <hr class="divider">
+    <p class="section-title">Education</p>
+    <p class="resume-line">
+      Certificate in Medical Assisting —
+      <span class="drop-zone" id="b10" data-answer="PULSE"></span>
+      Medical Assistant School &nbsp; Completed:
+      <span class="drop-zone" id="b11" data-answer="March 2026"></span>
+    </p>
+  </div>
+
+  <p class="section-label">Word bank — drag to place</p>
+  <div id="chip-bank"></div>
+  <p class="feedback-msg" id="feedback"></p>
+  <div id="done-msg">Resume complete! Jordan is job-ready. Excellent work!</div>
+  <button id="reset-btn" onclick="resetGame()" style="margin-top:12px;display:none;background:#2a2a33;border:0.5px solid #44444f;color:#d0d0e0;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;font-weight:700;">Start over ↺</button>
+</div>
+
+<script>
+const wordBank=['Certified Medical Assistant','clinical','phlebotomy','Phlebotomy','Sterilization','EHR/EMR','Insurance Verification','vital signs','specimen collection','EHR','PULSE','March 2026','radiology','pediatrics','HIPAA','CPR certification'];
+
+let dragWord=null, dragFromZone=null, filled=0;
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
+const order=shuffle([...wordBank]);
+
+function renderChips(){
+  const bank=document.getElementById('chip-bank'); bank.innerHTML='';
+  order.forEach(w=>bank.appendChild(makeChip(w)));
+}
+
+function makeChip(word){
+  const el=document.createElement('span');
+  el.className='chip'; el.id='chip-'+word.replace(/\W/g,'_'); el.textContent=word; el.draggable=true;
+  el.addEventListener('dragstart',e=>{dragWord=word;dragFromZone=null;el.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+  el.addEventListener('dragend',()=>el.classList.remove('dragging'));
+  el.addEventListener('touchstart',touchStart,{passive:true});
+  el.addEventListener('touchmove',touchMove,{passive:false});
+  el.addEventListener('touchend',touchEnd);
+  return el;
+}
+
+function setupDropZones(){
+  document.querySelectorAll('.drop-zone').forEach(zone=>{
+    zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+    zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+    zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');handleDrop(zone);});
+    zone.addEventListener('click',()=>{if(zone.classList.contains('filled'))returnToBank(zone);});
+  });
+  const bank=document.getElementById('chip-bank');
+  bank.addEventListener('dragover',e=>e.preventDefault());
+  bank.addEventListener('drop',e=>{e.preventDefault();if(dragFromZone){returnToBank(dragFromZone);dragFromZone=null;}});
+}
+
+function handleDrop(zone){
+  if(!dragWord) return;
+  const answer=zone.dataset.answer;
+  if(zone.classList.contains('filled')){
+    returnWordToBank(zone.dataset.current); zone.classList.remove('filled'); filled--;
+  }
+  if(dragWord===answer){
+    zone.textContent=dragWord; zone.classList.add('filled'); zone.dataset.current=dragWord;
+    markChipUsed(dragWord,true); filled++; updateScore();
+    document.getElementById('feedback').textContent='Correct!';
+    if(filled===12){
+      document.getElementById('done-msg').style.display='block';
+      document.getElementById('reset-btn').style.display='inline-block';
+      document.getElementById('feedback').textContent='';
+    }
+  } else {
+    zone.classList.add('wrong-flash');
+    setTimeout(()=>zone.classList.remove('wrong-flash'),400);
+    document.getElementById('feedback').textContent='Not quite — try a different word!';
+  }
+  if(dragFromZone&&dragFromZone!==zone) dragFromZone=null;
+  dragWord=null;
+}
+
+function returnToBank(zone){
+  const word=zone.dataset.current; if(!word) return;
+  zone.textContent=''; zone.classList.remove('filled'); delete zone.dataset.current;
+  markChipUsed(word,false); filled--; updateScore();
+  document.getElementById('feedback').textContent=word+' returned to bank.';
+}
+
+function returnWordToBank(word){markChipUsed(word,false);}
+
+function markChipUsed(word,used){
+  const chip=document.getElementById('chip-'+word.replace(/\W/g,'_'));
+  if(chip){used?chip.classList.add('used'):chip.classList.remove('used');}
+}
+
+function updateScore(){
+  document.getElementById('s-filled').textContent=filled;
+  document.getElementById('s-pct').textContent=Math.round(filled/12*100)+'%';
+}
+
+function resetGame(){
+  filled=0;dragWord=null;dragFromZone=null;
+  document.querySelectorAll('.drop-zone').forEach(z=>{z.textContent='';z.className='drop-zone';delete z.dataset.current;});
+  order.sort(()=>Math.random()-0.5); renderChips(); setupChipDrag(); updateScore();
+  document.getElementById('done-msg').style.display='none';
+  document.getElementById('reset-btn').style.display='none';
+  document.getElementById('feedback').textContent='';
+}
+
+let touchEl=null, touchClone=null;
+
+function touchStart(e){
+  const el=e.currentTarget; dragWord=el.textContent; dragFromZone=null; touchEl=el;
+  const r=el.getBoundingClientRect(); touchClone=el.cloneNode(true);
+  touchClone.style.cssText='position:fixed;pointer-events:none;opacity:0.85;z-index:9999;background:#33333e;border:0.5px solid #55556a;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;color:#d0d0e8;';
+  touchClone.style.left=r.left+'px'; touchClone.style.top=r.top+'px';
+  document.body.appendChild(touchClone);
+}
+
+function touchMove(e){
+  e.preventDefault(); if(!touchClone) return;
+  const t=e.touches[0];
+  touchClone.style.left=(t.clientX-40)+'px'; touchClone.style.top=(t.clientY-18)+'px';
+  document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over'));
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  if(el&&el.classList.contains('drop-zone')) el.classList.add('drag-over');
+}
+
+function touchEnd(e){
+  if(touchClone){document.body.removeChild(touchClone);touchClone=null;}
+  document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over'));
+  if(!e.changedTouches.length) return;
+  const t=e.changedTouches[0];
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  if(el&&el.classList.contains('drop-zone')){handleDrop(el);}
+  else{
+    const bank=document.getElementById('chip-bank');
+    const br=bank.getBoundingClientRect();
+    if(t.clientX>=br.left&&t.clientX<=br.right&&t.clientY>=br.top&&t.clientY<=br.bottom){
+      if(dragFromZone){returnToBank(dragFromZone);dragFromZone=null;}
+    }
+  }
+  dragWord=null;touchEl=null;
+}
+
+function setupChipDrag(){
+  document.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('touchstart',touchStart,{passive:true});
+    chip.addEventListener('touchmove',touchMove,{passive:false});
+    chip.addEventListener('touchend',touchEnd);
+  });
+}
+
+renderChips(); setupDropZones(); setupChipDrag();
+</script>
+</body>
+</html>

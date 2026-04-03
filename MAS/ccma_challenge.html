@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CCMA Exam Day — Recall Challenge</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,sans-serif;background:#1a1a2e;min-height:100vh;}
+  .app{background:#1a1a2e;min-height:100vh;padding:1.5rem 1rem 2rem;max-width:640px;margin:0 auto;}
+  .header{text-align:center;margin-bottom:1.5rem}
+  .header h1{font-size:20px;font-weight:500;color:#e8e6f0;margin-bottom:4px}
+  .header p{font-size:13px;color:#9b97b2}
+  .score-row{display:flex;justify-content:center;gap:16px;margin-bottom:1.5rem}
+  .score-pill{background:#252540;border-radius:99px;padding:6px 16px;font-size:13px;font-weight:500}
+  .score-pill.correct{color:#5DCAA5}
+  .score-pill.wrong{color:#F0997B}
+  .score-pill.left{color:#9b97b2}
+  .category{font-size:11px;font-weight:500;letter-spacing:0.08em;color:#9b97b2;text-transform:uppercase;margin:1rem 0 0.5rem;padding-left:2px}
+  .card{background:#252540;border:1px solid #333360;border-radius:14px;padding:1.25rem;margin-bottom:0.6rem;cursor:pointer;transition:border-color 0.15s,background 0.15s}
+  .card:hover{border-color:#534AB7;background:#2d2d55}
+  .card.revealed.correct{background:#0d3326;border-color:#1D9E75}
+  .card.revealed.wrong{background:#3a1a1a;border-color:#D85A30}
+  .prompt{font-size:15px;color:#e8e6f0;margin-bottom:10px;line-height:1.5}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .choice{background:#1a1a2e;border:1px solid #333360;border-radius:8px;padding:8px 12px;font-size:13px;color:#c8c5e0;cursor:pointer;text-align:center;transition:all 0.15s;line-height:1.4}
+  .choice:hover:not(.locked){background:#2d2d55;border-color:#534AB7;color:#e8e6f0}
+  .choice.picked.correct{background:#0d3326;border-color:#1D9E75;color:#5DCAA5;font-weight:500}
+  .choice.picked.wrong{background:#3a1a1a;border-color:#D85A30;color:#F0997B}
+  .choice.reveal-right{background:#0d3326;border-color:#1D9E75;color:#5DCAA5}
+  .feedback{font-size:12px;margin-top:10px;padding:6px 10px;border-radius:6px;font-weight:500}
+  .feedback.correct{background:#0d3326;color:#5DCAA5}
+  .feedback.wrong{background:#3a1a1a;color:#F0997B}
+  .win{padding:2rem 1rem;text-align:center}
+  .win h2{font-size:22px;font-weight:500;color:#e8e6f0;margin-bottom:8px}
+  .win p{font-size:14px;color:#9b97b2;margin-bottom:1.5rem}
+  .win .big{font-size:42px;margin-bottom:12px}
+  .win .score-final{font-size:32px;font-weight:500;color:#5DCAA5;margin-bottom:6px}
+  .restart{background:#534AB7;color:#CECBF6;border:none;border-radius:10px;padding:10px 28px;font-size:14px;cursor:pointer;font-weight:500}
+  .restart:hover{background:#7F77DD}
+</style>
+</head>
+<body>
+<div class="app" id="appRoot">
+  <div class="header">
+    <h1>CCMA Exam Day — Recall Challenge</h1>
+    <p>Tap the best answer for each question!</p>
+  </div>
+  <div class="score-row">
+    <div class="score-pill correct" id="sc">0 correct</div>
+    <div class="score-pill wrong" id="sw">0 wrong</div>
+    <div class="score-pill left" id="sl">10 left</div>
+  </div>
+  <div id="board"></div>
+</div>
+
+<script>
+const qs=[
+  {cat:"Before exam day",prompt:"Your ID name must match your ___",choices:["NHA registration","Birth certificate","School ID","Driver record"],ans:0,hint:"NHA checks this exactly!"},
+  {cat:"Before exam day",prompt:"How many hours of sleep should you get the night before?",choices:["4–5 hours","7–8 hours","10+ hours","Sleep doesn't matter"],ans:1,hint:"Rest beats last-minute cramming every time."},
+  {cat:"What to bring",prompt:"Which ID is acceptable at the testing center?",choices:["Student ID","Library card","Government-issued photo ID","Work badge"],ans:2,hint:"Think official — driver's license, passport, state ID."},
+  {cat:"What to bring",prompt:"What should you leave at home or in your car?",choices:["Confirmation email","Light jacket","Cell phone","Snack"],ans:2,hint:"It must be stored — don't risk your exam!"},
+  {cat:"Arrival",prompt:"How early should you arrive at the testing center?",choices:["Right on time","5 minutes early","15 minutes early","30 minutes early"],ans:2,hint:"15 min gives you time to settle and breathe."},
+  {cat:"Test strategy",prompt:"When you see the word FIRST in a question, you should:",choices:["Skip it","Look for priority/safety answers","Pick the longest answer","Choose the most technical answer"],ans:1,hint:"FIRST, BEST, MOST = keyword alert!"},
+  {cat:"Test strategy",prompt:"If you're stuck on a tough question, you should:",choices:["Guess and stress","Spend 5 minutes on it","Flag it and come back","Leave it blank"],ans:2,hint:"Move forward — manage your time!"},
+  {cat:"Test strategy",prompt:"The best strategy before choosing an answer is to:",choices:["Scan the choices first","Eliminate two wrong answers","Pick the longest one","Go with your second guess"],ans:1,hint:"Eliminate 2, then choose from what's left."},
+  {cat:"Exam priorities",prompt:"Which always comes first in the CCMA exam?",choices:["Documentation","Patient safety","Billing","Scheduling"],ans:1,hint:"Safety-first answers are almost always correct!"},
+  {cat:"Mindset",prompt:"Right before the exam starts, you should:",choices:["Review all your notes","Take 3 slow deep breaths","Drink coffee","Check your phone"],ans:1,hint:"Calm your nerves — you are prepared!"},
+];
+
+let state=qs.map(()=>({picked:null,revealed:false}));
+let correct=0, wrong=0;
+
+function pick(qi,ci){
+  if(state[qi].revealed) return;
+  state[qi].picked=ci; state[qi].revealed=true;
+  const isRight=ci===qs[qi].ans;
+  if(isRight) correct++; else wrong++;
+  updateScore(); renderCard(qi);
+  if(correct+wrong===qs.length) setTimeout(showWin,600);
+}
+
+function updateScore(){
+  document.getElementById('sc').textContent=correct+' correct';
+  document.getElementById('sw').textContent=wrong+' wrong';
+  document.getElementById('sl').textContent=(qs.length-correct-wrong)+' left';
+}
+
+function renderCard(qi){
+  const q=qs[qi], s=state[qi];
+  const card=document.getElementById('card-'+qi);
+  if(!card) return;
+  const isRight=s.picked===q.ans;
+  card.className='card'+(s.revealed?' revealed '+(isRight?'correct':'wrong'):'');
+  const choicesHtml=q.choices.map((c,ci)=>{
+    let cls='choice';
+    if(s.revealed){
+      cls+=' locked';
+      if(ci===s.picked&&isRight) cls+=' picked correct';
+      else if(ci===s.picked&&!isRight) cls+=' picked wrong';
+      else if(ci===q.ans) cls+=' reveal-right';
+    }
+    return`<div class="${cls}" onclick="pick(${qi},${ci})">${c}</div>`;
+  }).join('');
+  const feedback=s.revealed?`<div class="feedback ${isRight?'correct':'wrong'}">${isRight?'Correct! ':'Wrong. '}${q.hint}</div>`:'';
+  card.innerHTML=`<div class="prompt">${q.prompt}</div><div class="choices">${choicesHtml}</div>${feedback}`;
+}
+
+function renderAll(){
+  const board=document.getElementById('board'); board.innerHTML='';
+  let lastCat='';
+  qs.forEach((q,qi)=>{
+    if(q.cat!==lastCat){
+      const cat=document.createElement('div'); cat.className='category'; cat.textContent=q.cat;
+      board.appendChild(cat); lastCat=q.cat;
+    }
+    const card=document.createElement('div'); card.className='card'; card.id='card-'+qi;
+    board.appendChild(card); renderCard(qi);
+  });
+}
+
+function showWin(){
+  const pct=Math.round(correct/qs.length*100);
+  const msg=pct===100?'Perfect score! You are SO ready.':pct>=80?'Great job! You know your stuff.':pct>=60?'Good effort — review the missed ones!':'Keep practicing — you\'ve got this!';
+  const emoji=pct===100?'🎉':pct>=80?'⭐':pct>=60?'💪':'📚';
+  document.getElementById('appRoot').innerHTML=`<div class="win">
+    <div class="big">${emoji}</div>
+    <div class="score-final">${pct}%</div>
+    <h2>${msg}</h2>
+    <p>${correct} of ${qs.length} questions correct</p>
+    <button class="restart" onclick="restart()">Try again</button>
+  </div>`;
+}
+
+function restart(){
+  state=qs.map(()=>({picked:null,revealed:false}));
+  correct=0; wrong=0;
+  document.getElementById('appRoot').innerHTML=`
+    <div class="header"><h1>CCMA Exam Day — Recall Challenge</h1><p>Tap the best answer for each question!</p></div>
+    <div class="score-row">
+      <div class="score-pill correct" id="sc">0 correct</div>
+      <div class="score-pill wrong" id="sw">0 wrong</div>
+      <div class="score-pill left" id="sl">10 left</div>
+    </div>
+    <div id="board"></div>`;
+  renderAll();
+}
+
+renderAll();
+</script>
+</body>
+</html>

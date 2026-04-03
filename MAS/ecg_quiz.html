@@ -1,0 +1,464 @@
+<style>
+  :root {
+    --bg-base: #0f1117;
+    --bg-card: #1a1d27;
+    --bg-secondary: #22263a;
+    --bg-tertiary: #2a2f47;
+    --border: #353a55;
+    --text-primary: #f0f2ff;
+    --text-secondary: #a8adc8;
+    --green-bg: #1a2e1a;
+    --green-border: #3a7a3a;
+    --green-text: #7dda7d;
+    --red-bg: #2e1a1a;
+    --red-border: #7a3a3a;
+    --red-text: #e88888;
+    --blue-bg: #162035;
+    --blue-border: #2e5a99;
+    --blue-text: #6aadee;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg-base); color: var(--text-primary); font-family: system-ui, sans-serif; }
+  .quiz-wrap { padding: 1rem; max-width: 520px; margin: 0 auto; }
+  .score-bar { display: flex; gap: 10px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .score-pill { font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); color: var(--text-secondary); background: var(--bg-secondary); }
+  .score-pill span { font-weight: 700; color: var(--text-primary); }
+  .rhythm-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .rhythm-label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 8px; }
+  .wave-box { background: #0a1a0a; border: 1px solid #1f3d1f; border-radius: 8px; padding: 10px 12px; margin-bottom: 1rem; overflow: hidden; }
+  .wave-box svg { display: block; width: 100%; height: auto; }
+  .identifiers { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
+  .id-badge { font-size: 12px; font-weight: 700; padding: 4px 10px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 20px; color: var(--text-primary); }
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+  .opt-btn { padding: 11px 8px; font-size: 14px; font-weight: 700; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); cursor: pointer; text-align: center; transition: background 0.15s, border-color 0.15s; }
+  .opt-btn:hover:not(:disabled) { background: var(--bg-tertiary); border-color: #4a5070; }
+  .opt-btn.correct { background: var(--green-bg) !important; border-color: var(--green-border) !important; color: var(--green-text) !important; }
+  .opt-btn.wrong { background: var(--red-bg) !important; border-color: var(--red-border) !important; color: var(--red-text) !important; }
+  .opt-btn:disabled { cursor: default; opacity: 0.85; }
+  .feedback { font-size: 14px; font-weight: 600; padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem; line-height: 1.5; }
+  .feedback.ok { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+  .feedback.no { background: var(--red-bg); color: var(--red-text); border: 1px solid var(--red-border); }
+  .feedback strong { color: #fff; }
+  .next-btn { font-size: 14px; font-weight: 700; padding: 10px 20px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); cursor: pointer; color: var(--text-primary); transition: background 0.15s; }
+  .next-btn:hover { background: var(--bg-tertiary); }
+  .done-box { text-align: center; padding: 2rem 1rem; }
+  .done-score { font-size: 42px; font-weight: 800; color: var(--text-primary); }
+  .done-msg { font-size: 15px; font-weight: 600; color: var(--text-secondary); margin-top: 10px; }
+  .restart-btn { margin-top: 1.5rem; padding: 11px 28px; font-size: 14px; font-weight: 700; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); cursor: pointer; color: var(--text-primary); transition: background 0.15s; }
+  .restart-btn:hover { background: var(--bg-tertiary); }
+  .mode-row { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .mode-btn { font-size: 13px; font-weight: 700; padding: 6px 16px; border: 1px solid var(--border); border-radius: 20px; background: var(--bg-secondary); color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
+  .mode-btn.active { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue-text); }
+  .progress { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 1rem; }
+  .hint { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-top: 6px; }
+  .match-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+  .match-opt { padding: 8px 4px; font-size: 12px; font-weight: 700; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-secondary); color: var(--text-primary); cursor: pointer; text-align: center; transition: background 0.15s, border-color 0.15s; }
+  .match-opt:hover:not(:disabled) { background: var(--bg-tertiary); border-color: #4a5070; }
+  .match-opt.correct { background: var(--green-bg) !important; border-color: var(--green-border) !important; color: var(--green-text) !important; }
+  .match-opt.wrong { background: var(--red-bg) !important; border-color: var(--red-border) !important; color: var(--red-text) !important; }
+  .match-opt:disabled { cursor: default; opacity: 0.85; }
+  .match-opt svg { display: block; width: 100%; height: auto; margin-bottom: 4px; pointer-events: none; }
+</style>
+<div class="quiz-wrap" id="app"></div>
+<script>
+const rhythms = [
+  {
+    name: "V-Fib",
+    full: "Ventricular Fibrillation",
+    shockable: true,
+    rate: "Unmeasurable",
+    identifiers: ["Irregular", "No P Wave", "No QRS"],
+    fun: "Chaos in the ventricles — no real waves, just a wiggly mess!",
+    draw: (w,h) => {
+      let d = `M0,${h/2}`;
+      // deterministic pseudo-random using seeded values
+      const vals = [0.3,0.7,0.2,0.8,0.5,0.1,0.9,0.4,0.6,0.3,0.7,0.15,0.85,0.45,0.55,0.25,0.75,0.35,0.65,0.5];
+      let x = 0, vi = 0;
+      while(x < w) {
+        let amp = 8 + vals[vi%vals.length]*14;
+        let step = 5 + vals[(vi+1)%vals.length]*8;
+        d += ` L${Math.min(x+step,w)},${h/2 + (vi%2===0?amp:-amp)}`;
+        x += step; vi++;
+      }
+      return d;
+    },
+    color: "#e24b4a"
+  },
+  {
+    name: "V-Tach",
+    full: "Ventricular Tachycardia",
+    shockable: true,
+    rate: "100–250 bpm",
+    identifiers: ["Regular", "No P Wave", "Wide QRS"],
+    fun: "Fast, wide, and regular — ventricles are running the show (badly).",
+    draw: (w,h) => {
+      let d = `M0,${h/2}`;
+      const p = 22;
+      for(let x=0; x<w; x+=p) {
+        d += ` L${x+p*0.1},${h/2} L${x+p*0.25},${h/2-16} L${x+p*0.45},${h/2+10} L${x+p*0.65},${h/2-16} L${x+p*0.85},${h/2+10} L${x+p},${h/2}`;
+      }
+      return d;
+    },
+    color: "#e24b4a"
+  },
+  {
+    name: "SVT",
+    full: "Supraventricular Tachycardia",
+    shockable: false,
+    rate: "150–250 bpm",
+    identifiers: ["Regular", "P Wave Hidden", "Narrow QRS"],
+    fun: "Super fast but organized — P wave is hiding behind the T wave.",
+    draw: (w,h) => {
+      let d = `M0,${h/2}`;
+      const p = 18;
+      for(let x=0; x<w; x+=p) {
+        d += ` L${x+p*0.35},${h/2} L${x+p*0.45},${h/2-18} L${x+p*0.5},${h/2} L${x+p*0.6},${h/2+4} L${x+p},${h/2}`;
+      }
+      return d;
+    },
+    color: "#ef9f27"
+  },
+  {
+    name: "A-Fib",
+    full: "Atrial Fibrillation",
+    shockable: false,
+    rate: "Irregular",
+    identifiers: ["Irregularly Irregular", "No P Wave", "Narrow QRS"],
+    fun: "Irregularly irregular — the atria are throwing a chaotic party.",
+    draw: (w,h) => {
+      let d = `M0,${h/2}`;
+      let x = 0;
+      const gaps = [22,14,18,26,12,20,16,24,10,28];
+      let si = 0;
+      while(x < w) {
+        let gap = gaps[si % gaps.length];
+        let wiggle = (si%3===0)?2:1;
+        d += ` L${x+gap*0.3},${h/2+wiggle} L${x+gap*0.4},${h/2-18} L${x+gap*0.5},${h/2} L${x+gap*0.65},${h/2+4} L${x+gap},${h/2}`;
+        x += gap; si++;
+      }
+      return d;
+    },
+    color: "#ef9f27"
+  },
+  {
+    name: "A-Flutter",
+    full: "Atrial Flutter",
+    shockable: false,
+    rate: "250–350 bpm (atrial)",
+    identifiers: ["Regular or Irregular", "Sawtooth Baseline", "Narrow QRS"],
+    fun: "Classic sawtooth baseline — atria fluttering like a hummingbird.",
+    draw: (w,h) => {
+      let d = `M0,${h/2+4}`;
+      for(let x=0; x<w; x+=10) {
+        d += ` L${x+5},${h/2-6} L${x+10},${h/2+4}`;
+      }
+      // overlay QRS every ~40px
+      let qd = "";
+      for(let x=0; x<w; x+=40) {
+        qd += ` M${x+2},${h/2+4} L${x+5},${h/2+4} L${x+7},${h/2-18} L${x+10},${h/2} L${x+14},${h/2+5} L${x+18},${h/2+4}`;
+      }
+      return d + qd;
+    },
+    color: "#ef9f27"
+  },
+  {
+    name: "PVC",
+    full: "Premature Ventricular Contraction",
+    shockable: false,
+    rate: "Varies",
+    identifiers: ["Irregular", "No P Wave (PVC beat)", "Wide QRS"],
+    fun: "Normal beats then — BAM! — a wide, bizarre beat pops in uninvited.",
+    draw: (w,h) => {
+      let d = `M0,${h/2}`;
+      // 2 normal, 1 PVC, 2 normal
+      const beats = [
+        {x:0, type:"normal"},
+        {x:28, type:"normal"},
+        {x:56, type:"pvc"},
+        {x:86, type:"normal"},
+        {x:114, type:"normal"},
+      ];
+      beats.forEach((b,i) => {
+        if(i>0) d += ` L${b.x},${h/2}`;
+        if(b.type === "pvc") {
+          d += ` L${b.x+4},${h/2} L${b.x+8},${h/2+14} L${b.x+14},${h/2-22} L${b.x+20},${h/2+10} L${b.x+26},${h/2}`;
+        } else {
+          d += ` L${b.x+5},${h/2} L${b.x+7},${h/2-5} L${b.x+9},${h/2} L${b.x+11},${h/2-18} L${b.x+13},${h/2} L${b.x+16},${h/2+5} L${b.x+20},${h/2}`;
+        }
+      });
+      d += ` L${w},${h/2}`;
+      return d;
+    },
+    color: "#ef9f27"
+  },
+  {
+    name: "Sinus Brady",
+    full: "Sinus Bradycardia",
+    shockable: false,
+    rate: "< 60 bpm",
+    identifiers: ["Regular", "P Wave Present", "Normal QRS"],
+    fun: "Slow and steady — the heart is just taking it easy today.",
+    draw: (w,h) => {
+      let d = `M0,${h/2}`;
+      const p = 48;
+      for(let x=0; x<w; x+=p) {
+        d += ` L${x+6},${h/2} L${x+9},${h/2-5} L${x+12},${h/2} L${x+14},${h/2} L${x+16},${h/2-18} L${x+18},${h/2} L${x+22},${h/2+5} L${x+26},${h/2} L${x+p},${h/2}`;
+      }
+      return d;
+    },
+    color: "#3ecf8e"
+  },
+  {
+    name: "Sinus Tach",
+    full: "Sinus Tachycardia",
+    shockable: false,
+    rate: "> 100 bpm",
+    identifiers: ["Regular", "P Wave Present", "Normal QRS"],
+    fun: "Fast but normal looking — could be exercise, fever, or too much coffee!",
+    draw: (w,h) => {
+      let d = `M0,${h/2}`;
+      const p = 22;
+      for(let x=0; x<w; x+=p) {
+        d += ` L${x+3},${h/2} L${x+5},${h/2-5} L${x+7},${h/2} L${x+9},${h/2-18} L${x+11},${h/2} L${x+14},${h/2+5} L${x+17},${h/2} L${x+p},${h/2}`;
+      }
+      return d;
+    },
+    color: "#3ecf8e"
+  },
+  {
+    name: "NSR",
+    full: "Normal Sinus Rhythm",
+    shockable: false,
+    rate: "60–100 bpm",
+    identifiers: ["Regular", "P Wave Present", "Normal QRS"],
+    fun: "The gold standard! Everything is right where it should be.",
+    draw: (w,h) => {
+      let d = `M0,${h/2}`;
+      const p = 34;
+      for(let x=0; x<w; x+=p) {
+        d += ` L${x+5},${h/2} L${x+7},${h/2-5} L${x+10},${h/2} L${x+12},${h/2} L${x+14},${h/2-18} L${x+17},${h/2} L${x+20},${h/2+5} L${x+24},${h/2} L${x+p},${h/2}`;
+      }
+      return d;
+    },
+    color: "#3ecf8e"
+  },
+  {
+    name: "3rd Deg AV Block",
+    full: "Complete Heart Block",
+    shockable: false,
+    rate: "20–40 bpm (ventricular)",
+    identifiers: ["Regular P & QRS", "No PR relationship", "Wide QRS"],
+    fun: "P waves and QRS march to completely different drummers — total disconnect!",
+    draw: (w,h) => {
+      let d = `M0,${h/2}`;
+      // Slow wide QRS every 50px, P waves every 20px (independent)
+      for(let x=0; x<w; x+=50) {
+        d += ` L${x+5},${h/2} L${x+10},${h/2-4} L${x+14},${h/2} L${x+17},${h/2-20} L${x+21},${h/2} L${x+26},${h/2+8} L${x+30},${h/2} L${x+50},${h/2}`;
+      }
+      // P waves overlay (small bumps at different interval)
+      let pd = "";
+      for(let x=8; x<w; x+=20) {
+        pd += ` M${x},${h/2-1} L${x+3},${h/2-7} L${x+6},${h/2-1}`;
+      }
+      return d + pd;
+    },
+    color: "#a78bfa"
+  }
+];
+
+const allNames = rhythms.map(r => r.name);
+
+function shuffle(arr) {
+  let a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    let j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function getWrongOptions(correctName, n) {
+  return shuffle(allNames.filter(x => x !== correctName)).slice(0, n);
+}
+
+let mode = "identify";
+let questions = [];
+let qIdx = 0;
+let score = 0;
+let answered = false;
+let chosen = null;
+
+function buildQuestions() {
+  questions = shuffle(rhythms).slice(0, 8).map(r => {
+    const wrongs = getWrongOptions(r.name, 3);
+    const opts = shuffle([r.name, ...wrongs]);
+    return { rhythm: r, opts };
+  });
+}
+
+function renderWave(r, w=260, h=60) {
+  const path = r.draw(w, h);
+  return `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    <rect width="${w}" height="${h}" fill="#0a1a0a" rx="4"/>
+    <path d="${path}" fill="none" stroke="${r.color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function renderIdentify() {
+  const q = questions[qIdx];
+  const r = q.rhythm;
+
+  let feedbackHTML = "";
+  if(answered) {
+    if(chosen === r.name) {
+      feedbackHTML = `<div class="feedback ok">✓ Correct! ${r.fun}</div>`;
+    } else {
+      feedbackHTML = `<div class="feedback no">✗ Not quite — this is <strong>${r.name}</strong> (${r.full}). ${r.fun}</div>`;
+    }
+  }
+
+  let optsHTML = q.opts.map(o => {
+    let cls = "opt-btn";
+    if(answered) {
+      if(o === r.name) cls += " correct";
+      else if(o === chosen) cls += " wrong";
+    }
+    return `<button class="${cls}" onclick="pick('${o.replace(/'/g,"\\'")}');" ${answered?"disabled":""}>${o}</button>`;
+  }).join("");
+
+  document.getElementById("app").innerHTML = `
+    <div class="score-bar">
+      <div class="score-pill">Score <span>${score}/${qIdx}</span></div>
+      <div class="score-pill">Question <span>${qIdx+1} of ${questions.length}</span></div>
+    </div>
+    <div class="mode-row">
+      <button class="mode-btn ${mode==='identify'?'active':''}" onclick="setMode('identify')">Name that rhythm</button>
+      <button class="mode-btn ${mode==='match'?'active':''}" onclick="setMode('match')">Match the strip</button>
+    </div>
+    <p class="progress">Look at the ECG strip — which rhythm is this?</p>
+    <div class="rhythm-card">
+      <div class="rhythm-label">Rhythm strip</div>
+      <div class="wave-box">${renderWave(r)}</div>
+      <div class="identifiers">
+        ${r.identifiers.map(id=>`<span class="id-badge">${id}</span>`).join("")}
+        <span class="id-badge">Rate: ${r.rate}</span>
+      </div>
+      <div class="options">${optsHTML}</div>
+      ${feedbackHTML}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${answered ? `<button class="next-btn" onclick="next()">${qIdx+1 < questions.length ? "Next →" : "See results →"}</button>` : ""}
+        ${answered ? `<button class="next-btn" onclick="redo()">↺ Redo</button>` : ""}
+      </div>
+      ${!answered ? `<div class="hint">💡 Check the identifiers above!</div>` : ""}
+    </div>
+  `;
+}
+
+function renderMatch() {
+  const q = questions[qIdx];
+  const r = q.rhythm;
+
+  let feedbackHTML = "";
+  if(answered) {
+    if(chosen === r.name) {
+      feedbackHTML = `<div class="feedback ok">✓ Correct! ${r.fun}</div>`;
+    } else {
+      feedbackHTML = `<div class="feedback no">✗ That was the <strong>${r.name}</strong> pattern. ${r.fun}</div>`;
+    }
+  }
+
+  let optsHTML = q.opts.map(o => {
+    const or = rhythms.find(x => x.name === o);
+    let cls = "match-opt";
+    if(answered) {
+      if(o === r.name) cls += " correct";
+      else if(o === chosen) cls += " wrong";
+    }
+    return `<button class="${cls}" onclick="pick('${o.replace(/'/g,"\\'")}');" ${answered?"disabled":""}>
+      ${renderWave(or, 200, 50)}
+      <span>${o}</span>
+    </button>`;
+  }).join("");
+
+  document.getElementById("app").innerHTML = `
+    <div class="score-bar">
+      <div class="score-pill">Score <span>${score}/${qIdx}</span></div>
+      <div class="score-pill">Question <span>${qIdx+1} of ${questions.length}</span></div>
+    </div>
+    <div class="mode-row">
+      <button class="mode-btn ${mode==='identify'?'active':''}" onclick="setMode('identify')">Name that rhythm</button>
+      <button class="mode-btn ${mode==='match'?'active':''}" onclick="setMode('match')">Match the strip</button>
+    </div>
+    <p class="progress">Which strip matches <strong style="color:var(--text-primary)">${r.name}</strong> — ${r.full}?</p>
+    <div class="rhythm-card">
+      <div class="identifiers">
+        ${r.identifiers.map(id=>`<span class="id-badge">${id}</span>`).join("")}
+        <span class="id-badge">Rate: ${r.rate}</span>
+      </div>
+      <div class="match-opts">${optsHTML}</div>
+      ${feedbackHTML}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${answered ? `<button class="next-btn" onclick="next()">${qIdx+1 < questions.length ? "Next →" : "See results →"}</button>` : ""}
+        ${answered ? `<button class="next-btn" onclick="redo()">↺ Redo</button>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+function renderDone() {
+  const pct = Math.round(score / questions.length * 100);
+  const msg = pct >= 80 ? "Excellent! You're ready for the floor. 🏥"
+            : pct >= 60 ? "Good effort! Review the ones you missed."
+            : "Keep practicing — you'll get there! 💪";
+  document.getElementById("app").innerHTML = `
+    <div class="done-box">
+      <div class="done-score">${score} / ${questions.length}</div>
+      <div style="font-size:32px;margin:8px 0;">${pct >= 80 ? "🎉" : pct >= 60 ? "👍" : "📖"}</div>
+      <div class="done-msg">${pct}% — ${msg}</div>
+      <button class="restart-btn" onclick="restart()">Try again</button>
+    </div>
+  `;
+}
+
+function render() {
+  if(qIdx >= questions.length) { renderDone(); return; }
+  if(mode === "identify") renderIdentify();
+  else renderMatch();
+}
+
+function pick(name) {
+  if(answered) return;
+  chosen = name;
+  answered = true;
+  if(name === questions[qIdx].rhythm.name) score++;
+  render();
+}
+
+function redo() {
+  if(chosen === questions[qIdx].rhythm.name) score--;
+  answered = false;
+  chosen = null;
+  render();
+}
+
+function next() {
+  qIdx++;
+  answered = false;
+  chosen = null;
+  render();
+}
+
+function setMode(m) {
+  mode = m;
+  restart();
+}
+
+function restart() {
+  qIdx = 0; score = 0; answered = false; chosen = null;
+  buildQuestions();
+  render();
+}
+
+buildQuestions();
+render();
+</script>

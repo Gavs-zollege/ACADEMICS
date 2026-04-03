@@ -1,0 +1,138 @@
+<style>
+  body { background: #1a1a2e; color: #e8e8f0; }
+  * { box-sizing: border-box; }
+  .btn { cursor: pointer; border: 1px solid #3a3a5c; background: #16213e; color: #e8e8f0; padding: 10px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; width: 100%; text-align: left; margin-bottom: 8px; transition: background 0.15s; }
+  .btn:hover { background: #0f3460; }
+  .btn.correct { background: #1a3d10; border-color: #4a8a1a; color: #a8e06a; }
+  .btn.wrong { background: #3d1010; border-color: #8a1a1a; color: #e06a6a; }
+  .btn:disabled { cursor: default; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+  .badge-green { background: #1a3d10; color: #a8e06a; }
+  .badge-red { background: #3d1010; color: #e06a6a; }
+  .badge-blue { background: #0f2a4a; color: #6ab4e0; }
+  .progress-bar { height: 6px; background: #2a2a4a; border-radius: 99px; margin-bottom: 1.5rem; }
+  .progress-fill { height: 6px; background: #1D9E75; border-radius: 99px; transition: width 0.3s; }
+  .feedback { font-size: 13px; font-weight: 600; margin-top: 12px; padding: 10px 14px; border-radius: 8px; background: #12122a; color: #c0c0d8; display: none; }
+  #q-counter { font-size: 13px; font-weight: 700; color: #9090b8; }
+  #question-text { font-size: 16px; font-weight: 700; color: #f0f0ff; margin: 0 0 1.25rem; }
+  .stat-box { background: #12122a; border-radius: 8px; padding: 14px; }
+  .stat-label { font-size: 11px; font-weight: 700; color: #7070a0; margin-bottom: 4px; }
+  #r-correct { font-size: 22px; font-weight: 800; color: #a8e06a; }
+  #r-wrong { font-size: 22px; font-weight: 800; color: #e06a6a; }
+  #r-pct { font-size: 22px; font-weight: 800; color: #e8e8f0; }
+  #result-title { font-size: 20px; font-weight: 800; color: #f0f0ff; margin: 0 0 6px; }
+  #result-sub { font-size: 14px; font-weight: 600; color: #9090b8; margin: 0 0 1.5rem; }
+</style>
+
+<div style="padding: 1.25rem 0;">
+  <div id="quiz-screen">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <span id="q-counter">Question 1 of 10</span>
+      <span id="score-badge" class="badge badge-blue">Score: 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:10%"></div></div>
+    <p id="question-text"></p>
+    <div id="answers"></div>
+    <div class="feedback" id="feedback"></div>
+    <button id="next-btn" class="btn" style="margin-top:14px; display:none; background:#0f3460; text-align:center; font-weight:700;">Next question →</button>
+  </div>
+
+  <div id="results-screen" style="display:none; text-align:center; padding: 1rem 0;">
+    <div style="font-size:40px; margin-bottom:8px;" id="result-emoji"></div>
+    <p id="result-title"></p>
+    <p id="result-sub"></p>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:1.5rem;">
+      <div class="stat-box"><div class="stat-label">Correct</div><div id="r-correct"></div></div>
+      <div class="stat-box"><div class="stat-label">Wrong</div><div id="r-wrong"></div></div>
+      <div class="stat-box"><div class="stat-label">Score</div><div id="r-pct"></div></div>
+    </div>
+    <button onclick="restartQuiz()" class="btn" style="max-width:220px; margin:0 auto; text-align:center; font-weight:700; background:#0f3460;">Play again</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  { q: "How many mL of tuberculin is injected in a Mantoux test?", a: ["0.1 mL","0.5 mL","1.0 mL","0.01 mL"], correct: 0, fact: "Always 0.1 mL — a small pale wheal should appear under the skin." },
+  { q: "At what angle is the tuberculin injected?", a: ["90 degrees","45 degrees","5–15 degrees","30 degrees"], correct: 2, fact: "The needle is inserted bevel-up at a very shallow 5–15 degree angle for an intradermal injection." },
+  { q: "How long after injection should the test be READ?", a: ["24–48 hours","48–72 hours","72–96 hours","1 week"], correct: 1, fact: "Reading is done at 48–72 hours. Returning after 72 hours will likely require re-testing." },
+  { q: "What does the MA MEASURE to interpret the test?", a: ["Redness (erythema)","Diameter of the induration (hardness)","Size of the wheal at injection","Diameter of redness"], correct: 1, fact: "Only the firm raised area (induration) is measured — NOT the redness. Use a ruler in mm." },
+  { q: "An induration of ≥5 mm is positive for which group?", a: ["Healthy adults with no risk factors","People with HIV","Children under 5","Healthcare workers"], correct: 1, fact: "The ≥5 mm threshold applies to high-risk groups: HIV+, recent TB contacts, and immunosuppressed patients." },
+  { q: "What gauge needle is used for the Mantoux test?", a: ["18–20 gauge","21 gauge","27 gauge","25 gauge"], correct: 2, fact: "A 27-gauge, short-bevel, 1/4–1/2 inch needle is used for the intradermal injection." },
+  { q: "What is the induration threshold considered positive for low-risk individuals?", a: ["≥5 mm","≥10 mm","≥15 mm","≥20 mm"], correct: 2, fact: "People with no risk factors for TB need ≥15 mm to be considered positive." },
+  { q: "Where on the forearm is the injection typically administered?", a: ["Dorsal (back) of forearm","Antecubital fossa","Volar (inner) aspect, 2–4 inches below elbow","Upper arm deltoid"], correct: 2, fact: "The injection site is the volar (inner) surface of the forearm, 2–4 inches below the elbow." },
+  { q: "After injection, a tense pale wheal should appear. What size is correct?", a: ["3–4 mm","6–10 mm","12–15 mm","2 mm"], correct: 1, fact: "A correct intradermal injection produces a 6–10 mm pale, tense wheal (like an orange peel texture)." },
+  { q: "Which of these is NOT correct documentation for a Mantoux result?", a: ["Record measurement in mm","Note date and time of administration","Record as 'positive' or 'negative'","Document injection site location"], correct: 2, fact: "Results should be recorded as a measurement in mm — NEVER as just 'positive' or 'negative', per CDC guidelines." }
+];
+
+let current = 0, score = 0, answered = false;
+const shuffled = [...questions].sort(() => Math.random() - 0.5);
+
+function loadQuestion() {
+  const q = shuffled[current];
+  document.getElementById('q-counter').textContent = `Question ${current+1} of ${shuffled.length}`;
+  document.getElementById('score-badge').textContent = `Score: ${score}`;
+  document.getElementById('progress').style.width = `${((current+1)/shuffled.length)*100}%`;
+  document.getElementById('question-text').textContent = q.q;
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+  const ans = document.getElementById('answers');
+  ans.innerHTML = '';
+  q.a.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'btn';
+    b.textContent = opt;
+    b.onclick = () => selectAnswer(i);
+    ans.appendChild(b);
+  });
+}
+
+function selectAnswer(i) {
+  if (answered) return;
+  answered = true;
+  const q = shuffled[current];
+  const btns = document.querySelectorAll('#answers .btn');
+  btns.forEach(b => b.disabled = true);
+  btns[i].classList.add(i === q.correct ? 'correct' : 'wrong');
+  if (i !== q.correct) btns[q.correct].classList.add('correct');
+  if (i === q.correct) score++;
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block';
+  fb.innerHTML = `<span class="badge ${i===q.correct?'badge-green':'badge-red'}" style="margin-bottom:6px;">${i===q.correct?'Correct!':'Incorrect'}</span><br>${q.fact}`;
+  document.getElementById('next-btn').style.display = 'block';
+  document.getElementById('score-badge').textContent = `Score: ${score}`;
+}
+
+document.getElementById('next-btn').onclick = () => {
+  current++;
+  if (current < shuffled.length) loadQuestion();
+  else showResults();
+};
+
+function showResults() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  const rs = document.getElementById('results-screen');
+  rs.style.display = 'block';
+  const pct = Math.round((score/shuffled.length)*100);
+  document.getElementById('r-correct').textContent = score;
+  document.getElementById('r-wrong').textContent = shuffled.length - score;
+  document.getElementById('r-pct').textContent = pct + '%';
+  let emoji, title, sub;
+  if (pct >= 90) { emoji='🏆'; title='Excellent work!'; sub='You\'re ready to administer and read the Mantoux test.'; }
+  else if (pct >= 70) { emoji='👍'; title='Good job!'; sub='Review a few details and you\'ll be fully prepared.'; }
+  else { emoji='📖'; title='Keep studying!'; sub='Review the Mantoux CDC guidelines and try again.'; }
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+}
+
+function restartQuiz() {
+  current = 0; score = 0;
+  shuffled.sort(() => Math.random() - 0.5);
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>

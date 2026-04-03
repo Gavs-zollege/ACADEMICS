@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pediatric IM Injection Sites Quiz</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#0f1117; min-height:100vh; padding:1rem; font-family:system-ui,sans-serif; }
+  .quiz-wrap { max-width:640px; margin:0 auto; padding:1rem 0; }
+  .scenario-card { background:#1a1d27; border:0.5px solid #2e3248; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1rem; }
+  .score-bar { display:flex; gap:12px; align-items:center; margin-bottom:1.25rem; }
+  .score-pill { background:#1e2a4a; color:#7eb3ff; border-radius:99px; padding:4px 14px; font-size:13px; font-weight:700; }
+  .q-label { font-size:13px; color:#9099b5; margin-bottom:6px; font-weight:600; }
+  .q-text { font-size:15px; font-weight:700; color:#e8ecf7; margin-bottom:14px; }
+  .options { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .opt-btn { background:#23273a; border:0.5px solid #3a3f5c; border-radius:8px; padding:10px 12px; font-size:13px; font-weight:600; color:#d4d9ef; cursor:pointer; text-align:left; transition:background 0.15s; }
+  .opt-btn:hover:not(:disabled) { background:#2c3150; }
+  .opt-btn.correct { background:#0f2e1a; border-color:#2a7a4a; color:#5de890; font-weight:700; }
+  .opt-btn.wrong { background:#2e0f0f; border-color:#7a2a2a; color:#f07070; font-weight:700; }
+  .opt-btn.reveal { background:#0f2e1a; border-color:#2a7a4a; color:#5de890; opacity:0.6; font-weight:700; }
+  .feedback { margin-top:10px; font-size:13px; font-weight:600; border-radius:8px; padding:8px 12px; display:none; }
+  .feedback.show { display:block; }
+  .feedback.ok { background:#0f2e1a; color:#5de890; }
+  .feedback.no { background:#2e0f0f; color:#f07070; }
+  .next-btn { margin-top:12px; width:100%; padding:10px; border:0.5px solid #3a3f5c; border-radius:8px; background:#23273a; color:#d4d9ef; font-size:14px; font-weight:700; cursor:pointer; display:none; }
+  .next-btn.show { display:block; }
+  .next-btn:hover { background:#2c3150; }
+  .finish { text-align:center; padding:1.5rem 0; }
+  .final-score { font-size:32px; font-weight:700; color:#e8ecf7; }
+  .final-label { font-size:14px; font-weight:600; color:#9099b5; margin-top:4px; }
+  .restart-btn { margin-top:1rem; padding:10px 24px; border:0.5px solid #3a3f5c; border-radius:8px; background:#23273a; color:#d4d9ef; font-size:14px; font-weight:700; cursor:pointer; }
+  .restart-btn:hover { background:#2c3150; }
+  .progress { font-size:13px; font-weight:600; color:#9099b5; }
+</style>
+</head>
+<body>
+<div class="quiz-wrap">
+  <div id="quiz-area"></div>
+</div>
+
+<script>
+const questions=[
+  {q:"You are preparing an IM injection for a 4-month-old infant. Which site is preferred?",options:["Deltoid region of upper arm","Anterolateral aspect of upper thigh","Gluteal muscle","Dorsal forearm"],answer:1,explain:"For birth to 24 months, the anterolateral aspect of the upper thigh is the preferred IM injection site — muscle mass is larger and safer here in infants."},
+  {q:"A 3-year-old child needs a vaccine. Which TWO sites are now acceptable?",options:["Dorsogluteal & abdomen","Deltoid region & anterolateral upper thigh","Inner wrist & calf","Gluteal & dorsal forearm"],answer:1,explain:"For children 2 years and older, both the deltoid region of the upper arm and the anterolateral aspect of the upper thigh are acceptable IM sites."},
+  {q:"Why is the anterolateral thigh preferred over the gluteal site for infants?",options:["It is less painful for infants","The infant's gluteal muscle is underdeveloped","Parents prefer it","It has a larger surface area"],answer:1,explain:"The gluteal muscle is not well developed until a child has been walking for some time. The anterolateral thigh has adequate muscle mass in infants, making it safer for IM injections."},
+  {q:"At what age does the deltoid become an acceptable IM injection site?",options:["Birth","6 months","12 months","2 years"],answer:3,explain:"The deltoid region of the upper arm is acceptable for IM injections starting at 2 years of age, when sufficient muscle mass has developed."},
+  {q:"A 6-week-old baby needs an IM injection. The parent asks why you are using the thigh. What do you say?",options:["It is the only site we use for all patients","The thigh muscle is better developed and safer for babies this age","The arm is too small for any injection","Hospital policy only allows thigh injections"],answer:1,explain:"The anterolateral thigh is the recommended site for infants because they have better-developed muscle mass there compared to the deltoid, which is not yet adequate for IM injections."},
+  {q:"You are injecting an 18-month-old toddler. Which site should you use?",options:["Deltoid upper arm","Anterolateral upper thigh","Ventrogluteal site","Dorsogluteal site"],answer:1,explain:"At 18 months, the patient is still within the birth-to-24-months range. The anterolateral aspect of the upper thigh remains the correct IM injection site."},
+];
+
+let current=0, score=0, answered=false;
+
+function render(){
+  const area=document.getElementById('quiz-area');
+  if(current>=questions.length){
+    const pct=Math.round(score/questions.length*100);
+    const msg=pct===100?"Perfect! Excellent work!":pct>=80?"Great job! Almost there.":pct>=60?"Good effort — review the sites again.":"Keep practicing — you've got this!";
+    area.innerHTML=`<div class="scenario-card finish">
+      <div class="final-score">${score}/${questions.length}</div>
+      <div class="final-label">${msg}</div>
+      <button class="restart-btn" onclick="restart()">Try again</button>
+    </div>`;
+    return;
+  }
+  const q=questions[current];
+  area.innerHTML=`
+    <div class="score-bar">
+      <span class="score-pill">Score: ${score}/${questions.length}</span>
+      <span class="progress">Question ${current+1} of ${questions.length}</span>
+    </div>
+    <div class="scenario-card">
+      <div class="q-label">Scenario</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts">
+        ${q.options.map((o,i)=>`<button class="opt-btn" onclick="choose(${i})">${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb"></div>
+      <button class="next-btn" id="nxt" onclick="next()">${current<questions.length-1?'Next question':'See results'}</button>
+    </div>`;
+  answered=false;
+}
+
+function choose(i){
+  if(answered) return; answered=true;
+  const q=questions[current];
+  const btns=document.querySelectorAll('.opt-btn');
+  const fb=document.getElementById('fb');
+  btns.forEach((b,idx)=>{
+    b.disabled=true;
+    if(idx===q.answer) b.classList.add(i===q.answer?'correct':'reveal');
+    if(idx===i&&i!==q.answer) b.classList.add('wrong');
+  });
+  if(i===q.answer){score++;fb.className='feedback show ok';fb.textContent='Correct! '+q.explain;}
+  else{fb.className='feedback show no';fb.textContent='Not quite. '+q.explain;}
+  document.getElementById('nxt').classList.add('show');
+}
+
+function next(){current++;render();}
+function restart(){current=0;score=0;render();}
+render();
+</script>
+</body>
+</html>

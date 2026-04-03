@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Injection Administration Quiz</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#1a1a2e; min-height:100vh; padding:1rem; font-family:system-ui,sans-serif; }
+  #app { max-width:640px; margin:0 auto; padding:1rem 0; }
+  .header { text-align:center; margin-bottom:1.5rem; }
+  .header h2 { font-size:20px; font-weight:700; margin:0 0 4px; color:#f0f0f0; }
+  .header p { font-size:14px; color:#b0b0c0; margin:0; font-weight:500; }
+  .progress-bar { height:6px; background:#2e2e4a; border-radius:99px; margin-bottom:1.5rem; overflow:hidden; }
+  .progress-fill { height:100%; background:#1D9E75; border-radius:99px; transition:width 0.4s ease; }
+  .score-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; font-size:13px; color:#b0b0c0; font-weight:600; }
+  .badge { display:inline-block; padding:2px 10px; border-radius:99px; font-size:12px; font-weight:700; }
+  .badge-info { background:#1a3a5c; color:#7ec8f5; }
+  .badge-success { background:#1a3a25; color:#7dd87a; }
+  .badge-error { background:#3a1a1a; color:#f5837a; }
+  .card { background:#22223a; border:0.5px solid #3a3a5a; border-radius:12px; padding:1.25rem; margin-bottom:1rem; }
+  .step-num { font-size:12px; color:#8888aa; margin-bottom:6px; font-weight:600; }
+  .question { font-size:16px; font-weight:700; color:#f0f0f0; margin:0 0 1rem; line-height:1.5; }
+  .choices { display:flex; flex-direction:column; gap:8px; }
+  .choice-btn { text-align:left; background:#2a2a45; border:0.5px solid #4a4a6a; border-radius:8px; padding:10px 14px; font-size:14px; font-weight:600; color:#dcdcf0; cursor:pointer; transition:background 0.15s; }
+  .choice-btn:hover { background:#32325a; }
+  .choice-btn.correct { background:#1a3a25; border-color:#3a8a3a; color:#7dd87a; }
+  .choice-btn.wrong { background:#3a1a1a; border-color:#8a3a3a; color:#f5837a; }
+  .choice-btn.reveal { background:#1a3a25; border-color:#3a8a3a; color:#7dd87a; opacity:0.7; }
+  .choice-btn:disabled { cursor:default; }
+  .feedback { margin-top:12px; font-size:14px; font-weight:600; padding:10px 14px; border-radius:8px; line-height:1.5; }
+  .feedback.correct { background:#1a3a25; color:#7dd87a; }
+  .feedback.wrong { background:#3a1a1a; color:#f5837a; }
+  .next-btn { margin-top:12px; width:100%; padding:10px; border:0.5px solid #4a4a6a; border-radius:8px; background:#2a2a45; color:#dcdcf0; font-size:14px; font-weight:700; cursor:pointer; }
+  .next-btn:hover { background:#32325a; }
+  .results { text-align:center; padding:1.5rem 0; }
+  .results .big-score { font-size:48px; font-weight:700; color:#f0f0f0; }
+  .results .label { font-size:15px; color:#b0b0c0; margin-bottom:1rem; font-weight:600; }
+  .results .msg { font-size:15px; font-weight:600; color:#dcdcf0; margin-bottom:1.5rem; }
+  .restart-btn { padding:10px 28px; border:0.5px solid #4a4a6a; border-radius:8px; background:#2a2a45; color:#dcdcf0; font-size:14px; font-weight:700; cursor:pointer; }
+  .restart-btn:hover { background:#32325a; }
+  .review-item { border-left:3px solid; padding-left:12px; margin-bottom:12px; font-size:13px; line-height:1.6; }
+  .review-item.correct { border-color:#3a8a3a; }
+  .review-item.wrong { border-color:#8a3a3a; }
+  .review-q { font-weight:700; color:#f0f0f0; }
+  .review-a { color:#b0b0c0; font-weight:500; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const questions=[
+  {q:"What is the FIRST thing the MA does when picking up the tray from the drawing station?",choices:["Check the patient's name on the syringe","Ensure necessary supplies are open and ready to use","Apply hand sanitizer","Knock on the exam room door"],answer:1,hint:"Before leaving the drawing station, the MA verifies supplies are prepped and ready — this is part of medication safety."},
+  {q:"Matching the patient name on the syringe to the patient is which medication check?",choices:["First check","Second check","Third check","Fourth check"],answer:2,hint:"This check at the bedside/exam room is the THIRD medication check — a critical safety step."},
+  {q:"After entering the exam room, what is the correct order for the MA's introduction and ID verification?",choices:["Verify DOB → introduce yourself → explain injection","Introduce yourself → have patient verify name & DOB","Apply hand sanitizer → introduce yourself","Explain the injection → then introduce yourself"],answer:1,hint:"Professional introduction comes first, then patient identity verification (name + DOB) before any procedure."},
+  {q:"When must the MA apply hand sanitizer?",choices:["After explaining the injection process","Before touching the patient","Right before inserting the needle","After disposing of the sharps"],answer:1,hint:"Hand hygiene must occur BEFORE touching the patient to prevent infection — standard precaution."},
+  {q:"What is 'Implied Consent' in this context?",choices:["The patient signs a form agreeing to treatment","The MA assumes the patient agrees because they came to the clinic","Explaining the injection process to the patient before proceeding","Getting verbal 'yes' from the patient"],answer:2,hint:"Implied consent here means explaining what you're about to do so the patient understands and can cooperate — communication is the key element."},
+  {q:"How many complete circles does the MA make when cleaning the injection site with an alcohol prep pad?",choices:["1 circle","2 circles","3 circles","As many as needed"],answer:2,hint:"The protocol specifies exactly 3 complete circles to properly clean the site."},
+  {q:"What MUST happen after cleaning the site before the needle is inserted?",choices:["Pinch the skin immediately","Let the spot dry completely","Re-check the syringe label","Put on gloves"],answer:1,hint:"Injecting through wet alcohol can introduce it into the tissue and cause stinging — always let it dry first."},
+  {q:"Why does the MA pinch up the skin/muscle at the injection site?",choices:["To distract the patient from the needle","To create a firm area and avoid self-injury","To stretch the skin for easier needle entry","To check for subcutaneous fat"],answer:1,hint:"Pinching creates a firm, elevated target and helps prevent accidental needlestick to the MA's fingers."},
+  {q:"How should the needle be inserted?",choices:["Slowly, bevel down","Slowly, bevel up","Swiftly, bevel down","Swiftly, bevel up"],answer:3,hint:"A swift insertion minimizes discomfort. Bevel UP ensures the opening faces toward the skin surface for proper flow."},
+  {q:"After injecting the solution, what must happen BEFORE withdrawing the needle?",choices:["Activate the safety mechanism","Release the pinched skin/muscle","Apply the Band-Aid","Recap the needle"],answer:1,hint:"Releasing the skin BEFORE withdrawing prevents tissue tearing and discomfort — sequence matters here."},
+  {q:"After withdrawing the needle, what are the NEXT TWO immediate steps in order?",choices:["Apply Band-Aid → engage safety","Engage safety → immediately place in sharps container","Place in sharps container → engage safety","Engage safety → document the injection"],answer:1,hint:"Safety first — engage the needle safety device immediately after withdrawal, then straight into the sharps container. Never recap!"},
+  {q:"When is a Band-Aid applied?",choices:["Always, on every injection","Only if requested by the patient","If needed at the injection spot","Never — it's not part of the protocol"],answer:2,hint:"The protocol says 'if needed' — apply a Band-Aid if there is bleeding or the patient requests one."},
+];
+
+let current=0, score=0, answered=false, results=[];
+
+function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5);}
+
+const shuffled=questions.map(q=>{
+  const sc=shuffle(q.choices.map((c,i)=>({text:c,orig:i})));
+  const na=sc.findIndex(c=>c.orig===q.answer);
+  return{...q,choices:sc.map(c=>c.text),answer:na};
+});
+
+function render(){
+  const app=document.getElementById('app');
+  if(current>=shuffled.length){renderResults(app);return;}
+  const q=shuffled[current];
+  const pct=Math.round(current/shuffled.length*100);
+  app.innerHTML=`
+    <div class="header">
+      <h2>Injection Administration Quiz</h2>
+      <p>Test your knowledge of proper injection technique</p>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div class="score-row">
+      <span>Question ${current+1} of ${shuffled.length}</span>
+      <span>Score: <strong>${score}</strong> / ${current}</span>
+    </div>
+    <div class="card">
+      <div class="step-num">Step sequence knowledge check</div>
+      <div class="question">${q.q}</div>
+      <div class="choices" id="choices">
+        ${q.choices.map((c,i)=>`<button class="choice-btn" onclick="pick(${i})">${c}</button>`).join('')}
+      </div>
+      <div id="feedback"></div>
+      <div id="next-wrap"></div>
+    </div>`;
+}
+
+function pick(i){
+  if(answered) return; answered=true;
+  const q=shuffled[current];
+  const btns=document.querySelectorAll('.choice-btn');
+  const fb=document.getElementById('feedback');
+  const nw=document.getElementById('next-wrap');
+  btns.forEach(b=>b.disabled=true);
+  const correct=i===q.answer;
+  if(correct) score++;
+  results.push({q:q.q,correct,chosen:q.choices[i],right:q.choices[q.answer]});
+  btns[i].classList.add(correct?'correct':'wrong');
+  if(!correct) btns[q.answer].classList.add('reveal');
+  fb.innerHTML=`<div class="feedback ${correct?'correct':'wrong'}">${correct?'✓ Correct! ':'✗ Not quite. '}${q.hint}</div>`;
+  nw.innerHTML=`<button class="next-btn" onclick="next()">${current+1<shuffled.length?'Next question →':'See results →'}</button>`;
+}
+
+function next(){answered=false;current++;render();}
+
+function renderResults(app){
+  const pct=Math.round(score/shuffled.length*100);
+  const msg=pct===100?"Perfect score! You're ready to ace injection technique.":pct>=75?"Great work! Review the missed steps before your next check-off.":pct>=50?"Good effort — focus on the sequence of safety steps.":"Keep practicing! Review the protocol and try again.";
+  const reviewHTML=results.map(r=>`
+    <div class="review-item ${r.correct?'correct':'wrong'}">
+      <div class="review-q">${r.q}</div>
+      <div class="review-a">${r.correct?'✓ '+r.right:'✗ You chose: '+r.chosen+' — Correct: '+r.right}</div>
+    </div>`).join('');
+  app.innerHTML=`
+    <div class="header">
+      <h2>Injection Administration Quiz</h2>
+      <p>Test your knowledge of proper injection technique</p>
+    </div>
+    <div class="results">
+      <div class="big-score">${score}/${shuffled.length}</div>
+      <div class="label">${pct}% correct</div>
+      <div class="badge ${pct===100?'badge-success':pct>=75?'badge-info':'badge-error'}" style="margin-bottom:1rem;">${pct===100?'Excellent':pct>=75?'Proficient':'Needs review'}</div>
+      <div class="msg">${msg}</div>
+      <button class="restart-btn" onclick="restart()">Try again</button>
+    </div>
+    <div class="card" style="margin-top:1.5rem;">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;color:#f0f0f0;">Review your answers</div>
+      ${reviewHTML}
+    </div>`;
+}
+
+function restart(){current=0;score=0;answered=false;results=[];render();}
+render();
+</script>
+</body>
+</html>

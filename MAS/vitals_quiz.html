@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Vital Signs Quiz</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:#13141f; min-height:100vh; padding:1.25rem; font-family:system-ui,sans-serif; }
+  .wrap { background:#1a1c2e; border-radius:16px; padding:1.5rem; max-width:640px; margin:0 auto; }
+  .prog-bar { height:8px; background:#2e3050; border-radius:99px; margin-bottom:1.25rem; overflow:hidden; }
+  .prog-fill { height:100%; background:#5DCAA5; border-radius:99px; transition:width 0.3s; }
+  .prog-label { font-size:13px; font-weight:600; color:#aaa; margin-bottom:8px; }
+  .q-card { background:#23263a; border-radius:12px; padding:1.1rem 1.25rem; margin-bottom:1rem; }
+  .q-label { font-size:12px; font-weight:700; color:#9FE1CB; letter-spacing:0.05em; text-transform:uppercase; margin-bottom:8px; }
+  .q-text { font-size:16px; font-weight:700; color:#f0f2ff; line-height:1.55; }
+  .opt { width:100%; text-align:left; border-radius:10px; padding:12px 14px; font-size:14px; font-weight:600; cursor:pointer; margin-bottom:8px; display:flex; align-items:center; gap:10px; border:1.5px solid #2e3050; background:#23263a; color:#d8dae8; transition:background 0.12s,border-color 0.12s; }
+  .opt:hover:not(:disabled) { background:#2e3050; border-color:#534AB7; color:#f0f2ff; }
+  .opt:disabled { cursor:default; }
+  .opt.correct { background:#0F6E56; border-color:#5DCAA5; color:#c4f5e8; }
+  .opt.wrong { background:#791F1F; border-color:#E24B4A; color:#fbb8b8; }
+  .opt.reveal-correct { background:#0F6E56; border-color:#5DCAA5; color:#c4f5e8; }
+  .icon-dot { width:24px; height:24px; border-radius:50%; border:2px solid #555; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; color:#aaa; }
+  .opt.correct .icon-dot { background:#5DCAA5; border-color:#5DCAA5; color:#04342C; }
+  .opt.wrong .icon-dot { background:#E24B4A; border-color:#E24B4A; color:#fff; }
+  .opt.reveal-correct .icon-dot { background:#5DCAA5; border-color:#5DCAA5; color:#04342C; }
+  .feedback { font-size:14px; font-weight:600; color:#9FE1CB; background:#0a2e25; border-left:4px solid #5DCAA5; border-radius:0 8px 8px 0; padding:11px 14px; margin-top:6px; line-height:1.65; }
+  .feedback.wrong-fb { color:#fbb8b8; background:#2a0e0e; border-color:#E24B4A; }
+  .feedback strong { font-weight:800; }
+  .next-btn { margin-top:14px; background:#534AB7; border:none; color:#CECBF6; border-radius:10px; padding:11px 24px; font-size:14px; font-weight:700; cursor:pointer; }
+  .next-btn:hover { background:#7F77DD; }
+  .score-wrap { text-align:center; padding:2rem 1rem; }
+  .score-big { font-size:52px; font-weight:800; color:#5DCAA5; }
+  .score-pct { font-size:18px; font-weight:700; color:#9FE1CB; margin-top:4px; }
+  .score-sub { color:#aaa; font-size:15px; font-weight:600; margin:10px 0 24px; }
+  .retry-btn { background:#534AB7; border:none; color:#CECBF6; border-radius:10px; padding:12px 30px; font-size:15px; cursor:pointer; font-weight:700; }
+  .retry-btn:hover { background:#7F77DD; }
+  .legend { display:flex; gap:16px; margin-bottom:14px; flex-wrap:wrap; }
+  .leg-dot { width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:5px; vertical-align:middle; }
+  .leg-label { font-size:12px; font-weight:700; vertical-align:middle; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="legend">
+    <span><span class="leg-dot" style="background:#5DCAA5;"></span><span class="leg-label" style="color:#9FE1CB;">Correct</span></span>
+    <span><span class="leg-dot" style="background:#E24B4A;"></span><span class="leg-label" style="color:#F09595;">Incorrect</span></span>
+    <span><span class="leg-dot" style="background:#534AB7;"></span><span class="leg-label" style="color:#CECBF6;">Right answer shown</span></span>
+  </div>
+  <div id="app"></div>
+</div>
+
+<script>
+const Qs=[
+  {q:"A patient's pulse is 112 bpm. How would you document this?",options:["Normal — within 60–100 bpm range","Tachycardia — above normal range","Bradycardia — below normal range","Not a vital sign concern"],ans:1,explain:"A heart rate above 100 bpm is tachycardia. Normal adult range is 60–100 bpm."},
+  {q:"Which temperature reading is within normal adult range?",options:["35.5°C (95.9°F)","36.6°C (97.9°F)","38.2°C (100.8°F)","39.0°C (102.2°F)"],ans:1,explain:"Normal temp is 36.1–37.2°C (97–99°F). 36.6°C falls right in that range."},
+  {q:"A patient takes 9 breaths per minute. This is:",options:["Normal — within 12–20 range","Tachypnea — too fast","Bradypnea — too slow","Apnea — no breathing"],ans:2,explain:"Normal respiratory rate is 12–20 breaths/min. Below 12 is bradypnea and must be reported."},
+  {q:"Blood pressure reads 128/84 mmHg. The systolic value is:",options:["84 mmHg","128 mmHg","The difference (44 mmHg)","The average (106 mmHg)"],ans:1,explain:"Systolic is the top number — 128 mmHg. It measures pressure when the heart beats."},
+  {q:"A patient's SpO₂ is 92%. You should:",options:["Document as normal and move on","Recheck in 8 hours — slightly low","Alert the provider — below 95–100% range","Only act if the patient feels unwell"],ans:2,explain:"SpO₂ below 95% is abnormal and requires immediate provider notification."},
+  {q:"Which set of vitals is entirely within normal adult ranges?",options:["HR:58, Temp:37.0°C, RR:22, BP:118/76, SpO₂:97%","HR:78, Temp:37.0°C, RR:16, BP:118/76, SpO₂:97%","HR:78, Temp:38.5°C, RR:16, BP:118/76, SpO₂:97%","HR:78, Temp:37.0°C, RR:16, BP:145/92, SpO₂:97%"],ans:1,explain:"Option B is all normal. A has low HR (58), C has fever (38.5°C), D has elevated BP (145/92)."},
+];
+
+let cur=0, score=0, picked=false;
+const labels=['A','B','C','D'];
+
+function render(){
+  const app=document.getElementById('app');
+  if(cur>=Qs.length){
+    const pct=Math.round(score/Qs.length*100);
+    const msg=score<=2?"Keep studying — review the ranges carefully!":score<=4?"Good effort! Check the ones you missed.":"Outstanding — you're ready for clinic!";
+    app.innerHTML=`<div class="score-wrap">
+      <div class="score-big">${score}/${Qs.length}</div>
+      <div class="score-pct">${pct}%</div>
+      <div class="score-sub">${msg}</div>
+      <button class="retry-btn" onclick="cur=0;score=0;picked=false;render()">Try again</button>
+    </div>`;
+    return;
+  }
+  const q=Qs[cur];
+  const pct=Math.round(cur/Qs.length*100);
+  app.innerHTML=`
+    <div class="prog-label">Question ${cur+1} of ${Qs.length}</div>
+    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="q-card">
+      <div class="q-label">Vital Signs</div>
+      <p class="q-text">${q.q}</p>
+    </div>
+    <div id="opts"></div>
+    <div id="fb"></div>
+    <div id="nxt"></div>`;
+
+  const opts=document.getElementById('opts');
+  q.options.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='opt';
+    btn.innerHTML=`<span class="icon-dot">${labels[i]}</span><span>${o}</span>`;
+    btn.onclick=()=>{
+      if(picked) return; picked=true;
+      const allBtns=opts.querySelectorAll('.opt');
+      allBtns.forEach(b=>b.disabled=true);
+      const isCorrect=i===q.ans;
+      if(isCorrect){
+        score++; btn.classList.add('correct');
+        document.getElementById('fb').innerHTML=`<div class="feedback">✓ Correct! ${q.explain}</div>`;
+      } else {
+        btn.classList.add('wrong'); allBtns[q.ans].classList.add('reveal-correct');
+        document.getElementById('fb').innerHTML=`<div class="feedback wrong-fb">✗ Incorrect. The right answer is <strong style="color:#9FE1CB;">${labels[q.ans]}: ${q.options[q.ans]}</strong>. ${q.explain}</div>`;
+      }
+      document.getElementById('nxt').innerHTML=`<button class="next-btn" onclick="cur++;picked=false;render()">${cur+1<Qs.length?'Next question →':'See results →'}</button>`;
+    };
+    opts.appendChild(btn);
+  });
+}
+render();
+</script>
+</body>
+</html>

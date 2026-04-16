@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Periodontics Flashcards – Week 4</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f7f6f2;
+      --surface:    #ffffff;
+      --surface2:   #f0ede8;
+      --border:     #e4e2da;
+      --border2:    #ccc9bf;
+      --text:       #1a1916;
+      --muted:      #74726a;
+      --accent:     #1d5fa8;
+      --accent-bg:  #e8f0fb;
+      --accent-bd:  #a8c5ed;
+      --green:      #1e6b3c;
+      --green-bg:   #e6f4ec;
+      --green-bd:   #7ec49a;
+      --amber:      #7a4a0a;
+      --amber-bg:   #fef3e2;
+      --amber-bd:   #f0c060;
+      --radius-md:  10px;
+      --radius-lg:  14px;
+      --shadow:     0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-lg:  0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app-wrap { max-width: 580px; margin: 0 auto; }
+
+    /* Header */
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+    .header-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .header-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .header-title { font-size: 17px; font-weight: 600; }
+    .header-sub   { font-size: 13px; color: var(--muted); margin-top: 1px; }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+
+    /* Score pills */
+    .score-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+    .pill { font-size: 12px; font-weight: 500; padding: 5px 13px; border-radius: 99px; border: 1px solid; }
+    .pill-know   { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+    .pill-review { background: var(--amber-bg); border-color: var(--amber-bd); color: var(--amber); }
+
+    /* Flashcard */
+    .card-area { perspective: 1000px; width: 100%; min-height: 220px; margin-bottom: 1.25rem; cursor: pointer; }
+    .card-inner {
+      position: relative; width: 100%; min-height: 220px;
+      transform-style: preserve-3d;
+      transition: transform .45s cubic-bezier(.4,0,.2,1);
+    }
+    .card-inner.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg); border: 1px solid;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.75rem; text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .card-front { background: var(--accent); border-color: var(--accent); }
+    .card-back  { background: var(--surface); border-color: var(--border); transform: rotateY(180deg); }
+
+    .card-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .card-front .card-label { color: rgba(255,255,255,.65); }
+    .card-back  .card-label { color: var(--muted); }
+    .card-q { font-size: 16px; font-weight: 500; line-height: 1.6; color: #fff; }
+    .card-a { font-size: 14px; font-weight: 400; line-height: 1.65; color: var(--text); }
+    .card-hint { font-size: 12px; margin-top: 12px; }
+    .card-front .card-hint { color: rgba(255,255,255,.55); }
+    .card-back  .card-hint { color: var(--muted); }
+
+    /* Buttons */
+    .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      font-size: 14px; font-weight: 500;
+      padding: 10px 22px; border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--surface); color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn:hover { background: var(--surface2); border-color: var(--border2); }
+    .btn-reveal { border-color: var(--accent-bd); color: var(--accent); background: var(--accent-bg); }
+    .btn-reveal:hover { background: #d4e4f7; }
+    .btn-know   { border-color: var(--green-bd); color: var(--green); background: var(--green-bg); }
+    .btn-know:hover   { background: #d0edda; }
+    .btn-review { border-color: var(--amber-bd); color: var(--amber); background: var(--amber-bg); }
+    .btn-review:hover { background: #fdeac8; }
+
+    /* Done screen */
+    .done-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem; text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .done-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--green-bg); border: 1px solid var(--green-bd);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem; font-size: 26px;
+    }
+    .done-title  { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .done-sub    { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+    .done-score  {
+      font-size: 42px; font-weight: 600; color: var(--accent);
+      margin-bottom: 0.25rem; line-height: 1;
+    }
+    .done-score-label { font-size: 13px; color: var(--muted); margin-bottom: 1.25rem; }
+    .done-pills  { display: flex; gap: 8px; justify-content: center; margin-bottom: 1.5rem; }
+    .btn-restart {
+      width: 100%; padding: 13px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn-restart:hover { opacity: .88; }
+  </style>
+</head>
+<body>
+<div id="app-wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Periodontics Flashcards</div>
+      <div class="header-sub">Week 4 — Tap each card to reveal the answer</div>
+    </div>
+  </div>
+
+  <!-- Dynamic content -->
+  <div id="game"></div>
+  <div id="done" style="display:none">
+    <div class="done-card">
+      <div class="done-icon">&#10003;</div>
+      <p class="done-title">Deck complete!</p>
+      <p class="done-sub">Cards marked "I know this" — great job reviewing!</p>
+      <div class="done-score" id="done-score">0</div>
+      <div class="done-score-label" id="done-score-label">out of 12</div>
+      <div class="done-pills">
+        <span class="pill pill-know"   id="done-know">Know it: 0</span>
+        <span class="pill pill-review" id="done-review">Need review: 0</span>
+      </div>
+      <button class="btn-restart" onclick="restart()">Start over</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CARDS = [
+  { q: "What is Periodontics?",
+    a: "A dental specialty focused on the prevention, diagnosis, and treatment of periodontal (gum) diseases, and maintaining the health of supporting structures like gums, periodontal ligament, and alveolar bone." },
+  { q: "What is the first stage of periodontal disease?",
+    a: "Gingivitis — caused by plaque buildup, leading to red, swollen, and bleeding gums. It is reversible with proper care." },
+  { q: "What happens during Advanced Periodontitis?",
+    a: "Severe bone loss, deep periodontal pockets, tooth mobility, and potential tooth loss occur." },
+  { q: "What is Scaling and Root Planing?",
+    a: "A non-surgical deep cleaning procedure that removes plaque and tartar from below the gumline, then smooths root surfaces to help gums re-attach." },
+  { q: "What is a Periodontal Probe used for?",
+    a: "It measures the depth of periodontal pockets around each tooth by being gently inserted into the sulcus to assess gum attachment." },
+  { q: "What is the purpose of a Curette?",
+    a: "A handheld instrument with a curved blade used for scaling and root planing. It must be kept sharp and sterilized after every use." },
+  { q: "What is Gingival Recession?",
+    a: "A condition where gum tissue pulls back from the teeth, exposing the roots. It can cause tooth sensitivity and must be addressed to preserve tooth structure." },
+  { q: "Name 3 signs that indicate you may need to see a Periodontist.",
+    a: "Bleeding while brushing or flossing, gum recession, loose or separating teeth, bad breath, swollen/red gums, tooth sensitivity, or pus between the gum and teeth." },
+  { q: "What PPE is required during periodontal procedures?",
+    a: "Gloves, masks, and protective eyewear must be worn during all procedures, following CDC infection control guidelines." },
+  { q: "What is the first step in Scaling and Root Planing?",
+    a: "Patient Assessment — reviewing medical history and assessing periodontal status, including probing depths and bleeding on probing." },
+  { q: "What is an Ultrasonic Scaler?",
+    a: "A tool that uses high-frequency vibrations to remove plaque and tartar from teeth and below the gumline, applied to surfaces with calculus buildup." },
+  { q: "How does periodontal disease develop?",
+    a: "It is an inflammatory condition caused by plaque accumulation on teeth, which can progress from gingivitis to periodontitis if left untreated." },
+];
+
+let deck = [], idx = 0, flipped = false, know = 0, review = 0;
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+}
+
+function render() {
+  if (idx >= deck.length) { showDone(); return; }
+  const c   = deck[idx];
+  const pct = Math.round(idx / deck.length * 100);
+
+  document.getElementById('game').innerHTML = `
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span>Card ${idx + 1} of ${deck.length}</span>
+        <span>${pct}%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:${pct}%"></div>
+      </div>
+    </div>
+
+    <div class="score-row">
+      <span class="pill pill-know">Know it: ${know}</span>
+      <span class="pill pill-review">Need review: ${review}</span>
+    </div>
+
+    <div class="card-area" onclick="flipCard()">
+      <div class="card-inner${flipped ? ' flipped' : ''}" id="card-inner">
+        <div class="card-face card-front">
+          <div class="card-label">Question</div>
+          <div class="card-q">${c.q}</div>
+          <div class="card-hint">Tap to reveal answer</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-label">Answer</div>
+          <div class="card-a">${c.a}</div>
+          <div class="card-hint">Tap to flip back</div>
+        </div>
+      </div>
+    </div>
+
+    ${flipped
+      ? `<div class="btn-row">
+           <button class="btn btn-review" onclick="mark(false)">Need review</button>
+           <button class="btn btn-know"   onclick="mark(true)">I know this &#10003;</button>
+         </div>`
+      : `<div class="btn-row">
+           <button class="btn btn-reveal" onclick="flipCard()">Reveal answer</button>
+         </div>`
+    }`;
+}
+
+function flipCard() {
+  flipped = !flipped;
+  render();
+}
+
+function mark(correct) {
+  if (correct) know++; else review++;
+  idx++; flipped = false;
+  render();
+}
+
+function showDone() {
+  document.getElementById('game').innerHTML   = '';
+  document.getElementById('done').style.display = 'block';
+  document.getElementById('done-score').textContent       = know;
+  document.getElementById('done-score-label').textContent = `out of ${deck.length}`;
+  document.getElementById('done-know').textContent        = `Know it: ${know}`;
+  document.getElementById('done-review').textContent      = `Need review: ${review}`;
+}
+
+function restart() {
+  idx = 0; flipped = false; know = 0; review = 0;
+  shuffle(deck);
+  document.getElementById('done').style.display = 'none';
+  render();
+}
+
+deck = [...CARDS];
+shuffle(deck);
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Assistant Flashcards</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #f7f6f2;
+      --surface:     #ffffff;
+      --surface2:    #f0ede8;
+      --border:      #e4e2da;
+      --border2:     #ccc9bf;
+      --text:        #1a1916;
+      --muted:       #74726a;
+      --accent:      #1d5fa8;
+      --accent-bg:   #e8f0fb;
+      --accent-bd:   #a8c5ed;
+      --green:       #1e6b3c;
+      --green-bg:    #e6f4ec;
+      --green-bd:    #7ec49a;
+      --green-dark:  #0f4a2a;
+      --amber:       #7a4a0a;
+      --amber-bg:    #fef3e2;
+      --amber-bd:    #f0c060;
+      --red:         #8b1d1d;
+      --red-bg:      #fbecec;
+      --red-bd:      #e8aaaa;
+      --radius-sm:   6px;
+      --radius-md:   10px;
+      --radius-lg:   14px;
+      --shadow:      0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app { max-width: 640px; margin: 0 auto; }
+
+    /* Header */
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+    .header-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .header-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .header-title  { font-size: 17px; font-weight: 600; }
+    .header-sub    { font-size: 13px; color: var(--muted); margin-top: 1px; line-height: 1.4; }
+
+    /* Category tabs */
+    .tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 1.25rem; }
+    .tab {
+      font-size: 12px; font-weight: 500;
+      padding: 5px 13px; border-radius: 99px;
+      border: 1px solid var(--border2);
+      background: var(--surface); color: var(--muted);
+      cursor: pointer; transition: all .12s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .tab:hover { border-color: var(--accent); color: var(--accent); }
+    .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+
+    /* Score pills */
+    .score-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; }
+    .pill {
+      font-size: 12px; font-weight: 500;
+      padding: 5px 13px; border-radius: 99px; border: 1px solid;
+    }
+    .pill-know     { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+    .pill-learning { background: var(--amber-bg); border-color: var(--amber-bd); color: var(--amber); }
+    .btn-shuffle {
+      font-size: 12px; font-weight: 500;
+      padding: 5px 13px; border-radius: 99px;
+      border: 1px solid var(--border2);
+      background: var(--surface); color: var(--muted);
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: all .12s; margin-left: auto;
+    }
+    .btn-shuffle:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* Card flip area */
+    .card-area { perspective: 1000px; margin-bottom: 1.25rem; min-height: 220px; }
+    .card {
+      width: 100%; min-height: 220px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform .45s cubic-bezier(.4,0,.2,1);
+      cursor: pointer;
+    }
+    .card.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; width: 100%; min-height: 220px;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.75rem 1.5rem; text-align: center;
+      border: 1px solid; box-shadow: var(--shadow);
+    }
+    .card-front {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .card-back {
+      transform: rotateY(180deg);
+      background: var(--surface);
+      border-color: var(--border);
+    }
+    .card-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .card-front .card-label { color: rgba(255,255,255,.7); }
+    .card-back  .card-label { color: var(--muted); }
+    .card-question {
+      font-size: 16px; font-weight: 500; line-height: 1.55;
+      color: #fff;
+    }
+    .card-answer {
+      font-size: 14px; font-weight: 400; line-height: 1.65;
+      color: var(--text);
+    }
+    .flip-hint {
+      font-size: 12px; margin-top: 14px; opacity: .7;
+    }
+    .card-front .flip-hint { color: rgba(255,255,255,.8); }
+    .card-back  .flip-hint { color: var(--muted); }
+
+    /* Know/don't know hint */
+    .know-hint {
+      font-size: 12px; color: var(--amber); text-align: center;
+      margin-bottom: 8px; font-weight: 500; min-height: 18px;
+    }
+
+    /* Navigation controls */
+    .controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .btn {
+      font-size: 14px; font-weight: 500;
+      padding: 9px 20px; border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-nav  { background: var(--surface); color: var(--text); }
+    .btn-nav:hover { background: var(--surface2); border-color: var(--border2); }
+    .btn-flip { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-flip:hover { opacity: .88; }
+
+    /* Know row */
+    .know-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .btn-know {
+      font-size: 13px; font-weight: 500;
+      padding: 9px 20px; border-radius: var(--radius-md);
+      font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .12s;
+      background: var(--green-bg); border: 1px solid var(--green-bd); color: var(--green);
+    }
+    .btn-know:hover { background: #d0edda; }
+    .btn-dontknow {
+      font-size: 13px; font-weight: 500;
+      padding: 9px 20px; border-radius: var(--radius-md);
+      font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .12s;
+      background: var(--amber-bg); border: 1px solid var(--amber-bd); color: var(--amber);
+    }
+    .btn-dontknow:hover { background: #fdeac8; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Dental Assistant Flashcards</div>
+      <div class="header-sub">Flip each card to see the answer, then mark whether you knew it.</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" id="tabs"></div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="prog-label">Card 1 of 12</span>
+      <span id="prog-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- Score row -->
+  <div class="score-row">
+    <span class="pill pill-know"     id="pill-know">Knew it: 0</span>
+    <span class="pill pill-learning" id="pill-learning">Still learning: 0</span>
+    <button class="btn-shuffle" onclick="shuffleDeck()">&#8646; Shuffle</button>
+  </div>
+
+  <!-- Flashcard -->
+  <div class="card-area">
+    <div class="card" id="card" onclick="flipCard()">
+      <div class="card-face card-front">
+        <div class="card-label">Question</div>
+        <div class="card-question" id="q-text"></div>
+        <div class="flip-hint">Tap to reveal answer</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-label">Answer</div>
+        <div class="card-answer" id="a-text"></div>
+        <div class="flip-hint">Tap to flip back</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hint -->
+  <div class="know-hint" id="know-hint"></div>
+
+  <!-- Nav controls -->
+  <div class="controls">
+    <button class="btn btn-nav"  onclick="prevCard()">&#8592; Previous</button>
+    <button class="btn btn-flip" onclick="flipCard()">Flip card</button>
+    <button class="btn btn-nav"  onclick="nextCard()">Next &#8594;</button>
+  </div>
+
+  <!-- Know row -->
+  <div class="know-row" id="know-row" style="visibility:hidden">
+    <button class="btn-know"     onclick="markKnow()">&#10003; I knew it!</button>
+    <button class="btn-dontknow" onclick="markDontKnow()">&#10007; Still learning</button>
+  </div>
+
+</div>
+
+<script>
+const ALL_CARDS = {
+  "Dental Exam": [
+    { q: "What four areas does a dental examination assess?", a: "Soft tissue, periodontal tissue, teeth, and facial structures and neck." },
+    { q: "What are the five components of a complete dental examination?", a: "Soft tissue exam, teeth exam, periodontal exam, radiographs, and impressions/photographs." },
+    { q: "What examination technique uses hands to assess texture, size, and consistency of tissues?", a: "Palpation — the examiner uses their hands to feel and evaluate tissue characteristics." },
+    { q: "What does blue/black color coding mean in dental charting?", a: "Blue or black marks completed treatments. Red marks treatments that are still needed." },
+    { q: "Describe G.V. Black's Class I, III, and V cavity classifications.", a: "Class I: pits and fissures. Class III: interproximal of anterior teeth. Class V: gingival third of any tooth." },
+    { q: "What are the three levels of a dental treatment plan?", a: "Level I: Emergency Care (relieves discomfort), Level II: Standard Care (restores function), Level III: Optimum Care (max function and aesthetics)." },
+    { q: "What is recorded at the end of each dental appointment?", a: "Medical history updates, tooth/surface treated, materials and anesthetics used, patient response, and instructions for the next visit." },
+    { q: "What four examination techniques does a dentist use?", a: "Visual evaluation (mouth mirror), palpation (hands), instrumentation (explores hard tissue), and radiography (X-rays)." },
+    { q: "What is the assistant's role during a dental examination?", a: "Preparing the setup, assisting with data collection, and recording information as dictated by the dentist." },
+    { q: "What is occlusion assessment and how is it performed?", a: "It checks bite alignment using articulating paper to identify abnormal contact markings between upper and lower teeth." },
+    { q: "What is dental charting?", a: "A shorthand system using tooth diagrams, numbering systems (Universal, FDI, Palmer), color coding, and symbols to record findings." },
+    { q: "What is G.V. Black's Class IV cavity?", a: "Decay on the interproximal surface that also involves the incisal edge of anterior (front) teeth." },
+  ],
+  "Disease & Caries": [
+    { q: "What causes dental caries?", a: "Acids produced by bacteria metabolizing dietary sugars, causing demineralization starting at the enamel and progressing inward." },
+    { q: "What are the four modes of disease transmission in dentistry?", a: "Direct contact (saliva/blood), indirect contact (contaminated instruments/surfaces), airborne (aerosols), and cross-contamination." },
+    { q: "What are the three stages of caries progression?", a: "1. Incipient lesions (early, reversible). 2. Dentin decay (faster, causes sensitivity). 3. Pulp involvement (pain, abscess, systemic infection)." },
+    { q: "What is fluoride's mechanism of action in oral health?", a: "It enhances enamel resistance to acid, promotes remineralization, prevents caries, and can repair early-stage lesions." },
+    { q: "What are four risk factors for developing dental caries?", a: "Poor oral hygiene, frequent sugar consumption, xerostomia (dry mouth), and limited access to dental care." },
+    { q: "Name the three common pathogens in dental settings.", a: "Streptococcus mutans (caries), Lactobacilli (decay progression), and viruses like herpes and hepatitis (direct/indirect contact)." },
+    { q: "How do sugars and carbohydrates damage teeth?", a: "Oral bacteria metabolize them, producing acid that demineralizes enamel and leads to caries. Reducing frequency lowers risk." },
+    { q: "What are the three preventive strategies used in dental public health?", a: "Water fluoridation, school dental programs (sealants/education), and public awareness campaigns on diet and hygiene." },
+    { q: "What are recommended practices when consuming acidic foods and beverages?", a: "Limit acidic foods between meals, use a straw for drinks, and delay brushing after acid exposure to prevent enamel damage." },
+    { q: "How does Vitamin C contribute to oral health?", a: "Vitamin C prevents gingivitis and supports gum health by maintaining connective tissue integrity." },
+    { q: "What does Calcium and Phosphorus do for oral health?", a: "They strengthen tooth enamel and support jawbone density, making them essential nutrients for oral structure." },
+    { q: "What risk does fluoride overexposure pose to children?", a: "Dental fluorosis — a cosmetic discoloration of the enamel. Patient education helps ensure appropriate fluoride use." },
+  ],
+  "Infection Control": [
+    { q: "What five standard precautions are used in infection control?", a: "Hand hygiene, PPE (gloves, mask, eyewear, gown), preprocedural mouth rinse, instrument sterilization, and environmental cleaning with EPA-registered disinfectants." },
+    { q: "What is the difference between high-level and low-level disinfectants?", a: "High-level kills all microorganisms except spores (used for heat-sensitive instruments). Low-level is for non-critical non-blood-contaminated surfaces." },
+    { q: "Name the four categories of hazardous waste in dentistry and how each is disposed.", a: "Sharps → puncture-resistant containers. Biohazardous → red biohazard bags. Chemical → per local regulations. Amalgam → approved recycling programs." },
+    { q: "What are the four post-exposure management steps after a needlestick?", a: "1. Wash with soap and water. 2. Report to supervisor. 3. Seek medical evaluation. 4. Start post-exposure prophylaxis if needed (e.g., for HIV)." },
+    { q: "What are the three forms of bacteria and how are they classified by Gram stain?", a: "Cocci (spherical), bacilli (rod-shaped), spirilla (spiral). Gram-positive retain violet stain (thick walls); gram-negative do not (thin walls)." },
+    { q: "What is a prion and what disease is it associated with?", a: "Prions are infectious proteins. They cause Creutzfeldt-Jakob Disease (CJD), a rare and fatal brain disorder." },
+    { q: "What three sterilization methods are used in dentistry?", a: "Autoclaving (steam under pressure), dry heat sterilization (best for sharp instruments), and chemical vapor sterilization (for moisture-sensitive materials)." },
+    { q: "Which two governing bodies set infection control standards for dental settings?", a: "The CDC (Infection Control Guidelines) and OSHA (Bloodborne Pathogens Standard)." },
+    { q: "What vaccinations are recommended for dental professionals?", a: "Hepatitis B and influenza vaccines are recommended to protect dental staff from common occupational exposures." },
+    { q: "What does intermediate-level disinfection target?", a: "It kills most bacteria, fungi, and viruses including Mycobacterium tuberculosis (TB). Used for surfaces that contact mucous membranes." },
+    { q: "What does preprocedural mouth rinse accomplish?", a: "It reduces the microbial load in the patient's oral cavity before the procedure begins, lowering airborne contamination risk." },
+    { q: "What protective equipment is included in PPE for dental procedures?", a: "Gloves, masks, protective eyewear/face shield, and gowns — all prevent direct exposure to infectious agents." },
+  ],
+  "Instrument Processing": [
+    { q: "What are the seven steps of instrument processing in order?", a: "Transport → Cleaning → Packaging → Sterilization → Storage → Delivery → Quality Assurance." },
+    { q: "Why must contaminated and clean areas be physically separated in a sterilization center?", a: "To prevent cross-contamination — moving instruments from dirty to clean zones in a one-way workflow eliminates recontamination risk." },
+    { q: "What are the three instrument cleaning methods and which is preferred?", a: "Hand scrubbing (least preferred — injury risk), ultrasonic cleaning (preferred — sound waves remove debris), and instrument washers (automated thermal disinfection)." },
+    { q: "What are the advantages and disadvantages of steam autoclave sterilization?", a: "Advantage: effective liquid chemical sterilization. Disadvantage: may cause rusting on certain instruments." },
+    { q: "What are the three forms of sterilization monitoring?", a: "Physical (checking temperature/pressure/time), Chemical (color-change indicators), and Biologic/spore testing (performed weekly to verify effectiveness)." },
+    { q: "What does a positive spore test result indicate?", a: "Microbial growth was detected — the sterilizer must be removed from service immediately and inspected before reuse." },
+    { q: "What are common packaging materials used before sterilization?", a: "Sterilization pouches, paper and plastic peel pouches, and perforated instrument cassettes — all prevent recontamination after sterilization." },
+    { q: "What is the purpose of a holding solution in instrument processing?", a: "It prevents debris from drying on instruments when immediate cleaning is not possible. Containers must be labeled biohazard." },
+    { q: "What are the four zones of a sterilization center?", a: "Contaminated area (receive/sort), cleaning area (preclean/decontaminate), sterilization area (package/sterilize), and storage area (hold until use)." },
+    { q: "What advantage does dry heat sterilization have over steam autoclaving?", a: "No moisture means no rust — dry heat is ideal for sharp instruments or materials that would be damaged by steam." },
+    { q: "What is quality assurance in instrument processing?", a: "Monitoring sterilization effectiveness through biological indicators and maintaining records to ensure every cycle meets safety standards." },
+    { q: "What technique must be used when delivering sterile instruments to the treatment room?", a: "Aseptic technique — packages are inspected for damage, handled with clean hands, and opened without contaminating the contents." },
+  ],
+  "Moisture Control": [
+    { q: "What are the three key reasons moisture control is important during dental procedures?", a: "Ensures accurate placement of restorative materials, prevents contamination from saliva and blood, and enhances patient comfort." },
+    { q: "What is the difference between a limited-area rinse and a complete mouth rinse?", a: "Limited-area rinse clears debris during short pauses throughout a procedure. Complete mouth rinse is done at the end for a refreshed feeling." },
+    { q: "What is the difference between a saliva ejector and HVE?", a: "Saliva ejector removes small amounts of saliva passively. HVE is a powerful suction used with high-speed handpieces to reduce aerosols and retract tissues." },
+    { q: "What are the three isolation techniques used in dentistry?", a: "Cotton rolls (easy, short procedures), dry angles (absorbent pads over Stensen's duct), and dental dams (complete latex/non-latex barrier isolation)." },
+    { q: "What is a dry angle and where is it placed?", a: "A dry angle is an absorbent triangular pad placed over the Stensen's duct opening to block saliva flow from the parotid gland." },
+    { q: "What are three advantages of using a dental dam over other isolation methods?", a: "Keeps the area dry for bonding, protects soft tissue from chemicals/debris, and improves the dentist's visibility and access." },
+    { q: "What are the two grasp techniques for holding the HVE tip?", a: "Thumb-to-nose grasp (stability and control) and pen grasp (used for finer, more precise movements)." },
+    { q: "Where should the HVE tip be positioned during a procedure?", a: "Slightly beyond the occlusal surface to catch spray before the dentist starts the handpiece, avoiding contact with soft tissues." },
+    { q: "What three equipment items are used for mouth rinsing?", a: "High-volume evacuator (HVE) tip, saliva ejector, and air-water syringe — used together to rinse and clear the oral cavity." },
+    { q: "What is high-volume evacuation (HVE) and why is it important for infection control?", a: "HVE is a strong suction system that reduces bacterial aerosols generated by high-speed handpieces, protecting both staff and patients." },
+    { q: "What is a limitation of using cotton rolls for isolation?", a: "They do not fully prevent saliva contamination and require frequent replacement — not ideal for lengthy procedures." },
+    { q: "What does the clinical assistant's role involve in moisture control?", a: "The assistant operates suction, positions isolation materials, manages the air-water syringe, and anticipates the dentist's needs throughout the procedure." },
+  ],
+  "Impressions & Lab": [
+    { q: "What are the three types of dental impressions and their purposes?", a: "Preliminary (diagnostic models/trays), final (detailed impressions for crowns/veneers/bridges), occlusal/bite registration (records how upper and lower teeth meet)." },
+    { q: "Why must alginate impressions be poured within one hour?", a: "To prevent imbibition (water absorption causing expansion) or syneresis (water loss causing shrinkage), both of which distort the impression." },
+    { q: "What is the difference between inelastic and elastic impression materials?", a: "Inelastic materials are rigid and fracture-prone (e.g., ZOE paste). Elastic materials deform but return to shape (e.g., alginate, VPS, polyether)." },
+    { q: "Which elastomeric material has the best dimensional stability for final impressions?", a: "Addition silicone (Vinyl Polysiloxane / VPS) — it has the best stability and is the most commonly used material for final impressions." },
+    { q: "What are the five steps for mixing and taking an alginate impression?", a: "Measure correct water-to-powder ratio → sift powder into water → mix until smooth/creamy → load tray and seat in mouth → remove once set and rinse." },
+    { q: "What is the correct water-to-powder ratio for dental stone?", a: "30–32 ml of water per 100 g of dental stone powder. Using too much water weakens the final cast." },
+    { q: "What is the difference between model plaster and dental stone?", a: "Model plaster is weaker (45–50 ml water/100g) and used for less detailed models. Dental stone is stronger (30–32 ml water/100g) for accurate diagnostic casts." },
+    { q: "What are the three methods for pouring diagnostic casts?", a: "Double-pour method (base poured separately), box-and-pour method (wax walls contain the material), and inverted-pour method (one-step process)." },
+    { q: "What are the anatomic and art portion proportions of a trimmed diagnostic cast?", a: "Anatomic portion (teeth and oral mucosa) = 2/3 of the cast. Art/base portion = 1/3 of the cast." },
+    { q: "What is the purpose of a Triple Tray impression tray?", a: "It takes both the final impression and bite registration simultaneously, saving time and reducing patient discomfort." },
+    { q: "What is the final impression technique using two materials?", a: "Light-bodied material is placed around the prepared tooth first, then heavy-bodied material is loaded in the tray and seated over it." },
+    { q: "What are the two setting types of alginate and their working/setting times?", a: "Normal set: 2 min working time, 4.5 min setting time. Fast set: 1 min working time, 1–2 min setting time." },
+  ],
+};
+
+const categories = Object.keys(ALL_CARDS);
+let activeCategory = categories[0];
+let deck = [], idx = 0, isFlipped = false;
+let scores = { know: 0, dontKnow: 0 };
+let cardMarked = [];
+
+function init() {
+  renderTabs();
+  loadCategory(activeCategory);
+}
+
+function renderTabs() {
+  document.getElementById('tabs').innerHTML = categories.map(cat =>
+    `<button class="tab${cat === activeCategory ? ' active' : ''}" onclick="switchCategory('${cat.replace(/'/g,"\\'")}')">
+      ${cat}
+    </button>`
+  ).join('');
+}
+
+function switchCategory(cat) {
+  activeCategory = cat;
+  scores = { know: 0, dontKnow: 0 };
+  renderTabs();
+  loadCategory(cat);
+  updateScorePills();
+}
+
+function loadCategory(cat) {
+  deck = [...ALL_CARDS[cat]];
+  idx = 0;
+  cardMarked = new Array(deck.length).fill(null);
+  isFlipped = false;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('know-row').style.visibility = 'hidden';
+  document.getElementById('know-hint').textContent = '';
+  renderCard();
+}
+
+function renderCard() {
+  document.getElementById('q-text').textContent = deck[idx].q;
+  document.getElementById('a-text').textContent = deck[idx].a;
+  const pct = Math.round((idx + 1) / deck.length * 100);
+  document.getElementById('prog-label').textContent = `Card ${idx + 1} of ${deck.length}`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('know-row').style.visibility = isFlipped ? 'visible' : 'hidden';
+}
+
+function flipCard() {
+  isFlipped = !isFlipped;
+  document.getElementById('card').classList.toggle('flipped', isFlipped);
+  document.getElementById('know-row').style.visibility = isFlipped ? 'visible' : 'hidden';
+  document.getElementById('know-hint').textContent = '';
+}
+
+function nextCard() {
+  if (idx < deck.length - 1) idx++;
+  isFlipped = false;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('know-hint').textContent = '';
+  renderCard();
+}
+
+function prevCard() {
+  if (idx > 0) idx--;
+  isFlipped = false;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('know-hint').textContent = '';
+  renderCard();
+}
+
+function markKnow() {
+  if (!isFlipped) {
+    document.getElementById('know-hint').textContent = 'Flip the card first, then mark your answer!';
+    return;
+  }
+  if (cardMarked[idx] !== 'know') {
+    if (cardMarked[idx] === 'dontknow') scores.dontKnow = Math.max(0, scores.dontKnow - 1);
+    scores.know++;
+    cardMarked[idx] = 'know';
+    updateScorePills();
+  }
+  setTimeout(nextCard, 280);
+}
+
+function markDontKnow() {
+  if (!isFlipped) {
+    document.getElementById('know-hint').textContent = 'Flip the card first, then mark your answer!';
+    return;
+  }
+  if (cardMarked[idx] !== 'dontknow') {
+    if (cardMarked[idx] === 'know') scores.know = Math.max(0, scores.know - 1);
+    scores.dontKnow++;
+    cardMarked[idx] = 'dontknow';
+    updateScorePills();
+  }
+  setTimeout(nextCard, 280);
+}
+
+function updateScorePills() {
+  document.getElementById('pill-know').textContent     = `Knew it: ${scores.know}`;
+  document.getElementById('pill-learning').textContent = `Still learning: ${scores.dontKnow}`;
+}
+
+function shuffleDeck() {
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  idx = 0;
+  cardMarked = new Array(deck.length).fill(null);
+  scores = { know: 0, dontKnow: 0 };
+  isFlipped = false;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('know-hint').textContent = '';
+  updateScorePills();
+  renderCard();
+}
+
+init();
+</script>
+</body>
+</html>

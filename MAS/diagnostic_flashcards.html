@@ -6,31 +6,11 @@
 <title>MA Lab Testing Flashcards</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    min-height: 100vh;
-    background: #0a0f1e;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 28px 16px;
-    font-family: 'Segoe UI', sans-serif;
-    color: #f1f5f9;
-  }
-  .header-box {
-    background: linear-gradient(135deg, #7f1d1d, #991b1b);
-    border-radius: 12px;
-    padding: 14px 28px;
-    margin-bottom: 14px;
-    display: inline-block;
-    text-align: center;
-  }
+  body { min-height: 100vh; background: #0a0f1e; display: flex; flex-direction: column; align-items: center; padding: 28px 16px; font-family: 'Segoe UI', sans-serif; color: #f1f5f9; }
+  .header-box { background: linear-gradient(135deg, #7f1d1d, #991b1b); border-radius: 12px; padding: 14px 28px; margin-bottom: 14px; display: inline-block; text-align: center; }
   .header-sub { font-size: 13px; font-weight: 700; letter-spacing: 3px; color: #fca5a5; margin-bottom: 4px; }
   .header-title { font-size: 22px; font-weight: 800; color: #fff; }
-  .subtitle {
-    color: #94a3b8; font-size: 15px; font-weight: 600;
-    background: #1e293b; border-radius: 8px; padding: 10px 18px;
-    max-width: 700px; text-align: center; margin-bottom: 20px;
-  }
+  .subtitle { color: #94a3b8; font-size: 15px; font-weight: 600; background: #1e293b; border-radius: 8px; padding: 10px 18px; max-width: 700px; text-align: center; margin-bottom: 20px; }
   .subtitle span { color: #fbbf24; }
   .progress-wrap { width: 100%; max-width: 680px; margin-bottom: 20px; }
   .progress-labels { display: flex; justify-content: space-between; margin-bottom: 7px; }
@@ -38,63 +18,20 @@
   .prog-right { font-size: 13px; font-weight: 700; color: #4ade80; }
   .prog-track { height: 10px; background: #1e293b; border-radius: 99px; overflow: hidden; }
   .prog-bar { height: 100%; background: linear-gradient(90deg, #16a34a, #4ade80); border-radius: 99px; transition: width 0.4s ease; }
-  .card {
-    width: 100%; max-width: 680px;
-    background: #111827;
-    border-radius: 18px;
-    border: 3px solid #334155;
-    padding: 30px 28px;
-    min-height: 280px;
-    display: flex; flex-direction: column; justify-content: space-between;
-    margin-bottom: 22px;
-    box-shadow: 0 0 30px #33415533;
-    transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  .badge {
-    display: inline-block;
-    color: #fff; font-weight: 800; font-size: 13px;
-    letter-spacing: 1.5px; padding: 5px 14px;
-    border-radius: 99px; text-transform: uppercase;
-    margin-bottom: 18px;
-  }
+  .card { width: 100%; max-width: 680px; background: #111827; border-radius: 18px; border: 3px solid #334155; padding: 30px 28px; min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 22px; box-shadow: 0 0 30px #33415533; transition: border-color 0.3s, box-shadow 0.3s; }
+  .badge { display: inline-block; color: #fff; font-weight: 800; font-size: 13px; letter-spacing: 1.5px; padding: 5px 14px; border-radius: 99px; text-transform: uppercase; margin-bottom: 18px; }
   .question { font-size: 20px; font-weight: 800; color: #f1f5f9; line-height: 1.5; margin-bottom: 24px; flex: 1; }
-  .flip-btn {
-    color: #fff; border: none; border-radius: 12px;
-    padding: 16px 24px; font-size: 18px; font-weight: 800;
-    cursor: pointer; width: 100%; letter-spacing: 0.5px;
-    transition: transform 0.15s;
-  }
+  .flip-btn { color: #fff; border: none; border-radius: 12px; padding: 16px 24px; font-size: 18px; font-weight: 800; cursor: pointer; width: 100%; letter-spacing: 0.5px; transition: transform 0.15s; }
   .flip-btn:hover { transform: scale(1.02); }
-  .answer-box {
-    background: #1e293b; border: 2px solid #334155;
-    border-radius: 12px; padding: 18px 20px; display: none;
-  }
+  .answer-box { background: #1e293b; border: 2px solid #334155; border-radius: 12px; padding: 18px 20px; display: none; }
   .answer-label { font-size: 13px; font-weight: 800; color: #4ade80; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase; }
   .answer-text { font-size: 17px; font-weight: 700; color: #e2e8f0; line-height: 1.7; white-space: pre-line; }
   .nav { display: flex; gap: 14px; width: 100%; max-width: 680px; flex-wrap: wrap; }
-  .nav-btn {
-    flex: 1; min-width: 120px;
-    background: #1e293b; color: #f1f5f9;
-    border: 2px solid #334155; border-radius: 12px;
-    padding: 15px 10px; font-size: 17px; font-weight: 800;
-    cursor: pointer; transition: background 0.15s;
-  }
+  .nav-btn { flex: 1; min-width: 120px; background: #1e293b; color: #f1f5f9; border: 2px solid #334155; border-radius: 12px; padding: 15px 10px; font-size: 17px; font-weight: 800; cursor: pointer; transition: background 0.15s; }
   .nav-btn:hover { background: #273548; }
-  .restart-btn {
-    flex: 1; min-width: 120px;
-    background: #7f1d1d; color: #fca5a5;
-    border: 2px solid #991b1b; border-radius: 12px;
-    padding: 15px 10px; font-size: 17px; font-weight: 800;
-    cursor: pointer; transition: background 0.15s;
-  }
+  .restart-btn { flex: 1; min-width: 120px; background: #7f1d1d; color: #fca5a5; border: 2px solid #991b1b; border-radius: 12px; padding: 15px 10px; font-size: 17px; font-weight: 800; cursor: pointer; transition: background 0.15s; }
   .restart-btn:hover { background: #991b1b; }
-  .complete {
-    margin-top: 22px;
-    background: linear-gradient(135deg, #14532d, #15803d);
-    border-radius: 14px; padding: 18px 28px;
-    text-align: center; max-width: 680px; width: 100%;
-    box-shadow: 0 0 24px #4ade8066; display: none;
-  }
+  .complete { margin-top: 22px; background: linear-gradient(135deg, #14532d, #15803d); border-radius: 14px; padding: 18px 28px; text-align: center; max-width: 680px; width: 100%; box-shadow: 0 0 24px #4ade8066; display: none; }
   .complete-emoji { font-size: 28px; margin-bottom: 6px; }
   .complete-title { font-size: 20px; font-weight: 800; color: #bbf7d0; }
   .complete-sub { font-size: 15px; font-weight: 600; color: #86efac; margin-top: 4px; }
@@ -105,9 +42,9 @@
 <div style="text-align:center; margin-bottom:20px; max-width:700px; width:100%;">
   <div class="header-box">
     <div class="header-sub">MEDICAL ASSISTANT PROGRAM</div>
-    <div class="header-title">Week 03 · Lab Testing Flashcards</div>
+    <div class="header-title">🧪 Lab Testing Flashcards</div>
   </div>
-  <div class="subtitle">🎯 This fun activity boosts your <span>recall & retention</span> of key lab testing concepts. Flip each card to reveal the answer!</div>
+  <div class="subtitle">🎯 This activity boosts your <span>recall & retention</span> of key lab testing concepts. Flip each card to reveal the answer!</div>
 </div>
 
 <div class="progress-wrap">
@@ -176,7 +113,7 @@ let idx = 0, seen = new Set();
 function render() {
   const c = cards[idx];
   const color = catColors[c.category] || "#334155";
-  document.getElementById('cardCounter').textContent = `Card ${idx + 1} of ${cards.length}`;
+  document.getElementById('cardCounter').textContent = `Card ${idx+1} of ${cards.length}`;
   document.getElementById('seenLabel').textContent = `${seen.size} reviewed · ${Math.round(seen.size/cards.length*100)}% done`;
   document.getElementById('progBar').style.width = `${Math.round(seen.size/cards.length*100)}%`;
   document.getElementById('badge').textContent = c.category;

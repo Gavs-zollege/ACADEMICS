@@ -3,14 +3,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MA Flashcards</title>
+<title>MA Flashcards – Pharmacology</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{min-height:100vh;background:#0d0d0d;font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;padding:20px}
   .screen{display:none;width:100%;max-width:660px;flex-direction:column;align-items:center}
   .screen.active{display:flex}
-
-  /* START */
   .start-box{background:#1a1a2e;border-radius:20px;padding:48px 40px;width:100%;text-align:center;border:2px solid #7b2d2d;box-shadow:0 8px 40px rgba(123,45,45,0.4)}
   .start-box .icon{font-size:56px;margin-bottom:16px}
   .start-box h1{color:#fff;font-size:28px;font-weight:800;margin-bottom:12px;line-height:1.2}
@@ -18,24 +16,18 @@
   .info-box{background:#111128;border-radius:12px;padding:20px;margin-bottom:28px;border:1px solid #333;color:#d0d0d0;font-size:15px;line-height:1.7;text-align:left}
   .info-box strong{color:#fff}
   .info-box .count{color:#e05c5c;font-weight:700}
-
-  /* FINISH */
   .finish-box{background:#1a1a2e;border-radius:20px;padding:48px 40px;width:100%;text-align:center;border:2px solid #27ae60;box-shadow:0 8px 40px rgba(39,174,96,0.3)}
   .finish-box .icon{font-size:64px;margin-bottom:16px}
   .finish-box h2{color:#fff;font-size:26px;font-weight:800;margin-bottom:12px}
   .finish-box p{color:#aaa;font-size:16px;margin-bottom:8px}
   .finish-box p.sub{color:#d0d0d0;font-size:15px;margin-bottom:32px;line-height:1.6}
   .finish-box p strong{color:#fff}
-
-  /* PROGRESS */
   .prog-bar-wrap{width:100%;margin-bottom:20px}
   .prog-labels{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
   .prog-labels .label{color:#aaa;font-size:14px;font-weight:600}
   .prog-labels .counter{color:#e05c5c;font-size:14px;font-weight:800}
   .prog-track{background:#2a2a2a;border-radius:999px;height:8px;overflow:hidden}
   .prog-fill{background:linear-gradient(90deg,#c0392b,#e05c5c);height:100%;border-radius:999px;transition:width 0.4s ease}
-
-  /* CARD */
   .card{width:100%;background:#1a1a2e;border-radius:18px;margin-bottom:24px;overflow:hidden;transition:border-color 0.3s,box-shadow 0.3s}
   .card.q-mode{border:2px solid #7b2d2d;box-shadow:0 6px 30px rgba(123,45,45,0.35)}
   .card.a-mode{border:2px solid #27ae60;box-shadow:0 6px 30px rgba(39,174,96,0.25)}
@@ -53,8 +45,6 @@
   .card-body .a-block p.main{color:#fff;font-size:18px;font-weight:700;text-align:center}
   .card-body .a-block p.detail{color:#d0d0d0;font-size:16px;font-weight:600;text-align:left}
   .card-foot{padding:0 28px 28px}
-
-  /* BUTTONS */
   .btn{border:none;border-radius:12px;font-weight:900;cursor:pointer;transition:opacity 0.15s,transform 0.1s;font-family:'Segoe UI',sans-serif;letter-spacing:0.4px}
   .btn:active{transform:scale(0.97)}
   .btn-start{width:100%;background:linear-gradient(135deg,#c0392b,#8e1a1a);color:#fff;padding:18px 40px;font-size:18px}
@@ -76,7 +66,7 @@
   <div class="start-box">
     <div class="icon">🏥</div>
     <h1>Medical Assistant Program</h1>
-    <h2>Week 04 · Flashcard Activity</h2>
+    <h2>Pharmacology · Flashcard Activity</h2>
     <div class="info-box">
       🎯 <strong>This activity is designed to sharpen your recall!</strong><br/><br/>
       Flashcards are one of the most effective tools for memorizing key concepts. Go through each card, try to recall the answer on your own, then flip to check yourself. No pressure — just practice!<br/><br/>
@@ -90,7 +80,7 @@
 <div class="screen" id="cardScreen">
   <div class="prog-bar-wrap">
     <div class="prog-labels">
-      <span class="label">MA PROGRAM · WEEK 04</span>
+      <span class="label">MA PROGRAM · PHARMACOLOGY</span>
       <span class="counter" id="counter">Card 1 of 20</span>
     </div>
     <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
@@ -113,7 +103,7 @@
     <button class="btn btn-nav btn-prev" id="prevBtn" onclick="prevCard()">← Previous</button>
     <button class="btn btn-nav btn-next" id="nextBtn" onclick="nextCard()" disabled>Next Card →</button>
   </div>
-  <p class="tip">💡 Tip: Try to recall the answer before revealing it for best results!</p>
+  <p class="tip">💡 Try to recall the answer before revealing it for best results!</p>
 </div>
 
 <!-- FINISH SCREEN -->
@@ -154,16 +144,16 @@ const cards = [
 const emojis = ["💊","🩺","💉","🧪","📋","🏥","⚕️","🔬","📝","✅"];
 let idx = 0, flipped = false;
 
-function show(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-function startActivity(){ idx=0; flipped=false; renderCard(); show('cardScreen'); }
-function restart(){ startActivity(); }
+function startActivity() { idx = 0; flipped = false; renderCard(); show('cardScreen'); }
+function restart() { startActivity(); }
 
-function renderCard(){
-  const card = cards[idx];
+function renderCard() {
+  const c = cards[idx];
   const total = cards.length;
   const progress = Math.round(((idx + (flipped ? 0.5 : 0)) / total) * 100);
 
@@ -171,28 +161,28 @@ function renderCard(){
   document.getElementById('progFill').style.width = progress + '%';
 
   const cardEl = document.getElementById('card');
-  const emoji = document.getElementById('cardEmoji');
-  const label = document.getElementById('cardLabel');
-  const body = document.getElementById('cardBody');
-  const foot = document.getElementById('cardFoot');
+  const emoji  = document.getElementById('cardEmoji');
+  const label  = document.getElementById('cardLabel');
+  const body   = document.getElementById('cardBody');
+  const foot   = document.getElementById('cardFoot');
   const nextBtn = document.getElementById('nextBtn');
   const prevBtn = document.getElementById('prevBtn');
 
   prevBtn.disabled = idx === 0;
   nextBtn.disabled = !flipped;
-  nextBtn.textContent = idx + 1 === total ? 'Finish 🎉' : 'Next Card →';
+  nextBtn.textContent = idx+1 === total ? 'Finish 🎉' : 'Next Card →';
 
-  if(!flipped){
+  if (!flipped) {
     cardEl.className = 'card q-mode';
     emoji.textContent = emojis[idx % emojis.length];
     label.textContent = 'Question';
-    body.innerHTML = `<p class="q-text">${card.q}</p>`;
+    body.innerHTML = `<p class="q-text">${c.q}</p>`;
     foot.innerHTML = `<button class="btn btn-reveal" onclick="flipCard()">👁️ Reveal Answer</button>`;
   } else {
     cardEl.className = 'card a-mode';
     emoji.textContent = '✅';
     label.textContent = 'Answer';
-    const lines = card.a.split('\n');
+    const lines = c.a.split('\n');
     const html = lines.map(l => {
       const isBullet = l.startsWith('•') || /^\d+\./.test(l);
       return `<p class="${isBullet ? 'detail' : 'main'}">${l}</p>`;
@@ -202,16 +192,16 @@ function renderCard(){
   }
 }
 
-function flipCard(){ flipped=true; renderCard(); }
+function flipCard() { flipped = true; renderCard(); }
 
-function nextCard(){
-  if(!flipped) return;
-  if(idx+1 >= cards.length){ show('finishScreen'); return; }
-  idx++; flipped=false; renderCard();
+function nextCard() {
+  if (!flipped) return;
+  if (idx+1 >= cards.length) { show('finishScreen'); return; }
+  idx++; flipped = false; renderCard();
 }
 
-function prevCard(){
-  if(idx > 0){ idx--; flipped=false; renderCard(); }
+function prevCard() {
+  if (idx > 0) { idx--; flipped = false; renderCard(); }
 }
 </script>
 </body>

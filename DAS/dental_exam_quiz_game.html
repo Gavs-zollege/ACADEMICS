@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Examination Components – Quiz</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f7f6f2;
+      --surface:   #ffffff;
+      --border:    #e4e2da;
+      --text:      #1a1916;
+      --muted:     #74726a;
+      --accent:    #1d5fa8;
+      --accent-bg: #e8f0fb;
+      --green:     #1e6b3c;
+      --green-bg:  #e6f4ec;
+      --green-bd:  #a3d4b5;
+      --red:       #8b1d1d;
+      --red-bg:    #fbecec;
+      --red-bd:    #e8aaaa;
+      --amber:     #7a4a0a;
+      --amber-bg:  #fef3e2;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --shadow:    0 1px 3px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.05);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    /* Header */
+    .quiz-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .quiz-icon {
+      width: 40px; height: 40px;
+      background: var(--accent);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .quiz-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .quiz-title { font-size: 17px; font-weight: 600; color: var(--text); }
+    .quiz-subtitle { font-size: 13px; color: var(--muted); margin-top: 1px; }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1.25rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-family: 'DM Mono', monospace; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 99px; transition: width 0.4s ease; }
+
+    /* Stats row */
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.75rem 1rem; }
+    .stat-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .stat-val { font-size: 24px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
+    .stat-val.streak-hot { color: #c45e00; }
+
+    /* Question card */
+    .q-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    .q-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 3px 10px;
+      border-radius: 99px;
+      background: var(--accent-bg);
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .q-text {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.55;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    /* Options */
+    .options { display: flex; flex-direction: column; gap: 8px; }
+    .opt {
+      width: 100%;
+      text-align: left;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      cursor: pointer;
+      transition: border-color .12s, background .12s;
+      line-height: 1.4;
+    }
+    .opt:hover:not(:disabled) { border-color: var(--accent); background: var(--accent-bg); }
+    .opt:disabled { cursor: default; }
+    .opt.correct { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); font-weight: 500; }
+    .opt.wrong   { background: var(--red-bg);   border-color: var(--red-bd);   color: var(--red);   font-weight: 500; }
+
+    /* Feedback */
+    .feedback {
+      margin-top: 1rem;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.55;
+      display: none;
+    }
+    .feedback.correct { background: var(--green-bg); color: var(--green); border-left: 3px solid var(--green-bd); }
+    .feedback.wrong   { background: var(--red-bg);   color: var(--red);   border-left: 3px solid var(--red-bd); }
+
+    /* Next button */
+    .btn-next {
+      margin-top: 1.25rem;
+      padding: 10px 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .12s, border-color .12s;
+      display: none;
+    }
+    .btn-next:hover { background: var(--bg); border-color: var(--accent); }
+
+    /* End screen */
+    #end-screen { display: none; }
+    .end-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .end-icon-wrap {
+      width: 56px; height: 56px;
+      background: var(--accent-bg);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    .end-icon-wrap svg { width: 28px; height: 28px; fill: var(--accent); }
+    .end-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .end-sub   { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; }
+    .end-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 1.5rem; }
+    .badge {
+      font-size: 12px; font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 99px;
+    }
+    .badge-green { background: var(--green-bg); color: var(--green); }
+    .badge-blue  { background: var(--accent-bg); color: var(--accent); }
+    .badge-amber { background: var(--amber-bg); color: var(--amber); }
+
+    .btn-restart {
+      padding: 11px 32px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity .12s;
+    }
+    .btn-restart:hover { opacity: .88; }
+
+    /* Streak flash */
+    @keyframes streakPop { 0%{transform:scale(1)} 50%{transform:scale(1.18)} 100%{transform:scale(1)} }
+    .streak-pop { animation: streakPop .25s ease; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="quiz-header">
+    <div class="quiz-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C9.5 2 7.5 3.5 6.5 5.5 5.5 3.5 3.5 2 2 4c-1 1.5-.5 4 1 5.5 1 1 2 4.5 2 7.5 0 1 .5 3 2 3s2-1.5 2-3c0-1 .5-2 1-2s1 1 1 2c0 1.5.5 3 2 3s2-2 2-3c0-3 1-6.5 2-7.5 1.5-1.5 2-4 1-5.5C17 2 14.5 2 12 2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="quiz-title">Dental Examination Components</div>
+      <div class="quiz-subtitle">10 questions · Multiple choice · Scored</div>
+    </div>
+  </div>
+
+  <!-- Quiz screen -->
+  <div id="quiz-screen">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="prog-label">Question 1 of 10</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-label">Score</div><div class="stat-val" id="score-disp">0</div></div>
+      <div class="stat"><div class="stat-label">Correct</div><div class="stat-val" id="correct-disp">0</div></div>
+      <div class="stat"><div class="stat-label">Streak</div><div class="stat-val" id="streak-disp">0</div></div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-tag" id="q-tag">Soft Tissue</div>
+      <p class="q-text" id="q-text"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="next-btn" onclick="nextQ()">Next question &rarr;</button>
+    </div>
+  </div>
+
+  <!-- End screen -->
+  <div id="end-screen">
+    <div class="end-card">
+      <div class="end-icon-wrap">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C9.5 2 7.5 3.5 6.5 5.5 5.5 3.5 3.5 2 2 4c-1 1.5-.5 4 1 5.5 1 1 2 4.5 2 7.5 0 1 .5 3 2 3s2-1.5 2-3c0-1 .5-2 1-2s1 1 1 2c0 1.5.5 3 2 3s2-2 2-3c0-3 1-6.5 2-7.5 1.5-1.5 2-4 1-5.5C17 2 14.5 2 12 2z"/>
+        </svg>
+      </div>
+      <p class="end-title" id="end-title"></p>
+      <p class="end-sub" id="end-sub"></p>
+      <div class="end-stats">
+        <div class="stat"><div class="stat-label">Final score</div><div class="stat-val" id="final-score"></div></div>
+        <div class="stat"><div class="stat-label">Correct</div><div class="stat-val" id="final-correct"></div></div>
+        <div class="stat"><div class="stat-label">Best streak</div><div class="stat-val" id="final-streak"></div></div>
+      </div>
+      <div class="badge-row" id="badges"></div>
+      <button class="btn-restart" onclick="restart()">Play again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    cat: "Soft Tissue",
+    q: "Which structures are checked during a soft tissue examination?",
+    opts: ["Only the teeth and gums", "Cheeks, mucosa, lips, palate, tonsils, tongue, and floor of mouth", "X-rays and bite alignment", "Dental impressions and photos"],
+    ans: 1,
+    exp: "Soft tissue exams cover cheeks, mucosa, lips, palate, tonsils, tongue, and the floor of the mouth."
+  },
+  {
+    cat: "Soft Tissue",
+    q: "What abnormalities does a soft tissue exam help detect?",
+    opts: ["Cavities between teeth", "Hidden bone loss", "Abnormalities in the head, neck, and oral areas", "Malocclusion only"],
+    ans: 2,
+    exp: "Soft tissue examination detects abnormalities in the head, neck, and oral areas — including potential oral cancer signs."
+  },
+  {
+    cat: "Teeth",
+    q: "During a teeth examination, what does the clinician inspect each tooth surface for?",
+    opts: ["Color changes only", "Decay, fractures, or wear", "Root length", "Gum recession"],
+    ans: 1,
+    exp: "Each tooth surface is systematically checked for decay (caries), fractures, and wear patterns."
+  },
+  {
+    cat: "Teeth",
+    q: "Why is it important to check all tooth surfaces, not just visible ones?",
+    opts: ["To measure enamel thickness", "Decay and fractures can hide on interproximal or lingual surfaces", "It is only required for new patients", "Radiographs already cover all surfaces"],
+    ans: 1,
+    exp: "Decay and fractures can occur on any surface. Visual exam with instruments finds issues radiographs might miss on occlusal or facial surfaces."
+  },
+  {
+    cat: "Periodontal",
+    q: "What does a periodontal examination evaluate?",
+    opts: ["Tooth color and shape", "Condition of gums, bone levels, and overall periodontal health", "Jaw joint movement", "Salivary flow rate"],
+    ans: 1,
+    exp: "Periodontal exams assess gum health, attachment levels, bone levels, and detect signs of periodontal disease."
+  },
+  {
+    cat: "Periodontal",
+    q: "Which tool is most commonly used to measure pocket depths in a periodontal exam?",
+    opts: ["Dental mirror", "Periodontal probe", "Saliva ejector", "Radiograph film"],
+    ans: 1,
+    exp: "A periodontal probe is used to measure the depth of the sulcus/pocket around each tooth."
+  },
+  {
+    cat: "Radiographs",
+    q: "What is the main advantage of dental radiographs (X-rays) in an exam?",
+    opts: ["They replace the need for instruments", "They provide visual evaluation of hidden areas", "They measure gum pocket depth", "They record the patient's medical history"],
+    ans: 1,
+    exp: "X-rays reveal structures hidden from direct view — interproximal decay, bone levels, root anatomy, and more."
+  },
+  {
+    cat: "Radiographs",
+    q: "Which type of X-ray gives a full overview of all teeth and supporting structures in one image?",
+    opts: ["Bitewing", "Periapical", "Panoramic", "Occlusal"],
+    ans: 2,
+    exp: "A panoramic radiograph captures all teeth, jaws, and surrounding structures in a single wide image."
+  },
+  {
+    cat: "Impressions & Photos",
+    q: "How do diagnostic casts (impressions) assist the dental team?",
+    opts: ["They replace radiographs", "They assist in treatment planning and patient education", "They measure pocket depths", "They detect soft tissue abnormalities"],
+    ans: 1,
+    exp: "Diagnostic casts provide a 3D model of the patient's dentition, useful for planning restorations, orthodontics, and patient education."
+  },
+  {
+    cat: "Impressions & Photos",
+    q: "Which statement BEST describes the purpose of intraoral photographs in a dental exam?",
+    opts: ["They provide radiation-free imaging of bone levels", "They document clinical findings and aid in patient education and treatment planning", "They replace the need for periodontal probing", "They measure salivary pH"],
+    ans: 1,
+    exp: "Intraoral photos document the current condition, help patients visualize issues, and support treatment planning and insurance documentation."
+  }
+];
+
+let cur = 0, score = 0, streak = 0, bestStreak = 0, correct = 0, answered = false, qs = [];
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function loadQ() {
+  const d = qs[cur];
+  document.getElementById('q-tag').textContent = d.cat;
+  document.getElementById('q-text').textContent = d.q;
+  document.getElementById('prog-label').textContent = 'Question ' + (cur + 1) + ' of ' + qs.length;
+  const pct = Math.round(cur / qs.length * 100);
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog').style.width = pct + '%';
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  d.opts.forEach((o, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = o;
+    b.onclick = () => pick(i, b, d);
+    opts.appendChild(b);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'none';
+  fb.className = 'feedback';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+}
+
+function pick(i, btn, d) {
+  if (answered) return;
+  answered = true;
+  document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('feedback');
+  const sv = document.getElementById('streak-disp');
+
+  if (i === d.ans) {
+    btn.classList.add('correct');
+    streak++; correct++;
+    if (streak > bestStreak) bestStreak = streak;
+    const pts = streak >= 3 ? 150 : 100;
+    score += pts;
+    fb.className = 'feedback correct';
+    fb.style.display = 'block';
+    fb.textContent = (streak >= 3 ? '🔥 On a streak! +' + pts + ' pts — ' : '✓ Correct! +' + pts + ' pts — ') + d.exp;
+  } else {
+    btn.classList.add('wrong');
+    streak = 0;
+    document.querySelectorAll('.opt')[d.ans].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.style.display = 'block';
+    fb.textContent = '✗ Not quite — ' + d.exp;
+  }
+
+  document.getElementById('score-disp').textContent = score;
+  document.getElementById('correct-disp').textContent = correct;
+  sv.textContent = streak;
+  sv.className = 'stat-val' + (streak >= 3 ? ' streak-hot' : '');
+  sv.classList.add('streak-pop');
+  sv.addEventListener('animationend', () => sv.classList.remove('streak-pop'), { once: true });
+
+  const nb = document.getElementById('next-btn');
+  nb.style.display = 'inline-block';
+  cur++;
+  if (cur >= qs.length) nb.textContent = 'See results →';
+}
+
+function nextQ() {
+  if (cur >= qs.length) { showEnd(); return; }
+  loadQ();
+}
+
+function showEnd() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('end-screen').style.display = 'block';
+  document.getElementById('prog').style.width = '100%';
+  document.getElementById('prog-pct').textContent = '100%';
+
+  document.getElementById('final-score').textContent = score;
+  document.getElementById('final-correct').textContent = correct + '/' + qs.length;
+  document.getElementById('final-streak').textContent = bestStreak;
+
+  const pct = Math.round(correct / qs.length * 100);
+  let title, sub;
+  if (pct >= 90) { title = 'Outstanding! You nailed it!'; sub = 'You are ready for clinic!'; }
+  else if (pct >= 70) { title = 'Great job!'; sub = 'Solid dental knowledge — keep it up!'; }
+  else if (pct >= 50) { title = 'Good effort!'; sub = 'Review the exam components and try again.'; }
+  else { title = 'Keep studying!'; sub = "You'll get there — review and retry!"; }
+
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('end-sub').textContent = sub;
+
+  const earned = [];
+  if (pct === 100) earned.push({ t: 'Perfect score!', cls: 'badge-green' });
+  if (bestStreak >= 3) earned.push({ t: '3× Streak', cls: 'badge-blue' });
+  if (score >= 1200) earned.push({ t: 'High scorer', cls: 'badge-amber' });
+  if (correct >= 8) earned.push({ t: 'Sharp clinician', cls: 'badge-green' });
+
+  const br = document.getElementById('badges');
+  br.innerHTML = '';
+  earned.forEach(e => {
+    const span = document.createElement('span');
+    span.className = 'badge ' + e.cls;
+    span.textContent = e.t;
+    br.appendChild(span);
+  });
+}
+
+function restart() {
+  cur = 0; score = 0; streak = 0; bestStreak = 0; correct = 0;
+  document.getElementById('score-disp').textContent = 0;
+  document.getElementById('correct-disp').textContent = 0;
+  document.getElementById('streak-disp').textContent = 0;
+  qs = shuffle([...QUESTIONS]);
+  document.getElementById('end-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  loadQ();
+}
+
+qs = shuffle([...QUESTIONS]);
+loadQ();
+</script>
+</body>
+</html>

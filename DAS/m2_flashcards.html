@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Assistant Flashcards – Week 2</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f7f6f2;
+      --surface:    #ffffff;
+      --surface2:   #f0ede8;
+      --border:     #e4e2da;
+      --border2:    #ccc9bf;
+      --text:       #1a1916;
+      --muted:      #74726a;
+      --accent:     #1d5fa8;
+      --accent-bg:  #e8f0fb;
+      --accent-bd:  #a8c5ed;
+      --green:      #1e6b3c;
+      --green-bg:   #e6f4ec;
+      --green-bd:   #7ec49a;
+      --amber:      #7a4a0a;
+      --amber-bg:   #fef3e2;
+      --amber-bd:   #f0c060;
+      --radius-md:  10px;
+      --radius-lg:  14px;
+      --shadow:     0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-lg:  0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    #app { width: 100%; max-width: 540px; }
+
+    /* Screens */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── START SCREEN ── */
+    .start-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .start-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem; font-size: 26px;
+    }
+    .start-title    { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .start-subtitle { font-size: 13px; color: var(--accent); font-weight: 500; margin-bottom: 1rem; }
+    .start-desc     { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 1.5rem; }
+    .start-badge {
+      display: inline-block;
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      border-radius: 99px; padding: 6px 16px;
+      font-size: 13px; font-weight: 500; color: var(--accent);
+      margin-bottom: 1.75rem;
+    }
+    .btn-start {
+      width: 100%; padding: 13px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn-start:hover { opacity: .88; }
+
+    /* ── GAME SCREEN ── */
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1.25rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+
+    /* Score pills */
+    .score-pills { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+    .pill {
+      font-size: 12px; font-weight: 500;
+      padding: 5px 13px; border-radius: 99px; border: 1px solid;
+    }
+    .pill-got      { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+    .pill-learning { background: var(--amber-bg); border-color: var(--amber-bd); color: var(--amber); }
+
+    /* Flashcard */
+    .card {
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.75rem;
+      min-height: 210px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; cursor: pointer;
+      transition: background .25s, border-color .25s;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 1.25rem;
+    }
+    .card.flipped {
+      background: var(--surface);
+      border-color: var(--border);
+    }
+    .card-label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .08em; text-transform: uppercase;
+      margin-bottom: 12px;
+      color: rgba(255,255,255,.7);
+    }
+    .card.flipped .card-label { color: var(--muted); }
+    .card-text {
+      font-size: 16px; font-weight: 500;
+      line-height: 1.6; color: #fff;
+    }
+    .card.flipped .card-text { color: var(--text); }
+
+    /* Action buttons */
+    .btn-area { text-align: center; }
+    .nav-row { display: flex; justify-content: flex-start; margin-bottom: 1rem; }
+    .btn-back {
+      padding: 7px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface); color: var(--muted);
+      font-size: 13px; font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-back:hover { background: var(--surface2); color: var(--text); border-color: var(--border2); }
+    .btn-back:disabled { opacity: .35; cursor: default; }
+    .btn-reveal {
+      padding: 10px 28px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface); color: var(--text);
+      font-size: 14px; font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-reveal:hover { background: var(--surface2); border-color: var(--border2); }
+    .answer-row { display: flex; gap: 10px; }
+    .btn-review {
+      flex: 1; padding: 11px 10px;
+      border: 1px solid var(--amber-bd);
+      border-radius: var(--radius-md);
+      background: var(--amber-bg); color: var(--amber);
+      font-size: 14px; font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-review:hover { background: #fdeac8; }
+    .btn-got {
+      flex: 1; padding: 11px 10px;
+      border: 1px solid var(--green-bd);
+      border-radius: var(--radius-md);
+      background: var(--green-bg); color: var(--green);
+      font-size: 14px; font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-got:hover { background: #d0edda; }
+
+    /* ── DONE SCREEN ── */
+    .done-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .done-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem; font-size: 26px;
+    }
+    .done-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .done-msg   { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+    .done-stats { display: flex; gap: 10px; margin-bottom: 1.25rem; }
+    .done-stat  {
+      flex: 1; border-radius: var(--radius-md);
+      padding: 14px 10px; text-align: center; border: 1px solid;
+    }
+    .done-stat.got     { background: var(--green-bg); border-color: var(--green-bd); }
+    .done-stat.missed  { background: var(--amber-bg); border-color: var(--amber-bd); }
+    .done-stat-num     { font-size: 28px; font-weight: 600; }
+    .done-stat.got    .done-stat-num { color: var(--green); }
+    .done-stat.missed .done-stat-num { color: var(--amber); }
+    .done-stat-lbl     { font-size: 12px; font-weight: 500; margin-top: 2px; }
+    .done-stat.got    .done-stat-lbl { color: var(--green); }
+    .done-stat.missed .done-stat-lbl { color: var(--amber); }
+    .done-pct {
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      border-radius: var(--radius-md); padding: 12px;
+      margin-bottom: 1.5rem;
+      font-size: 18px; font-weight: 600; color: var(--accent);
+    }
+    .btn-replay {
+      width: 100%; padding: 13px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn-replay:hover { opacity: .88; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- START -->
+  <div class="screen active" id="screen-start">
+    <div class="start-card">
+      <div class="start-icon">&#129463;</div>
+      <p class="start-title">Dental Assistant Flashcards</p>
+      <p class="start-subtitle">Week 2 — Recall Practice Activity</p>
+      <p class="start-desc">
+        This activity is designed to boost your memory recall on key topics from Week 2 — including anesthesia, radiography, instruments, materials, and restorative procedures.<br><br>
+        Flip each card to reveal the answer, then mark whether you got it right or need more review.
+      </p>
+      <div class="start-badge">20 cards &nbsp;·&nbsp; Tap to flip</div>
+      <button class="btn-start" onclick="startGame()">Start flashcards &rarr;</button>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div class="screen" id="screen-game">
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="card-counter">Card 1 of 20</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-back" id="btn-back" onclick="goBack()" disabled>&#8592; Back</button>
+    </div>
+
+    <div class="score-pills">
+      <span class="pill pill-got"      id="pill-got">Got it: 0</span>
+      <span class="pill pill-learning" id="pill-learning">Review: 0</span>
+    </div>
+
+    <div class="card" id="flashcard" onclick="flipCard()">
+      <div class="card-label" id="card-label">Question &mdash; tap to flip</div>
+      <p class="card-text" id="card-text"></p>
+    </div>
+
+    <div class="btn-area" id="btn-area">
+      <button class="btn-reveal" onclick="flipCard()">Reveal answer</button>
+    </div>
+  </div>
+
+  <!-- DONE -->
+  <div class="screen" id="screen-done">
+    <div class="done-card">
+      <div class="done-icon" id="done-icon">&#127942;</div>
+      <p class="done-title">Session complete!</p>
+      <p class="done-msg" id="done-msg"></p>
+      <div class="done-stats">
+        <div class="done-stat got">
+          <div class="done-stat-num" id="final-got">0</div>
+          <div class="done-stat-lbl">Got it</div>
+        </div>
+        <div class="done-stat missed">
+          <div class="done-stat-num" id="final-missed">0</div>
+          <div class="done-stat-lbl">Need review</div>
+        </div>
+      </div>
+      <div class="done-pct" id="done-pct">0% score</div>
+      <button class="btn-replay" onclick="startGame()">Play again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CARDS = [
+  { q: "What is the most common pain control method in dentistry?",               a: "Local anesthesia — it blocks nerve impulses at the injection site." },
+  { q: "Name the two chemical groups of local anesthetics.",                      a: "Amides (e.g., Lidocaine, Articaine) and Esters (less commonly used due to allergy risks)." },
+  { q: "What is the purpose of vasoconstrictors in local anesthesia?",            a: "They prolong numbness and reduce bleeding. Common types: Epinephrine, Levonordefrin." },
+  { q: "What does ALARA stand for?",                                              a: "As Low As Reasonably Achievable — minimize radiation exposure using all protective measures." },
+  { q: "What are the 3 types of intraoral radiographs?",                          a: "Periapical, Bite-Wing, and Occlusal radiographs." },
+  { q: "How much less radiation does digital imaging use vs. traditional X-rays?",a: "Digital imaging uses 70–80% less radiation than traditional film." },
+  { q: "What are the 3 parts of a hand dental instrument?",                       a: "Handle, Shank, and Working End." },
+  { q: "What is the difference between a low-speed and high-speed handpiece?",    a: "Low-speed: up to 25,000 RPM (polishing/adjustments). High-speed: up to 450,000 RPM (tooth prep/decay removal)." },
+  { q: "What is the composition of amalgam?",                                     a: "Mercury (43–54%), Silver, Tin, Copper, and Zinc." },
+  { q: "What are the advantages of composite resins over amalgam?",               a: "Tooth-colored, bonds directly to tooth, and requires minimal removal of natural tooth structure." },
+  { q: "What is acid etching used for?",                                          a: "Phosphoric acid roughens the enamel surface to enhance bonding for composites, sealants, and brackets." },
+  { q: "What are the 5 steps of manual film processing?",                         a: "Developer → Rinse → Fixer → Wash → Dry." },
+  { q: "What causes a 'cone cut' error on an X-ray?",                            a: "A misaligned X-ray beam. Fix: center the PID over the film." },
+  { q: "What is nitrous oxide used for in dentistry?",                            a: "Sedation — it induces relaxation via an inhaled gas (nasal mask) with rapid onset and recovery." },
+  { q: "What records must be documented for anesthesia?",                         a: "Pre/post vital signs, type and amount of anesthetic, procedure duration, and patient response/recovery notes." },
+  { q: "What is the purpose of a Periodontal Probe?",                             a: "It measures pocket depth for gum health assessment." },
+  { q: "What is a matrix system used for in restorations?",                       a: "It provides a temporary wall for Class II, III, and IV restorations during material placement." },
+  { q: "What whitening agent is used in professional in-office treatments?",      a: "Hydrogen Peroxide (25–38%), often accelerated with laser or LED light." },
+  { q: "What are retention pins used for?",                                       a: "They provide internal support for complex restorations when minimal tooth structure remains." },
+  { q: "What is the role of calcium hydroxide as a dental liner?",                a: "It protects the pulp and stimulates new dentin formation." },
+];
+
+let idx = 0, flipped = false, got = 0, missed = 0;
+const TOTAL = CARDS.length;
+let marks = []; // tracks 'got'|'missed'|null per card
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame() {
+  idx = 0; flipped = false; got = 0; missed = 0;
+  marks = new Array(TOTAL).fill(null);
+  updatePills();
+  renderCard();
+  show('screen-game');
+}
+
+function renderCard() {
+  const c = CARDS[idx];
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+  document.getElementById('card-label').textContent = 'Question \u2014 tap to flip';
+  document.getElementById('card-text').textContent  = c.q;
+  document.getElementById('card-counter').textContent = `Card ${idx + 1} of ${TOTAL}`;
+  const pct = Math.round(idx / TOTAL * 100);
+  document.getElementById('prog-pct').textContent  = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('btn-area').innerHTML =
+    `<button class="btn-reveal" onclick="flipCard()">Reveal answer</button>`;
+  document.getElementById('btn-back').disabled = idx === 0;
+  flipped = false;
+}
+
+function flipCard() {
+  if (flipped) return;
+  flipped = true;
+  const c = CARDS[idx];
+  document.getElementById('flashcard').classList.add('flipped');
+  document.getElementById('card-label').textContent = 'Answer';
+  document.getElementById('card-text').textContent  = c.a;
+  document.getElementById('btn-area').innerHTML = `
+    <div class="answer-row">
+      <button class="btn-review" onclick="answer(false)">Need review</button>
+      <button class="btn-got"    onclick="answer(true)">Got it!</button>
+    </div>`;
+}
+
+function answer(isGot) {
+  // Undo previous mark for this card if going back then re-answering
+  if (marks[idx] === 'got') got--;
+  else if (marks[idx] === 'missed') missed--;
+  if (isGot) { got++; marks[idx] = 'got'; }
+  else        { missed++; marks[idx] = 'missed'; }
+  updatePills();
+  idx++;
+  if (idx >= TOTAL) showDone(); else renderCard();
+}
+
+function goBack() {
+  if (idx === 0) return;
+  // Undo the mark for the card we're going back to
+  idx--;
+  if (marks[idx] === 'got')    { got--;    marks[idx] = null; }
+  else if (marks[idx] === 'missed') { missed--; marks[idx] = null; }
+  updatePills();
+  renderCard();
+}
+
+function updatePills() {
+  document.getElementById('pill-got').textContent      = `Got it: ${got}`;
+  document.getElementById('pill-learning').textContent = `Review: ${missed}`;
+}
+
+function showDone() {
+  const pct = Math.round(got / TOTAL * 100);
+  document.getElementById('final-got').textContent    = got;
+  document.getElementById('final-missed').textContent = missed;
+  document.getElementById('done-pct').textContent     = `${pct}% score`;
+  document.getElementById('done-icon').textContent    = pct >= 80 ? '\uD83C\uDFC6' : pct >= 60 ? '\uD83D\uDCAA' : '\uD83D\uDCDA';
+  document.getElementById('done-msg').textContent     = pct >= 80
+    ? "Excellent work! You're mastering the material."
+    : pct >= 60
+    ? "Good effort! A little more review and you'll nail it."
+    : "Keep studying — you've got this!";
+  show('screen-done');
+}
+</script>
+</body>
+</html>

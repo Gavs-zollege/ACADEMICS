@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Assistant Study Flashcards</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #f7f6f2;
+      --surface:     #ffffff;
+      --surface2:    #f0ede8;
+      --border:      #e4e2da;
+      --border2:     #ccc9bf;
+      --text:        #1a1916;
+      --muted:       #74726a;
+      --accent:      #1d5fa8;
+      --accent-bg:   #e8f0fb;
+      --accent-bd:   #a8c5ed;
+      --green:       #1e6b3c;
+      --green-bg:    #e6f4ec;
+      --green-bd:    #7ec49a;
+      --amber:       #7a4a0a;
+      --amber-bg:    #fef3e2;
+      --amber-bd:    #f0c060;
+      --purple:      #3c2e89;
+      --purple-bg:   #eeedfe;
+      --purple-bd:   #afa9ec;
+      --coral:       #6b2a10;
+      --coral-bg:    #faece7;
+      --coral-bd:    #f0997b;
+      --radius-md:   10px;
+      --radius-lg:   14px;
+      --shadow:      0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-lg:   0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app { max-width: 600px; margin: 0 auto; }
+
+    /* Header */
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
+    .header-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .header-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .header-title { font-size: 17px; font-weight: 600; }
+    .header-sub   { font-size: 13px; color: var(--muted); margin-top: 1px; }
+
+    /* Intro */
+    .intro {
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      border-radius: var(--radius-md); padding: 0.9rem 1.1rem;
+      margin-bottom: 1.25rem; font-size: 13px; color: var(--accent); line-height: 1.6;
+    }
+
+    /* Category chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 1.25rem; }
+    .chip {
+      font-size: 11px; font-weight: 600; padding: 5px 13px;
+      border-radius: 99px; border: 1px solid; cursor: pointer;
+      text-transform: uppercase; letter-spacing: .04em;
+      transition: all .12s; font-family: 'DM Sans', sans-serif;
+    }
+    .chip-all    { background: var(--surface);    border-color: var(--border2);   color: var(--muted); }
+    .chip-ic     { background: var(--accent-bg);  border-color: var(--accent-bd); color: var(--accent); }
+    .chip-da     { background: var(--green-bg);   border-color: var(--green-bd);  color: var(--green); }
+    .chip-ra     { background: var(--amber-bg);   border-color: var(--amber-bd);  color: var(--amber); }
+    .chip-cl     { background: var(--coral-bg);   border-color: var(--coral-bd);  color: var(--coral); }
+
+    .chip.active, .chip:hover { filter: brightness(.93); }
+    .chip-all.active  { background: var(--text); border-color: var(--text); color: #fff; }
+    .chip-ic.active   { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .chip-da.active   { background: var(--green);  border-color: var(--green);  color: #fff; }
+    .chip-ra.active   { background: var(--amber);  border-color: var(--amber);  color: #fff; }
+    .chip-cl.active   { background: var(--coral);  border-color: var(--coral-bd); color: #fff; }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s; }
+
+    /* Flashcard — 3D flip */
+    .card-area { perspective: 1000px; width: 100%; min-height: 230px; margin-bottom: 1rem; cursor: pointer; }
+    .card-inner {
+      position: relative; width: 100%; min-height: 230px;
+      transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.4,0,.2,1);
+    }
+    .card-inner.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg); border: 1px solid;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.75rem; text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .card-front { background: var(--accent); border-color: var(--accent); }
+    .card-back  { background: var(--surface); border-color: var(--border); transform: rotateY(180deg); }
+
+    .card-tag {
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 12px;
+      padding: 3px 10px; border-radius: 99px;
+    }
+    .card-front .card-tag { background: rgba(255,255,255,.15); color: rgba(255,255,255,.8); }
+    .card-back  .card-tag { background: var(--accent-bg); color: var(--accent); }
+
+    .card-q { font-size: 16px; font-weight: 500; line-height: 1.6; color: #fff; }
+    .card-a { font-size: 14px; font-weight: 400; line-height: 1.65; color: var(--text); }
+    .card-hint { font-size: 12px; margin-top: 12px; }
+    .card-front .card-hint { color: rgba(255,255,255,.5); }
+    .card-back  .card-hint { color: var(--muted); }
+
+    /* Flip hint */
+    .flip-hint { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 1rem; min-height: 18px; }
+
+    /* Buttons */
+    .btn-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .btn {
+      font-size: 13px; font-weight: 500; padding: 9px 20px; border-radius: var(--radius-md);
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .12s;
+    }
+    .btn:hover { background: var(--surface2); border-color: var(--border2); }
+    .btn-flip    { border-color: var(--green-bd);   color: var(--green);  background: var(--green-bg); }
+    .btn-flip:hover { background: #d0edda; }
+    .btn-shuffle { border-color: var(--purple-bd);  color: var(--purple); background: var(--purple-bg); }
+    .btn-shuffle:hover { background: #dedcfc; }
+    .btn-reset   { border-color: var(--coral-bd);   color: var(--coral);  background: var(--coral-bg); }
+    .btn-reset:hover { background: #f5ddd6; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Dental Assistant Study Flashcards</div>
+      <div class="header-sub">Tap a card to reveal the answer. Filter by topic to focus your review.</div>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro">
+    This activity is designed to make studying fun and boost your recall! Use the filters below to focus on specific topics.
+  </div>
+
+  <!-- Category chips -->
+  <div class="chips">
+    <span class="chip chip-all active" onclick="filterCards('all', this)">All topics</span>
+    <span class="chip chip-ic"         onclick="filterCards('ic',  this)">Infection control</span>
+    <span class="chip chip-da"         onclick="filterCards('da',  this)">Dental anatomy</span>
+    <span class="chip chip-ra"         onclick="filterCards('ra',  this)">Radiography</span>
+    <span class="chip chip-cl"         onclick="filterCards('cl',  this)">Clinical</span>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="prog-label">Card 1 of 30</span>
+      <span id="prog-pct">3%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill" style="width:3%"></div>
+    </div>
+  </div>
+
+  <!-- Flashcard -->
+  <div class="card-area" onclick="flipCard()">
+    <div class="card-inner" id="card-inner">
+      <div class="card-face card-front">
+        <span class="card-tag">Question</span>
+        <div class="card-q" id="q-text"></div>
+        <div class="card-hint">Tap card to reveal answer</div>
+      </div>
+      <div class="card-face card-back">
+        <span class="card-tag">Answer</span>
+        <div class="card-a" id="a-text"></div>
+        <div class="card-hint">Tap again to see the question</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flip hint -->
+  <div class="flip-hint" id="flip-hint">Tap the card to flip it</div>
+
+  <!-- Nav buttons -->
+  <div class="btn-row">
+    <button class="btn" onclick="prev()">&#8592; Prev</button>
+    <button class="btn btn-flip" onclick="flipCard()">Flip card</button>
+    <button class="btn" onclick="next()">Next &#8594;</button>
+  </div>
+
+  <!-- Utility buttons -->
+  <div class="btn-row">
+    <button class="btn btn-shuffle" onclick="shuffleDeck()">&#8645; Shuffle</button>
+    <button class="btn btn-reset"   onclick="resetCards()">&#8635; Reset</button>
+  </div>
+
+</div>
+
+<script>
+const ALL = [
+  { cat:"ic", q:"What does PPE stand for and what does it include?",               a:"Personal Protective Equipment — includes gloves, mask, eye protection, and gown." },
+  { cat:"cl", q:"What is the primary purpose of the dental dam?",                  a:"Isolates the tooth from moisture and saliva during procedures, improving visibility and infection control." },
+  { cat:"da", q:"Name the 3 types of dentition.",                                  a:"Primary (baby teeth), Mixed (primary + permanent), and Permanent (adult teeth)." },
+  { cat:"cl", q:"What does HIPAA protect?",                                        a:"Patient health information — it requires confidentiality and security of medical records." },
+  { cat:"ic", q:"What is the difference between sterilization and disinfection?",  a:"Sterilization destroys all microorganisms including spores. Disinfection kills most but not all microorganisms." },
+  { cat:"da", q:"What are the 5 tooth surfaces?",                                  a:"Mesial, Distal, Buccal/Labial, Lingual/Palatal, and Occlusal/Incisal." },
+  { cat:"cl", q:"What is a high-volume evacuator (HVE) used for?",                a:"To remove fluids, debris, and aerosols from the mouth quickly during dental procedures." },
+  { cat:"ra", q:"What does ALARA stand for in radiation safety?",                  a:"As Low As Reasonably Achievable — the principle of minimizing radiation exposure." },
+  { cat:"da", q:"What is the Universal Numbering System?",                         a:"A tooth numbering system using 1–32 for permanent teeth and A–T for primary teeth." },
+  { cat:"cl", q:"What is the role of a dental assistant during a restorative procedure?", a:"Instrument transfer, moisture control, mixing materials, retraction, and patient care." },
+  { cat:"ic", q:"What pathogen is most associated with disease transmission risk in dentistry?", a:"Bloodborne pathogens like Hepatitis B (HBV), Hepatitis C (HCV), and HIV." },
+  { cat:"ra", q:"What are the two main radiographic techniques?",                  a:"Paralleling technique and bisecting angle technique." },
+  { cat:"da", q:"What is occlusion?",                                              a:"The contact relationship between upper and lower teeth when the jaws are closed." },
+  { cat:"ic", q:"What is the spore test (biological indicator) used for?",         a:"To verify that the autoclave (sterilizer) is functioning correctly and killing all microorganisms." },
+  { cat:"cl", q:"What is the purpose of a dental sealant?",                        a:"To prevent decay by sealing the grooves and pits on the chewing surfaces of back teeth." },
+  { cat:"ra", q:"What lead apron is required during dental X-rays?",               a:"A lead apron (with thyroid collar for children and pregnant patients) to protect from radiation scatter." },
+  { cat:"cl", q:"What is gingival probing used to assess?",                        a:"Periodontal health — it measures the depth of the sulcus/pocket around each tooth." },
+  { cat:"ic", q:"What does an autoclave use to sterilize instruments?",            a:"Steam under pressure (moist heat) at a specific temperature and time." },
+  { cat:"da", q:"Name the 4 types of teeth and their functions.",                  a:"Incisors (cutting), Canines (tearing), Premolars (crushing), Molars (grinding)." },
+  { cat:"cl", q:"What is root canal therapy?",                                     a:"An endodontic procedure that removes infected pulp tissue, cleans and shapes the canal, then seals it." },
+  { cat:"ra", q:"What is the purpose of the film holder in periapical X-rays?",    a:"To position and stabilize the film/sensor parallel to the tooth for accurate imaging." },
+  { cat:"cl", q:"What does scope of practice mean for a dental assistant?",        a:"The legal tasks and procedures a dental assistant is permitted to perform under state regulations." },
+  { cat:"cl", q:"What is the purpose of an alginate impression?",                  a:"To create a negative mold of the teeth and surrounding tissue for making study models." },
+  { cat:"ic", q:"What are the modes of disease transmission in dentistry?",        a:"Direct contact, indirect contact, droplet transmission, and airborne transmission." },
+  { cat:"cl", q:"What is coronal polishing?",                                      a:"Removal of soft deposits and stains from the crown (visible part) of the tooth using a rubber cup." },
+  { cat:"ra", q:"What is a panoramic radiograph?",                                 a:"A single X-ray image showing the entire mouth — all teeth, jaws, sinuses, and supporting structures." },
+  { cat:"da", q:"What is the function of the pulp in a tooth?",                    a:"Contains nerves and blood vessels that provide sensation and nourishment to the tooth." },
+  { cat:"cl", q:"What is nitrous oxide used for in dentistry?",                    a:"A mild sedation gas used to reduce patient anxiety and discomfort during procedures." },
+  { cat:"cl", q:"What is scaling and root planing?",                               a:"A deep cleaning procedure that removes calculus (tartar) from below the gum line to treat periodontitis." },
+  { cat:"cl", q:"What are the components of the dental operatory?",                a:"Dental chair, delivery unit, operator's stool, assistant's stool, light, X-ray unit, and cabinetry." },
+];
+
+let deck = [...ALL], idx = 0, flipped = false, activeCat = 'all';
+
+function filterCards(cat, el) {
+  activeCat = cat;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  deck = cat === 'all' ? [...ALL] : ALL.filter(c => c.cat === cat);
+  idx = 0; flipped = false;
+  render();
+}
+
+function render() {
+  const d = deck[idx];
+  document.getElementById('q-text').textContent = d.q;
+  document.getElementById('a-text').textContent = d.a;
+  document.getElementById('card-inner').classList.remove('flipped');
+  flipped = false;
+  const pct = Math.round((idx + 1) / deck.length * 100);
+  document.getElementById('prog-label').textContent = `Card ${idx + 1} of ${deck.length}`;
+  document.getElementById('prog-pct').textContent   = pct + '%';
+  document.getElementById('prog-fill').style.width  = pct + '%';
+  document.getElementById('flip-hint').textContent  = 'Tap the card to flip it';
+}
+
+function flipCard() {
+  flipped = !flipped;
+  document.getElementById('card-inner').classList.toggle('flipped', flipped);
+  document.getElementById('flip-hint').textContent = flipped
+    ? 'Tap again to see the question'
+    : 'Tap the card to flip it';
+}
+
+function next() { idx = (idx + 1) % deck.length; render(); }
+function prev() { idx = (idx - 1 + deck.length) % deck.length; render(); }
+
+function shuffleDeck() {
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  idx = 0; render();
+}
+
+function resetCards() {
+  deck = activeCat === 'all' ? [...ALL] : ALL.filter(c => c.cat === activeCat);
+  idx = 0; render();
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infection Control Match-Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f7f6f2;
+      --surface:    #ffffff;
+      --surface2:   #f0ede8;
+      --border:     #e4e2da;
+      --border2:    #ccc9bf;
+      --text:       #1a1916;
+      --muted:      #74726a;
+      --accent:     #1d5fa8;
+      --accent-bg:  #e8f0fb;
+      --accent-bd:  #a8c5ed;
+      --green:      #1e6b3c;
+      --green-bg:   #e6f4ec;
+      --green-bd:   #7ec49a;
+      --red:        #8b1d1d;
+      --red-bg:     #fbecec;
+      --red-bd:     #e8aaaa;
+      --radius-sm:  6px;
+      --radius-md:  10px;
+      --radius-lg:  14px;
+      --shadow:     0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app { max-width: 780px; margin: 0 auto; }
+
+    /* Header */
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+    .header-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .header-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .header-title { font-size: 17px; font-weight: 600; }
+    .header-sub   { font-size: 13px; color: var(--muted); margin-top: 1px; }
+
+    /* Score bar */
+    .score-bar { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+    .score-pill {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 8px 16px;
+      font-size: 13px; color: var(--muted); font-weight: 400;
+    }
+    .score-pill strong { font-weight: 600; color: var(--text); }
+
+    /* Game grid */
+    .game-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    @media (max-width: 540px) { .game-grid { grid-template-columns: 1fr; } }
+
+    .col-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--muted); margin-bottom: 12px;
+    }
+
+    /* Draggable cards */
+    .draggable-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 11px 13px;
+      margin-bottom: 8px;
+      cursor: grab;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      user-select: none;
+      transition: border-color .12s, box-shadow .12s, opacity .12s;
+      box-shadow: var(--shadow);
+    }
+    .draggable-card:hover { border-color: var(--accent); }
+    .draggable-card:active { cursor: grabbing; opacity: .6; }
+    .draggable-card.dragging { opacity: .4; }
+    .card-icon { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
+    .card-text  { font-size: 13px; font-weight: 400; line-height: 1.5; color: var(--text); }
+
+    /* Drop zones */
+    .drop-zone {
+      background: var(--surface);
+      border: 1.5px dashed var(--border2);
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      min-height: 74px;
+      margin-bottom: 10px;
+      transition: border-color .12s, background .12s;
+    }
+    .drop-zone.drag-over { border-color: var(--accent); background: var(--accent-bg); }
+    .drop-zone.correct   { border: 1.5px solid var(--green-bd); background: var(--green-bg); }
+    .drop-zone.wrong     { border: 1.5px solid var(--red-bd);   background: var(--red-bg); }
+
+    .zone-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+    .zone-desc  { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+
+    .dropped-item {
+      font-size: 12px; font-weight: 500;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--green-bg);
+      border: 1px solid var(--green-bd);
+      color: var(--green);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .feedback-msg { font-size: 12px; font-weight: 500; margin-top: 6px; }
+    .feedback-msg.ok { color: var(--green); }
+    .feedback-msg.no { color: var(--red); }
+
+    /* Buttons */
+    .btn-row { display: flex; gap: 10px; margin-top: 1.5rem; flex-wrap: wrap; }
+    .btn {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 9px 20px;
+      font-size: 14px; font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface); color: var(--text);
+      cursor: pointer; transition: background .12s, border-color .12s;
+    }
+    .btn:hover { background: var(--surface2); border-color: var(--border2); }
+    .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn.primary:hover { opacity: .88; }
+
+    /* Win screen */
+    #win-screen {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow);
+      margin-top: 1rem;
+    }
+    .win-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--green-bg); border: 1px solid var(--green-bd);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem; font-size: 26px;
+    }
+    .win-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .win-sub   { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; }
+    .win-stats { display: flex; gap: 10px; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .win-stat  {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 10px 20px; text-align: center; min-width: 100px;
+    }
+    .win-stat-label { font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+    .win-stat-val   { font-size: 22px; font-weight: 600; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 1L3 5v6c0 5.25 3.75 10.15 9 11.35C17.25 21.15 21 16.25 21 11V5l-9-4zm-1 14l-3-3 1.41-1.41L11 12.17l4.59-4.58L17 9l-6 6z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Infection Control Match-Up</div>
+      <div class="header-sub">Drag each action card to the correct infection control category.</div>
+    </div>
+  </div>
+
+  <!-- Score bar -->
+  <div class="score-bar">
+    <div class="score-pill">Score: <strong><span id="score-num">0</span> / 5</strong></div>
+    <div class="score-pill">Attempts: <strong><span id="att-num">0</span></strong></div>
+  </div>
+
+  <!-- Game -->
+  <div class="game-grid" id="game-area">
+    <div>
+      <div class="col-label">Action cards</div>
+      <div id="card-pool"></div>
+    </div>
+    <div>
+      <div class="col-label">Categories</div>
+      <div id="zone-pool"></div>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-row" id="btn-row">
+    <button class="btn" onclick="resetGame()">Reset</button>
+  </div>
+
+  <!-- Win screen -->
+  <div id="win-screen">
+    <div class="win-icon">&#10003;</div>
+    <p class="win-title" id="win-title">All matched!</p>
+    <p class="win-sub" id="win-sub"></p>
+    <div class="win-stats">
+      <div class="win-stat"><div class="win-stat-label">Score</div><div class="win-stat-val">5 / 5</div></div>
+      <div class="win-stat"><div class="win-stat-label">Attempts</div><div class="win-stat-val" id="win-att"></div></div>
+    </div>
+    <button class="btn primary" onclick="resetGame()">Play again</button>
+  </div>
+
+</div>
+
+<script>
+const PAIRS = [
+  { id:"c1", icon:"🧼", text:"Wash hands with soap for 20 seconds before patient contact",         zone:"hand-hygiene"  },
+  { id:"c2", icon:"🧤", text:"Put on gloves and a gown before any exposure to body fluids",        zone:"ppe"           },
+  { id:"c3", icon:"🫧", text:"Ask patient to rinse with antiseptic mouthwash before the procedure",zone:"mouth-rinse"   },
+  { id:"c4", icon:"♨️", text:"Run the autoclave cycle and verify with biological indicators",       zone:"sterilization" },
+  { id:"c5", icon:"🧹", text:"Wipe down dental chairs with an EPA-registered disinfectant",        zone:"env-cleaning"  },
+];
+
+const ZONES = [
+  { id:"hand-hygiene",  label:"Hand hygiene",                     desc:"Before & after patient contact"   },
+  { id:"ppe",           label:"Personal protective equipment",     desc:"Gloves, masks, gowns, eyewear"    },
+  { id:"mouth-rinse",   label:"Preprocedural mouth rinse",         desc:"Reduces oral microbial load"      },
+  { id:"sterilization", label:"Instrument sterilization",          desc:"Autoclave + indicators"           },
+  { id:"env-cleaning",  label:"Environmental cleaning",            desc:"High-touch surfaces"              },
+];
+
+let score = 0, attempts = 0, placed = {}, dragging = null;
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildCards() {
+  const pool = document.getElementById('card-pool');
+  pool.innerHTML = '';
+  shuffle([...PAIRS]).forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'draggable-card';
+    el.id = 'card-' + c.id;
+    el.draggable = true;
+    el.innerHTML = `<span class="card-icon">${c.icon}</span><span class="card-text">${c.text}</span>`;
+    el.addEventListener('dragstart', () => { dragging = c.id; el.classList.add('dragging'); });
+    el.addEventListener('dragend',   () => { el.classList.remove('dragging'); dragging = null; });
+    pool.appendChild(el);
+  });
+}
+
+function buildZones() {
+  const pool = document.getElementById('zone-pool');
+  pool.innerHTML = '';
+  ZONES.forEach(z => {
+    const el = document.createElement('div');
+    el.className = 'drop-zone';
+    el.id = 'zone-' + z.id;
+    el.innerHTML = `
+      <div class="zone-label">${z.label}</div>
+      <div class="zone-desc">${z.desc}</div>
+      <div class="dropped-slot"></div>
+      <div class="feedback-msg"></div>`;
+    el.addEventListener('dragover',  e => { e.preventDefault(); el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+    el.addEventListener('drop',      e => { e.preventDefault(); el.classList.remove('drag-over'); handleDrop(z.id); });
+    pool.appendChild(el);
+  });
+}
+
+function handleDrop(zoneId) {
+  if (!dragging || placed[zoneId]) return;
+  attempts++;
+  document.getElementById('att-num').textContent = attempts;
+
+  const card   = PAIRS.find(p => p.id === dragging);
+  const zoneEl = document.getElementById('zone-' + zoneId);
+  const fb     = zoneEl.querySelector('.feedback-msg');
+  const slot   = zoneEl.querySelector('.dropped-slot');
+
+  if (card.zone === zoneId) {
+    score++;
+    document.getElementById('score-num').textContent = score;
+    placed[zoneId] = dragging;
+    zoneEl.classList.add('correct');
+    slot.innerHTML = `<span class="dropped-item">${card.icon} ${card.text}</span>`;
+    fb.className = 'feedback-msg ok';
+    fb.textContent = 'Correct!';
+    const cardEl = document.getElementById('card-' + dragging);
+    if (cardEl) cardEl.remove();
+    if (score === PAIRS.length) setTimeout(showWin, 400);
+  } else {
+    zoneEl.classList.add('wrong');
+    fb.className = 'feedback-msg no';
+    fb.textContent = 'Not quite — try another category.';
+    setTimeout(() => { zoneEl.classList.remove('wrong'); fb.textContent = ''; }, 1500);
+  }
+}
+
+function showWin() {
+  document.getElementById('game-area').style.display = 'none';
+  document.getElementById('btn-row').style.display   = 'none';
+  const ws = document.getElementById('win-screen');
+  ws.style.display = 'block';
+  document.getElementById('win-att').textContent = attempts;
+  const sub = attempts <= 5
+    ? 'Flawless! Perfect score on your first tries.'
+    : 'Great work — infection control mastered!';
+  document.getElementById('win-sub').textContent = sub;
+}
+
+function resetGame() {
+  score = 0; attempts = 0; placed = {};
+  document.getElementById('score-num').textContent = 0;
+  document.getElementById('att-num').textContent   = 0;
+  document.getElementById('game-area').style.display = 'grid';
+  document.getElementById('btn-row').style.display   = 'flex';
+  document.getElementById('win-screen').style.display = 'none';
+  buildCards();
+  buildZones();
+}
+
+buildCards();
+buildZones();
+</script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Radiography Flashcards – Week 8</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f7f6f2;
+      --surface:    #ffffff;
+      --surface2:   #f0ede8;
+      --border:     #e4e2da;
+      --border2:    #ccc9bf;
+      --text:       #1a1916;
+      --muted:      #74726a;
+      --accent:     #1d5fa8;
+      --accent-bg:  #e8f0fb;
+      --accent-bd:  #a8c5ed;
+      --green:      #1e6b3c;
+      --green-bg:   #e6f4ec;
+      --green-bd:   #7ec49a;
+      --amber:      #7a4a0a;
+      --amber-bg:   #fef3e2;
+      --amber-bd:   #f0c060;
+      --radius-md:  10px;
+      --radius-lg:  14px;
+      --shadow:     0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-lg:  0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app { max-width: 560px; margin: 0 auto; }
+
+    /* Header */
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+    .header-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .header-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .header-title { font-size: 17px; font-weight: 600; }
+    .header-sub   { font-size: 13px; color: var(--muted); margin-top: 1px; }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1.25rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+
+    /* Score pills */
+    .score-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+    .pill { font-size: 12px; font-weight: 500; padding: 5px 13px; border-radius: 99px; border: 1px solid; }
+    .pill-knew   { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+    .pill-review { background: var(--amber-bg); border-color: var(--amber-bd); color: var(--amber); }
+
+    /* Flashcard — no 3D flip, uses background/content transition like the original */
+    .card {
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-lg);
+      min-height: 220px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.75rem; text-align: center;
+      cursor: pointer;
+      transition: background .25s, border-color .25s;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 1.25rem;
+    }
+    .card.flipped { background: var(--surface); border-color: var(--border); }
+
+    .card-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 12px;
+      color: rgba(255,255,255,.65);
+    }
+    .card.flipped .card-label { color: var(--muted); }
+
+    .card-text {
+      font-size: 16px; font-weight: 500; line-height: 1.6;
+      color: #fff;
+    }
+    .card.flipped .card-text { color: var(--text); }
+
+    .tap-hint { font-size: 12px; margin-top: 12px; color: rgba(255,255,255,.55); }
+    .card.flipped .tap-hint { color: var(--muted); }
+
+    /* Action buttons */
+    .action-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+    .btn-knew {
+      flex: 1; padding: 11px 10px; border-radius: var(--radius-md);
+      border: 1px solid var(--green-bd); background: var(--green-bg); color: var(--green);
+      font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-knew:hover { background: #d0edda; }
+    .btn-review {
+      flex: 1; padding: 11px 10px; border-radius: var(--radius-md);
+      border: 1px solid var(--amber-bd); background: var(--amber-bg); color: var(--amber);
+      font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-review:hover { background: #fdeac8; }
+    .btn-reveal {
+      width: 100%; padding: 11px; border-radius: var(--radius-md);
+      border: 1px solid var(--accent-bd); background: var(--accent-bg); color: var(--accent);
+      font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s; text-align: center;
+    }
+    .btn-reveal:hover { background: #d4e4f7; }
+
+    /* Done screen */
+    #done-screen { display: none; }
+    .done-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 2.5rem 2rem;
+      text-align: center; box-shadow: var(--shadow-lg);
+    }
+    .done-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem; font-size: 26px;
+    }
+    .done-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .done-sub   { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+    .done-stats { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+    .done-stat  { flex: 1; border-radius: var(--radius-md); padding: 14px 10px; text-align: center; border: 1px solid; }
+    .done-stat.knew   { background: var(--green-bg); border-color: var(--green-bd); }
+    .done-stat.review { background: var(--amber-bg); border-color: var(--amber-bd); }
+    .done-stat-num    { font-size: 28px; font-weight: 600; }
+    .done-stat.knew   .done-stat-num { color: var(--green); }
+    .done-stat.review .done-stat-num { color: var(--amber); }
+    .done-stat-lbl    { font-size: 12px; font-weight: 500; margin-top: 2px; }
+    .done-stat.knew   .done-stat-lbl { color: var(--green); }
+    .done-stat.review .done-stat-lbl { color: var(--amber); }
+    .btn-restart {
+      width: 100%; padding: 13px; background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn-restart:hover { opacity: .88; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Dental Radiography Flashcards</div>
+      <div class="header-sub">Week 8 — Tap the card to reveal the answer</div>
+    </div>
+  </div>
+
+  <!-- Main screen -->
+  <div id="main-screen">
+
+    <div class="progress-wrap">
+      <div class="progress-meta">
+        <span id="prog-label">Card 1 of 12</span>
+        <span id="prog-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="score-row">
+      <span class="pill pill-knew"   id="pill-knew">Knew it: 0</span>
+      <span class="pill pill-review" id="pill-review">Review: 0</span>
+    </div>
+
+    <div class="card" id="card" onclick="flipCard()">
+      <div class="card-label" id="card-label">Question</div>
+      <p class="card-text" id="card-text"></p>
+      <p class="tap-hint" id="tap-hint">Tap to reveal answer</p>
+    </div>
+
+    <div id="btn-area">
+      <button class="btn-reveal" onclick="flipCard()">Reveal answer</button>
+    </div>
+
+  </div>
+
+  <!-- Done screen -->
+  <div id="done-screen">
+    <div class="done-card">
+      <div class="done-icon">&#127881;</div>
+      <p class="done-title">You finished all the cards!</p>
+      <p class="done-sub">Great job reviewing Week 8 — Dental Radiography!</p>
+      <div class="done-stats">
+        <div class="done-stat knew">
+          <div class="done-stat-num" id="final-knew">0</div>
+          <div class="done-stat-lbl">Knew it</div>
+        </div>
+        <div class="done-stat review">
+          <div class="done-stat-num" id="final-review">0</div>
+          <div class="done-stat-lbl">Need review</div>
+        </div>
+      </div>
+      <button class="btn-restart" onclick="restart()">Start over</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CARDS = [
+  { q: "What is Radiography in dentistry?",
+    a: "The use of x-rays to view internal structures of teeth, bones, and surrounding tissues to detect problems invisible to the naked eye." },
+  { q: "What is a Radiograph?",
+    a: "An image produced on a photographic film or digital sensor by x-rays, used to identify hidden dental problems like cavities, impacted teeth, or tumors." },
+  { q: "What is the ALARA principle?",
+    a: "'As Low As Reasonably Achievable' — always use the lowest radiation dose necessary to get an adequate image." },
+  { q: "What protective gear is placed on a patient before x-rays?",
+    a: "A lead apron and thyroid collar to minimize radiation exposure to the body, especially the thyroid gland." },
+  { q: "What are the 3 types of intraoral radiographs?",
+    a: "Bitewing, Periapical, and Panoramic radiographs — each used for different areas and purposes." },
+  { q: "What does Contrast mean in radiography?",
+    a: "The difference in density between tissues, which helps highlight specific areas on a radiograph so abnormalities can be detected." },
+  { q: "What is the role of the x-ray machine?",
+    a: "It generates and directs radiation toward the patient for both intraoral (inside the mouth) and extraoral (outside the mouth) imaging." },
+  { q: "What are the 6 steps of a dental radiography procedure?",
+    a: "1) Preparation  2) Positioning  3) Exposure  4) Processing  5) Evaluation  6) Aftercare." },
+  { q: "What is the solution for motion artifacts (blurry images)?",
+    a: "Ensure the patient remains still during exposure. Consider using a bite block to help with positioning." },
+  { q: "How does digital radiography differ from traditional film?",
+    a: "Digital imaging displays results instantly on a monitor with less radiation exposure, while traditional film must be chemically developed in a darkroom." },
+  { q: "What hygiene measures are used during radiography?",
+    a: "Use disposable barriers for the film or sensor, and clean/disinfect all reusable equipment after each patient." },
+  { q: "Why are radiographs important in dentistry?",
+    a: "They help assess oral health, plan treatments, ensure accurate diagnoses, and detect issues early before they become more serious." },
+];
+
+let idx = 0, flipped = false, knew = 0, review = 0;
+const TOTAL = CARDS.length;
+
+function render() {
+  const c = CARDS[idx];
+  const card = document.getElementById('card');
+
+  card.classList.toggle('flipped', flipped);
+  document.getElementById('card-label').textContent = flipped ? 'Answer' : 'Question';
+  document.getElementById('card-text').textContent  = flipped ? c.a : c.q;
+  document.getElementById('tap-hint').style.display = flipped ? 'none' : 'block';
+
+  const pct = Math.round(idx / TOTAL * 100);
+  document.getElementById('prog-label').textContent = `Card ${idx + 1} of ${TOTAL}`;
+  document.getElementById('prog-pct').textContent   = pct + '%';
+  document.getElementById('prog-fill').style.width  = pct + '%';
+  document.getElementById('pill-knew').textContent   = `Knew it: ${knew}`;
+  document.getElementById('pill-review').textContent = `Review: ${review}`;
+
+  document.getElementById('btn-area').innerHTML = flipped
+    ? `<div class="action-row">
+         <button class="btn-review" onclick="answer(false)">Need review</button>
+         <button class="btn-knew"   onclick="answer(true)">I knew it! &#10003;</button>
+       </div>`
+    : `<button class="btn-reveal" onclick="flipCard()">Reveal answer</button>`;
+}
+
+function flipCard() {
+  flipped = !flipped;
+  render();
+}
+
+function answer(didKnow) {
+  if (didKnow) knew++; else review++;
+  flipped = false;
+  idx++;
+  if (idx >= TOTAL) {
+    showDone();
+  } else {
+    render();
+  }
+}
+
+function showDone() {
+  document.getElementById('main-screen').style.display  = 'none';
+  document.getElementById('done-screen').style.display  = 'block';
+  document.getElementById('final-knew').textContent     = knew;
+  document.getElementById('final-review').textContent   = review;
+}
+
+function restart() {
+  idx = 0; flipped = false; knew = 0; review = 0;
+  document.getElementById('done-screen').style.display = 'none';
+  document.getElementById('main-screen').style.display = 'block';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Assistant Flashcards – Week 9</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f7f6f2;
+      --surface:    #ffffff;
+      --surface2:   #f0ede8;
+      --border:     #e4e2da;
+      --border2:    #ccc9bf;
+      --text:       #1a1916;
+      --muted:      #74726a;
+      --accent:     #1d5fa8;
+      --accent-bg:  #e8f0fb;
+      --accent-bd:  #a8c5ed;
+      --green:      #1e6b3c;
+      --green-bg:   #e6f4ec;
+      --green-bd:   #7ec49a;
+      --amber:      #7a4a0a;
+      --amber-bg:   #fef3e2;
+      --amber-bd:   #f0c060;
+      --radius-md:  10px;
+      --radius-lg:  14px;
+      --shadow:     0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-lg:  0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app { max-width: 560px; margin: 0 auto; }
+
+    /* Header */
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
+    .header-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .header-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .header-title { font-size: 17px; font-weight: 600; }
+    .header-sub   { font-size: 13px; color: var(--muted); margin-top: 1px; }
+
+    /* Top bar */
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+    .card-count { font-size: 12px; color: var(--muted); }
+    .score-pills { display: flex; gap: 8px; }
+    .pill { font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 99px; border: 1px solid; }
+    .pill-got    { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+    .pill-missed { background: var(--amber-bg); border-color: var(--amber-bd); color: var(--amber); }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1.25rem; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--accent); border-radius: 99px; transition: width .4s; }
+    .progress-pct   { text-align: right; font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* Flashcard */
+    .card {
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-lg);
+      min-height: 230px;
+      display: flex; flex-direction: column;
+      justify-content: flex-start;
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      transition: background .25s, border-color .25s;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 1.25rem;
+    }
+    .card.flipped { background: var(--surface); border-color: var(--border); }
+
+    .card-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 1rem;
+      display: inline-block; padding: 3px 10px; border-radius: 99px;
+      background: rgba(255,255,255,.15); color: rgba(255,255,255,.8);
+      align-self: flex-start;
+    }
+    .card.flipped .card-label { background: var(--accent-bg); color: var(--accent); }
+
+    .card-q {
+      font-size: 16px; font-weight: 500; line-height: 1.6; color: #fff;
+      flex: 1; display: flex; align-items: center;
+    }
+    .card-a {
+      font-size: 14px; font-weight: 400; line-height: 1.7; color: var(--text);
+      flex: 1; white-space: pre-line;
+    }
+
+    /* Buttons */
+    .btn-reveal {
+      width: 100%; padding: 11px; border-radius: var(--radius-md);
+      border: 1px solid var(--accent-bd); background: var(--accent-bg); color: var(--accent);
+      font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s; margin-bottom: 8px;
+    }
+    .btn-reveal:hover { background: #d4e4f7; }
+
+    .answer-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    .btn-got {
+      flex: 1; padding: 11px 10px; border-radius: var(--radius-md);
+      border: 1px solid var(--green-bd); background: var(--green-bg); color: var(--green);
+      font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-got:hover { background: #d0edda; }
+    .btn-miss {
+      flex: 1; padding: 11px 10px; border-radius: var(--radius-md);
+      border: 1px solid var(--amber-bd); background: var(--amber-bg); color: var(--amber);
+      font-size: 14px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-miss:hover { background: #fdeac8; }
+
+    .btn-next {
+      width: 100%; padding: 11px; border-radius: var(--radius-md);
+      border: none; background: var(--accent); color: #fff;
+      font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: opacity .12s;
+    }
+    .btn-next:hover { opacity: .88; }
+
+    /* Done screen */
+    #done-screen { display: none; }
+    .done-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 2.5rem 2rem;
+      text-align: center; box-shadow: var(--shadow-lg);
+    }
+    .done-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem; font-size: 26px;
+    }
+    .done-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .done-sub   { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; }
+    .done-stats { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+    .done-stat  { flex: 1; border-radius: var(--radius-md); padding: 14px 10px; text-align: center; border: 1px solid; }
+    .done-stat.got     { background: var(--green-bg); border-color: var(--green-bd); }
+    .done-stat.missed  { background: var(--amber-bg); border-color: var(--amber-bd); }
+    .done-stat.score   { background: var(--accent-bg); border-color: var(--accent-bd); }
+    .done-stat-num     { font-size: 28px; font-weight: 600; }
+    .done-stat.got    .done-stat-num { color: var(--green); }
+    .done-stat.missed .done-stat-num { color: var(--amber); }
+    .done-stat.score  .done-stat-num { color: var(--accent); }
+    .done-stat-lbl     { font-size: 12px; font-weight: 500; margin-top: 2px; color: var(--muted); }
+    .btn-restart {
+      width: 100%; padding: 13px; background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn-restart:hover { opacity: .88; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Dental Assistant Flashcards</div>
+      <div class="header-sub">Week 9 — Coronal Polishing, Sealants &amp; Career</div>
+    </div>
+  </div>
+
+  <!-- Main screen -->
+  <div id="main-screen">
+    <div class="topbar">
+      <span class="card-count" id="card-count">Card 1 of 20</span>
+      <div class="score-pills">
+        <span class="pill pill-got"    id="pill-got">Got it: 0</span>
+        <span class="pill pill-missed" id="pill-missed">Review: 0</span>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+      <div class="progress-pct" id="prog-pct">0% complete</div>
+    </div>
+
+    <div class="card" id="card" onclick="flipCard()">
+      <div class="card-label" id="card-label">Question — tap to flip</div>
+      <div class="card-q" id="card-q"></div>
+      <div class="card-a" id="card-a" style="display:none"></div>
+    </div>
+
+    <div id="btn-area"></div>
+  </div>
+
+  <!-- Done screen -->
+  <div id="done-screen">
+    <div class="done-card">
+      <div class="done-icon">&#127881;</div>
+      <p class="done-title">You finished all 20 cards!</p>
+      <p class="done-sub">Great job reviewing Week 9 material.</p>
+      <div class="done-stats">
+        <div class="done-stat got">
+          <div class="done-stat-num" id="final-got">0</div>
+          <div class="done-stat-lbl">Got it</div>
+        </div>
+        <div class="done-stat missed">
+          <div class="done-stat-num" id="final-missed">0</div>
+          <div class="done-stat-lbl">Review</div>
+        </div>
+        <div class="done-stat score">
+          <div class="done-stat-num" id="final-pct">0%</div>
+          <div class="done-stat-lbl">Score</div>
+        </div>
+      </div>
+      <button class="btn-restart" onclick="restart()">Shuffle &amp; play again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CARDS = [
+  { q: "What is coronal polishing?",
+    a: "A technique using a handpiece, rubber cup, and abrasive agent to remove biofilm and extrinsic stains from the clinical crowns of teeth. It is NOT a substitute for oral prophylaxis." },
+  { q: "What is oral prophylaxis and who can perform it?",
+    a: "A procedure that removes calculus and debris from ALL tooth surfaces. It must be performed by a licensed dentist or hygienist — not a dental assistant." },
+  { q: "What are 3 possible damaging effects of coronal polishing?",
+    a: "1. Excessive polishing can remove surface enamel.\n2. Polishing exposed cementum can cause sensitivity.\n3. Abrasive pastes can scratch restorations (gold, composite)." },
+  { q: "Name 3 indications for coronal polishing.",
+    a: "Before sealant placement, before cementing crowns/bridges, before fluoride application, before orthodontic band cementation, before acid etching or placing a dental dam." },
+  { q: "Name 3 contraindications for coronal polishing.",
+    a: "Patients without visible stains, high-risk caries patients (e.g., nursing bottle caries), demineralized enamel, sensitive teeth, patients needing antibiotic premedication, newly erupted teeth." },
+  { q: "What are extrinsic stains? Give 2 examples.",
+    a: "Stains on the outer surface of teeth that CAN be removed by polishing. Examples: black line stains (near gingival margin), tobacco stains (dark brown/black), green stains (poor hygiene/fungal), food & drink stains (coffee, tea)." },
+  { q: "What are intrinsic stains? Give 2 examples.",
+    a: "Stains within the tooth structure that CANNOT be removed by polishing. Examples: tetracycline staining (green to dark yellow), dental fluorosis (white to brown mottled enamel), pulpless teeth (gray/black), amalgam staining." },
+  { q: "How does air-powder polishing work?",
+    a: "A handpiece sprays a mixture of sodium bicarbonate and water. It is efficient for stain removal without direct enamel contact." },
+  { q: "How does rubber-cup polishing work?",
+    a: "A slow-speed handpiece rotates a rubber cup loaded with abrasive paste against the tooth surface. It is the most common method for coronal polishing." },
+  { q: "What is the correct operator positioning for a right-handed operator?",
+    a: "A right-handed operator positions at the 8–9 o'clock position. A left-handed operator positions at 3–4 o'clock." },
+  { q: "What are dental sealants and where are they applied?",
+    a: "Thin protective coatings applied to the pits and fissures of posterior teeth to prevent caries by creating a barrier against bacteria and food particles." },
+  { q: "What are the 6 steps for sealant placement?",
+    a: "1. Tooth preparation (clean with pumice)\n2. Isolation (rubber dam/cotton rolls)\n3. Etching (phosphoric acid 15–60 sec)\n4. Sealant application (thin layer, no bubbles)\n5. Curing (light-cure 20 sec per surface)\n6. Evaluation and occlusion check." },
+  { q: "What is the difference between self-cured and light-cured sealants?",
+    a: "Self-cured (auto-polymerizing): two-part base + catalyst system that hardens within 1 minute. Light-cured (photo-polymerizing): hardens under visible light and is preferred because it offers more control over timing." },
+  { q: "What are 3 indications for pit and fissure sealants?",
+    a: "Deep pits and fissures, recently erupted molars (within 4 years), preventive therapy combined with fluoride treatment." },
+  { q: "What are 3 contraindications for pit and fissure sealants?",
+    a: "Shallow pits and fissures, existing caries requiring restoration, existing restoration already present on the tooth." },
+  { q: "Name 4 career opportunities for dental assistants.",
+    a: "Private practice, insurance companies, dental sales representative, public health/government programs, dental schools, hospitals, teaching (requires DANB + bachelor's preferred)." },
+  { q: "What should a dental assistant's resume include?",
+    a: "Heading (name, credentials, contact), professional objective, education (most recent first), work experience, certifications (CPR, DANB, ADAA), references (optional), and volunteer work/awards." },
+  { q: "What are 3 best practices BEFORE a job interview?",
+    a: "Review your resume, research the dental practice, prepare answers to common questions, dress professionally (no scrubs), and plan to arrive 15 minutes early." },
+  { q: "What should you do AFTER a job interview?",
+    a: "Send a thank-you letter within 48 hours expressing appreciation for the opportunity and reaffirming your interest in the position." },
+  { q: "What is the proper way to resign from a dental position?",
+    a: "Provide a two-week notice, maintain professionalism (do not speak negatively about the office), assist with training a replacement if asked, and leave on good terms for future references." },
+];
+
+let order = [], idx = 0, flipped = false, answered = false, got = 0, missed = 0;
+const TOTAL = CARDS.length;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function render() {
+  const card = CARDS[order[idx]];
+  const progress = Math.round((idx + (answered ? 1 : 0)) / TOTAL * 100);
+
+  // Card content
+  document.getElementById('card-label').textContent = flipped ? 'Answer' : 'Question — tap to flip';
+  document.getElementById('card').classList.toggle('flipped', flipped);
+
+  const qEl = document.getElementById('card-q');
+  const aEl = document.getElementById('card-a');
+  if (flipped) {
+    qEl.style.display = 'none';
+    aEl.style.display = 'block';
+    aEl.textContent = card.a;
+  } else {
+    qEl.style.display = 'flex';
+    aEl.style.display = 'none';
+    qEl.textContent = card.q;
+  }
+
+  // Progress
+  document.getElementById('card-count').textContent = `Card ${idx + 1} of ${TOTAL}`;
+  document.getElementById('prog-fill').style.width  = progress + '%';
+  document.getElementById('prog-pct').textContent   = progress + '% complete';
+  document.getElementById('pill-got').textContent    = `Got it: ${got}`;
+  document.getElementById('pill-missed').textContent = `Review: ${missed}`;
+
+  // Buttons
+  const area = document.getElementById('btn-area');
+  if (!flipped) {
+    area.innerHTML = `<button class="btn-reveal" onclick="flipCard()">Reveal answer</button>`;
+  } else if (!answered) {
+    area.innerHTML = `
+      <div class="answer-row">
+        <button class="btn-miss" onclick="answer(false)">Need review</button>
+        <button class="btn-got"  onclick="answer(true)">Got it! &#10003;</button>
+      </div>`;
+  } else {
+    const isLast = idx + 1 >= TOTAL;
+    area.innerHTML = `<button class="btn-next" onclick="next()">${isLast ? 'See results &rarr;' : 'Next card &rarr;'}</button>`;
+  }
+}
+
+function flipCard() {
+  flipped = !flipped;
+  render();
+}
+
+function answer(correct) {
+  if (correct) got++; else missed++;
+  answered = true;
+  render();
+}
+
+function next() {
+  if (idx + 1 >= TOTAL) { showDone(); return; }
+  idx++; flipped = false; answered = false;
+  render();
+}
+
+function showDone() {
+  document.getElementById('main-screen').style.display = 'none';
+  document.getElementById('done-screen').style.display = 'block';
+  const pct = Math.round(got / TOTAL * 100);
+  document.getElementById('final-got').textContent    = got;
+  document.getElementById('final-missed').textContent = missed;
+  document.getElementById('final-pct').textContent    = pct + '%';
+}
+
+function restart() {
+  idx = 0; flipped = false; answered = false; got = 0; missed = 0;
+  order = shuffle(CARDS.map((_, i) => i));
+  document.getElementById('done-screen').style.display  = 'none';
+  document.getElementById('main-screen').style.display  = 'block';
+  render();
+}
+
+order = shuffle(CARDS.map((_, i) => i));
+render();
+</script>
+</body>
+</html>

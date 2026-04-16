@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Assistant Flashcards – Week 7</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f7f6f2;
+      --surface:    #ffffff;
+      --surface2:   #f0ede8;
+      --border:     #e4e2da;
+      --border2:    #ccc9bf;
+      --text:       #1a1916;
+      --muted:      #74726a;
+      --accent:     #1d5fa8;
+      --accent-bg:  #e8f0fb;
+      --accent-bd:  #a8c5ed;
+      --green:      #1e6b3c;
+      --green-bg:   #e6f4ec;
+      --green-bd:   #7ec49a;
+      --amber:      #7a4a0a;
+      --amber-bg:   #fef3e2;
+      --amber-bd:   #f0c060;
+      --purple:     #3c2e89;
+      --purple-bg:  #eeedfe;
+      --purple-bd:  #afa9ec;
+      --radius-md:  10px;
+      --radius-lg:  14px;
+      --shadow:     0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-lg:  0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app { max-width: 600px; margin: 0 auto; }
+
+    /* Header */
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem; }
+    .header-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .header-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .header-title { font-size: 17px; font-weight: 600; }
+    .header-sub   { font-size: 13px; color: var(--muted); margin-top: 1px; }
+
+    /* Intro */
+    .intro {
+      background: var(--accent-bg); border: 1px solid var(--accent-bd);
+      border-radius: var(--radius-md); padding: 0.9rem 1.1rem;
+      margin-bottom: 1.25rem; font-size: 13px; color: var(--accent); line-height: 1.6;
+    }
+
+    /* Category tabs */
+    .cat-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .cat-btn {
+      font-size: 12px; font-weight: 500; padding: 5px 13px; border-radius: 99px;
+      border: 1px solid var(--border2); background: var(--surface); color: var(--muted);
+      cursor: pointer; transition: all .12s; font-family: 'DM Sans', sans-serif;
+    }
+    .cat-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .cat-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+
+    /* Stats row */
+    .stats-row { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+    .stat {
+      flex: 1; border-radius: var(--radius-md); padding: 10px 8px;
+      text-align: center; border: 1px solid;
+    }
+    .stat-known  { background: var(--green-bg);  border-color: var(--green-bd); }
+    .stat-review { background: var(--amber-bg);  border-color: var(--amber-bd); }
+    .stat-total  { background: var(--accent-bg); border-color: var(--accent-bd); }
+    .stat-num    { font-size: 20px; font-weight: 600; line-height: 1; margin-bottom: 3px; }
+    .stat-known  .stat-num { color: var(--green); }
+    .stat-review .stat-num { color: var(--amber); }
+    .stat-total  .stat-num { color: var(--accent); }
+    .stat-label  { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+
+    /* Flashcard */
+    .card-area { perspective: 1000px; width: 100%; min-height: 230px; margin-bottom: 1.25rem; cursor: pointer; }
+    .card-inner {
+      position: relative; width: 100%; min-height: 230px;
+      transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.4,0,.2,1);
+    }
+    .card-inner.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg); border: 1px solid;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.75rem; text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .card-front { background: var(--accent); border-color: var(--accent); }
+    .card-back  { background: var(--surface); border-color: var(--border); transform: rotateY(180deg); }
+    .card-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .card-front .card-label { color: rgba(255,255,255,.65); }
+    .card-back  .card-label { color: var(--muted); }
+    .card-q { font-size: 16px; font-weight: 500; line-height: 1.6; color: #fff; }
+    .card-a { font-size: 14px; font-weight: 400; line-height: 1.65; color: var(--text); }
+    .card-hint { font-size: 12px; margin-top: 12px; }
+    .card-front .card-hint { color: rgba(255,255,255,.55); }
+    .card-back  .card-hint { color: var(--muted); }
+
+    /* Controls */
+    .controls { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
+    .btn {
+      font-size: 13px; font-weight: 500; padding: 9px 18px; border-radius: var(--radius-md);
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .12s;
+    }
+    .btn:hover { background: var(--surface2); border-color: var(--border2); }
+    .btn-flip    { border-color: var(--accent-bd); color: var(--accent); background: var(--accent-bg); }
+    .btn-flip:hover { background: #d4e4f7; }
+    .btn-shuffle { border-color: var(--purple-bd); color: var(--purple); background: var(--purple-bg); }
+    .btn-shuffle:hover { background: #dedcfc; }
+
+    /* Mark buttons */
+    .mark-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+    .btn-know {
+      flex: 1; padding: 10px; border-radius: var(--radius-md);
+      border: 1px solid var(--green-bd); background: var(--green-bg); color: var(--green);
+      font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-know:hover { background: #d0edda; }
+    .btn-review-mark {
+      flex: 1; padding: 10px; border-radius: var(--radius-md);
+      border: 1px solid var(--amber-bd); background: var(--amber-bg); color: var(--amber);
+      font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn-review-mark:hover { background: #fdeac8; }
+
+    /* Reset */
+    .btn-reset {
+      display: block; margin: 0 auto;
+      background: transparent; border: 1px solid var(--border2);
+      color: var(--muted); border-radius: var(--radius-md);
+      padding: 7px 18px; font-size: 12px; font-weight: 500;
+      font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all .12s;
+    }
+    .btn-reset:hover { border-color: var(--border); color: var(--text); }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Dental Assistant Flashcards</div>
+      <div class="header-sub">Week 7 — Preventive Care &amp; Orthodontics</div>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro">
+    Tap a card to reveal the answer. Mark what you know — this helps build your recall muscle!
+  </div>
+
+  <!-- Category tabs -->
+  <div class="cat-row" id="cat-row">
+    <button class="cat-btn active" onclick="setCategory('all', this)">All cards</button>
+    <button class="cat-btn" onclick="setCategory('preventive', this)">Preventive care</button>
+    <button class="cat-btn" onclick="setCategory('ortho', this)">Orthodontics</button>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="prog-label">Card 1 of 20</span>
+      <span id="prog-pct">5%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill" style="width:5%"></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat stat-known">
+      <div class="stat-num" id="known-count">0</div>
+      <div class="stat-label">Known</div>
+    </div>
+    <div class="stat stat-review">
+      <div class="stat-num" id="review-count">0</div>
+      <div class="stat-label">Review</div>
+    </div>
+    <div class="stat stat-total">
+      <div class="stat-num" id="total-count">20</div>
+      <div class="stat-label">Total</div>
+    </div>
+  </div>
+
+  <!-- Flashcard -->
+  <div class="card-area" onclick="flipCard()">
+    <div class="card-inner" id="card-inner">
+      <div class="card-face card-front">
+        <div class="card-label">Question</div>
+        <div class="card-q" id="q-text"></div>
+        <div class="card-hint">Tap to reveal answer</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-label">Answer</div>
+        <div class="card-a" id="a-text"></div>
+        <div class="card-hint">Did you get it right?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav controls -->
+  <div class="controls">
+    <button class="btn"         onclick="prevCard()">&#8592; Prev</button>
+    <button class="btn btn-flip" onclick="flipCard()">Flip card</button>
+    <button class="btn"         onclick="nextCard()">Next &#8594;</button>
+    <button class="btn btn-shuffle" onclick="shuffleDeck()">&#8645; Shuffle</button>
+  </div>
+
+  <!-- Mark buttons -->
+  <div class="mark-row">
+    <button class="btn-know"        onclick="markKnow()">&#10003; Got it!</button>
+    <button class="btn-review-mark" onclick="markReview()">&#8635; Need review</button>
+  </div>
+
+  <!-- Reset -->
+  <button class="btn-reset" onclick="resetScores()">Reset scores</button>
+
+</div>
+
+<script>
+const ALL_CARDS = [
+  { cat:"preventive", q:"What is preventive care in dentistry?",                                      a:"A dental approach focused on maintaining optimal oral health and preventing diseases like cavities, gum disease, and oral cancer." },
+  { cat:"preventive", q:"What does fluoride treatment do for teeth?",                                 a:"Fluoride makes teeth more resistant to decay and helps remineralize weakened enamel when applied to tooth surfaces." },
+  { cat:"preventive", q:"What are dental sealants and who benefits most?",                            a:"Sealants are protective coatings applied to the grooves of molars. They prevent decay in both children and adults prone to cavities." },
+  { cat:"preventive", q:"Describe the Bass Method of Sulcular Brushing.",                             a:"Place bristles at a 45° angle to the gumline, contacting both tooth and gum. Use a gentle vibrating back-and-forth rolling motion across 2–3 teeth at a time." },
+  { cat:"preventive", q:"What are the 5 steps in the dental sealant application process?",           a:"1) Tooth preparation, 2) Acid etching the surface, 3) Cleaning and drying, 4) Applying the resin sealant, 5) Light-curing the sealant." },
+  { cat:"preventive", q:"What does a prophy cup and polisher do?",                                    a:"A small rubber cup that holds polishing paste, used by dental professionals to remove plaque, stains, and tartar during cleanings." },
+  { cat:"preventive", q:"Why must a patient avoid eating/drinking for 30 minutes after fluoride treatment?", a:"To ensure maximum fluoride retention and absorption into the tooth enamel." },
+  { cat:"preventive", q:"What is examined during a gingival assessment?",                             a:"The gum tissue is checked for signs of inflammation, bleeding, or other indicators of gum disease." },
+  { cat:"preventive", q:"What does periodontal probing measure?",                                     a:"The depth of the pockets around each tooth to assess gum health and detect signs of periodontal disease." },
+  { cat:"preventive", q:"How should infection control be maintained during preventive care?",         a:"All instruments must be sterilized between patients, and standard cleaning protocols for the dental unit must be followed to prevent cross-contamination." },
+  { cat:"ortho",      q:"What is orthodontics?",                                                      a:"A branch of dentistry focused on diagnosing, preventing, and correcting misaligned teeth and jaws to improve both function and aesthetics." },
+  { cat:"ortho",      q:"What is malocclusion?",                                                      a:"The misalignment of teeth and jaws that can cause difficulties with chewing, speaking, and oral hygiene. Correcting it is a central concern in orthodontics." },
+  { cat:"ortho",      q:"Name the 6 main components of braces.",                                      a:"A) Ligature, B) Archwire, C) Bracket, D) Molar Band, E) Bracket with Hook & Ball Hook, F) Rubber Bands." },
+  { cat:"ortho",      q:"What is the role of the archwire in braces?",                               a:"A thin metal wire connecting all brackets that applies continuous pressure to gradually move teeth into the correct position." },
+  { cat:"ortho",      q:"What are elastic ligatures used for in orthodontics?",                       a:"Tiny rubber bands that hold the archwire to the brackets. They must be replaced regularly to keep braces secure and effective." },
+  { cat:"ortho",      q:"What is the purpose of retention after braces are removed?",                 a:"Retainers keep teeth in their new position to prevent them from drifting back to their original misalignment, ensuring long-term success." },
+  { cat:"ortho",      q:"How often are orthodontic adjustment appointments scheduled and why?",       a:"Every 4–6 weeks, to tighten or adjust the braces and ensure gradual, controlled movement of the teeth." },
+  { cat:"ortho",      q:"What happens at an initial orthodontic consultation?",                       a:"The patient's dental and medical history is evaluated, followed by X-rays, photographs, and impressions to assess alignment and design a treatment plan." },
+  { cat:"ortho",      q:"What are 3 common orthodontic challenges and their solutions?",              a:"1) Discomfort → pain relievers + soft foods. 2) Poor compliance → reminders + education. 3) Broken brackets/wires → prompt repair by the orthodontist." },
+  { cat:"ortho",      q:"How does proper hygiene reduce risk during orthodontic treatment?",          a:"Brushing and flossing after every meal, plus using fluoride toothpaste and mouthwash, prevents plaque buildup and tooth decay around the braces." },
+];
+
+let deck = [...ALL_CARDS], idx = 0, currentCat = 'all';
+let known = new Set(), review = new Set();
+
+function setCategory(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  deck = cat === 'all' ? [...ALL_CARDS] : ALL_CARDS.filter(c => c.cat === cat);
+  idx = 0;
+  document.getElementById('card-inner').classList.remove('flipped');
+  updateCard();
+}
+
+function updateCard() {
+  const c = deck[idx];
+  document.getElementById('q-text').textContent = c.q;
+  document.getElementById('a-text').textContent = c.a;
+  document.getElementById('card-inner').classList.remove('flipped');
+  const pct = Math.round((idx + 1) / deck.length * 100);
+  document.getElementById('prog-fill').style.width  = pct + '%';
+  document.getElementById('prog-pct').textContent   = pct + '%';
+  document.getElementById('prog-label').textContent = `Card ${idx + 1} of ${deck.length}`;
+  document.getElementById('total-count').textContent  = deck.length;
+  document.getElementById('known-count').textContent  = known.size;
+  document.getElementById('review-count').textContent = review.size;
+}
+
+function flipCard() {
+  document.getElementById('card-inner').classList.toggle('flipped');
+}
+
+function nextCard() { idx = (idx + 1) % deck.length; updateCard(); }
+function prevCard() { idx = (idx - 1 + deck.length) % deck.length; updateCard(); }
+
+function shuffleDeck() {
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  idx = 0; updateCard();
+}
+
+function markKnow() {
+  const id = deck[idx].q;
+  known.add(id); review.delete(id);
+  updateCard();
+  nextCard();
+}
+
+function markReview() {
+  const id = deck[idx].q;
+  review.add(id); known.delete(id);
+  updateCard();
+  nextCard();
+}
+
+function resetScores() {
+  known.clear(); review.clear();
+  updateCard();
+}
+
+updateCard();
+</script>
+</body>
+</html>

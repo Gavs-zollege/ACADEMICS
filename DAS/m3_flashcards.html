@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Assistant Flashcards – Week 3</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #f7f6f2;
+      --surface:     #ffffff;
+      --surface2:    #f0ede8;
+      --border:      #e4e2da;
+      --border2:     #ccc9bf;
+      --text:        #1a1916;
+      --muted:       #74726a;
+      --accent:      #1d5fa8;
+      --accent-bg:   #e8f0fb;
+      --accent-bd:   #a8c5ed;
+      --green:       #1e6b3c;
+      --green-bg:    #e6f4ec;
+      --green-bd:    #7ec49a;
+      --amber:       #7a4a0a;
+      --amber-bg:    #fef3e2;
+      --amber-bd:    #f0c060;
+      --purple:      #3c2e89;
+      --purple-bg:   #eeedfe;
+      --purple-bd:   #afa9ec;
+      --coral:       #6b2a10;
+      --coral-bg:    #faece7;
+      --coral-bd:    #f0997b;
+      --red:         #8b1d1d;
+      --red-bg:      #fbecec;
+      --red-bd:      #e8aaaa;
+      --gold:        #634a08;
+      --gold-bg:     #faeeda;
+      --gold-bd:     #ef9f27;
+      --radius-md:   10px;
+      --radius-lg:   14px;
+      --shadow:      0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-lg:   0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app { max-width: 600px; margin: 0 auto; }
+
+    /* Header */
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+    .header-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .header-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .header-title { font-size: 17px; font-weight: 600; }
+    .header-sub   { font-size: 13px; color: var(--muted); margin-top: 1px; }
+
+    /* Intro box */
+    .intro-box {
+      background: var(--accent-bg);
+      border: 1px solid var(--accent-bd);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      font-size: 13px; color: var(--accent); line-height: 1.6;
+    }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+
+    /* Score pills */
+    .score-row { display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .pill { font-size: 12px; font-weight: 500; padding: 5px 13px; border-radius: 99px; border: 1px solid; }
+    .pill-got      { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+    .pill-learning { background: var(--amber-bg); border-color: var(--amber-bd); color: var(--amber); }
+
+    /* Category tags */
+    .cat-tag {
+      display: inline-block; font-size: 11px; font-weight: 600;
+      padding: 3px 11px; border-radius: 99px; border: 1px solid;
+      text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px;
+    }
+    .cat-legal     { background: var(--purple-bg); border-color: var(--purple-bd); color: var(--purple); }
+    .cat-patient   { background: var(--coral-bg);  border-color: var(--coral-bd);  color: var(--coral); }
+    .cat-emergency { background: var(--red-bg);    border-color: var(--red-bd);    color: var(--red); }
+    .cat-tools     { background: var(--gold-bg);   border-color: var(--gold-bd);   color: var(--gold); }
+
+    /* Flashcard */
+    .card-wrap { perspective: 1000px; width: 100%; min-height: 230px; margin-bottom: 1.25rem; cursor: pointer; }
+    .card-inner {
+      position: relative; width: 100%; min-height: 230px;
+      transform-style: preserve-3d;
+      transition: transform .5s cubic-bezier(.4,0,.2,1);
+    }
+    .card-inner.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg); border: 1px solid;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.75rem; text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .card-front { background: var(--accent); border-color: var(--accent); }
+    .card-back  { background: var(--surface); border-color: var(--border); transform: rotateY(180deg); }
+
+    .card-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 10px;
+    }
+    .card-front .card-label { color: rgba(255,255,255,.65); }
+    .card-back  .card-label { color: var(--muted); }
+
+    .card-q { font-size: 16px; font-weight: 500; line-height: 1.6; color: #fff; }
+    .card-a { font-size: 14px; font-weight: 400; line-height: 1.65; color: var(--text); }
+
+    .card-hint { font-size: 12px; margin-top: 12px; color: rgba(255,255,255,.55); }
+    .card-back .card-hint { color: var(--muted); }
+
+    /* Buttons */
+    .btn-row {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      justify-content: center; margin-bottom: 8px;
+    }
+    .btn {
+      font-size: 13px; font-weight: 500;
+      padding: 9px 18px; border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--surface); color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn:hover { background: var(--surface2); border-color: var(--border2); }
+    .btn-flip   { border-color: var(--accent-bd); color: var(--accent); background: var(--accent-bg); }
+    .btn-flip:hover { background: #d4e4f7; }
+    .btn-got    { border-color: var(--green-bd); color: var(--green); background: var(--green-bg); }
+    .btn-got:hover { background: #d0edda; }
+    .btn-miss   { border-color: var(--amber-bd); color: var(--amber); background: var(--amber-bg); }
+    .btn-miss:hover { background: #fdeac8; }
+
+    /* Done box */
+    .done-box {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem; text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .done-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--green-bg); border: 1px solid var(--green-bd);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem; font-size: 26px;
+    }
+    .done-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+    .done-sub   { font-size: 14px; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.5; }
+    .done-stats { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+    .done-stat  { flex: 1; border-radius: var(--radius-md); padding: 14px 10px; text-align: center; border: 1px solid; }
+    .done-stat.got    { background: var(--green-bg); border-color: var(--green-bd); }
+    .done-stat.missed { background: var(--amber-bg); border-color: var(--amber-bd); }
+    .done-stat-num    { font-size: 28px; font-weight: 600; }
+    .done-stat.got    .done-stat-num { color: var(--green); }
+    .done-stat.missed .done-stat-num { color: var(--amber); }
+    .done-stat-lbl    { font-size: 12px; font-weight: 500; margin-top: 2px; }
+    .done-stat.got    .done-stat-lbl { color: var(--green); }
+    .done-stat.missed .done-stat-lbl { color: var(--amber); }
+    .btn-restart {
+      width: 100%; padding: 13px;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius-md);
+      font-size: 15px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn-restart:hover { opacity: .88; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Dental Assistant Flashcards</div>
+      <div class="header-sub">Week 3 — Recall Practice Activity</div>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro-box">
+    Tap each card to reveal the answer. This activity helps you strengthen memory recall on the most important concepts from Week 3 — legal &amp; professional, patient care, tools, and medical emergencies.
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="counter">Card 1 of 20</span>
+      <span id="prog-pct">5%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill" style="width:5%"></div>
+    </div>
+  </div>
+
+  <!-- Score pills -->
+  <div class="score-row">
+    <span class="pill pill-got"      id="pill-got">Got it: 0</span>
+    <span class="pill pill-learning" id="pill-missed">Review: 0</span>
+  </div>
+
+  <!-- Flashcard -->
+  <div class="card-wrap" id="card-wrap" onclick="flipCard()">
+    <div class="card-inner" id="card-inner">
+      <div class="card-face card-front">
+        <div class="cat-tag cat-legal" id="cat-tag">Legal &amp; Professional</div>
+        <div class="card-label">Question</div>
+        <div class="card-q" id="q-text">Loading...</div>
+        <div class="card-hint">Tap card to reveal answer</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-label">Answer</div>
+        <div class="card-a" id="a-text"></div>
+        <div class="card-hint">Tap again to see question</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buttons row 1 -->
+  <div class="btn-row">
+    <button class="btn" onclick="prevCard()">&#8592; Previous</button>
+    <button class="btn btn-flip" onclick="flipCard()">Flip card</button>
+    <button class="btn btn-got"  onclick="markGot()">Got it &#10003;</button>
+    <button class="btn btn-miss" onclick="markMissed()">Review again</button>
+  </div>
+
+  <!-- Buttons row 2 -->
+  <div class="btn-row">
+    <button class="btn" onclick="nextCard()">Skip &rarr;</button>
+    <button class="btn" onclick="shuffleDeck()">&#8645; Shuffle</button>
+    <button class="btn" onclick="resetDeck()">&#8635; Restart</button>
+  </div>
+
+  <!-- Done box -->
+  <div class="done-box" id="done-box">
+    <div class="done-icon">&#10003;</div>
+    <p class="done-title">Great work!</p>
+    <p class="done-sub">You've gone through all 20 cards. Keep reviewing the ones marked <strong>Review again</strong> until you nail them all.</p>
+    <div class="done-stats">
+      <div class="done-stat got">
+        <div class="done-stat-num" id="final-got">0</div>
+        <div class="done-stat-lbl">Got it</div>
+      </div>
+      <div class="done-stat missed">
+        <div class="done-stat-num" id="final-missed">0</div>
+        <div class="done-stat-lbl">Review</div>
+      </div>
+    </div>
+    <button class="btn-restart" onclick="resetDeck()">Start over</button>
+  </div>
+
+</div>
+
+<script>
+const CARDS = [
+  { cat:"Legal & Professional", catCls:"cat-legal",
+    q:"What is the 'scope of practice' for a dental assistant?",
+    a:"The specific tasks a dental assistant is legally authorized to perform based on their education, training, and licensure in their state or region." },
+  { cat:"Legal & Professional", catCls:"cat-legal",
+    q:"What does HIPAA stand for and why does it matter?",
+    a:"Health Insurance Portability and Accountability Act. It sets federal standards for protecting patient privacy and medical information in all healthcare settings including dental offices." },
+  { cat:"Legal & Professional", catCls:"cat-legal",
+    q:"What is 'informed consent' in dentistry?",
+    a:"The process of fully educating a patient about a proposed procedure — including its risks, benefits, and alternatives — so they can voluntarily agree before treatment begins." },
+  { cat:"Legal & Professional", catCls:"cat-legal",
+    q:"Why must dental assistants stay within their scope of practice?",
+    a:"To reduce the risk of malpractice or legal violations. Performing tasks beyond your certification or legal authority can result in penalties for both you and the dental practice." },
+  { cat:"Legal & Professional", catCls:"cat-legal",
+    q:"Name three key characteristics of a professional dental assistant.",
+    a:"Any three of: Communicative, Detail-Oriented, Technically Skilled, Empathetic, Organized, Team-Oriented, Knowledgeable, Time-Efficient, Adaptable, Professional." },
+  { cat:"Legal & Professional", catCls:"cat-legal",
+    q:"What does OSHA stand for and what is its role in dental offices?",
+    a:"Occupational Safety and Health Administration. It sets workplace safety standards including infection control protocols, PPE requirements, and proper handling of hazardous materials." },
+  { cat:"Patient Care", catCls:"cat-patient",
+    q:"What are the steps of 'Patient Intake and Assessment'?",
+    a:"Greet and seat the patient, update their medical/dental history, take vital signs (blood pressure, pulse, temperature), explain the procedure, and maintain confidentiality throughout." },
+  { cat:"Patient Care", catCls:"cat-patient",
+    q:"Why is a patient's medical history important before dental treatment?",
+    a:"It helps identify health conditions, medications, and allergies that could affect treatment — preventing adverse reactions and allowing the team to tailor care to the individual." },
+  { cat:"Patient Care", catCls:"cat-patient",
+    q:"What should a dental assistant do during post-treatment care?",
+    a:"Provide post-care instructions, ensure comfort, schedule follow-up appointments, confirm the patient understands all instructions, and document the procedure accurately." },
+  { cat:"Patient Care", catCls:"cat-patient",
+    q:"How can dental professionals ease patient anxiety?",
+    a:"Use clear communication, explain procedures step by step, provide reassurance, use calming techniques, and offer comfort options such as sedation if appropriate." },
+  { cat:"Patient Care", catCls:"cat-patient",
+    q:"What does a 'patient-centered approach' mean in dental care?",
+    a:"Recognizing each patient's individual needs to provide empathetic, efficient, and effective care — fostering a positive experience and promoting long-term oral health." },
+  { cat:"Tools & Equipment", catCls:"cat-tools",
+    q:"What is the purpose of a dental explorer?",
+    a:"A small, pointed instrument used to detect cavities, irregularities, plaque, and calculus on tooth surfaces — especially in areas not visible to the naked eye." },
+  { cat:"Tools & Equipment", catCls:"cat-tools",
+    q:"What is the difference between a manual and ultrasonic scaler?",
+    a:"A manual scaler physically scrapes off plaque and tartar with a sharp edge. An ultrasonic scaler vibrates at high frequency for more efficient heavy tartar removal." },
+  { cat:"Tools & Equipment", catCls:"cat-tools",
+    q:"What are dental forceps used for and who can use them?",
+    a:"Forceps extract teeth or remove loose tissue. Only licensed dentists or oral surgeons can perform extractions — dental assistants may assist but cannot use them independently." },
+  { cat:"Tools & Equipment", catCls:"cat-tools",
+    q:"What is the suction tip (saliva ejector) used for?",
+    a:"To remove fluids and debris from the patient's mouth during procedures, keeping the treatment area dry for better visibility and hygiene." },
+  { cat:"Tools & Equipment", catCls:"cat-tools",
+    q:"What is the dental mirror used for?",
+    a:"To provide visibility in hard-to-see areas of the oral cavity and reflect light. Used during exams and procedures — must be cleaned and sterilized after each use." },
+  { cat:"Medical Emergencies", catCls:"cat-emergency",
+    q:"Name five common medical emergencies in a dental office.",
+    a:"Vasovagal syncope (fainting), hyperventilation/panic attack, acute asthma attack, angina/myocardial infarction, epileptic seizures, diabetic emergencies, anaphylaxis, choking, adrenal insufficiency, cardiac arrest." },
+  { cat:"Medical Emergencies", catCls:"cat-emergency",
+    q:"What is Basic Life Support (BLS) and why is it essential for dental staff?",
+    a:"BLS includes CPR and use of an AED. Dental professionals may be first responders to cardiac arrest or respiratory failure, making BLS training potentially life-saving." },
+  { cat:"Medical Emergencies", catCls:"cat-emergency",
+    q:"What are the five steps for handling a medical emergency in a dental office?",
+    a:"1) Assess the situation. 2) Activate the emergency protocol. 3) Stabilize the patient. 4) Monitor vital signs. 5) Document the event, steps taken, and outcome." },
+  { cat:"Medical Emergencies", catCls:"cat-emergency",
+    q:"What is an epinephrine auto-injector used for and how is it given?",
+    a:"Used during severe allergic reactions (anaphylaxis). Injected into the patient's outer thigh muscle to counteract the reaction. Only trained staff should administer it per protocols." },
+];
+
+let deck = [...CARDS], idx = 0, got = 0, missed = 0, flipped = false;
+
+function shuffle(a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+}
+
+function render() {
+  const c = deck[idx];
+  document.getElementById('card-inner').classList.remove('flipped');
+  flipped = false;
+  const tag = document.getElementById('cat-tag');
+  tag.textContent  = c.cat;
+  tag.className    = 'cat-tag ' + c.catCls;
+  document.getElementById('q-text').textContent = c.q;
+  document.getElementById('a-text').textContent = c.a;
+  const pct = Math.round((idx + 1) / deck.length * 100);
+  document.getElementById('counter').textContent  = `Card ${idx + 1} of ${deck.length}`;
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('done-box').style.display  = 'none';
+  document.getElementById('card-wrap').style.display = 'block';
+}
+
+function flipCard() {
+  flipped = !flipped;
+  document.getElementById('card-inner').classList.toggle('flipped', flipped);
+}
+
+function nextCard() {
+  if (idx < deck.length - 1) { idx++; render(); } else showDone();
+}
+
+function prevCard() {
+  if (idx > 0) { idx--; render(); }
+}
+
+function markGot() {
+  got++;
+  document.getElementById('pill-got').textContent = `Got it: ${got}`;
+  nextCard();
+}
+
+function markMissed() {
+  missed++;
+  document.getElementById('pill-missed').textContent = `Review: ${missed}`;
+  nextCard();
+}
+
+function shuffleDeck() {
+  shuffle(deck); idx = 0; got = 0; missed = 0;
+  document.getElementById('pill-got').textContent    = 'Got it: 0';
+  document.getElementById('pill-missed').textContent = 'Review: 0';
+  render();
+}
+
+function resetDeck() {
+  deck = [...CARDS]; idx = 0; got = 0; missed = 0;
+  document.getElementById('pill-got').textContent    = 'Got it: 0';
+  document.getElementById('pill-missed').textContent = 'Review: 0';
+  render();
+}
+
+function showDone() {
+  document.getElementById('card-wrap').style.display = 'none';
+  document.getElementById('done-box').style.display  = 'block';
+  document.getElementById('final-got').textContent    = got;
+  document.getElementById('final-missed').textContent = missed;
+}
+
+render();
+</script>
+</body>
+</html>

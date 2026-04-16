@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Endodontics Flashcards – Week 6</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f7f6f2;
+      --surface:    #ffffff;
+      --surface2:   #f0ede8;
+      --border:     #e4e2da;
+      --border2:    #ccc9bf;
+      --text:       #1a1916;
+      --muted:      #74726a;
+      --accent:     #1d5fa8;
+      --accent-bg:  #e8f0fb;
+      --accent-bd:  #a8c5ed;
+      --green:      #1e6b3c;
+      --green-bg:   #e6f4ec;
+      --green-bd:   #7ec49a;
+      --radius-md:  10px;
+      --radius-lg:  14px;
+      --shadow:     0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --shadow-lg:  0 2px 8px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.07);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    #app { max-width: 580px; margin: 0 auto; }
+
+    /* Header */
+    .header { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+    .header-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      background: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .header-icon svg { width: 22px; height: 22px; fill: #fff; }
+    .header-title { font-size: 17px; font-weight: 600; }
+    .header-sub   { font-size: 13px; color: var(--muted); margin-top: 1px; }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 1rem; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+
+    /* Reviewed pill */
+    .reviewed-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 500;
+      padding: 5px 13px; border-radius: 99px; border: 1px solid;
+      background: var(--green-bg); border-color: var(--green-bd); color: var(--green);
+      margin-bottom: 1.25rem;
+    }
+
+    /* Flashcard */
+    .card-area { perspective: 1000px; width: 100%; min-height: 230px; margin-bottom: 1.25rem; cursor: pointer; }
+    .card-inner {
+      position: relative; width: 100%; min-height: 230px;
+      transform-style: preserve-3d;
+      transition: transform .45s cubic-bezier(.4,0,.2,1);
+    }
+    .card-inner.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg); border: 1px solid;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.75rem; text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .card-front { background: var(--accent); border-color: var(--accent); }
+    .card-back  { background: var(--surface); border-color: var(--border); transform: rotateY(180deg); }
+
+    .card-label {
+      font-size: 10px; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .card-front .card-label { color: rgba(255,255,255,.65); }
+    .card-back  .card-label { color: var(--muted); }
+    .card-q { font-size: 16px; font-weight: 500; line-height: 1.6; color: #fff; }
+    .card-a { font-size: 14px; font-weight: 400; line-height: 1.65; color: var(--text); }
+    .card-hint { font-size: 12px; margin-top: 12px; }
+    .card-front .card-hint { color: rgba(255,255,255,.55); }
+    .card-back  .card-hint { color: var(--muted); }
+
+    /* Buttons */
+    .btn-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
+    .btn {
+      font-size: 13px; font-weight: 500;
+      padding: 9px 20px; border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--surface); color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all .12s;
+    }
+    .btn:hover { background: var(--surface2); border-color: var(--border2); }
+    .btn-flip {
+      border-color: var(--accent-bd); color: var(--accent); background: var(--accent-bg);
+    }
+    .btn-flip:hover { background: #d4e4f7; }
+
+    /* Dot navigation */
+    .dots-wrap { margin-top: 1.25rem; }
+    .dots-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; display: flex; gap: 16px; flex-wrap: wrap; }
+    .dots-label span { display: flex; align-items: center; gap: 5px; }
+    .dot-legend {
+      width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--border2); display: inline-block;
+    }
+    .dot-legend.current  { background: var(--accent); border-color: var(--accent); }
+    .dot-legend.reviewed { background: var(--green-bd); border-color: var(--green); }
+    .dot-legend.unvisited { background: var(--border); }
+    .dots { display: flex; gap: 7px; flex-wrap: wrap; }
+    .dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      cursor: pointer; border: 1px solid var(--border2);
+      background: var(--border); transition: all .15s;
+    }
+    .dot:hover    { border-color: var(--accent); }
+    .dot.current  { background: var(--accent); border-color: var(--accent); }
+    .dot.reviewed { background: var(--green-bd); border-color: var(--green); }
+
+    /* Complete box */
+    .complete-box {
+      display: none; margin-top: 1.25rem;
+      background: var(--green-bg); border: 1px solid var(--green-bd);
+      border-radius: var(--radius-lg); padding: 1.5rem;
+      text-align: center;
+    }
+    .complete-title { font-size: 16px; font-weight: 600; color: var(--green); margin-bottom: 6px; }
+    .complete-sub   { font-size: 13px; color: var(--green); margin-bottom: 1.25rem; opacity: .8; }
+    .btn-restart {
+      padding: 10px 28px; background: var(--accent); color: #fff;
+      border: none; border-radius: var(--radius-md);
+      font-size: 14px; font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: opacity .15s;
+    }
+    .btn-restart:hover { opacity: .88; }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="header-title">Endodontics Flashcards</div>
+      <div class="header-sub">Week 6 — Tap each card to reveal the answer</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="card-num">Card 1 of 15</span>
+      <span id="reviewed-count">0 reviewed</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Reviewed pill -->
+  <div class="reviewed-pill" id="reviewed-pill">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="reviewed-text">0 of 15 reviewed</span>
+  </div>
+
+  <!-- Flashcard -->
+  <div class="card-area" onclick="toggleFlip()">
+    <div class="card-inner" id="card-inner">
+      <div class="card-face card-front">
+        <div class="card-label">Question</div>
+        <div class="card-q" id="q-text"></div>
+        <div class="card-hint">Tap to reveal answer</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-label">Answer</div>
+        <div class="card-a" id="a-text"></div>
+        <div class="card-hint">Tap to flip back</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="btn-row">
+    <button class="btn" onclick="prev()">&#8592; Previous</button>
+    <button class="btn btn-flip" id="flip-btn" onclick="toggleFlip()">Show answer</button>
+    <button class="btn" onclick="next()">Next &#8594;</button>
+  </div>
+
+  <!-- Dot navigation -->
+  <div class="dots-wrap">
+    <div class="dots-label">
+      <span><span class="dot-legend current"></span> Current</span>
+      <span><span class="dot-legend reviewed"></span> Reviewed</span>
+      <span><span class="dot-legend unvisited"></span> Not yet visited</span>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <!-- Complete box -->
+  <div class="complete-box" id="complete-box">
+    <p class="complete-title">Great job! You've reviewed all 15 cards.</p>
+    <p class="complete-sub">Keep revisiting any concepts that felt unclear.</p>
+    <button class="btn-restart" onclick="resetDeck()">Start over</button>
+  </div>
+
+</div>
+
+<script>
+const CARDS = [
+  { q: "What is Endodontics?",
+    a: "A specialized dental field focused on the prevention, diagnosis, and treatment of dental pulp diseases — primarily through root canal therapy." },
+  { q: "What is the main goal of endodontic treatment?",
+    a: "To save a tooth from extraction by treating diseases of the dental pulp." },
+  { q: "What is Reversible Pulpitis?",
+    a: "Inflammation of the pulp that can heal with proper treatment — the pulp is still viable." },
+  { q: "What is Irreversible Pulpitis?",
+    a: "Severe pulp inflammation that cannot heal — requires root canal therapy." },
+  { q: "What is Necrotic Pulp?",
+    a: "A pulp that shows no response to stimuli, indicating cell death." },
+  { q: "Name the 4 key radiographs in root canal therapy.",
+    a: "1) Initial (diagnostic) 2) Working length 3) Final instrumentation 4) Root canal completion." },
+  { q: "What does the Percussion Test assess?",
+    a: "It determines inflammation by tapping the tooth to check for sensitivity." },
+  { q: "What does the Electric Pulp Test assess?",
+    a: "It assesses nerve response using small electrical stimuli to evaluate pulp vitality." },
+  { q: "What is Gutta-Percha used for?",
+    a: "It is the most common filling material used to seal the root canal after cleaning and shaping." },
+  { q: "Why is Sodium Hypochlorite used in root canals?",
+    a: "It is an irrigation solution used to disinfect and dissolve tissue within the root canal." },
+  { q: "What are the 5 steps of Root Canal Treatment?",
+    a: "1) Anesthesia & Pain Control 2) Isolation & Disinfection 3) Access Preparation 4) Debridement & Shaping 5) Obturation (Filling)." },
+  { q: "What is an Apicoectomy?",
+    a: "A surgical endodontic procedure involving removal of the root tip." },
+  { q: "What is a Pulpotomy?",
+    a: "Removal of the coronal portion of the pulp to maintain tooth vitality." },
+  { q: "What is a Periradicular Abscess?",
+    a: "An infection at the root tip causing swelling and pain." },
+  { q: "What are the 3 ethical considerations in Endodontics?",
+    a: "1) Patient communication & informed consent 2) Precision in radiographs & measurements 3) Managing patient expectations regarding pain and healing." },
+];
+
+let idx = 0, flipped = false, reviewed = new Set();
+
+function render() {
+  const c = CARDS[idx];
+  document.getElementById('q-text').textContent = c.q;
+  document.getElementById('a-text').textContent = c.a;
+  document.getElementById('card-inner').classList.toggle('flipped', flipped);
+  document.getElementById('flip-btn').textContent = flipped ? 'Hide answer' : 'Show answer';
+  document.getElementById('card-num').textContent = `Card ${idx + 1} of ${CARDS.length}`;
+
+  const revCount = reviewed.size;
+  const pct = Math.round(revCount / CARDS.length * 100);
+  document.getElementById('reviewed-count').textContent = `${revCount} reviewed`;
+  document.getElementById('reviewed-text').textContent  = `${revCount} of ${CARDS.length} reviewed`;
+  document.getElementById('prog-fill').style.width = pct + '%';
+
+  // Dots
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = '';
+  CARDS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === idx ? ' current' : reviewed.has(i) ? ' reviewed' : '');
+    d.title = `Card ${i + 1}`;
+    d.onclick = () => { idx = i; flipped = false; render(); };
+    dotsEl.appendChild(d);
+  });
+
+  // Complete box
+  document.getElementById('complete-box').style.display =
+    reviewed.size === CARDS.length ? 'block' : 'none';
+}
+
+function toggleFlip() {
+  flipped = !flipped;
+  render();
+}
+
+function next() {
+  reviewed.add(idx);
+  idx = (idx + 1) % CARDS.length;
+  flipped = false;
+  render();
+}
+
+function prev() {
+  idx = (idx - 1 + CARDS.length) % CARDS.length;
+  flipped = false;
+  render();
+}
+
+function resetDeck() {
+  idx = 0; flipped = false; reviewed = new Set();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

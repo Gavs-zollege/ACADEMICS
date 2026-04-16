@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Lab Flashcard Challenge – Week 02</title>
+<title>Lab Flashcard Challenge</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: system-ui, sans-serif; background: #1a1a2e; color: #e8e8f0; min-height: 100vh; padding: 24px 16px; }
   .header { text-align: center; margin-bottom: 8px; }
   .header h1 { font-size: 22px; font-weight: 600; color: #ffffff; margin-bottom: 6px; }
-  .header .subtitle { font-size: 14px; color: #a0a0c0; line-height: 1.5; max-width: 520px; margin: 0 auto 6px; }
-  .badge { display: inline-block; background: #2d2d5e; color: #9090e0; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; border: 1px solid #4040a0; }
+  .header .subtitle { font-size: 14px; color: #a0a0c0; line-height: 1.5; max-width: 520px; margin: 0 auto 16px; }
   .progress-bar { background: #2a2a4a; border-radius: 10px; height: 8px; margin-bottom: 6px; overflow: hidden; }
   .progress-fill { height: 100%; background: linear-gradient(90deg, #7c6df0, #a78bfa); border-radius: 10px; transition: width 0.4s ease; }
   .progress-text { font-size: 12px; color: #8080b0; text-align: center; margin-bottom: 20px; }
@@ -29,7 +28,7 @@
   .options-label { font-size: 13px; font-weight: 600; color: #9090c0; text-align: center; margin-bottom: 12px; letter-spacing: 0.5px; }
   .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .option-btn { background: #1e1e3e; border: 2px solid #3a3a6a; color: #d0d0f0; font-size: 15px; font-weight: 600; padding: 14px 10px; border-radius: 12px; cursor: pointer; transition: all 0.18s; text-align: center; line-height: 1.4; min-height: 60px; display: flex; align-items: center; justify-content: center; }
-  .option-btn:hover { background: #2a2a5a; border-color: #6060c0; color: #ffffff; transform: translateY(-1px); }
+  .option-btn:hover:not(:disabled) { background: #2a2a5a; border-color: #6060c0; color: #ffffff; transform: translateY(-1px); }
   .option-btn.correct { background: #0d3a1a; border-color: #2ecc71; color: #5dff9a; }
   .option-btn.wrong { background: #3a0d0d; border-color: #e74c3c; color: #ff8080; }
   .option-btn:disabled { cursor: default; transform: none; }
@@ -51,21 +50,20 @@
 <body>
 
 <div class="header">
-  <div class="badge">Week 02 — Lab Rules & Practices</div>
   <h1>🧪 Lab Flashcard Challenge</h1>
-  <p class="subtitle">This fun activity helps sharpen your recall! Read the question, think it through, then select the best answer. Every question counts — just like every test in the lab!</p>
+  <p class="subtitle">Read the question, think it through, then select the best answer. Every question counts — just like every test in the lab!</p>
 </div>
 
 <div class="progress-bar"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
 <p class="progress-text" id="progText">Question 1 of 12</p>
-<p class="card-counter" id="cardCounter">Click the card to reveal the topic 👆</p>
+<p class="card-counter" id="cardCounter">Tap the card to peek at the answer 👆</p>
 
 <div class="card-area" id="cardArea" onclick="flipCard()">
   <div class="card-inner" id="cardInner">
     <div class="card-face card-front">
       <span class="card-label front-label">Question</span>
       <p class="card-text" id="qText"></p>
-      <p class="card-hint">Tap to see options ↓</p>
+      <p class="card-hint">Tap to see answer ↓</p>
     </div>
     <div class="card-face card-back">
       <span class="card-label back-label" id="topicTag"></span>
@@ -130,7 +128,6 @@ function render() {
   document.getElementById('topicTag').textContent = c.topic;
   document.getElementById('progFill').style.width = ((cur+1)/cards.length*100)+'%';
   document.getElementById('progText').textContent = 'Question '+(cur+1)+' of '+cards.length;
-  document.getElementById('cardCounter').textContent = 'Tap the card to peek at the answer 👆';
   const grid = document.getElementById('optionsGrid');
   grid.innerHTML = '';
   c.opts.forEach((o, i) => {
@@ -156,18 +153,18 @@ function render() {
 
 function flipCard() { document.getElementById('cardInner').classList.toggle('flipped'); }
 
-function selectAnswer(idx) {
+function selectAnswer(i) {
   if (answered[cur] !== null) return;
-  answered[cur] = idx;
+  answered[cur] = i;
   const c = cards[cur];
-  if (idx === c.correct) score++;
-  document.querySelectorAll('.option-btn').forEach((b, i) => {
+  if (i === c.correct) score++;
+  document.querySelectorAll('.option-btn').forEach((b, j) => {
     b.disabled = true;
-    if (i === c.correct) b.classList.add('correct');
-    else if (i === idx && idx !== c.correct) b.classList.add('wrong');
+    if (j === c.correct) b.classList.add('correct');
+    else if (j === i && i !== c.correct) b.classList.add('wrong');
   });
   const fb = document.getElementById('feedback');
-  if (idx === c.correct) { fb.className='feedback correct'; fb.textContent='✓ Correct! Great work!'; }
+  if (i === c.correct) { fb.className='feedback correct'; fb.textContent='✓ Correct! Great work!'; }
   else { fb.className='feedback wrong'; fb.textContent='✗ Not quite — the correct answer is highlighted above.'; }
   document.getElementById('cardInner').classList.add('flipped');
 }
@@ -186,10 +183,10 @@ function showScore() {
   document.getElementById('scoreSection').style.display = 'block';
   document.getElementById('scoreNum').textContent = score+' / '+cards.length;
   const pct = Math.round(score/cards.length*100);
-  const msg = pct===100 ? '🌟 Perfect score! You\'ve mastered Week 02 concepts!'
+  const msg = pct===100 ? '🌟 Perfect score! You\'ve mastered every concept!'
     : pct>=75 ? '🎉 Excellent recall! Review any missed questions and you\'ll be unstoppable!'
     : pct>=50 ? '👍 Good effort! Review the topics you missed and try again!'
-    : '💪 Keep going! Review the slides and try again — you\'ve got this!';
+    : '💪 Keep going! Review the material and try again — you\'ve got this!';
   document.getElementById('scoreMsg').textContent = msg;
 }
 

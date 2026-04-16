@@ -3,24 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MA Flashcards – Week 01</title>
+<title>MA Flashcards – Patient Intake &amp; Evaluation</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   body{min-height:100vh;background:#0f172a;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Segoe UI',sans-serif;padding:20px}
   #app{width:100%;max-width:580px;display:flex;flex-direction:column;align-items:center}
 
-  /* Header */
-  .badge{background:#dc2626;color:#fff;display:inline-block;border-radius:8px;padding:4px 14px;font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:8px}
   h1{color:#f8fafc;font-size:22px;font-weight:800;margin-bottom:4px;text-align:center}
   .subtitle{color:#64748b;font-size:13px;text-align:center}
 
-  /* Progress */
   .progress-wrap{width:100%;margin:24px 0 16px}
   .progress-labels{display:flex;justify-content:space-between;color:#94a3b8;font-size:13px;font-weight:600;margin-bottom:6px}
   .progress-track{background:#1e293b;border-radius:99px;height:8px;overflow:hidden}
   .progress-fill{background:linear-gradient(90deg,#dc2626,#f59e0b);height:100%;border-radius:99px;transition:width .4s ease}
 
-  /* Card */
   .card{width:100%;min-height:240px;border-radius:20px;padding:36px 32px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transition:all .3s ease;user-select:none}
   .card.question{background:linear-gradient(135deg,#1e3a5f,#1e293b);box-shadow:0 0 0 2px #334155,0 20px 50px rgba(0,0,0,.4)}
   .card.answer{background:linear-gradient(135deg,#7f1d1d,#991b1b);box-shadow:0 0 0 3px #f59e0b,0 20px 50px rgba(0,0,0,.4)}
@@ -33,7 +29,6 @@
   .card.question .card-hint{color:#60a5fa}
   .card.answer .card-hint{color:#fca5a5}
 
-  /* Buttons */
   .btn-row{display:flex;gap:16px;margin-top:24px;width:100%}
   button{flex:1;padding:16px;border-radius:14px;font-size:17px;font-weight:800;cursor:pointer;transition:all .2s;letter-spacing:.3px;border:2px solid transparent}
   #btn-prev{background:#334155;color:#f8fafc;border-color:#475569}
@@ -42,7 +37,6 @@
   #btn-next{background:#dc2626;color:#fff;border-color:#ef4444}
   .tip{color:#475569;font-size:12px;margin-top:20px;text-align:center}
 
-  /* Completed screen */
   #done{display:none;background:#1e293b;border-radius:20px;padding:48px 40px;max-width:520px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)}
   #done h2{color:#f8fafc;font-size:28px;margin:16px 0 12px}
   #done p{color:#94a3b8;font-size:16px;margin-bottom:32px}
@@ -52,14 +46,11 @@
 </head>
 <body>
 <div id="app">
-  <!-- Header -->
   <div style="text-align:center;margin-bottom:0">
-    <div class="badge">WEEK 01</div>
     <h1>🩺 Patient Intake &amp; Evaluation</h1>
-    <p class="subtitle">✨ A fun activity to boost your recall — flip each card to reveal the answer!</p>
+    <p class="subtitle">✨ Flip each card to reveal the answer and boost your recall!</p>
   </div>
 
-  <!-- Progress -->
   <div class="progress-wrap">
     <div class="progress-labels">
       <span id="lbl-card">Card 1 of 20</span>
@@ -68,14 +59,12 @@
     <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:5%"></div></div>
   </div>
 
-  <!-- Flashcard -->
   <div class="card question" id="card" onclick="flipCard()">
     <div class="card-label" id="card-label">❓ QUESTION</div>
     <p class="card-text" id="card-text"></p>
     <div class="card-hint" id="card-hint">Click to reveal answer</div>
   </div>
 
-  <!-- Buttons -->
   <div class="btn-row">
     <button id="btn-prev" onclick="prev()" disabled>← Previous</button>
     <button id="btn-flip" onclick="flipCard()">🔄 Flip Card</button>
@@ -83,11 +72,10 @@
   </div>
   <p class="tip">💡 Tip: Try to answer before flipping — that's how real recall works!</p>
 
-  <!-- Completed -->
   <div id="done">
     <div style="font-size:72px">🎉</div>
     <h2>Great Work!</h2>
-    <p>You've reviewed all <strong>20 flashcards</strong> from Week 01.<br>Keep practicing to sharpen your recall!</p>
+    <p>You've reviewed all <strong>20 flashcards</strong>.<br>Keep practicing to sharpen your recall!</p>
     <button id="btn-restart" onclick="restart()">🔁 Restart Flashcards</button>
   </div>
 </div>
@@ -133,46 +121,43 @@ const $done    = document.getElementById('done');
 
 function render() {
   const c = cards[idx];
-  $text.textContent = flipped ? c.a : c.q;
+  $text.textContent  = flipped ? c.a : c.q;
   $label.textContent = flipped ? '💡 ANSWER' : '❓ QUESTION';
   $hint.textContent  = flipped ? 'Click to see question' : 'Click to reveal answer';
-  $card.className = 'card ' + (flipped ? 'answer' : 'question');
-  $card.style.fontSize = flipped ? '17px' : '19px';
+  $card.className    = 'card ' + (flipped ? 'answer' : 'question');
   $lblCard.textContent = `Card ${idx+1} of ${total}`;
   const pct = Math.round(((idx+1)/total)*100);
-  $lblPct.textContent = `${pct}% complete`;
-  $fill.style.width = pct + '%';
-  $prev.disabled = idx === 0;
-  $next.textContent = idx+1 === total ? 'Finish ✓' : 'Next →';
+  $lblPct.textContent  = `${pct}% complete`;
+  $fill.style.width    = pct + '%';
+  $prev.disabled       = idx === 0;
+  $next.textContent    = idx+1 === total ? 'Finish ✓' : 'Next →';
 }
 
 function flipCard() { flipped = !flipped; render(); }
 
 function next() {
-  if (idx+1 >= total) { showDone(); return; }
+  if(idx+1 >= total) { showDone(); return; }
   flipped = false;
   $card.style.opacity = '0';
-  setTimeout(() => { idx++; render(); $card.style.opacity='1'; }, 150);
+  setTimeout(() => { idx++; render(); $card.style.opacity = '1'; }, 150);
 }
 
 function prev() {
-  if (idx === 0) return;
+  if(idx === 0) return;
   flipped = false;
   $card.style.opacity = '0';
-  setTimeout(() => { idx--; render(); $card.style.opacity='1'; }, 150);
+  setTimeout(() => { idx--; render(); $card.style.opacity = '1'; }, 150);
 }
 
 function showDone() {
-  $app.querySelectorAll(':not(#done)').forEach(el => el.style.display='none');
+  $app.querySelectorAll(':not(#done)').forEach(el => el.style.display = 'none');
   $done.style.display = 'block';
 }
 
 function restart() {
   idx = 0; flipped = false;
   $done.style.display = 'none';
-  $app.querySelectorAll('[style*="display:none"]').forEach(el => el.style.display='');
-  // restore specific elements
-  document.querySelector('.badge').style.display='';
+  $app.querySelectorAll('[style*="display:none"]').forEach(el => el.style.display = '');
   render();
 }
 

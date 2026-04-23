@@ -438,7 +438,7 @@
     <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
       <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/>
     </svg>
-    <input type="text" id="search-input" placeholder="Buscar términos, definiciones…" autocomplete="off" spellcheck="false"/>
+    <input type="text" id="search-input" placeholder="Search terms, definitions…" autocomplete="off" spellcheck="false"/>
     <span class="search-count" id="search-count"></span>
   </div>
 
@@ -633,14 +633,14 @@ function updateSearchCount() {
     t.term.toLowerCase().includes(query.toLowerCase()) ||
     t.def.toLowerCase().includes(query.toLowerCase())
   ).length;
-  el.textContent = n + ' resultado' + (n !== 1 ? 's' : '');
+  el.textContent = n + ' result' + (n !== 1 ? 's' : '');
 }
 
 function renderStats() {
   const row = document.getElementById('stats-row');
   row.innerHTML = `
-    <div class="stat-chip"><strong>${ALL_TERMS.length}</strong><span class="sep"></span>términos</div>
-    <div class="stat-chip"><strong>${CATEGORIES.length}</strong><span class="sep"></span>categorías</div>
+    <div class="stat-chip"><strong>${ALL_TERMS.length}</strong><span class="sep"></span>terms</div>
+    <div class="stat-chip"><strong>${CATEGORIES.length}</strong><span class="sep"></span>categories</div>
   `;
 }
 
@@ -655,7 +655,7 @@ function renderContent() {
     );
 
     if (!filtered.length) {
-      el.innerHTML = `<div class="empty"><span class="empty-icon">🔍</span><p>No se encontraron términos. Intenta con otras palabras.</p></div>`;
+      el.innerHTML = `<div class="empty"><span class="empty-icon">🔍</span><p>No terms found. Try different keywords.</p></div>`;
       return;
     }
 
@@ -685,7 +685,7 @@ function renderContent() {
         <button class="cat-header${isOpen ? ' open' : ''}" onclick="toggleCat(${ci})">
           <div class="cat-icon" style="background:${bg}">${cat.emoji}</div>
           <span class="cat-title">${esc(cat.name)}</span>
-          <span class="cat-badge" style="background:${bg};color:${cat.color}">${cat.terms.length} términos</span>
+          <span class="cat-badge" style="background:${bg};color:${cat.color}">${cat.terms.length} terms</span>
           <svg class="cat-chevron" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 10.94L2.53 5.47l1.06-1.06L8 8.82l4.41-4.41 1.06 1.06z"/>
           </svg>

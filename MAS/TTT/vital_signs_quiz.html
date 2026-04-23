@@ -1,0 +1,448 @@
+vital_signs_quiz.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vital Signs Clinical Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-start: #0F2B3C;
+    --bg-mid: #0D4F5C;
+    --bg-end: #0E7490;
+    --teal: #0E7490;
+    --teal-dark: #0D4F5C;
+    --mint: #B2F0E8;
+    --green: #10B981;
+    --green-dark: #059669;
+    --green-bg: #D1FAE5;
+    --green-text: #065F46;
+    --red: #EF4444;
+    --red-bg: #FEE2E2;
+    --red-text: #991B1B;
+    --amber: #F59E0B;
+    --amber-dark: #D97706;
+    --card-bg: rgba(255,255,255,0.97);
+    --scenario-bg: #F0F7FA;
+    --score-bg: #F0F7FA;
+    --slate-900: #0F172A;
+    --slate-700: #334155;
+    --slate-500: #64748B;
+    --slate-300: #CBD5E1;
+    --slate-200: #E2E8F0;
+    --slate-100: #F1F5F9;
+    --slate-50: #F8FAFC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  .quiz-container { max-width: 640px; width: 100%; }
+
+  /* Progress Header */
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .progress-label {
+    color: var(--mint);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+  }
+  .progress-track {
+    height: 5px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 3px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22A6B3, var(--mint));
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+  }
+
+  /* Scenario */
+  .scenario-block {
+    background: var(--scenario-bg);
+    padding: 28px 32px;
+    border-bottom: 1px solid #E8EFF3;
+  }
+  .scenario-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .scenario-number {
+    background: var(--teal);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .scenario-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--slate-500);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+  }
+  .scenario-text {
+    font-size: 17px;
+    color: #1E293B;
+    line-height: 1.55;
+  }
+
+  /* Options */
+  .options-block { padding: 20px 32px 28px; }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: white;
+    border: 2px solid var(--slate-200);
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .option-btn:not(.revealed):hover {
+    border-color: var(--teal);
+    background: var(--scenario-bg);
+    transform: translateX(4px);
+  }
+  .option-btn.revealed { cursor: default; }
+  .option-btn.correct-choice { background: var(--green-bg); border-color: var(--green); color: var(--green-text); }
+  .option-btn.correct-choice .option-letter { background: var(--green); color: white; }
+  .option-btn.wrong-choice { background: var(--red-bg); border-color: var(--red); color: var(--red-text); }
+  .option-btn.wrong-choice .option-letter { background: var(--red); color: white; }
+  .option-btn.dimmed { background: var(--slate-50); border-color: var(--slate-100); color: #94A3B8; }
+
+  .option-letter {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--scenario-bg);
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .option-text { font-size: 15px; line-height: 1.4; }
+
+  /* Explanation */
+  .explanation {
+    margin-top: 12px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    border-left: 4px solid;
+    animation: fadeSlideIn 0.35s ease;
+  }
+  .explanation.correct-exp { background: #ECFDF5; border-left-color: var(--green); }
+  .explanation.wrong-exp { background: #FFF7ED; border-left-color: var(--amber); }
+  .explanation-label {
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    font-family: 'DM Sans', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .explanation.correct-exp .explanation-label { color: var(--green-dark); }
+  .explanation.wrong-exp .explanation-label { color: var(--amber-dark); }
+  .explanation p {
+    font-size: 14px;
+    color: var(--slate-700);
+    line-height: 1.5;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* Buttons */
+  .next-btn, .restart-btn {
+    margin-top: 16px;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Playfair Display', Georgia, serif;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .next-btn:hover, .restart-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(14,116,144,0.4);
+  }
+
+  /* Results Screen */
+  .results-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 48px 40px;
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    animation: fadeIn 0.4s ease;
+  }
+  .results-emoji { font-size: 56px; margin-bottom: 8px; }
+  .results-title { font-size: 28px; color: var(--bg-start); margin-bottom: 4px; }
+  .results-grade { color: var(--slate-500); font-size: 14px; font-family: 'DM Sans', sans-serif; margin-bottom: 24px; }
+  .results-score-box {
+    background: var(--score-bg);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .results-big-score { font-size: 52px; font-weight: 700; color: var(--teal); line-height: 1; }
+  .results-pct { font-size: 14px; color: var(--slate-500); margin-top: 4px; font-family: 'DM Sans', sans-serif; }
+  .results-bar-track {
+    margin-top: 16px;
+    height: 8px;
+    background: var(--slate-200);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .results-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+  .results-bar-fill.pass { background: linear-gradient(90deg, var(--green), var(--green-dark)); }
+  .results-bar-fill.fail { background: linear-gradient(90deg, var(--amber), var(--amber-dark)); }
+
+  .results-review { text-align: left; margin-bottom: 24px; }
+  .review-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .review-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .review-icon.ok { background: var(--green-bg); color: var(--green-dark); }
+  .review-icon.nope { background: var(--red-bg); color: #DC2626; }
+  .review-text { font-size: 13px; color: var(--slate-700); font-family: 'DM Sans', sans-serif; }
+
+  .restart-btn { width: auto; padding: 14px 32px; display: inline-block; }
+
+  .hidden { display: none !important; }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- QUIZ SCREEN -->
+<div class="quiz-container" id="quizScreen">
+  <div class="progress-header">
+    <span class="progress-label" id="qLabel">Question 1 of 10</span>
+    <span class="progress-label" id="scoreLabel">Score: 0</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="card">
+    <div class="scenario-block">
+      <div class="scenario-badge">
+        <span class="scenario-number" id="qNum">1</span>
+        <span class="scenario-tag">Clinical Scenario</span>
+      </div>
+      <p class="scenario-text" id="scenarioText"></p>
+    </div>
+    <div class="options-block" id="optionsBlock"></div>
+  </div>
+</div>
+
+<!-- RESULTS SCREEN -->
+<div class="results-card hidden" id="resultsScreen">
+  <div class="results-emoji" id="resEmoji"></div>
+  <h1 class="results-title">Quiz Complete!</h1>
+  <p class="results-grade" id="resGrade"></p>
+  <div class="results-score-box">
+    <div class="results-big-score" id="resBigScore"></div>
+    <div class="results-pct" id="resPct"></div>
+    <div class="results-bar-track">
+      <div class="results-bar-fill" id="resBar"></div>
+    </div>
+  </div>
+  <div class="results-review" id="resReview"></div>
+  <button class="restart-btn" onclick="restart()">Try Again</button>
+</div>
+
+<script>
+const QUESTIONS = [
+  { scenario: "A 45-year-old patient presents with a BP reading of 142/94 mmHg. How would you classify this?", options: ["Normal", "Elevated", "Stage 1 Hypertension", "Stage 2 Hypertension", "Hypertensive Crisis"], correct: 3, explanation: "Systolic \u2265 140 OR Diastolic \u2265 90 qualifies as Stage 2 Hypertension. This patient has both values in range." },
+  { scenario: "You\u2019re measuring an infant\u2019s pulse. Which site should you use as your PRIMARY assessment location?", options: ["Radial artery", "Carotid artery", "Brachial artery", "Dorsalis pedis", "Femoral artery"], correct: 2, explanation: "The brachial artery (inside upper arm) is the primary pulse site for infants and young children. The radial pulse can be difficult to palpate in very small patients." },
+  { scenario: "A patient\u2019s oral temperature reads 99.8\u00B0F. Their rectal temperature would most likely read approximately:", options: ["98.8\u00B0F", "99.8\u00B0F", "100.8\u00B0F", "101.8\u00B0F"], correct: 2, explanation: "Rectal temperatures read approximately 1\u00B0F HIGHER than oral. So 99.8\u00B0F oral \u2248 100.8\u00B0F rectal." },
+  { scenario: "You notice a patient\u2019s SpO\u2082 reads 88%. What is the appropriate next step?", options: ["Document and continue with the visit", "Recheck in 30 minutes", "Report to the provider immediately", "Remove nail polish and recheck"], correct: 2, explanation: "An SpO\u2082 below 90% is clinically significant and must be reported to the provider immediately. While nail polish can affect readings, 88% is too critical to delay \u2014 report first, troubleshoot second." },
+  { scenario: "When performing orthostatic blood pressure measurements, a positive finding is defined as:", options: ["BP drops \u2265 10 mmHg systolic", "BP drops \u2265 20 mmHg systolic AND/OR pulse rises \u2265 10 bpm", "Pulse drops \u2265 20 bpm upon standing", "BP rises \u2265 15 mmHg upon standing"], correct: 1, explanation: "A positive orthostatic finding = systolic BP drops \u2265 20 mmHg AND/OR pulse increases \u2265 10 bpm when moving from lying to standing." },
+  { scenario: "A mother brings in her 2-year-old toddler. The child\u2019s heart rate is 130 bpm. This is:", options: ["Bradycardic \u2014 dangerously low", "Below normal range", "Within normal range", "Tachycardic \u2014 dangerously high"], correct: 2, explanation: "Normal pulse for a toddler (1\u20132 years) is 98\u2013140 bpm. A heart rate of 130 bpm falls well within the expected range." },
+  { scenario: "You need to convert a patient\u2019s weight of 176 lbs to kilograms. The correct conversion is:", options: ["176 \u00D7 2.2 = 387.2 kg", "176 \u00F7 2.2 = 80 kg", "176 \u00F7 1.8 = 97.8 kg", "176 \u00D7 0.45 = 79.2 kg"], correct: 1, explanation: "To convert pounds to kilograms, divide by 2.2. So 176 \u00F7 2.2 = 80 kg." },
+  { scenario: "A patient tells you they have no complaints but their face is grimacing and they\u2019re guarding their abdomen. You should:", options: ["Accept their verbal report \u2014 pain is subjective", "Document both the verbal denial and nonverbal cues, then report to the provider", "Assign a pain score of 0 since they denied pain", "Ignore the nonverbal cues \u2014 only the patient can rate their pain"], correct: 1, explanation: "While pain IS subjective, nonverbal cues are clinically significant. Document both the verbal denial AND the observed nonverbal indicators (grimacing, guarding) and report the discrepancy to the provider." },
+  { scenario: "Before taking a blood pressure reading, you should ensure the patient has NOT done which of the following in the last 30 minutes?", options: ["Eaten a full meal", "Smoked or consumed caffeine", "Taken a shower", "Used their cell phone"], correct: 1, explanation: "Smoking and caffeine consumption within 30 minutes can elevate both blood pressure and heart rate, producing an inaccurate reading." },
+  { scenario: "A patient\u2019s BMI is calculated at 27.3. This falls into which category?", options: ["Underweight", "Normal / Healthy", "Overweight", "Obese"], correct: 2, explanation: "A BMI of 25.0\u201329.9 is classified as Overweight. 27.3 falls within this range." }
+];
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+let current = 0, score = 0, selected = null, revealed = false, answers = [];
+
+function render() {
+  const q = QUESTIONS[current];
+  document.getElementById("qLabel").textContent = `Question ${current + 1} of ${QUESTIONS.length}`;
+  document.getElementById("scoreLabel").textContent = `Score: ${score}`;
+  document.getElementById("progressBar").style.width = `${(current / QUESTIONS.length) * 100}%`;
+  document.getElementById("qNum").textContent = current + 1;
+  document.getElementById("scenarioText").textContent = q.scenario;
+
+  const block = document.getElementById("optionsBlock");
+  block.innerHTML = "";
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+    if (revealed) {
+      btn.classList.add("revealed");
+      if (i === q.correct) btn.classList.add("correct-choice");
+      else if (i === selected && i !== q.correct) btn.classList.add("wrong-choice");
+      else btn.classList.add("dimmed");
+    }
+    btn.innerHTML = `<span class="option-letter">${LETTERS[i]}</span><span class="option-text">${opt}</span>`;
+    btn.onclick = () => selectOption(i);
+    block.appendChild(btn);
+  });
+
+  if (revealed) {
+    // Explanation
+    const exp = document.createElement("div");
+    const isCorrect = selected === q.correct;
+    exp.className = `explanation ${isCorrect ? "correct-exp" : "wrong-exp"}`;
+    exp.innerHTML = `<div class="explanation-label">${isCorrect ? "\u2713 Correct!" : "\u2717 Not quite"}</div><p>${q.explanation}</p>`;
+    block.appendChild(exp);
+
+    // Next button
+    const btn = document.createElement("button");
+    btn.className = "next-btn";
+    btn.textContent = current + 1 >= QUESTIONS.length ? "See Results" : "Next Question \u2192";
+    btn.onclick = nextQuestion;
+    block.appendChild(btn);
+  }
+}
+
+function selectOption(i) {
+  if (revealed) return;
+  selected = i;
+  revealed = true;
+  const isCorrect = i === QUESTIONS[current].correct;
+  if (isCorrect) score++;
+  answers.push({ qIdx: current, picked: i, correct: QUESTIONS[current].correct, isCorrect });
+  render();
+}
+
+function nextQuestion() {
+  if (current + 1 >= QUESTIONS.length) {
+    showResults();
+  } else {
+    current++;
+    selected = null;
+    revealed = false;
+    render();
+  }
+}
+
+function showResults() {
+  document.getElementById("quizScreen").classList.add("hidden");
+  const res = document.getElementById("resultsScreen");
+  res.classList.remove("hidden");
+
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+  const grade = pct >= 90 ? "Outstanding!" : pct >= 70 ? "Great work!" : pct >= 50 ? "Keep studying!" : "Review the material.";
+
+  document.getElementById("resEmoji").textContent = pct >= 70 ? "\uD83C\uDF89" : "\uD83D\uDCDA";
+  document.getElementById("resGrade").textContent = grade;
+  document.getElementById("resBigScore").textContent = `${score}/${QUESTIONS.length}`;
+  document.getElementById("resPct").textContent = `${pct}% correct`;
+
+  const bar = document.getElementById("resBar");
+  bar.className = `results-bar-fill ${pct >= 70 ? "pass" : "fail"}`;
+  setTimeout(() => { bar.style.width = `${pct}%`; }, 50);
+
+  const review = document.getElementById("resReview");
+  review.innerHTML = answers.map((a, i) =>
+    `<div class="review-row">
+      <span class="review-icon ${a.isCorrect ? "ok" : "nope"}">${a.isCorrect ? "\u2713" : "\u2717"}</span>
+      <span class="review-text">Q${i + 1}: ${a.isCorrect ? "Correct" : `You chose ${LETTERS[a.picked]} \u2014 answer was ${LETTERS[a.correct]}`}</span>
+    </div>`
+  ).join("");
+}
+
+function restart() {
+  current = 0; score = 0; selected = null; revealed = false; answers = [];
+  document.getElementById("resultsScreen").classList.add("hidden");
+  document.getElementById("quizScreen").classList.remove("hidden");
+  document.getElementById("resBar").style.width = "0%";
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

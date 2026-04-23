@@ -1,0 +1,399 @@
+week1_glossary (1).html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 1 Glossary — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #0e0e1a;
+    --text-secondary: #3a3a50;
+    --surface-1: #e0e0ec;
+    --surface-2: #d0d0dd;
+    --border: #c0c0cc;
+    --bg: #d8d8e4;
+    --card-shadow: 0 2px 12px rgba(26,26,46,0.06);
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text: #e4e4f0;
+      --text-secondary: #9898b0;
+      --surface-1: #1c1c2e;
+      --surface-2: #282840;
+      --border: #363650;
+      --bg: #111122;
+      --card-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 600;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C0392B; margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 900;
+    letter-spacing: -1px; margin-bottom: 6px; line-height: 1.1;
+  }
+  .header p { font-size: 13px; color: var(--text-secondary); }
+
+  /* Search */
+  .search-wrap { position: relative; margin-bottom: 20px; }
+  .search-wrap input {
+    width: 100%; padding: 14px 18px 14px 46px; border-radius: 14px;
+    border: 2px solid var(--border); background: var(--surface-1);
+    color: var(--text); font-size: 15px; outline: none; font-family: var(--font-body);
+    transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: #C0392B; }
+  .search-wrap .icon {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    font-size: 18px; opacity: .4;
+  }
+
+  /* Category accordion */
+  .cat-btn {
+    width: 100%; padding: 14px 18px; border-radius: 14px;
+    border: 2px solid var(--border); background: var(--surface-1);
+    cursor: pointer; display: flex; align-items: center; gap: 12px;
+    transition: all .2s; font-family: var(--font-body);
+  }
+  .cat-btn:hover { border-color: #aaa; }
+  .cat-btn .emoji { font-size: 22px; }
+  .cat-btn .name { font-weight: 700; color: var(--text); font-size: 15px; }
+  .cat-btn .count {
+    margin-left: auto; font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .cat-btn .arrow {
+    font-size: 14px; color: var(--text-secondary); transition: transform .25s;
+  }
+  .cat-btn.open .arrow { transform: rotate(180deg); }
+
+  /* Term cards */
+  .term-card {
+    padding: 13px 16px; border-radius: 11px; background: var(--surface-1);
+    border: 2px solid transparent; cursor: pointer; transition: all .15s;
+  }
+  .term-card:hover { border-color: var(--border); }
+  .term-card .term-name { font-weight: 800; font-size: 14px; color: var(--text); }
+  .term-card .term-def {
+    margin: 10px 0 4px; font-size: 13px; line-height: 1.65;
+    color: var(--text-secondary); font-weight: 600;
+  }
+
+  /* Search result card */
+  .result-card {
+    padding: 14px 18px; border-radius: 12px; background: var(--surface-1);
+    cursor: pointer; border: 2px solid var(--border); transition: all .2s;
+  }
+  .result-card .row { display: flex; align-items: center; gap: 10px; }
+  .result-card .r-emoji { font-size: 20px; }
+  .result-card .r-term { font-weight: 700; color: var(--text); font-size: 15px; }
+  .result-card .r-cat {
+    margin-left: auto; font-size: 11px; padding: 3px 10px;
+    border-radius: 20px; font-weight: 600;
+  }
+  .result-card .r-def {
+    margin: 12px 0 4px 30px; font-size: 14px; line-height: 1.6; color: var(--text-secondary);
+  }
+
+  /* Utilities */
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; }
+  .mb-6 { margin-bottom: 6px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; }
+  .gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 1 Glossary</h1>
+    <p id="header-subtitle"></p>
+  </div>
+
+  <!-- Browse Mode -->
+  <div id="browse-mode"></div>
+
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────
+const CATEGORIES = [
+  {
+    name: "Patient ID & Safety", emoji: "🛡️", color: "#C0392B",
+    terms: [
+      { term: "Patient Identifier", def: "A piece of information used to confirm a patient's identity. The two most common identifiers are full name and date of birth. Other accepted identifiers include the medical record number and the last four digits of a Social Security number." },
+      { term: "Medical Record Number (MRN)", def: "A unique number assigned to each patient within a healthcare system's electronic health record. Used to distinguish patients with similar names and link all clinical documentation to the correct individual." },
+      { term: "Demographics", def: "Basic personal information about a patient collected and verified at every visit, including full name, address, phone number, date of birth, insurance information, and emergency contact details." },
+      { term: "The Joint Commission", def: "A nonprofit organization that accredits and certifies healthcare organizations in the United States. It establishes patient safety standards, including the requirement to use at least two methods of identification before delivering care." },
+      { term: "Medication Reconciliation", def: "A formal safety process that compares the medications a patient is currently taking against those listed in the medical record. Performed at every visit to prevent errors, interactions, and duplicate prescriptions." },
+    ],
+  },
+  {
+    name: "Patient History & Docs", emoji: "📋", color: "#2471A3",
+    terms: [
+      { term: "Chief Complaint (CC)", def: "The main reason a patient is seeking care, documented in the patient's own words and placed in quotation marks. Also called the chief concern. This is the first piece of subjective information recorded during intake." },
+      { term: "Subjective Information", def: "Information felt, experienced, or described by the patient that cannot be directly measured. Examples include pain, nausea, and dizziness. Contrasts with objective information." },
+      { term: "Objective Information", def: "Information that can be directly observed, measured, or documented — such as vital signs, lab results, and physical examination findings. Past medical history is considered objective because it has been previously documented." },
+      { term: "Medical History", def: "A record of a patient's past illnesses, diagnoses, surgeries, hospitalizations, and procedures. Provides the clinical background needed to make informed treatment decisions." },
+      { term: "Family History", def: "A record of illnesses, diseases, and health conditions in a patient's immediate family (parents, siblings, children). Helps identify genetic predispositions to conditions such as heart disease, diabetes, and cancer." },
+      { term: "Social History", def: "Information about a patient's lifestyle and personal habits, including diet, exercise, tobacco/alcohol use, recreational drug use, sexual practices, and living situation. Supports preventive care planning." },
+      { term: "Occupational History", def: "A record of past and current employment, with attention to occupational hazards and exposures such as asbestos, chemicals, heavy machinery, or repetitive physical stress." },
+      { term: "Allergy", def: "An immune system reaction to a specific substance. When documenting, the medical assistant records the allergen and the type of reaction (e.g., hives, anaphylaxis). Allergy info must be prominently flagged in the medical record." },
+      { term: "Anaphylaxis", def: "A severe, potentially life-threatening allergic reaction requiring immediate emergency treatment. Symptoms include airway swelling, difficulty breathing, sudden drop in blood pressure, and loss of consciousness." },
+    ],
+  },
+  {
+    name: "Blood Pressure", emoji: "❤️", color: "#C2185B",
+    terms: [
+      { term: "Blood Pressure (BP)", def: "A measurement of the force exerted by circulating blood against artery walls. Recorded as systolic over diastolic (e.g., 118/76 mmHg). Measured in millimeters of mercury (mmHg)." },
+      { term: "Systolic Pressure", def: "The top number in a blood pressure reading. Represents pressure in the arteries when the heart contracts and pumps blood. The first Korotkoff sound heard during manual BP reading." },
+      { term: "Diastolic Pressure", def: "The bottom number in a blood pressure reading. Represents pressure in the arteries when the heart is at rest between beats. Recorded when the last Korotkoff sound disappears." },
+      { term: "Sphygmomanometer", def: "The medical instrument used to measure blood pressure, consisting of an inflatable cuff, a pressure gauge (aneroid or mercury), and tubing. Available in manual and electronic versions." },
+      { term: "Korotkoff Sounds", def: "Five distinct sounds heard through a stethoscope during manual blood pressure measurement. Phase I (first tapping) marks systolic; Phase V (last sound disappears) marks diastolic." },
+      { term: "Hypertension", def: "Chronically elevated blood pressure. Stages: Elevated (120–129/<80), Stage 1 (130–139 or 80–89), Stage 2 (≥140 or ≥90), Hypertensive Crisis (>180 and/or >120). Risk factor for heart disease, stroke, kidney disease." },
+      { term: "Hypertensive Crisis", def: "A medical emergency where blood pressure exceeds 180/120 mmHg. Requires immediate care. Symptoms may include severe headache, chest pain, vision changes, or difficulty breathing." },
+      { term: "Palpatory Method", def: "A technique to estimate systolic BP by feeling the radial pulse rather than listening with a stethoscope. Used in emergencies. Documented as, e.g., 104/P." },
+      { term: "Auscultation", def: "The act of listening to sounds within the body, typically with a stethoscope. Used when manually measuring blood pressure to detect Korotkoff sounds." },
+      { term: "Antecubital Space", def: "The inner bend of the elbow. Standard placement site for the blood pressure cuff — positioned approximately one inch above — and where the brachial artery is palpated or auscultated." },
+      { term: "Orthostatic Hypotension", def: "A significant drop in BP (≥20 mmHg systolic or ≥10 mmHg diastolic) that occurs when moving from lying to sitting, or sitting to standing. Also called postural hypotension. Can cause dizziness or fainting." },
+      { term: "Postural Hypotension", def: "Another term for orthostatic hypotension. Occurs due to positional changes and can indicate dehydration, heart disease, diabetes, medication effects, or nervous system disorders." },
+    ],
+  },
+  {
+    name: "Pulse", emoji: "💓", color: "#7D3C98",
+    terms: [
+      { term: "Pulse Rate", def: "The number of times the heart beats per minute, measured by palpating an artery. Also referred to as heart rate. Normal adult range: 60–100 bpm." },
+      { term: "Radial Pulse", def: "The pulse felt on the thumb side of the wrist at the radial artery. The most common site for measuring pulse in adults." },
+      { term: "Brachial Pulse", def: "The pulse felt on the inside of the upper arm at the brachial artery. Most common site for measuring pulse in infants/children, and used during blood pressure measurement." },
+      { term: "Carotid Pulse", def: "The pulse felt in the neck at the carotid artery, just below the jawbone. Most commonly used during emergencies and CPR." },
+      { term: "Apical Pulse", def: "The pulse measured by listening directly over the apex of the heart with a stethoscope. Used for infants, young children, and patients with irregular heartbeats. Always counted for a full minute." },
+      { term: "Bradycardia", def: "A heart rate below 60 bpm in adults. May be normal in well-trained athletes but can indicate a cardiac or metabolic problem in other patients." },
+      { term: "Tachycardia", def: "A heart rate above 100 bpm in adults. Can be caused by fever, pain, anxiety, dehydration, medications, or cardiac conditions." },
+      { term: "Thready Pulse", def: "A pulse that is weak, faint, or difficult to detect. May indicate low blood pressure, shock, or poor circulation." },
+      { term: "Bounding Pulse", def: "A pulse that feels abnormally strong or forceful. May indicate elevated blood pressure, fever, or certain cardiac conditions." },
+      { term: "Irregular Rhythm", def: "A pulse that does not beat at a consistent, even interval. Any irregularity should be reported to the provider." },
+    ],
+  },
+  {
+    name: "Respiration", emoji: "🫁", color: "#148F77",
+    terms: [
+      { term: "Respiratory Rate", def: "The number of complete breaths (one inhalation + one exhalation) per minute. Normal adult range: 12–20 breaths/min. Should be counted without the patient's knowledge to prevent voluntary alteration." },
+      { term: "Tachypnea", def: "Abnormally fast respiratory rate, greater than 20 breaths/min in adults. Can be caused by anxiety, fever, pain, respiratory infection, or metabolic disturbances." },
+      { term: "Bradypnea", def: "Abnormally slow respiratory rate, fewer than 12 breaths/min in adults. Can be caused by certain medications, neurological conditions, or metabolic changes." },
+      { term: "Dyspnea", def: "Difficult, labored, or painful breathing. Commonly associated with asthma, COPD, pneumonia, heart failure, or high altitude. Patients often describe it as feeling 'short of breath.'" },
+      { term: "Apnea", def: "A temporary pause or complete cessation of breathing. Can occur during sleep (sleep apnea) or as a sign of a medical emergency requiring immediate intervention." },
+      { term: "Hyperventilation", def: "Abnormally rapid and deep breathing causing a decrease in blood CO₂ levels. Often triggered by anxiety, panic attacks, or intense pain." },
+      { term: "Orthopnea", def: "Difficulty breathing that occurs when lying flat, relieved by sitting or standing upright. Commonly associated with congestive heart failure and COPD." },
+      { term: "Wheezing", def: "A high-pitched whistling sound during breathing, most often on exhalation, as air moves through narrowed airways. Associated with asthma and allergic reactions." },
+      { term: "Rales", def: "Abnormal crackling or clicking sounds heard on lung auscultation, usually during inhalation. Caused by fluid or secretions in the small airways or air sacs. Associated with pneumonia and heart failure." },
+      { term: "Rhonchi", def: "Low-pitched, rumbling sounds heard in the larger airways during breathing, similar to snoring. Associated with COPD, chronic bronchitis, and pneumonia." },
+    ],
+  },
+  {
+    name: "Temperature", emoji: "🌡️", color: "#D68910",
+    terms: [
+      { term: "Body Temperature", def: "A measurement of the body's ability to generate and release heat. Normal adult oral temperature ≈ 98.6°F (37°C). Influenced by time of day, age, gender, activity, and illness." },
+      { term: "Pyrexia", def: "The medical term for fever — an elevation in body temperature above the normal range, typically triggered by infection. Represents the body's natural defense against pathogens." },
+      { term: "Afebrile", def: "Having no fever. A body temperature within the normal range for that patient's age and baseline." },
+      { term: "Febrile", def: "Having a fever. Body temperature above the normal range, generally >99.6°F (37.6°C) for an oral reading in adults." },
+      { term: "Axillary Temperature (Ax)", def: "Temperature measured in the armpit (axilla). Approximately 1°F (0.6°C) lower than oral temperature because not measured in an enclosed body cavity. Documented with (Ax)." },
+      { term: "Tympanic Temperature (T/AU)", def: "Temperature measured in the ear canal using infrared technology. Approximately 1°F (0.6°C) higher than oral. Not used when patient has ear pain or bilateral impacted cerumen. Documented with (T) or (AU)." },
+      { term: "Temporal Artery Temperature (TA)", def: "Temperature measured by scanning the forehead and behind the ear over the temporal artery. Approximately 1°F higher than oral. Preferred for pediatric patients. Documented with (TA)." },
+      { term: "Rectal Temperature (R)", def: "Temperature measured in the rectum. Approximately 1°F (0.6°C) higher than oral. The most accurate method for measuring core body temperature. Often used for infants. Documented with (R)." },
+      { term: "Frenulum Linguae", def: "The thin membrane on the underside of the tongue connecting it to the floor of the mouth. The thermometer probe is placed beside (not under) the frenulum during oral temperature measurement." },
+      { term: "Malaise", def: "A general feeling of discomfort, illness, or lack of energy that often accompanies fever. Patients may describe it as feeling 'run down' or 'unwell.'" },
+    ],
+  },
+  {
+    name: "Pulse Oximetry & O₂", emoji: "🫧", color: "#1A5276",
+    terms: [
+      { term: "Pulse Oximetry", def: "A non-invasive method of measuring the percentage of oxygen saturation in the blood using a probe that emits infrared light. Provides rapid assessment of respiratory function." },
+      { term: "SpO₂", def: "The notation used to document oxygen saturation measured by a pulse oximeter. Normal: ≥95%. Values below 90% should be reported to the provider immediately." },
+      { term: "Hypoxemia", def: "An abnormally low level of oxygen in the blood. Defined as SpO₂ below 90%. May require supplemental oxygen therapy and prompt provider evaluation." },
+      { term: "Oxygen Saturation", def: "The percentage of hemoglobin in the blood carrying oxygen. Measured non-invasively by pulse oximetry. Normal SpO₂ ≥95% for most adults." },
+    ],
+  },
+  {
+    name: "Pain Assessment", emoji: "😣", color: "#CA6F1E",
+    terms: [
+      { term: "Pain Scale (0–10)", def: "A standardized numerical tool to measure a patient's self-reported pain level. Zero = no pain, ten = worst pain imaginable. The patient's verbal report is the standard." },
+      { term: "Wong-Baker Faces Rating Scale", def: "A pain assessment tool using illustrated faces ranging from happy (no pain) to crying (worst pain). Designed for children or patients who have difficulty using a numerical scale." },
+      { term: "Nonverbal Pain Cues", def: "Observable signs of pain in patients who cannot verbally communicate discomfort. Examples: facial grimacing, guarding, rigid posture, bracing, and moaning." },
+    ],
+  },
+  {
+    name: "Menstrual History", emoji: "📅", color: "#922B21",
+    terms: [
+      { term: "Last Menstrual Period (LMP)", def: "The first day of a patient's most recent menstrual cycle. Recorded at every visit for menstruating patients. Used to evaluate potential pregnancy and calculate an estimated due date (EDD)." },
+      { term: "Menstruation", def: "The monthly shedding of the uterine lining (endometrium) through vaginal bleeding. Typically occurs approximately every 28 days. Regulated by estrogen and progesterone." },
+      { term: "Endometrium", def: "The inner mucous membrane lining of the uterus. Thickens each month in preparation for pregnancy. If fertilization does not occur, it is shed during menstruation." },
+      { term: "Estimated Due Date (EDD)", def: "The projected date of delivery calculated from the first day of the last menstrual period (LMP). Typically 40 weeks from the LMP. Guides prenatal care." },
+    ],
+  },
+  {
+    name: "Anthropometrics & BMI", emoji: "📏", color: "#1E8449",
+    terms: [
+      { term: "Anthropometric Measurements", def: "Physical measurements of the human body used to assess health status. Typically include height, weight, head circumference (in children), and waist circumference. Used in calculating BMI." },
+      { term: "Body Mass Index (BMI)", def: "A screening tool estimating body fat based on height and weight. Formula: weight (kg) ÷ height² (m²). Results: <18.5 = Underweight; 18.5–24.9 = Normal; 25–29.9 = Overweight; ≥30 = Obese." },
+      { term: "Stadiometer", def: "A height-measuring device consisting of a vertical ruler attached to a flat platform with a movable horizontal headpiece. Used to measure standing height accurately." },
+      { term: "Head Circumference", def: "Measurement of the widest part of an infant's or toddler's head, taken above the eyebrows, around the sides above the ears, and across the widest part of the back of the skull. Monitored birth to 36 months." },
+    ],
+  },
+  {
+    name: "Pediatric Growth", emoji: "👶", color: "#6C3483",
+    terms: [
+      { term: "Growth Chart", def: "A standardized graph (developed by the CDC) plotting a child's height, weight, and/or head circumference against national data by age and sex. Used from birth through age 20." },
+      { term: "Growth Percentile", def: "A measurement on the growth chart indicating what percentage of same-age, same-sex children are at or below a given measurement. E.g., 50th percentile for weight = heavier than 50% of peers." },
+      { term: "Length", def: "The measurement of an infant/young child's body from head to heel, taken while lying flat. Used in place of standing height for children who cannot stand unassisted." },
+      { term: "Well-Child Visit", def: "A routine preventive healthcare appointment including growth measurements, developmental screening, immunization review, and health education for the parent or caregiver." },
+    ],
+  },
+  {
+    name: "Screenings & Mental Health", emoji: "🧠", color: "#117A65",
+    terms: [
+      { term: "PHQ-2", def: "A brief, two-question screening tool asking about depressed mood and loss of interest over the past two weeks. A positive result prompts administration of the full PHQ-9." },
+      { term: "PHQ-9", def: "A nine-question depression screening tool used to assess whether a patient meets criteria for a depressive disorder and gauge symptom severity. Completed when the PHQ-2 is positive." },
+      { term: "GAD-7", def: "A seven-question screening questionnaire used to assess the presence and severity of generalized anxiety disorder. Scores help guide further evaluation or treatment." },
+      { term: "Mini-Mental State Exam (MMSE)", def: "A brief cognitive screening tool for older adults evaluating memory, orientation, attention, language, and other cognitive functions. Used to screen for dementia." },
+      { term: "Depression", def: "A mental health condition characterized by persistent sadness, loss of interest, fatigue, changes in appetite or sleep, low energy, and difficulty concentrating. Requires clinical screening for diagnosis." },
+      { term: "Anxiety", def: "A mental health condition characterized by excessive worry, fear, or nervousness. Physical symptoms can include heart palpitations, shortness of breath, sweating, and irritability." },
+      { term: "White Coat Syndrome", def: "A phenomenon where a patient's blood pressure, heart rate, or anxiety is elevated specifically in a clinical setting due to stress of being seen by a healthcare provider. Can lead to falsely elevated readings." },
+    ],
+  },
+  {
+    name: "Unit Conversions", emoji: "🔢", color: "#2C3E50",
+    terms: [
+      { term: "Millimeters of Mercury (mmHg)", def: "The unit of measurement for blood pressure. Represents the height in millimeters that pressure can raise a column of mercury in a traditional gauge." },
+      { term: "Fahrenheit (°F)", def: "The temperature scale commonly used in US clinical practice. Water freezes at 32°F, boils at 212°F. Normal adult oral temp ≈ 98.6°F." },
+      { term: "Celsius (°C)", def: "The metric temperature scale used in scientific and international clinical settings. Water freezes at 0°C, boils at 100°C. Normal adult oral temp ≈ 37°C." },
+      { term: "°F to °C Conversion", def: "Formula: °C = (°F − 32) ÷ 1.8. Example: 99°F → (99 − 32) ÷ 1.8 = 37.2°C." },
+      { term: "°C to °F Conversion", def: "Formula: °F = (°C × 1.8) + 32. Example: 38°C → (38 × 1.8) + 32 = 100.4°F." },
+      { term: "Pounds to Kilograms", def: "Formula: kg = lb ÷ 2.2. Example: 148 lb ÷ 2.2 = 67.3 kg. Used when medication dosing requires weight in kilograms." },
+      { term: "Kilograms to Pounds", def: "Formula: lb = kg × 2.2. Example: 87 kg × 2.2 = 191.4 lb." },
+      { term: "Inches to Feet/Inches", def: "Formula: divide total inches by 12. Whole number = feet; remainder = inches. Example: 62 in ÷ 12 = 5 feet, 2 inches." },
+    ],
+  },
+];
+
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+
+// ─── STATE ────────────────────────────────────────────────
+// Browse state
+let browseSearch = '';
+let browseOpenCat = null;
+let browseOpenTerm = null;
+
+// ─── INIT ─────────────────────────────────────────────────
+document.getElementById('header-subtitle').textContent =
+  `Patient Intake & Vital Signs · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+
+renderBrowse();
+
+// ─── BROWSE MODE ──────────────────────────────────────────
+function renderBrowse() {
+  const el = document.getElementById('browse-mode');
+  const query = browseSearch.trim().toLowerCase();
+
+  let html = `
+    <div class="search-wrap">
+      <span class="icon">🔍</span>
+      <input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}"
+        oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" />
+    </div>`;
+
+  if (query) {
+    const filtered = ALL_TERMS.filter(t =>
+      t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query)
+    );
+    if (filtered.length === 0) {
+      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
+    } else {
+      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
+      filtered.forEach((t, i) => {
+        const isOpen = browseOpenTerm === `s-${i}`;
+        html += `
+          <div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();"
+               style="border-color:${isOpen ? t.color : 'var(--border)'}">
+            <div class="row">
+              <span class="r-emoji">${t.emoji}</span>
+              <span class="r-term">${escHtml(t.term)}</span>
+              <span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span>
+            </div>
+            ${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}
+          </div>`;
+      });
+      html += `</div>`;
+    }
+  } else {
+    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
+    CATEGORIES.forEach((cat, ci) => {
+      const isOpen = browseOpenCat === ci;
+      html += `
+        <div>
+          <button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();"
+            style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}">
+            <span class="emoji">${cat.emoji}</span>
+            <span class="name">${escHtml(cat.name)}</span>
+            <span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span>
+            <span class="arrow">▼</span>
+          </button>`;
+      if (isOpen) {
+        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
+        cat.terms.forEach((t, ti) => {
+          const tKey = `${ci}-${ti}`;
+          const tOpen = browseOpenTerm === tKey;
+          html += `
+            <div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();"
+                 style="border-color:${tOpen ? cat.color : 'transparent'}">
+              <span class="term-name">${escHtml(t.term)}</span>
+              ${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}
+            </div>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ─── HELPERS ──────────────────────────────────────────────
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

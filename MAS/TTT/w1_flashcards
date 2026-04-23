@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #c0392b;
+    --text: #0f0f1a;
+    --text-2: #555570;
+    --text-3: #9090a8;
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.09);
+    --border-hover: rgba(0,0,0,0.18);
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+    --shadow-hover: 0 2px 8px rgba(0,0,0,0.10), 0 8px 24px rgba(0,0,0,0.06);
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Syne', sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 20px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --red: #e05a50;
+      --text: #eeeef6;
+      --text-2: #9898b8;
+      --text-3: #5a5a78;
+      --bg: #0e0e18;
+      --surface: #181828;
+      --border: rgba(255,255,255,0.08);
+      --border-hover: rgba(255,255,255,0.16);
+      --shadow-card: 0 1px 4px rgba(0,0,0,0.4);
+      --shadow-hover: 0 4px 20px rgba(0,0,0,0.5);
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+
+  /* Header */
+  .header { margin-bottom: 40px; }
+  .header-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+  .header-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 18px; height: 2px;
+    background: var(--red);
+    border-radius: 2px;
+  }
+  .header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.0;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .header-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-2);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 5px 12px;
+    font-weight: 500;
+    box-shadow: var(--shadow-card);
+  }
+  .header-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  /* Category selection grid */
+  .cat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .cat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 100px;
+    border: 1.5px solid;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .cat-chip .chip-emoji { font-size: 14px; }
+
+  /* Start button */
+  .btn-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    padding: 14px 32px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: var(--font-display);
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+    letter-spacing: -0.2px;
+  }
+  .btn-start:hover { opacity: 0.9; }
+  .btn-start:active { transform: scale(0.98); }
+
+  .select-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .select-count {
+    font-size: 13px;
+    color: var(--text-3);
+    font-weight: 500;
+  }
+  .select-count strong {
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--text-2);
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .progress-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+  .progress-track {
+    flex: 1;
+    height: 5px;
+    border-radius: 5px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width .3s ease;
+  }
+  .score-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+
+  /* Flashcard */
+  .card-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .flashcard {
+    width: 100%;
+    min-height: 260px;
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    transition: transform .15s, box-shadow .15s;
+    user-select: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+  .flashcard:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,0,0,0.16); }
+  .flashcard:active { transform: scale(0.99); }
+
+  .card-label {
+    position: absolute;
+    top: 18px; left: 22px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    opacity: 0.65;
+  }
+  .card-hint {
+    position: absolute;
+    top: 18px; right: 22px;
+    font-size: 11px;
+    opacity: 0.45;
+    font-weight: 500;
+  }
+  .card-term {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 4vw, 28px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.5px;
+    color: #fff;
+  }
+  .card-def {
+    font-size: 14.5px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  /* Action buttons */
+  .card-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+  }
+  .btn-learning {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: 100px;
+    border: 1.5px solid;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .btn-learning:hover { opacity: 0.8; }
+  .btn-got-it {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: 100px;
+    border: none;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font-body);
+    cursor: pointer;
+    color: #fff;
+    transition: all .15s;
+  }
+  .btn-got-it:hover { opacity: 0.9; }
+  .btn-got-it:active, .btn-learning:active { transform: scale(0.97); }
+
+  /* Results screen */
+  .results-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px 32px;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+  .results-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .results-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .results-sub {
+    font-size: 14px;
+    color: var(--text-2);
+    margin-bottom: 24px;
+  }
+  .results-meter {
+    width: 100%;
+    max-width: 320px;
+    height: 8px;
+    border-radius: 8px;
+    background: var(--border);
+    margin: 0 auto 28px;
+    overflow: hidden;
+  }
+  .results-meter-fill {
+    height: 100%;
+    border-radius: 8px;
+    transition: width .8s ease;
+  }
+  .results-stats {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+  .stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .btn-again {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: 100px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: var(--font-display);
+    cursor: pointer;
+    color: #fff;
+    background: var(--red);
+    transition: opacity .15s;
+    letter-spacing: -0.2px;
+  }
+  .btn-again:hover { opacity: 0.9; }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 32px 0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="header">
+    <div class="header-eyebrow">Medical Assistant Program</div>
+    <h1>Flashcards</h1>
+    <div class="header-pill"><span class="dot"></span>Patient Intake &amp; Vital Signs</div>
+  </header>
+
+  <div id="app"></div>
+
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "Patient ID & Safety", emoji: "🛡️", color: "#C0392B",
+    terms: [
+      { term: "Patient Identifier", def: "A piece of information used to confirm a patient's identity. The two most common identifiers are full name and date of birth. Other accepted identifiers include the medical record number and the last four digits of a Social Security number." },
+      { term: "Medical Record Number (MRN)", def: "A unique number assigned to each patient within a healthcare system's electronic health record. Used to distinguish patients with similar names and link all clinical documentation to the correct individual." },
+      { term: "Demographics", def: "Basic personal information about a patient collected and verified at every visit, including full name, address, phone number, date of birth, insurance information, and emergency contact details." },
+      { term: "The Joint Commission", def: "A nonprofit organization that accredits and certifies healthcare organizations in the United States. It establishes patient safety standards, including the requirement to use at least two methods of identification before delivering care." },
+      { term: "Medication Reconciliation", def: "A formal safety process that compares the medications a patient is currently taking against those listed in the medical record. Performed at every visit to prevent errors, interactions, and duplicate prescriptions." },
+    ],
+  },
+  {
+    name: "Patient History & Docs", emoji: "📋", color: "#2471A3",
+    terms: [
+      { term: "Chief Complaint (CC)", def: "The main reason a patient is seeking care, documented in the patient's own words and placed in quotation marks. Also called the chief concern. This is the first piece of subjective information recorded during intake." },
+      { term: "Subjective Information", def: "Information felt, experienced, or described by the patient that cannot be directly measured. Examples include pain, nausea, and dizziness. Contrasts with objective information." },
+      { term: "Objective Information", def: "Information that can be directly observed, measured, or documented — such as vital signs, lab results, and physical examination findings. Past medical history is considered objective because it has been previously documented." },
+      { term: "Medical History", def: "A record of a patient's past illnesses, diagnoses, surgeries, hospitalizations, and procedures. Provides the clinical background needed to make informed treatment decisions." },
+      { term: "Family History", def: "A record of illnesses, diseases, and health conditions in a patient's immediate family (parents, siblings, children). Helps identify genetic predispositions to conditions such as heart disease, diabetes, and cancer." },
+      { term: "Social History", def: "Information about a patient's lifestyle and personal habits, including diet, exercise, tobacco/alcohol use, recreational drug use, sexual practices, and living situation. Supports preventive care planning." },
+      { term: "Occupational History", def: "A record of past and current employment, with attention to occupational hazards and exposures such as asbestos, chemicals, heavy machinery, or repetitive physical stress." },
+      { term: "Allergy", def: "An immune system reaction to a specific substance. When documenting, the medical assistant records the allergen and the type of reaction (e.g., hives, anaphylaxis). Allergy info must be prominently flagged in the medical record." },
+      { term: "Anaphylaxis", def: "A severe, potentially life-threatening allergic reaction requiring immediate emergency treatment. Symptoms include airway swelling, difficulty breathing, sudden drop in blood pressure, and loss of consciousness." },
+    ],
+  },
+  {
+    name: "Blood Pressure", emoji: "❤️", color: "#C2185B",
+    terms: [
+      { term: "Blood Pressure (BP)", def: "A measurement of the force exerted by circulating blood against artery walls. Recorded as systolic over diastolic (e.g., 118/76 mmHg). Measured in millimeters of mercury (mmHg)." },
+      { term: "Systolic Pressure", def: "The top number in a blood pressure reading. Represents pressure in the arteries when the heart contracts and pumps blood. The first Korotkoff sound heard during manual BP reading." },
+      { term: "Diastolic Pressure", def: "The bottom number in a blood pressure reading. Represents pressure in the arteries when the heart is at rest between beats. Recorded when the last Korotkoff sound disappears." },
+      { term: "Sphygmomanometer", def: "The medical instrument used to measure blood pressure, consisting of an inflatable cuff, a pressure gauge (aneroid or mercury), and tubing. Available in manual and electronic versions." },
+      { term: "Korotkoff Sounds", def: "Five distinct sounds heard through a stethoscope during manual blood pressure measurement. Phase I (first tapping) marks systolic; Phase V (last sound disappears) marks diastolic." },
+      { term: "Hypertension", def: "Chronically elevated blood pressure. Stages: Elevated (120–129/<80), Stage 1 (130–139 or 80–89), Stage 2 (≥140 or ≥90), Hypertensive Crisis (>180 and/or >120). Risk factor for heart disease, stroke, kidney disease." },
+      { term: "Hypertensive Crisis", def: "A medical emergency where blood pressure exceeds 180/120 mmHg. Requires immediate care. Symptoms may include severe headache, chest pain, vision changes, or difficulty breathing." },
+      { term: "Palpatory Method", def: "A technique to estimate systolic BP by feeling the radial pulse rather than listening with a stethoscope. Used in emergencies. Documented as, e.g., 104/P." },
+      { term: "Auscultation", def: "The act of listening to sounds within the body, typically with a stethoscope. Used when manually measuring blood pressure to detect Korotkoff sounds." },
+      { term: "Antecubital Space", def: "The inner bend of the elbow. Standard placement site for the blood pressure cuff — positioned approximately one inch above — and where the brachial artery is palpated or auscultated." },
+      { term: "Orthostatic Hypotension", def: "A significant drop in BP (≥20 mmHg systolic or ≥10 mmHg diastolic) that occurs when moving from lying to sitting, or sitting to standing. Also called postural hypotension. Can cause dizziness or fainting." },
+      { term: "Postural Hypotension", def: "Another term for orthostatic hypotension. Occurs due to positional changes and can indicate dehydration, heart disease, diabetes, medication effects, or nervous system disorders." },
+    ],
+  },
+  {
+    name: "Pulse", emoji: "💓", color: "#7D3C98",
+    terms: [
+      { term: "Pulse Rate", def: "The number of times the heart beats per minute, measured by palpating an artery. Also referred to as heart rate. Normal adult range: 60–100 bpm." },
+      { term: "Radial Pulse", def: "The pulse felt on the thumb side of the wrist at the radial artery. The most common site for measuring pulse in adults." },
+      { term: "Brachial Pulse", def: "The pulse felt on the inside of the upper arm at the brachial artery. Most common site for measuring pulse in infants/children, and used during blood pressure measurement." },
+      { term: "Carotid Pulse", def: "The pulse felt in the neck at the carotid artery, just below the jawbone. Most commonly used during emergencies and CPR." },
+      { term: "Apical Pulse", def: "The pulse measured by listening directly over the apex of the heart with a stethoscope. Used for infants, young children, and patients with irregular heartbeats. Always counted for a full minute." },
+      { term: "Bradycardia", def: "A heart rate below 60 bpm in adults. May be normal in well-trained athletes but can indicate a cardiac or metabolic problem in other patients." },
+      { term: "Tachycardia", def: "A heart rate above 100 bpm in adults. Can be caused by fever, pain, anxiety, dehydration, medications, or cardiac conditions." },
+      { term: "Thready Pulse", def: "A pulse that is weak, faint, or difficult to detect. May indicate low blood pressure, shock, or poor circulation." },
+      { term: "Bounding Pulse", def: "A pulse that feels abnormally strong or forceful. May indicate elevated blood pressure, fever, or certain cardiac conditions." },
+      { term: "Irregular Rhythm", def: "A pulse that does not beat at a consistent, even interval. Any irregularity should be reported to the provider." },
+    ],
+  },
+  {
+    name: "Respiration", emoji: "🫁", color: "#148F77",
+    terms: [
+      { term: "Respiratory Rate", def: "The number of complete breaths (one inhalation + one exhalation) per minute. Normal adult range: 12–20 breaths/min. Should be counted without the patient's knowledge to prevent voluntary alteration." },
+      { term: "Tachypnea", def: "Abnormally fast respiratory rate, greater than 20 breaths/min in adults. Can be caused by anxiety, fever, pain, respiratory infection, or metabolic disturbances." },
+      { term: "Bradypnea", def: "Abnormally slow respiratory rate, fewer than 12 breaths/min in adults. Can be caused by certain medications, neurological conditions, or metabolic changes." },
+      { term: "Dyspnea", def: "Difficult, labored, or painful breathing. Commonly associated with asthma, COPD, pneumonia, heart failure, or high altitude. Patients often describe it as feeling 'short of breath.'" },
+      { term: "Apnea", def: "A temporary pause or complete cessation of breathing. Can occur during sleep (sleep apnea) or as a sign of a medical emergency requiring immediate intervention." },
+      { term: "Hyperventilation", def: "Abnormally rapid and deep breathing causing a decrease in blood CO₂ levels. Often triggered by anxiety, panic attacks, or intense pain." },
+      { term: "Orthopnea", def: "Difficulty breathing that occurs when lying flat, relieved by sitting or standing upright. Commonly associated with congestive heart failure and COPD." },
+      { term: "Wheezing", def: "A high-pitched whistling sound during breathing, most often on exhalation, as air moves through narrowed airways. Associated with asthma and allergic reactions." },
+      { term: "Rales", def: "Abnormal crackling or clicking sounds heard on lung auscultation, usually during inhalation. Caused by fluid or secretions in the small airways or air sacs. Associated with pneumonia and heart failure." },
+      { term: "Rhonchi", def: "Low-pitched, rumbling sounds heard in the larger airways during breathing, similar to snoring. Associated with COPD, chronic bronchitis, and pneumonia." },
+    ],
+  },
+  {
+    name: "Temperature", emoji: "🌡️", color: "#D68910",
+    terms: [
+      { term: "Body Temperature", def: "A measurement of the body's ability to generate and release heat. Normal adult oral temperature ≈ 98.6°F (37°C). Influenced by time of day, age, gender, activity, and illness." },
+      { term: "Pyrexia", def: "The medical term for fever — an elevation in body temperature above the normal range, typically triggered by infection. Represents the body's natural defense against pathogens." },
+      { term: "Afebrile", def: "Having no fever. A body temperature within the normal range for that patient's age and baseline." },
+      { term: "Febrile", def: "Having a fever. Body temperature above the normal range, generally >99.6°F (37.6°C) for an oral reading in adults." },
+      { term: "Axillary Temperature (Ax)", def: "Temperature measured in the armpit (axilla). Approximately 1°F (0.6°C) lower than oral temperature because not measured in an enclosed body cavity. Documented with (Ax)." },
+      { term: "Tympanic Temperature (T/AU)", def: "Temperature measured in the ear canal using infrared technology. Approximately 1°F (0.6°C) higher than oral. Not used when patient has ear pain or bilateral impacted cerumen. Documented with (T) or (AU)." },
+      { term: "Temporal Artery Temperature (TA)", def: "Temperature measured by scanning the forehead and behind the ear over the temporal artery. Approximately 1°F higher than oral. Preferred for pediatric patients. Documented with (TA)." },
+      { term: "Rectal Temperature (R)", def: "Temperature measured in the rectum. Approximately 1°F (0.6°C) higher than oral. The most accurate method for measuring core body temperature. Often used for infants. Documented with (R)." },
+      { term: "Frenulum Linguae", def: "The thin membrane on the underside of the tongue connecting it to the floor of the mouth. The thermometer probe is placed beside (not under) the frenulum during oral temperature measurement." },
+      { term: "Malaise", def: "A general feeling of discomfort, illness, or lack of energy that often accompanies fever. Patients may describe it as feeling 'run down' or 'unwell.'" },
+    ],
+  },
+  {
+    name: "Pulse Oximetry & O₂", emoji: "🫧", color: "#1A5276",
+    terms: [
+      { term: "Pulse Oximetry", def: "A non-invasive method of measuring the percentage of oxygen saturation in the blood using a probe that emits infrared light. Provides rapid assessment of respiratory function." },
+      { term: "SpO₂", def: "The notation used to document oxygen saturation measured by a pulse oximeter. Normal: ≥95%. Values below 90% should be reported to the provider immediately." },
+      { term: "Hypoxemia", def: "An abnormally low level of oxygen in the blood. Defined as SpO₂ below 90%. May require supplemental oxygen therapy and prompt provider evaluation." },
+      { term: "Oxygen Saturation", def: "The percentage of hemoglobin in the blood carrying oxygen. Measured non-invasively by pulse oximetry. Normal SpO₂ ≥95% for most adults." },
+    ],
+  },
+  {
+    name: "Pain Assessment", emoji: "😣", color: "#CA6F1E",
+    terms: [
+      { term: "Pain Scale (0–10)", def: "A standardized numerical tool to measure a patient's self-reported pain level. Zero = no pain, ten = worst pain imaginable. The patient's verbal report is the standard." },
+      { term: "Wong-Baker Faces Rating Scale", def: "A pain assessment tool using illustrated faces ranging from happy (no pain) to crying (worst pain). Designed for children or patients who have difficulty using a numerical scale." },
+      { term: "Nonverbal Pain Cues", def: "Observable signs of pain in patients who cannot verbally communicate discomfort. Examples: facial grimacing, guarding, rigid posture, bracing, and moaning." },
+    ],
+  },
+  {
+    name: "Menstrual History", emoji: "📅", color: "#922B21",
+    terms: [
+      { term: "Last Menstrual Period (LMP)", def: "The first day of a patient's most recent menstrual cycle. Recorded at every visit for menstruating patients. Used to evaluate potential pregnancy and calculate an estimated due date (EDD)." },
+      { term: "Menstruation", def: "The monthly shedding of the uterine lining (endometrium) through vaginal bleeding. Typically occurs approximately every 28 days. Regulated by estrogen and progesterone." },
+      { term: "Endometrium", def: "The inner mucous membrane lining of the uterus. Thickens each month in preparation for pregnancy. If fertilization does not occur, it is shed during menstruation." },
+      { term: "Estimated Due Date (EDD)", def: "The projected date of delivery calculated from the first day of the last menstrual period (LMP). Typically 40 weeks from the LMP. Guides prenatal care." },
+    ],
+  },
+  {
+    name: "Anthropometrics & BMI", emoji: "📏", color: "#1E8449",
+    terms: [
+      { term: "Anthropometric Measurements", def: "Physical measurements of the human body used to assess health status. Typically include height, weight, head circumference (in children), and waist circumference. Used in calculating BMI." },
+      { term: "Body Mass Index (BMI)", def: "A screening tool estimating body fat based on height and weight. Formula: weight (kg) ÷ height² (m²). Results: <18.5 = Underweight; 18.5–24.9 = Normal; 25–29.9 = Overweight; ≥30 = Obese." },
+      { term: "Stadiometer", def: "A height-measuring device consisting of a vertical ruler attached to a flat platform with a movable horizontal headpiece. Used to measure standing height accurately." },
+      { term: "Head Circumference", def: "Measurement of the widest part of an infant's or toddler's head, taken above the eyebrows, around the sides above the ears, and across the widest part of the back of the skull. Monitored birth to 36 months." },
+    ],
+  },
+  {
+    name: "Pediatric Growth", emoji: "👶", color: "#6C3483",
+    terms: [
+      { term: "Growth Chart", def: "A standardized graph (developed by the CDC) plotting a child's height, weight, and/or head circumference against national data by age and sex. Used from birth through age 20." },
+      { term: "Growth Percentile", def: "A measurement on the growth chart indicating what percentage of same-age, same-sex children are at or below a given measurement. E.g., 50th percentile for weight = heavier than 50% of peers." },
+      { term: "Length", def: "The measurement of an infant/young child's body from head to heel, taken while lying flat. Used in place of standing height for children who cannot stand unassisted." },
+      { term: "Well-Child Visit", def: "A routine preventive healthcare appointment including growth measurements, developmental screening, immunization review, and health education for the parent or caregiver." },
+    ],
+  },
+  {
+    name: "Screenings & Mental Health", emoji: "🧠", color: "#117A65",
+    terms: [
+      { term: "PHQ-2", def: "A brief, two-question screening tool asking about depressed mood and loss of interest over the past two weeks. A positive result prompts administration of the full PHQ-9." },
+      { term: "PHQ-9", def: "A nine-question depression screening tool used to assess whether a patient meets criteria for a depressive disorder and gauge symptom severity. Completed when the PHQ-2 is positive." },
+      { term: "GAD-7", def: "A seven-question screening questionnaire used to assess the presence and severity of generalized anxiety disorder. Scores help guide further evaluation or treatment." },
+      { term: "Mini-Mental State Exam (MMSE)", def: "A brief cognitive screening tool for older adults evaluating memory, orientation, attention, language, and other cognitive functions. Used to screen for dementia." },
+      { term: "Depression", def: "A mental health condition characterized by persistent sadness, loss of interest, fatigue, changes in appetite or sleep, low energy, and difficulty concentrating. Requires clinical screening for diagnosis." },
+      { term: "Anxiety", def: "A mental health condition characterized by excessive worry, fear, or nervousness. Physical symptoms can include heart palpitations, shortness of breath, sweating, and irritability." },
+      { term: "White Coat Syndrome", def: "A phenomenon where a patient's blood pressure, heart rate, or anxiety is elevated specifically in a clinical setting due to stress of being seen by a healthcare provider. Can lead to falsely elevated readings." },
+    ],
+  },
+  {
+    name: "Unit Conversions", emoji: "🔢", color: "#2C3E50",
+    terms: [
+      { term: "Millimeters of Mercury (mmHg)", def: "The unit of measurement for blood pressure. Represents the height in millimeters that pressure can raise a column of mercury in a traditional gauge." },
+      { term: "Fahrenheit (°F)", def: "The temperature scale commonly used in US clinical practice. Water freezes at 32°F, boils at 212°F. Normal adult oral temp ≈ 98.6°F." },
+      { term: "Celsius (°C)", def: "The metric temperature scale used in scientific and international clinical settings. Water freezes at 0°C, boils at 100°C. Normal adult oral temp ≈ 37°C." },
+      { term: "°F to °C Conversion", def: "Formula: °C = (°F − 32) ÷ 1.8. Example: 99°F → (99 − 32) ÷ 1.8 = 37.2°C." },
+      { term: "°C to °F Conversion", def: "Formula: °F = (°C × 1.8) + 32. Example: 38°C → (38 × 1.8) + 32 = 100.4°F." },
+      { term: "Pounds to Kilograms", def: "Formula: kg = lb ÷ 2.2. Example: 148 lb ÷ 2.2 = 67.3 kg. Used when medication dosing requires weight in kilograms." },
+      { term: "Kilograms to Pounds", def: "Formula: lb = kg × 2.2. Example: 87 kg × 2.2 = 191.4 lb." },
+      { term: "Inches to Feet/Inches", def: "Formula: divide total inches by 12. Whole number = feet; remainder = inches. Example: 62 in ÷ 12 = 5 feet, 2 inches." },
+    ],
+  },
+];
+
+/* ── State ── */
+let selectedCats = new Set(CATEGORIES.map((_, i) => i));
+let deck = [];
+let idx = 0;
+let flipped = false;
+let known = 0;
+let learning = 0;
+let phase = 'select'; // 'select' | 'study' | 'done'
+
+/* ── Init ── */
+render();
+
+function render() {
+  const el = document.getElementById('app');
+  if (phase === 'select') el.innerHTML = renderSelect();
+  else if (phase === 'study') el.innerHTML = renderStudy();
+  else el.innerHTML = renderDone();
+}
+
+/* ── Select screen ── */
+function renderSelect() {
+  const totalTerms = CATEGORIES.reduce((s, c, i) => s + (selectedCats.has(i) ? c.terms.length : 0), 0);
+  let chips = '';
+  CATEGORIES.forEach((c, i) => {
+    const sel = selectedCats.has(i);
+    chips += `<button class="cat-chip" onclick="toggleCat(${i})"
+      style="border-color:${c.color};background:${sel ? c.color : 'transparent'};color:${sel ? '#fff' : c.color}">
+      <span class="chip-emoji">${c.emoji}</span>${esc(c.name)}
+    </button>`;
+  });
+  return `
+    <div class="cat-grid">${chips}</div>
+    <div class="divider"></div>
+    <div class="select-footer">
+      <span class="select-count"><strong>${totalTerms}</strong> cards selected across <strong>${selectedCats.size}</strong> ${selectedCats.size === 1 ? 'category' : 'categories'}</span>
+      <button class="btn-start" onclick="startDeck()">Shuffle &amp; Start →</button>
+    </div>`;
+}
+
+/* ── Study screen ── */
+function renderStudy() {
+  const card = deck[idx];
+  const pct = Math.round((idx / deck.length) * 100);
+  const defColor = isDark(card.color) ? '#fff' : '#1a1a2e';
+
+  return `
+    <div class="card-area">
+      <div class="progress-wrap">
+        <span class="progress-label">${idx + 1} / ${deck.length}</span>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${pct}%;background:${card.color}"></div>
+        </div>
+        <span class="score-label">✓ ${known} &nbsp; ✗ ${learning}</span>
+      </div>
+
+      <div class="flashcard" onclick="flipCard()"
+           style="background:${flipped ? 'var(--surface)' : card.color};
+                  border:${flipped ? '1px solid var(--border)' : 'none'}">
+        <span class="card-label" style="color:${flipped ? 'var(--text-3)' : 'rgba(255,255,255,0.6)'}">
+          ${flipped ? 'Definition' : card.emoji + ' ' + esc(card.category)}
+        </span>
+        ${!flipped ? `<span class="card-hint" style="color:rgba(255,255,255,0.45)">tap to flip</span>` : ''}
+        ${flipped
+          ? `<p class="card-def" style="color:var(--text-2);max-width:520px">${esc(card.def)}</p>`
+          : `<p class="card-term">${esc(card.term)}</p>`
+        }
+      </div>
+
+      ${flipped ? `
+        <div class="card-actions">
+          <button class="btn-learning" style="border-color:${card.color};color:${card.color}" onclick="mark(false)">Still Learning</button>
+          <button class="btn-got-it" style="background:${card.color}" onclick="mark(true)">Got It ✓</button>
+        </div>` : ''}
+
+      <div style="margin-top:20px">
+        <button onclick="phase='select';render()" style="background:none;border:none;font-size:13px;color:var(--text-3);cursor:pointer;font-family:var(--font-body);">← Change categories</button>
+      </div>
+    </div>`;
+}
+
+/* ── Done screen ── */
+function renderDone() {
+  const total = known + learning;
+  const pct = Math.round((known / total) * 100);
+  const icon = pct >= 80 ? '🎉' : pct >= 50 ? '💪' : '📖';
+  const msg = pct >= 80 ? 'Excellent work!' : pct >= 50 ? 'Good progress!' : 'Keep studying!';
+  const barColor = pct >= 80 ? '#27AE60' : pct >= 50 ? '#E67E22' : '#E74C3C';
+
+  return `
+    <div class="results-card">
+      <span class="results-icon">${icon}</span>
+      <p class="results-title">${msg}</p>
+      <p class="results-sub">${pct}% mastery · ${total} cards reviewed</p>
+      <div class="results-meter">
+        <div class="results-meter-fill" style="width:${pct}%;background:${barColor}"></div>
+      </div>
+      <div class="results-stats">
+        <span class="stat-pill" style="color:#27AE60;border-color:rgba(39,174,96,0.25);background:rgba(39,174,96,0.06)">✓ ${known} knew it</span>
+        <span class="stat-pill" style="color:#E74C3C;border-color:rgba(231,76,60,0.25);background:rgba(231,76,60,0.06)">✗ ${learning} still learning</span>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-again" onclick="startDeck()">Study Again →</button>
+        <button onclick="phase='select';render()" style="display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:100px;border:1.5px solid var(--border);background:transparent;font-size:14px;font-weight:600;font-family:var(--font-body);cursor:pointer;color:var(--text-2)">Change Categories</button>
+      </div>
+    </div>`;
+}
+
+/* ── Actions ── */
+function toggleCat(i) {
+  if (selectedCats.has(i)) {
+    if (selectedCats.size > 1) selectedCats.delete(i);
+  } else {
+    selectedCats.add(i);
+  }
+  render();
+}
+
+function startDeck() {
+  deck = shuffle(CATEGORIES.flatMap((cat, ci) =>
+    selectedCats.has(ci) ? cat.terms.map(t => ({ ...t, color: cat.color, emoji: cat.emoji, category: cat.name })) : []
+  ));
+  idx = 0; flipped = false; known = 0; learning = 0; phase = 'study';
+  render();
+}
+
+function flipCard() {
+  flipped = !flipped;
+  render();
+}
+
+function mark(isKnown) {
+  if (isKnown) known++; else learning++;
+  if (idx + 1 >= deck.length) { phase = 'done'; render(); return; }
+  idx++; flipped = false; render();
+}
+
+/* ── Helpers ── */
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function isDark(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return (r*299 + g*587 + b*114) / 1000 < 128;
+}
+</script>
+</body>
+</html>

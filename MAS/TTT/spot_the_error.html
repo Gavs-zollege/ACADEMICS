@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spot the Error</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111827;
+    --card-bg: #1F2937;
+    --border: #374151;
+    --text-primary: #F1F5F9;
+    --text-secondary: #CBD5E1;
+    --text-muted: #6B7280;
+    --accent: #0E7490;
+    --accent-dark: #0D4F5C;
+    --accent-hover: #0891b2;
+    --green: #10B981;
+    --green-bg: #ECFDF5;
+    --green-text: #059669;
+    --red: #EF4444;
+    --red-bg: #FEE2E2;
+    --red-text: #DC2626;
+    --amber: #F59E0B;
+    --amber-bg: #FEF3C7;
+    --amber-text: #D97706;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* PLAY VIEW */
+  .play-view { padding: 28px 20px 48px; }
+  .play-inner { max-width: 660px; margin: 0 auto; }
+
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .header-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-hover);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .header-title {
+    font-size: 20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+  .header-score {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 24px;
+  }
+  .progress-seg {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    transition: background 0.3s;
+  }
+
+  /* Scenario box */
+  .scenario-box {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    border: 1px solid var(--border);
+  }
+  .scenario-title {
+    font-size: 15px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .scenario-title-badge {
+    font-size: 10px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-hover);
+    background: rgba(14, 116, 144, 0.12);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .scenario-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+  }
+
+  /* Instructions */
+  .instructions {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+  .instructions strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+
+  /* Items */
+  .items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .item-wrapper { display: flex; flex-direction: column; }
+
+  .item-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    text-align: left;
+    padding: 13px 16px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-family: 'Inter', sans-serif;
+    border: 1.5px solid var(--border);
+  }
+  .item-btn:not(.locked):hover {
+    border-color: var(--accent-hover);
+    background: rgba(14, 116, 144, 0.06);
+  }
+  .item-btn.selected { border-color: var(--accent); background: rgba(14, 116, 144, 0.08); }
+  .item-btn.locked { cursor: default; }
+
+  .item-btn.result-correct-hit { background: #ECFDF5; border-color: var(--green); }
+  .item-btn.result-missed-error { background: #FFFBEB; border-color: var(--amber); }
+  .item-btn.result-false-alarm { background: #FEE2E2; border-color: var(--red); }
+  .item-btn.result-correct-pass { background: var(--card-bg); border-color: var(--border); opacity: 0.7; }
+
+  .item-check {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    color: white;
+    transition: all 0.15s;
+  }
+  .item-check.checked { border-color: var(--accent); background: var(--accent); }
+  .item-check.check-green { border-color: var(--green); background: var(--green); }
+  .item-check.check-red { border-color: var(--red); background: var(--red); }
+  .item-check.check-amber { border-color: var(--amber); background: var(--amber); }
+
+  .item-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+  }
+  .item-btn.result-correct-hit .item-text { color: var(--green-text); font-weight: 600; }
+  .item-btn.result-missed-error .item-text { color: var(--amber-text); font-weight: 600; }
+  .item-btn.result-false-alarm .item-text { color: var(--red-text); font-weight: 600; }
+
+  /* Explanation */
+  .explanation {
+    margin: 4px 0 2px 56px;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    animation: fadeSlideIn 0.25s ease;
+  }
+  .explanation.exp-error { color: #92400E; }
+  .explanation.exp-missed { color: #92400E; }
+  .explanation.exp-ok { color: #4B5563; }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: transform 0.12s, box-shadow 0.12s, opacity 0.15s;
+    letter-spacing: 0.2px;
+  }
+  .submit-btn.disabled {
+    background: var(--border);
+    color: var(--text-muted);
+    cursor: default;
+  }
+  .submit-btn.active {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: white;
+  }
+  .submit-btn.active:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(14,116,144,0.4);
+  }
+  .submit-btn.active:active { transform: translateY(0); }
+
+  /* DONE SCREEN */
+  .done-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .done-inner { max-width: 480px; width: 100%; text-align: center; }
+  .done-emoji { font-size: 52px; margin-bottom: 12px; }
+  .done-title {
+    font-size: 26px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.4px;
+  }
+  .done-msg {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+  .done-box {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  .done-pct {
+    font-size: 52px;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .done-label {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 6px;
+  }
+  .score-chips {
+    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .score-chip {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+  }
+  .btn-restart {
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .btn-restart:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(14,116,144,0.4);
+  }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- PLAY VIEW -->
+<div id="playView" class="play-view">
+  <div class="play-inner">
+    <div class="header-row">
+      <div>
+        <div class="header-label">Spot the Error</div>
+        <h2 class="header-title" id="sceneLabel"></h2>
+      </div>
+      <span class="header-score" id="runningScore">Score: 0</span>
+    </div>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="scenario-box">
+      <div class="scenario-title">
+        <span id="scenarioTitle"></span>
+        <span class="scenario-title-badge">Clinical Scenario</span>
+      </div>
+      <p class="scenario-text" id="scenarioText"></p>
+    </div>
+
+    <p class="instructions"><strong>Tap every item you think is an error.</strong> Leave non-errors unchecked. Some items look wrong but aren&rsquo;t!</p>
+
+    <div class="items-list" id="itemsList"></div>
+
+    <button class="submit-btn disabled" id="submitBtn">Check My Answers</button>
+  </div>
+</div>
+
+<!-- DONE VIEW -->
+<div id="doneView" class="done-wrap hidden">
+  <div class="done-inner">
+    <div class="done-emoji" id="doneEmoji"></div>
+    <h1 class="done-title">All Scenarios Complete!</h1>
+    <p class="done-msg" id="doneMsg"></p>
+    <div class="done-box">
+      <div class="done-pct" id="donePct"></div>
+      <div class="done-label">Overall accuracy</div>
+      <div class="score-chips" id="scoreChips"></div>
+    </div>
+    <button class="btn-restart" onclick="restart()">Try Again</button>
+  </div>
+</div>
+
+<script>
+var SCENARIOS = [
+  {
+    title: "The Rushed BP Reading",
+    scene: "A medical assistant seats a patient, immediately wraps the cuff over their sweater sleeve, and takes a blood pressure reading. The patient's legs are crossed and they're talking on their phone. The MA records 148/92 and flags it as Stage 2 Hypertension.",
+    errors: [
+      { id:"cuff", text:"Cuff placed over clothing", explanation:"The cuff must be placed on bare skin. Clothing can add 10\u201350 mmHg to the reading." },
+      { id:"legs", text:"Patient's legs are crossed", explanation:"Crossed legs can raise systolic pressure by 2\u20138 mmHg. Feet should be flat on the floor." },
+      { id:"phone", text:"Patient talking during measurement", explanation:"Talking elevates both BP and heart rate. Patient should sit quietly." },
+      { id:"rest", text:"No rest period before measurement", explanation:"Patient should rest seated for 1\u20135 minutes before a BP reading." }
+    ],
+    notErrors: [
+      { id:"flag", text:"Flagging 148/92 as Stage 2 HTN", explanation:"The classification is correct \u2014 148/92 falls into Stage 2 (\u2265\u202f140/\u2265\u202f90). The reading itself is likely inaccurate." },
+      { id:"seat", text:"Seating the patient for BP", explanation:"Seated position is correct for routine BP measurement." }
+    ]
+  },
+  {
+    title: "The Temperature Mix-Up",
+    scene: "A nurse takes a child's temperature using a tympanic thermometer in the left ear. The reading shows 99.2\u00b0F. The nurse documents: \"Temp 99.2\u00b0F (Ax) \u2014 within normal limits.\" The child had been drinking cold juice 5 minutes ago.",
+    errors: [
+      { id:"doc", text:"Documented as (Ax) instead of (T) or (AU)", explanation:"Tympanic readings are documented as (T) or (AU), not (Ax). (Ax) indicates axillary." },
+      { id:"adjust", text:"Didn't account for tympanic reading being ~1\u00b0F higher than oral", explanation:"Tympanic reads ~1\u00b0F higher than oral. So 99.2\u00b0F tympanic \u2248 98.2\u00b0F oral \u2014 worth noting in context." }
+    ],
+    notErrors: [
+      { id:"juice", text:"Cold juice consumption before reading", explanation:"Cold beverages affect oral temperatures, not tympanic. Tympanic measures infrared heat from the ear canal." },
+      { id:"left", text:"Using the left ear", explanation:"Either ear can be used for tympanic measurement." },
+      { id:"child", text:"Using tympanic on a child", explanation:"Tympanic thermometers are appropriate for children." }
+    ]
+  },
+  {
+    title: "The Patient ID Shortcut",
+    scene: "The front desk calls out \"Maria Gonzalez?\" in the crowded waiting room. A woman stands up. The MA says \"Mrs. Gonzalez, date of birth June 5th, 1985 \u2014 is that correct?\" The patient nods yes. The MA proceeds to room her without further verification.",
+    errors: [
+      { id:"callout", text:"Calling the patient's full name in the waiting room", explanation:"Calling a full name in a crowded room is a potential HIPAA privacy concern." },
+      { id:"confirm", text:"Reading the DOB to the patient and asking them to confirm", explanation:"Never read identifiers TO the patient. Ask them to STATE their date of birth." },
+      { id:"nod", text:"Accepting a head nod as verification", explanation:"A nod is not reliable. The patient must verbally state their identifiers." }
+    ],
+    notErrors: [
+      { id:"dob", text:"Using date of birth as a second identifier", explanation:"DOB is an appropriate second identifier. The problem is HOW it was verified." },
+      { id:"twoid", text:"Using two identifiers (name + DOB)", explanation:"Two identifiers is correct protocol. The issue is the verification method." }
+    ]
+  },
+  {
+    title: "The Pediatric Scale Incident",
+    scene: "An MA weighs a 6-month-old infant while the baby is wearing a diaper and onesie. The MA records the weight, then turns to the computer to enter it into the EHR while the baby is still on the scale. The parent is standing 4 feet away, looking at their phone.",
+    errors: [
+      { id:"clothes", text:"Weighing infant with diaper and clothing on", explanation:"Infants should be weighed without clothing or diaper. A wet diaper can significantly distort results." },
+      { id:"turn", text:"Turning away from infant still on the scale", explanation:"Never turn away from an infant on a scale. Always keep one hand hovering over the baby." },
+      { id:"parent", text:"Parent not positioned to assist", explanation:"The parent should be close and engaged, not 4 feet away on their phone." }
+    ],
+    notErrors: [
+      { id:"six", text:"Weighing a 6-month-old on an infant scale", explanation:"Infant scales are appropriate up to about 2 years old." },
+      { id:"ehr", text:"Recording weight in the EHR", explanation:"Entering weight is required \u2014 the error is when it happens (while the baby is still on the scale)." }
+    ]
+  },
+  {
+    title: "The SpO\u2082 Reading Puzzle",
+    scene: "A patient's pulse oximeter reads 91%. The MA notices the patient has dark blue acrylic nails. She documents SpO\u2082 = 91% and tells the patient \"everything looks fine\" before continuing the intake. The patient mentions feeling slightly short of breath.",
+    errors: [
+      { id:"nails", text:"Didn't work around the acrylic nails", explanation:"Artificial nails can block infrared light and produce inaccurate SpO\u2082 readings. Try a different finger or site." },
+      { id:"fine", text:"Told the patient \"everything looks fine\" at 91%", explanation:"91% is not fine. Normal SpO\u2082 is \u2265 95%. Below 90% requires immediate provider notification." },
+      { id:"sob", text:"Didn't address the shortness of breath complaint", explanation:"Dyspnea paired with borderline SpO\u2082 must be reported to the provider immediately." }
+    ],
+    notErrors: [
+      { id:"finger", text:"Using a fingertip for pulse oximetry", explanation:"Fingertip is the standard site. The issue here is the acrylic nails obstructing the reading." },
+      { id:"document", text:"Documenting the SpO\u2082 reading", explanation:"Documenting is correct. The problems are failing to troubleshoot and failing to report." }
+    ]
+  }
+];
+
+var sceneIdx = 0;
+var selected = {};
+var submitted = false;
+var scores = [];
+
+function getAllItems(sc) {
+  var all = [];
+  for (var i = 0; i < sc.errors.length; i++) {
+    all.push({ id: sc.errors[i].id, text: sc.errors[i].text, explanation: sc.errors[i].explanation, isError: true });
+  }
+  for (var j = 0; j < sc.notErrors.length; j++) {
+    all.push({ id: sc.notErrors[j].id, text: sc.notErrors[j].text, explanation: sc.notErrors[j].explanation, isError: false });
+  }
+  all.sort(function(a, b) { return a.id.localeCompare(b.id); });
+  return all;
+}
+
+function countSelected() {
+  var n = 0;
+  for (var k in selected) { if (selected[k]) n++; }
+  return n;
+}
+
+function render() {
+  var playView = document.getElementById('playView');
+  var doneView = document.getElementById('doneView');
+
+  if (sceneIdx === -1) {
+    playView.classList.add('hidden');
+    doneView.classList.remove('hidden');
+    renderDone();
+    return;
+  }
+
+  playView.classList.remove('hidden');
+  doneView.classList.add('hidden');
+
+  var sc = SCENARIOS[sceneIdx];
+  var items = getAllItems(sc);
+  var totalScore = 0;
+  for (var s = 0; s < scores.length; s++) totalScore += scores[s].pts;
+
+  document.getElementById('sceneLabel').textContent = 'Scenario ' + (sceneIdx + 1) + ' of ' + SCENARIOS.length;
+  document.getElementById('runningScore').textContent = 'Score: ' + totalScore;
+
+  // Progress bar
+  var bar = document.getElementById('progressBar');
+  bar.innerHTML = '';
+  for (var i = 0; i < SCENARIOS.length; i++) {
+    var seg = document.createElement('div');
+    seg.className = 'progress-seg';
+    seg.style.background = i < sceneIdx ? '#10B981' : i === sceneIdx ? 'var(--accent)' : 'var(--border)';
+    bar.appendChild(seg);
+  }
+
+  document.getElementById('scenarioTitle').textContent = sc.title;
+  document.getElementById('scenarioText').textContent = sc.scene;
+
+  // Items list
+  var list = document.getElementById('itemsList');
+  list.innerHTML = '';
+
+  for (var k = 0; k < items.length; k++) {
+    (function(item) {
+      var isSel = !!selected[item.id];
+
+      var wrapper = document.createElement('div');
+      wrapper.className = 'item-wrapper';
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+
+      var check = document.createElement('span');
+      var text = document.createElement('span');
+      text.className = 'item-text';
+      text.textContent = item.text;
+
+      if (!submitted) {
+        btn.className = 'item-btn' + (isSel ? ' selected' : '');
+        check.className = 'item-check' + (isSel ? ' checked' : '');
+        check.textContent = isSel ? '\u2713' : '';
+        btn.addEventListener('click', function() {
+          selected[item.id] = !selected[item.id];
+          render();
+        });
+      } else {
+        btn.className = 'item-btn locked';
+        // Determine result class
+        if (item.isError && isSel) {
+          btn.classList.add('result-correct-hit');
+          check.className = 'item-check check-green';
+          check.textContent = '\u2713';
+        } else if (item.isError && !isSel) {
+          btn.classList.add('result-missed-error');
+          check.className = 'item-check check-amber';
+          check.textContent = '!';
+        } else if (!item.isError && isSel) {
+          btn.classList.add('result-false-alarm');
+          check.className = 'item-check check-red';
+          check.textContent = '\u2717';
+        } else {
+          btn.classList.add('result-correct-pass');
+          check.className = 'item-check';
+          check.textContent = '';
+        }
+
+        // Explanation
+        var expl = document.createElement('div');
+        expl.className = 'explanation' + (item.isError ? ' exp-error' : ' exp-ok');
+        var prefix = item.isError && isSel ? '\u2713 Error: '
+          : item.isError && !isSel ? '\u26a0 Missed: '
+          : !item.isError && isSel ? '\u2717 Not an error: '
+          : '\u2014 ';
+        expl.textContent = prefix + item.explanation;
+        wrapper.appendChild(btn);
+        wrapper.appendChild(expl);
+      }
+
+      btn.appendChild(check);
+      btn.appendChild(text);
+      if (submitted) {
+        // already appended above
+      } else {
+        wrapper.appendChild(btn);
+      }
+
+      list.appendChild(wrapper);
+    })(items[k]);
+  }
+
+  // Submit button
+  var submitBtn = document.getElementById('submitBtn');
+  if (!submitted) {
+    submitBtn.textContent = 'Check My Answers';
+    submitBtn.className = 'submit-btn ' + (countSelected() === 0 ? 'disabled' : 'active');
+    submitBtn.onclick = handleSubmit;
+  } else {
+    submitBtn.textContent = (sceneIdx + 1 >= SCENARIOS.length) ? 'See Final Results' : 'Next Scenario \u2192';
+    submitBtn.className = 'submit-btn active';
+    submitBtn.onclick = handleNext;
+  }
+}
+
+function handleSubmit() {
+  if (countSelected() === 0) return;
+  var sc = SCENARIOS[sceneIdx];
+  var items = getAllItems(sc);
+  var pts = 0;
+  for (var i = 0; i < items.length; i++) {
+    var userSaid = !!selected[items[i].id];
+    if (items[i].isError && userSaid) pts++;
+    else if (!items[i].isError && !userSaid) pts++;
+  }
+  scores.push({ scene: sceneIdx, pts: pts, max: items.length });
+  submitted = true;
+  render();
+}
+
+function handleNext() {
+  if (sceneIdx + 1 >= SCENARIOS.length) {
+    sceneIdx = -1;
+  } else {
+    sceneIdx++;
+    selected = {};
+    submitted = false;
+  }
+  render();
+}
+
+function renderDone() {
+  var totalPts = 0, totalMax = 0;
+  for (var i = 0; i < scores.length; i++) { totalPts += scores[i].pts; totalMax += scores[i].max; }
+  var pct = totalMax > 0 ? Math.round(totalPts / totalMax * 100) : 0;
+
+  document.getElementById('doneEmoji').textContent = pct >= 80 ? '\uD83D\uDD0D' : '\uD83D\uDCDA';
+  document.getElementById('doneMsg').textContent = pct >= 85
+    ? "Sharp clinical eye \u2014 you caught nearly everything!"
+    : pct >= 65 ? "Good awareness \u2014 review the tricky ones."
+    : "Keep studying \u2014 attention to detail saves patients.";
+  document.getElementById('donePct').textContent = pct + '%';
+  document.getElementById('donePct').style.color = pct >= 80 ? '#10B981' : '#F59E0B';
+
+  var chips = document.getElementById('scoreChips');
+  chips.innerHTML = '';
+  for (var j = 0; j < scores.length; j++) {
+    var s = scores[j];
+    var ratio = s.pts / s.max;
+    var chip = document.createElement('div');
+    chip.className = 'score-chip';
+    chip.style.background = ratio >= 1 ? '#D1FAE5' : ratio >= 0.7 ? '#FEF3C7' : '#FEE2E2';
+    chip.style.color = ratio >= 1 ? '#059669' : ratio >= 0.7 ? '#D97706' : '#DC2626';
+    chip.textContent = 'S' + (j + 1) + ': ' + s.pts + '/' + s.max;
+    chips.appendChild(chip);
+  }
+}
+
+function restart() {
+  sceneIdx = 0; selected = {}; submitted = false; scores = [];
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Normal or Abnormal?</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-start: #0F2B3C;
+    --bg-mid: #0D4F5C;
+    --bg-end: #0E7490;
+    --teal: #0E7490;
+    --teal-dark: #0D4F5C;
+    --teal-bright: #22A6B3;
+    --green: #10B981;
+    --green-dark: #059669;
+    --red: #EF4444;
+    --amber: #F59E0B;
+    --blue: #3B82F6;
+    --purple: #8B5CF6;
+    --text-primary: #F1F5F9;
+    --text-secondary: #CBD5E1;
+    --text-muted: #64748B;
+    --card-border: rgba(255,255,255,0.08);
+    --card-bg: rgba(255,255,255,0.05);
+  }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .screen { display: none; max-width: 480px; width: 100%; }
+  .screen.active { display: block; }
+  .center-wrap { text-align: center; }
+
+  /* START SCREEN */
+  .emoji-big { font-size: 60px; margin-bottom: 16px; }
+
+  .start-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+  .start-desc {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 8px;
+    font-family: 'Inter', sans-serif;
+  }
+  .start-sub {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 32px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-go {
+    background: linear-gradient(135deg, var(--green), var(--green-dark));
+    color: white;
+    border: none;
+    padding: 15px 52px;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    box-shadow: 0 8px 28px rgba(16,185,129,0.3);
+    transition: transform 0.12s, box-shadow 0.12s;
+    letter-spacing: 0.2px;
+  }
+  .btn-go:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(16,185,129,0.4);
+  }
+  .btn-go:active { transform: translateY(0); }
+
+  /* PLAY SCREEN */
+  .timer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .timer-val {
+    font-size: 26px;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.3s;
+  }
+  .score-area { display: flex; align-items: center; gap: 10px; }
+  .streak-badge {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--amber);
+    font-family: 'Inter', sans-serif;
+    background: rgba(245,158,11,0.12);
+    border: 1px solid rgba(245,158,11,0.25);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .score-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+  }
+  .score-total { color: var(--text-muted); }
+
+  .timer-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .timer-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s linear, background 0.3s;
+  }
+
+  /* Vital display */
+  .vital-area { text-align: center; margin-bottom: 28px; }
+  .cat-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .cat-pill-text {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+  .vital-box {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 40px 28px;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+  }
+  .vital-text {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-primary);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.3px;
+  }
+
+  /* Answer buttons */
+  .answer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .answer-btn {
+    padding: 22px 12px;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: transform 0.12s, box-shadow 0.12s;
+    letter-spacing: 0.1px;
+  }
+  .answer-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+  .answer-btn:active:not(:disabled) { transform: translateY(0); }
+  .answer-btn:disabled { cursor: default; }
+
+  /* DONE SCREEN */
+  .done-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    letter-spacing: -0.4px;
+  }
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .result-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 18px 10px;
+    border: 1px solid var(--card-border);
+    text-align: center;
+  }
+  .result-card-val {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1;
+  }
+  .result-card-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 5px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .review-box {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    border: 1px solid var(--card-border);
+    text-align: left;
+  }
+  .review-title {
+    font-size: 11px;
+    color: var(--amber);
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .review-item {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .review-item:last-child { border-bottom: none; }
+  .review-label {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+  .review-explain {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 3px;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+
+  .done-emoji { font-size: 52px; margin-bottom: 14px; }
+</style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div class="screen active" id="startScreen">
+  <div class="center-wrap">
+    <div class="emoji-big">⚡</div>
+    <h1 class="start-title">Normal or Abnormal?</h1>
+    <p class="start-desc">A vital sign reading flashes on screen. Tap <strong style="color:#10B981">Normal</strong> or <strong style="color:#EF4444">Abnormal</strong> as fast as you can!</p>
+    <p class="start-sub">Includes adult AND pediatric ranges &mdash; 45 seconds on the clock.</p>
+    <button class="btn-go" onclick="startGame()">Let's Go!</button>
+  </div>
+</div>
+
+<!-- PLAY SCREEN -->
+<div class="screen" id="playScreen">
+  <div class="timer-row">
+    <span class="timer-val" id="timerVal">45s</span>
+    <div class="score-area">
+      <span class="streak-badge" id="streakLabel" style="display:none"></span>
+      <span class="score-text">
+        <span id="playScore">0</span><span class="score-total">/<span id="playTotal">0</span></span>
+      </span>
+    </div>
+  </div>
+  <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+
+  <div class="vital-area">
+    <div class="cat-pill" id="vitalBadge">
+      <span class="cat-pill-text" id="vitalCat"></span>
+    </div>
+    <div class="vital-box">
+      <div class="vital-text" id="vitalText"></div>
+    </div>
+  </div>
+
+  <div class="answer-grid">
+    <button class="answer-btn" id="btnNormal" onclick="answer(true)">&#10003; Normal</button>
+    <button class="answer-btn" id="btnAbnormal" onclick="answer(false)">&#10007; Abnormal</button>
+  </div>
+</div>
+
+<!-- DONE SCREEN -->
+<div class="screen" id="doneScreen">
+  <div class="center-wrap">
+    <div class="done-emoji" id="doneEmoji"></div>
+    <h1 class="done-title">Time&rsquo;s Up!</h1>
+    <div class="results-grid" id="resultsGrid"></div>
+    <div id="reviewSection"></div>
+    <button class="btn-go" onclick="startGame()">Play Again</button>
+  </div>
+</div>
+
+<script>
+var catColors = {
+  "Pulse": "#EF4444",
+  "BP": "#3B82F6",
+  "Resp": "#10B981",
+  "Temp": "#F97316",
+  "SpO\u2082": "#8B5CF6"
+};
+
+var vital = null;
+var userPicked = null;
+var score = 0;
+var total = 0;
+var streak = 0;
+var best = 0;
+var time = 45;
+var gameHistory = [];
+var timer = null;
+
+function genVital() {
+  var types = [
+    function() {
+      var v = Math.floor(Math.random() * 50 + 55);
+      var n = v >= 60 && v <= 100;
+      return { label: "Adult pulse: " + v + " bpm", normal: n, category: "Pulse", explain: n ? "60\u2013100 bpm is normal for adults." : v < 60 ? "Bradycardia \u2014 below 60 bpm." : "Tachycardia \u2014 above 100 bpm." };
+    },
+    function() {
+      var s = Math.floor(Math.random() * 80 + 95);
+      var d = Math.floor(Math.random() * 40 + 55);
+      var n = s < 120 && d < 80;
+      return { label: "Adult BP: " + s + "/" + d + " mmHg", normal: n, category: "BP", explain: n ? "< 120/80 mmHg is normal." : "Systolic " + (s >= 120 ? "\u2265 120" : "ok") + ", Diastolic " + (d >= 80 ? "\u2265 80" : "ok") + " \u2014 elevated or hypertensive." };
+    },
+    function() {
+      var v = Math.floor(Math.random() * 16 + 8);
+      var n = v >= 12 && v <= 20;
+      return { label: "Adult RR: " + v + " breaths/min", normal: n, category: "Resp", explain: n ? "12\u201320 breaths/min is normal." : v < 12 ? "Bradypnea \u2014 abnormally slow." : "Tachypnea \u2014 abnormally fast." };
+    },
+    function() {
+      var v = (Math.random() * 6 + 95).toFixed(1);
+      var n = parseFloat(v) >= 97.6 && parseFloat(v) <= 99.6;
+      return { label: "Oral temp: " + v + "\u00b0F", normal: n, category: "Temp", explain: n ? "97.6\u201399.6\u00b0F is the normal oral range." : parseFloat(v) < 97.6 ? "Below normal \u2014 possible hypothermia." : "Above normal \u2014 fever." };
+    },
+    function() {
+      var v = Math.floor(Math.random() * 12 + 88);
+      var n = v >= 95;
+      return { label: "SpO\u2082: " + v + "%", normal: n, category: "SpO\u2082", explain: n ? "\u2265 95% is normal." : "Below 95% \u2014 warrants attention." };
+    },
+    function() {
+      var v = Math.floor(Math.random() * 120 + 80);
+      var n = v >= 100 && v <= 180;
+      return { label: "Infant pulse: " + v + " bpm", normal: n, category: "Pulse", explain: n ? "100\u2013180 bpm is normal for infants." : v < 100 ? "Below normal infant range." : "Above normal infant range." };
+    },
+    function() {
+      var v = Math.floor(Math.random() * 40 + 20);
+      var n = v >= 30 && v <= 53;
+      return { label: "Infant RR: " + v + " breaths/min", normal: n, category: "Resp", explain: n ? "30\u201353 breaths/min is normal for infants." : v < 30 ? "Below normal infant RR." : "Above normal infant RR." };
+    },
+    function() {
+      var v = Math.floor(Math.random() * 80 + 70);
+      var n = v >= 98 && v <= 140;
+      return { label: "Toddler pulse: " + v + " bpm", normal: n, category: "Pulse", explain: n ? "98\u2013140 bpm is normal for toddlers." : v < 98 ? "Below normal toddler range." : "Above normal toddler range." };
+    },
+    function() {
+      var v = (Math.random() * 4 + 97).toFixed(1);
+      var n = parseFloat(v) >= 96.0 && parseFloat(v) <= 98.6;
+      return { label: "Axillary temp: " + v + "\u00b0F", normal: n, category: "Temp", explain: n ? "Axillary reads ~1\u00b0F lower than oral. Acceptable range." : parseFloat(v) > 98.6 ? "Elevated for axillary \u2014 clinically significant." : "Below expected axillary range." };
+    },
+    function() {
+      var v = (Math.random() * 5 + 98).toFixed(1);
+      var n = parseFloat(v) >= 98.6 && parseFloat(v) <= 100.6;
+      return { label: "Rectal temp: " + v + "\u00b0F", normal: n, category: "Temp", explain: n ? "Rectal reads ~1\u00b0F higher than oral. Expected range." : parseFloat(v) < 98.6 ? "Below expected rectal range." : "Elevated even for rectal \u2014 possible fever." };
+    }
+  ];
+  return types[Math.floor(Math.random() * types.length)]();
+}
+
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame() {
+  score = 0; total = 0; streak = 0; best = 0; time = 45; gameHistory = []; userPicked = null;
+  if (timer) clearInterval(timer);
+  vital = genVital();
+  renderPlay();
+  showScreen('playScreen');
+  timer = setInterval(function() {
+    time--;
+    updateTimer();
+    if (time <= 0) { clearInterval(timer); showDone(); }
+  }, 1000);
+}
+
+function updateTimer() {
+  var color = time > 15 ? '#10B981' : time > 6 ? '#F59E0B' : '#EF4444';
+  var el = document.getElementById('timerVal');
+  el.textContent = time + 's';
+  el.style.color = color;
+  var fill = document.getElementById('timerFill');
+  fill.style.width = (time / 45 * 100) + '%';
+  fill.style.background = color;
+}
+
+function renderPlay() {
+  updateTimer();
+  document.getElementById('playScore').textContent = score;
+  document.getElementById('playTotal').textContent = total;
+
+  var sl = document.getElementById('streakLabel');
+  if (streak >= 3) { sl.style.display = 'inline'; sl.textContent = '\uD83D\uDD25 ' + streak; }
+  else sl.style.display = 'none';
+
+  var cc = catColors[vital.category] || '#94A3B8';
+  document.getElementById('vitalBadge').style.background = cc + '20';
+  document.getElementById('vitalCat').style.color = cc;
+  document.getElementById('vitalCat').textContent = vital.category;
+  document.getElementById('vitalText').textContent = vital.label;
+
+  var bn = document.getElementById('btnNormal');
+  var ba = document.getElementById('btnAbnormal');
+  bn.disabled = false; ba.disabled = false;
+  bn.style.background = 'rgba(16,185,129,0.08)';
+  bn.style.border = '2px solid rgba(16,185,129,0.3)';
+  bn.style.color = '#10B981';
+  ba.style.background = 'rgba(239,68,68,0.08)';
+  ba.style.border = '2px solid rgba(239,68,68,0.3)';
+  ba.style.color = '#EF4444';
+  bn.style.cursor = 'pointer';
+  ba.style.cursor = 'pointer';
+}
+
+function answer(isNormal) {
+  if (userPicked !== null) return;
+  userPicked = isNormal;
+  var correct = isNormal === vital.normal;
+  total++;
+  if (correct) { score++; streak++; best = Math.max(best, streak); }
+  else streak = 0;
+  gameHistory.push({ label: vital.label, normal: vital.normal, explain: vital.explain, userSaid: isNormal, correct: correct });
+
+  var bn = document.getElementById('btnNormal');
+  var ba = document.getElementById('btnAbnormal');
+  bn.disabled = true; ba.disabled = true;
+  bn.style.cursor = 'default'; ba.style.cursor = 'default';
+
+  if (vital.normal) {
+    bn.style.background = 'rgba(16,185,129,0.2)'; bn.style.border = '2px solid #10B981'; bn.style.color = '#10B981';
+    ba.style.background = 'rgba(255,255,255,0.02)'; ba.style.border = '2px solid rgba(255,255,255,0.06)'; ba.style.color = '#475569';
+  } else {
+    ba.style.background = 'rgba(239,68,68,0.2)'; ba.style.border = '2px solid #EF4444'; ba.style.color = '#EF4444';
+    bn.style.background = 'rgba(255,255,255,0.02)'; bn.style.border = '2px solid rgba(255,255,255,0.06)'; bn.style.color = '#475569';
+  }
+
+  document.getElementById('playScore').textContent = score;
+  document.getElementById('playTotal').textContent = total;
+
+  setTimeout(function() {
+    userPicked = null;
+    vital = genVital();
+    renderPlay();
+  }, 850);
+}
+
+function showDone() {
+  showScreen('doneScreen');
+  var pct = total > 0 ? Math.round(score / total * 100) : 0;
+  document.getElementById('doneEmoji').textContent = pct >= 80 ? '\uD83C\uDFAF' : '\uD83D\uDCDA';
+
+  var stats = [
+    { l: 'Score', v: score + '/' + total, c: '#10B981' },
+    { l: 'Accuracy', v: pct + '%', c: '#3B82F6' },
+    { l: 'Best Streak', v: best + ' \uD83D\uDD25', c: '#F59E0B' }
+  ];
+  var gridHTML = '';
+  for (var i = 0; i < stats.length; i++) {
+    gridHTML += '<div class="result-card"><div class="result-card-val" style="color:' + stats[i].c + '">' + stats[i].v + '</div><div class="result-card-label">' + stats[i].l + '</div></div>';
+  }
+  document.getElementById('resultsGrid').innerHTML = gridHTML;
+
+  var missed = [];
+  for (var j = 0; j < gameHistory.length; j++) {
+    if (!gameHistory[j].correct) missed.push(gameHistory[j]);
+  }
+  missed = missed.slice(0, 6);
+
+  var sec = document.getElementById('reviewSection');
+  if (missed.length > 0) {
+    var reviewHTML = '<div class="review-box"><div class="review-title">Review These</div>';
+    for (var k = 0; k < missed.length; k++) {
+      reviewHTML += '<div class="review-item"><div class="review-label">' + missed[k].label + '</div><div class="review-explain">' + missed[k].explain + '</div></div>';
+    }
+    reviewHTML += '</div>';
+    sec.innerHTML = reviewHTML;
+  } else {
+    sec.innerHTML = '<p style="color:#10B981;font-size:14px;font-family:Inter,sans-serif;margin-bottom:20px;font-weight:500">Perfect round \u2014 no misses!</p>';
+  }
+}
+</script>
+</body>
+</html>

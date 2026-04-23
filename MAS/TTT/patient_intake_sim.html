@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Intake Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-start: #0F2B3C;
+    --bg-mid: #0D4F5C;
+    --bg-end: #0E7490;
+    --teal: #0E7490;
+    --teal-dark: #0D4F5C;
+    --teal-bright: #22A6B3;
+    --mint: #B2F0E8;
+    --green: #10B981;
+    --green-dark: #059669;
+    --red: #EF4444;
+    --amber: #F59E0B;
+    --text-primary: #F1F5F9;
+    --text-secondary: #CBD5E1;
+    --text-muted: #64748B;
+    --card-border: rgba(255,255,255,0.08);
+    --card-bg: rgba(255,255,255,0.04);
+  }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout ── */
+  .app { padding: 28px 20px 48px; }
+  .app--done { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .container { max-width: 660px; margin: 0 auto; }
+
+  /* ── Header ── */
+  .header { text-align: center; margin-bottom: 24px; padding-top: 8px; }
+  .header__label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--teal-bright);
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 6px;
+  }
+  .header__title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  /* ── Progress ── */
+  .progress { display: flex; gap: 5px; margin-bottom: 22px; }
+  .progress__bar {
+    flex: 1; height: 4px; border-radius: 2px;
+    background: rgba(255,255,255,0.1);
+    transition: background 0.35s;
+  }
+  .progress__bar--done { background: var(--green); }
+  .progress__bar--active { background: var(--teal-bright); }
+
+  /* ── Phase badge ── */
+  .phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(14,116,144,0.18);
+    border: 1px solid rgba(14,116,144,0.35);
+    border-radius: 20px;
+    padding: 5px 14px;
+    margin-bottom: 18px;
+  }
+  .phase-badge__text {
+    color: var(--teal-bright);
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+  .card__prompt {
+    padding: 26px 30px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .card__prompt p {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.65;
+    letter-spacing: -0.1px;
+  }
+  .card__body { padding: 20px 30px 28px; }
+  .card__label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+  }
+
+  /* ── Option buttons ── */
+  .option-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 13px 16px;
+    margin-bottom: 9px;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.12s;
+    font-family: 'Inter', sans-serif;
+  }
+  .option-btn:hover:not(:disabled) {
+    background: rgba(255,255,255,0.07);
+    border-color: var(--teal-bright);
+    transform: translateX(3px);
+  }
+  .option-btn:disabled { cursor: default; }
+  .option-btn span {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    font-weight: 400;
+  }
+
+  .option-btn--correct { background: rgba(16,185,129,0.1) !important; border-color: var(--green) !important; }
+  .option-btn--correct span { color: #A7F3D0 !important; font-weight: 500 !important; }
+  .option-btn--wrong { background: rgba(239,68,68,0.1) !important; border-color: var(--red) !important; }
+  .option-btn--wrong span { color: #FCA5A5 !important; }
+  .option-btn--dimmed { background: rgba(255,255,255,0.01) !important; border-color: rgba(255,255,255,0.04) !important; }
+  .option-btn--dimmed span { color: #475569 !important; }
+
+  /* ── Feedback ── */
+  .feedback {
+    margin-top: 14px;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border-left: 3px solid;
+    animation: fadeSlideIn 0.3s ease;
+  }
+  .feedback--correct { background: rgba(16,185,129,0.07); border-left-color: var(--green); }
+  .feedback--wrong { background: rgba(245,158,11,0.07); border-left-color: var(--amber); }
+  .feedback__label {
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .feedback--correct .feedback__label { color: var(--green); }
+  .feedback--wrong .feedback__label { color: var(--amber); }
+  .feedback__text {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── Next button ── */
+  .next-btn {
+    margin-top: 16px;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.2px;
+    animation: fadeSlideIn 0.3s ease;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .next-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(14,116,144,0.45);
+  }
+  .next-btn:active { transform: translateY(0); }
+
+  /* ── Results ── */
+  .results { max-width: 520px; width: 100%; text-align: center; }
+  .results__icon { font-size: 56px; margin-bottom: 12px; }
+  .results__title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 4px;
+    letter-spacing: -0.5px;
+  }
+  .results__subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin: 0 0 28px;
+    font-family: 'Inter', sans-serif;
+  }
+  .results__card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+  .results__pct {
+    font-size: 56px;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .results__pct--pass { color: var(--green); }
+  .results__pct--warn { color: var(--amber); }
+  .results__score {
+    color: var(--mint);
+    font-size: 13px;
+    margin: 8px 0 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+  .results__dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 22px;
+  }
+  .results__dot {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+  }
+  .results__dot--correct { background: rgba(16,185,129,0.18); border: 1.5px solid var(--green); color: var(--green); }
+  .results__dot--wrong { background: rgba(239,68,68,0.18); border: 1.5px solid var(--red); color: var(--red); }
+  .results__msg {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.65;
+    margin-bottom: 24px;
+    font-family: 'Inter', sans-serif;
+  }
+  .restart-btn {
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: white;
+    border: none;
+    padding: 13px 40px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .restart-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(14,116,144,0.45);
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+var STEPS = [
+  {
+    phase: "Patient Identification",
+    prompt: "Mrs. Garcia has arrived for her appointment. She\u2019s sitting in the waiting room. What\u2019s the FIRST thing you say?",
+    options: [
+      { text: "\"Mrs. Garcia? Come on back!\"", correct: false, feedback: "Never call out a patient\u2019s name as confirmation. A stressed or distracted person may respond to any name. This also risks a HIPAA violation in a crowded waiting room." },
+      { text: "\"Hi, can you tell me your full name and date of birth?\"", correct: true, feedback: "Excellent! You asked the patient to STATE her identifiers rather than confirming them for her. This is the gold standard for patient identification." },
+      { text: "\"Are you Maria Garcia, born 3/15/1978?\"", correct: false, feedback: "Never read the patient\u2019s information and ask them to confirm. Patients who are ill, anxious, or distracted may agree to incorrect information." }
+    ]
+  },
+  {
+    phase: "Patient Identification",
+    prompt: "Mrs. Garcia confirms: \"Maria Elena Garcia, date of birth March 15, 1978.\" You\u2019ve verified her name and DOB. Now she needs to discuss a billing issue. What additional identifier do you need?",
+    options: [
+      { text: "Her full Social Security number", correct: false, feedback: "Requesting the complete SSN is a privacy concern. For financial matters, only the last 4 digits of the SSN are needed alongside the full name." },
+      { text: "Her medical record number", correct: false, feedback: "The MRN is used for clinical identification within the EHR, not typically for billing conversations. For financial verification, you need the last 4 of her SSN." },
+      { text: "The last 4 digits of her Social Security number", correct: true, feedback: "Correct! For billing and financial matters, verify the patient\u2019s full name plus the last 4 digits of their SSN. The complete SSN is rarely requested due to privacy concerns." }
+    ]
+  },
+  {
+    phase: "Chief Complaint",
+    prompt: "You\u2019ve roomed Mrs. Garcia. How do you elicit her chief complaint?",
+    options: [
+      { text: "\"So you\u2019re here for your annual checkup, right?\"", correct: false, feedback: "Never assume the reason for the visit. Even if the schedule says \u2018annual,\u2019 the patient may have a different or additional concern. Always use open-ended questions." },
+      { text: "\"What brings you in today?\"", correct: true, feedback: "Perfect! Open-ended questions let the patient describe their concern in their own words. Document their response using direct quotation marks \u2014 this is subjective data." },
+      { text: "\"Do you have any pain today?\"", correct: false, feedback: "This is a closed-ended (yes/no) question that narrows the conversation too early. Start with an open-ended question to let the patient share their primary concern freely." }
+    ]
+  },
+  {
+    phase: "Medical History",
+    prompt: "Mrs. Garcia mentions she takes lisinopril and metformin. What must you do at EVERY visit regarding her medications?",
+    options: [
+      { text: "Note that her medications haven\u2019t changed", correct: false, feedback: "You can\u2019t assume they haven\u2019t changed. Medication reconciliation requires reviewing EVERY current medication \u2014 including OTCs, supplements, and changes since the last visit." },
+      { text: "Perform medication reconciliation \u2014 review all current meds, doses, and any changes", correct: true, feedback: "Correct! Medication reconciliation is required at every visit. Review each medication, its dosage, frequency, and confirm no new medications, OTCs, or supplements have been added or discontinued." },
+      { text: "Skip this step \u2014 pharmacy records are updated automatically", correct: false, feedback: "Pharmacy records don\u2019t always reflect what the patient is actually taking. Patients may skip doses, take OTC medications, or have changes from other providers. Manual reconciliation is essential." }
+    ]
+  },
+  {
+    phase: "Allergy Documentation",
+    prompt: "Mrs. Garcia says she\u2019s allergic to penicillin. What\u2019s the correct way to document this?",
+    options: [
+      { text: "\"Allergic to penicillin\"", correct: false, feedback: "This is incomplete. You must also document the TYPE of reaction \u2014 was it anaphylaxis, a rash, GI upset, or something else? The reaction type determines how critical the allergy is." },
+      { text: "\"PCN allergy \u2014 causes rash\"", correct: false, feedback: "Close, but never use unofficial abbreviations. \u2018PCN\u2019 is not a universally accepted abbreviation and could be misread. Write out \u2018penicillin\u2019 and describe the reaction." },
+      { text: "\"Penicillin allergy \u2014 reaction: hives and facial swelling\" (after asking what happens)", correct: true, feedback: "Excellent! You asked about the specific reaction and documented both the allergen AND the reaction type. This is critical for the provider to assess cross-reactivity risks and treatment decisions." }
+    ]
+  },
+  {
+    phase: "Vital Signs",
+    prompt: "Time to take Mrs. Garcia\u2019s blood pressure. She\u2019s seated with her legs crossed, chatting on her phone. What do you address FIRST?",
+    options: [
+      { text: "Ask her to uncross her legs and rest quietly for at least 1 minute", correct: true, feedback: "Correct! Crossed legs can raise systolic BP by 2\u20138 mmHg, and conversation or phone use can also elevate readings. Have her sit with feet flat, back supported, arm at heart level, and rest quietly for 1\u20135 minutes before measuring." },
+      { text: "Go ahead and take the reading \u2014 you can note the crossed legs in the chart", correct: false, feedback: "Taking a reading with known influencing factors defeats the purpose of accurate measurement. Always correct positioning first \u2014 crossed legs can add 2\u20138 mmHg to the systolic reading." },
+      { text: "Ask her to stand up and then sit back down to reset", correct: false, feedback: "Standing and sitting changes won\u2019t help \u2014 you need her to be seated properly (feet flat, back supported, arm at heart level) and resting quietly for at least 1 minute before measurement." }
+    ]
+  },
+  {
+    phase: "Vital Signs",
+    prompt: "Mrs. Garcia\u2019s vitals: BP 118/76, HR 78, RR 16, Temp 98.4\u00b0F, SpO\u2082 97%. How would you classify these overall?",
+    options: [
+      { text: "All within normal adult ranges \u2014 document and proceed", correct: true, feedback: "Correct! BP < 120/80 (normal), HR 60\u2013100 (normal), RR 12\u201320 (normal), Temp 97.6\u201399.6\u00b0F (normal), SpO\u2082 \u2265 95% (normal). All values fall within expected adult parameters." },
+      { text: "BP is elevated \u2014 flag for the provider", correct: false, feedback: "118/76 is within normal range (< 120/80). \u2018Elevated\u2019 BP starts at 120\u2013129 systolic with < 80 diastolic. These readings are normal." },
+      { text: "Temperature is low \u2014 possible hypothermia", correct: false, feedback: "98.4\u00b0F is well within the normal oral range of 97.6\u201399.6\u00b0F. Hypothermia concerns would begin below 95\u00b0F (35\u00b0C)." }
+    ]
+  },
+  {
+    phase: "Screenings",
+    prompt: "You ask Mrs. Garcia about tobacco use. She says: \"I\u2019d rather not answer that.\" What do you do?",
+    options: [
+      { text: "Explain that you need the information and ask again", correct: false, feedback: "While the information is valuable, patients have the right to decline any screening question. Pressing further could damage rapport and trust." },
+      { text: "Skip the question and leave the field blank", correct: false, feedback: "Never leave a field blank. A blank field is ambiguous \u2014 it could mean \u2018no tobacco use,\u2019 \u2018not asked,\u2019 or \u2018declined.\u2019 Always document the refusal explicitly." },
+      { text: "Document: \"Patient declined to answer\" and move on respectfully", correct: true, feedback: "Correct! Respect the patient\u2019s autonomy. Document the refusal clearly so the care team knows the question was asked and the patient exercised their right to decline." }
+    ]
+  }
+];
+
+var state = { step: 0, picked: null, correctCount: 0, done: false, history: [] };
+
+function render() {
+  var app = document.getElementById('app');
+  app.innerHTML = state.done ? renderResults() : renderQuestion();
+  bindEvents();
+}
+
+function renderResults() {
+  var pct = Math.round(state.correctCount / STEPS.length * 100);
+  var pctClass = pct >= 75 ? 'results__pct--pass' : 'results__pct--warn';
+  var msg = pct >= 88
+    ? "Outstanding clinical judgment! You handled Mrs. Garcia\u2019s intake with professionalism and precision."
+    : pct >= 62
+    ? "Good effort! Review the areas you missed \u2014 small details in the intake process make a big difference in patient safety."
+    : "Keep studying the intake process. Every step matters for patient safety and accurate documentation.";
+
+  var dots = '';
+  for (var i = 0; i < state.history.length; i++) {
+    var h = state.history[i];
+    var cls = h.correct ? 'results__dot--correct' : 'results__dot--wrong';
+    dots += '<div class="results__dot ' + cls + '">' + (h.correct ? '\u2713' : '\u2717') + '</div>';
+  }
+
+  return '<div class="app app--done"><div class="results">' +
+    '<div class="results__icon">\uD83C\uDFE5</div>' +
+    '<h1 class="results__title">Intake Complete!</h1>' +
+    '<p class="results__subtitle">Here\u2019s how your patient encounter went</p>' +
+    '<div class="results__card">' +
+      '<div class="results__pct ' + pctClass + '">' + pct + '%</div>' +
+      '<p class="results__score">' + state.correctCount + ' of ' + STEPS.length + ' decisions correct</p>' +
+      '<div class="results__dots">' + dots + '</div>' +
+      '<p class="results__msg">' + msg + '</p>' +
+      '<button class="restart-btn" id="restartBtn">Start Over</button>' +
+    '</div></div></div>';
+}
+
+function renderQuestion() {
+  var s = STEPS[state.step];
+
+  var bars = '';
+  for (var i = 0; i < STEPS.length; i++) {
+    var cls = 'progress__bar';
+    if (i < state.step) cls += ' progress__bar--done';
+    else if (i === state.step) cls += ' progress__bar--active';
+    bars += '<div class="' + cls + '"></div>';
+  }
+
+  var opts = '';
+  for (var j = 0; j < s.options.length; j++) {
+    var opt = s.options[j];
+    var cls2 = 'option-btn';
+    if (state.picked !== null) {
+      if (opt.correct) cls2 += ' option-btn--correct';
+      else if (j === state.picked && !opt.correct) cls2 += ' option-btn--wrong';
+      else cls2 += ' option-btn--dimmed';
+    }
+    var disabled = state.picked !== null ? 'disabled' : '';
+    opts += '<button class="' + cls2 + '" data-idx="' + j + '" ' + disabled + '><span>' + opt.text + '</span></button>';
+  }
+
+  var feedbackHTML = '';
+  if (state.picked !== null) {
+    var chosen = s.options[state.picked];
+    var fbCls = chosen.correct ? 'feedback--correct' : 'feedback--wrong';
+    var label = chosen.correct ? '\u2713 Correct approach' : '\u2717 Not the best choice';
+    var nextLabel = state.step + 1 >= STEPS.length ? 'Complete Encounter' : 'Continue \u2192';
+    feedbackHTML =
+      '<div class="feedback ' + fbCls + '">' +
+        '<div class="feedback__label">' + label + '</div>' +
+        '<p class="feedback__text">' + chosen.feedback + '</p>' +
+      '</div>' +
+      '<button class="next-btn" id="nextBtn">' + nextLabel + '</button>';
+  }
+
+  return '<div class="app"><div class="container">' +
+    '<div class="header">' +
+      '<div class="header__label">Patient Intake Simulator</div>' +
+      '<h2 class="header__title">Rooming Mrs. Garcia</h2>' +
+    '</div>' +
+    '<div class="progress">' + bars + '</div>' +
+    '<div class="phase-badge"><span class="phase-badge__text">' + s.phase + '</span></div>' +
+    '<div class="card">' +
+      '<div class="card__prompt"><p>' + s.prompt + '</p></div>' +
+      '<div class="card__body">' +
+        '<div class="card__label">What would you do?</div>' +
+        opts +
+        feedbackHTML +
+      '</div>' +
+    '</div>' +
+  '</div></div>';
+}
+
+function bindEvents() {
+  var optBtns = document.querySelectorAll('.option-btn');
+  for (var i = 0; i < optBtns.length; i++) {
+    (function(btn) {
+      btn.addEventListener('click', function() {
+        if (state.picked !== null) return;
+        var idx = parseInt(btn.getAttribute('data-idx'));
+        state.picked = idx;
+        if (STEPS[state.step].options[idx].correct) state.correctCount++;
+        state.history.push({ step: state.step, picked: idx, correct: STEPS[state.step].options[idx].correct });
+        render();
+      });
+    })(optBtns[i]);
+  }
+
+  var nextBtn = document.getElementById('nextBtn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function() {
+      if (state.step + 1 >= STEPS.length) {
+        state.done = true;
+      } else {
+        state.step++;
+        state.picked = null;
+      }
+      render();
+    });
+  }
+
+  var restartBtn = document.getElementById('restartBtn');
+  if (restartBtn) {
+    restartBtn.addEventListener('click', function() {
+      state = { step: 0, picked: null, correctCount: 0, done: false, history: [] };
+      render();
+    });
+  }
+}
+
+render();
+</script>
+</body>
+</html>

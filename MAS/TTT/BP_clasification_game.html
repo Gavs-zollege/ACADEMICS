@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BP Classification Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-start: #0F2B3C;
+    --bg-mid: #0D4F5C;
+    --bg-end: #0E7490;
+    --teal: #0E7490;
+    --teal-dark: #0D4F5C;
+    --teal-bright: #22A6B3;
+    --green: #10B981;
+    --green-dark: #059669;
+    --text-primary: #F1F5F9;
+    --text-secondary: #CBD5E1;
+    --text-muted: #64748B;
+    --card-border: rgba(255,255,255,0.08);
+    --card-bg: rgba(255,255,255,0.05);
+  }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .screen { display: none; max-width: 480px; width: 100%; }
+  .screen.active { display: block; }
+  .center-wrap { text-align: center; }
+
+  /* START SCREEN */
+  .emoji-big { font-size: 56px; margin-bottom: 14px; }
+
+  .start-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    letter-spacing: -0.4px;
+  }
+  .start-desc {
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.65;
+    margin-bottom: 6px;
+    font-family: 'Inter', sans-serif;
+  }
+  .start-sub {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Reference table */
+  .ref-box {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    border: 1px solid var(--card-border);
+    text-align: left;
+  }
+  .ref-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+  }
+  .ref-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .ref-row:last-child { border-bottom: none; }
+  .ref-cat {
+    font-weight: 600;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+  }
+  .ref-range {
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+
+  .btn-start {
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    color: white;
+    border: none;
+    padding: 14px 52px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.2px;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(14,116,144,0.45);
+  }
+  .btn-start:active { transform: translateY(0); }
+
+  /* PLAY SCREEN */
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .score-pill {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .progress-bar { display: flex; gap: 4px; margin-bottom: 28px; }
+  .progress-seg {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    transition: background 0.3s;
+  }
+
+  /* Reading display */
+  .reading-area { text-align: center; margin-bottom: 26px; }
+  .reading-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+  }
+  .reading-box {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 32px 24px;
+    border: 1px solid var(--card-border);
+    display: inline-block;
+    min-width: 260px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+  }
+  .reading-val {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -2px;
+  }
+  .reading-slash {
+    color: var(--text-muted);
+    font-size: 36px;
+    font-weight: 400;
+    margin: 0 2px;
+  }
+  .reading-unit {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Category buttons */
+  .cat-buttons { display: flex; flex-direction: column; gap: 8px; }
+  .cat-btn {
+    padding: 14px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    letter-spacing: 0.1px;
+  }
+  .cat-btn:hover:not([disabled]) { transform: translateX(3px); }
+  .cat-btn[disabled] { cursor: default; }
+
+  /* DONE SCREEN */
+  .done-emoji { font-size: 52px; margin-bottom: 12px; }
+  .done-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    letter-spacing: -0.4px;
+  }
+  .done-msg {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 22px;
+    font-family: 'Inter', sans-serif;
+  }
+  .result-box {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid var(--card-border);
+    margin-bottom: 24px;
+  }
+  .result-score {
+    font-size: 52px;
+    font-weight: 800;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .result-pct {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<!-- START SCREEN -->
+<div class="screen active" id="startScreen">
+  <div class="center-wrap">
+    <div class="emoji-big">🩺</div>
+    <h1 class="start-title">BP Classification</h1>
+    <p class="start-desc">A blood pressure reading will appear. Tap the correct classification as fast as you can!</p>
+    <p class="start-sub">15 readings total</p>
+
+    <div class="ref-box">
+      <div class="ref-title">Quick Reference</div>
+      <div class="ref-row"><span class="ref-cat" style="color:#10B981">Normal</span><span class="ref-range">&lt; 120 / &lt; 80</span></div>
+      <div class="ref-row"><span class="ref-cat" style="color:#F59E0B">Elevated</span><span class="ref-range">120&ndash;129 / &lt; 80</span></div>
+      <div class="ref-row"><span class="ref-cat" style="color:#F97316">Stage 1 HTN</span><span class="ref-range">130&ndash;139 / 80&ndash;89</span></div>
+      <div class="ref-row"><span class="ref-cat" style="color:#EF4444">Stage 2 HTN</span><span class="ref-range">&ge; 140 / &ge; 90</span></div>
+      <div class="ref-row"><span class="ref-cat" style="color:#DC2626">Crisis &#9888;</span><span class="ref-range">&gt; 180 / &gt; 120</span></div>
+    </div>
+
+    <button class="btn-start" onclick="startGame()">Start</button>
+  </div>
+</div>
+
+<!-- PLAY SCREEN -->
+<div class="screen" id="playScreen">
+  <div class="progress-row">
+    <span class="progress-label" id="roundLabel">Reading 1 of 15</span>
+    <span class="score-pill" id="scoreLabel">0 correct</span>
+  </div>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <div class="reading-area">
+    <div class="reading-label">Classify this reading</div>
+    <div class="reading-box">
+      <div class="reading-val">
+        <span id="sysVal"></span><span class="reading-slash">/</span><span id="diaVal"></span>
+      </div>
+      <div class="reading-unit">mmHg</div>
+    </div>
+  </div>
+
+  <div class="cat-buttons" id="catButtons"></div>
+</div>
+
+<!-- DONE SCREEN -->
+<div class="screen" id="doneScreen">
+  <div class="center-wrap">
+    <div class="done-emoji" id="doneEmoji"></div>
+    <h1 class="done-title">Results</h1>
+    <p class="done-msg" id="doneMsg"></p>
+    <div class="result-box">
+      <div class="result-score" id="doneScore"></div>
+      <div class="result-pct" id="donePct"></div>
+    </div>
+    <button class="btn-start" onclick="startGame()">Play Again</button>
+  </div>
+</div>
+
+<script>
+var CATEGORIES = [
+  { label: "Normal",      color: "#10B981", bg: "rgba(16,185,129,0.12)"  },
+  { label: "Elevated",    color: "#F59E0B", bg: "rgba(245,158,11,0.12)"  },
+  { label: "Stage 1 HTN", color: "#F97316", bg: "rgba(249,115,22,0.12)"  },
+  { label: "Stage 2 HTN", color: "#EF4444", bg: "rgba(239,68,68,0.12)"   },
+  { label: "Crisis \u26a0", color: "#DC2626", bg: "rgba(220,38,38,0.12)" }
+];
+
+var MAX_ROUNDS = 15;
+var gameReading = null;
+var gamePicked = null;
+var gameScore = 0;
+var gameTotal = 0;
+var gameRound = 0;
+
+function classify(sys, dia) {
+  if (sys > 180 || dia > 120) return 4;
+  if (sys >= 140 || dia >= 90) return 3;
+  if (sys >= 130 || dia >= 80) return 2;
+  if (sys >= 120 && dia < 80) return 1;
+  return 0;
+}
+
+function genReading() {
+  var pools = [
+    function() { return { sys: Math.floor(Math.random()*20+95),  dia: Math.floor(Math.random()*15+60) }; },
+    function() { return { sys: Math.floor(Math.random()*10+120), dia: Math.floor(Math.random()*10+68) }; },
+    function() { return { sys: Math.floor(Math.random()*10+130), dia: Math.floor(Math.random()*10+80) }; },
+    function() { return { sys: Math.floor(Math.random()*20+140), dia: Math.floor(Math.random()*15+90) }; },
+    function() { return { sys: Math.floor(Math.random()*30+182), dia: Math.floor(Math.random()*20+122) }; }
+  ];
+  var r = pools[Math.floor(Math.random() * pools.length)]();
+  if (r.sys >= 120 && r.sys < 130 && r.dia >= 80) {
+    r.dia = Math.floor(Math.random() * 10 + 68);
+  }
+  return r;
+}
+
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame() {
+  gameScore = 0; gameTotal = 0; gameRound = 0;
+  nextRound();
+  showScreen('playScreen');
+}
+
+function nextRound() {
+  gameReading = genReading();
+  gamePicked = null;
+  gameRound++;
+  renderPlay();
+}
+
+function renderPlay() {
+  document.getElementById('roundLabel').textContent = 'Reading ' + gameRound + ' of ' + MAX_ROUNDS;
+  document.getElementById('scoreLabel').textContent = gameScore + ' correct';
+  document.getElementById('sysVal').textContent = gameReading.sys;
+  document.getElementById('diaVal').textContent = gameReading.dia;
+
+  // Progress bar
+  var bar = document.getElementById('progressBar');
+  bar.innerHTML = '';
+  for (var i = 0; i < MAX_ROUNDS; i++) {
+    var seg = document.createElement('div');
+    seg.className = 'progress-seg';
+    seg.style.background = i < gameRound - 1 ? '#10B981' : i === gameRound - 1 ? '#22A6B3' : 'rgba(255,255,255,0.08)';
+    bar.appendChild(seg);
+  }
+
+  // Category buttons
+  var container = document.getElementById('catButtons');
+  container.innerHTML = '';
+  for (var j = 0; j < CATEGORIES.length; j++) {
+    (function(idx) {
+      var cat = CATEGORIES[idx];
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cat-btn';
+      btn.textContent = cat.label;
+      btn.style.background = 'rgba(255,255,255,0.04)';
+      btn.style.border = '1.5px solid rgba(255,255,255,0.1)';
+      btn.style.color = '#CBD5E1';
+      btn.id = 'catBtn' + idx;
+      btn.addEventListener('click', function() { handlePick(idx); });
+      container.appendChild(btn);
+    })(j);
+  }
+}
+
+function handlePick(catIdx) {
+  if (gamePicked !== null) return;
+  var correctIdx = classify(gameReading.sys, gameReading.dia);
+  gamePicked = catIdx;
+  gameTotal++;
+  if (catIdx === correctIdx) gameScore++;
+
+  for (var i = 0; i < CATEGORIES.length; i++) {
+    var cat = CATEGORIES[i];
+    var btn = document.getElementById('catBtn' + i);
+    btn.setAttribute('disabled', 'disabled');
+    btn.style.cursor = 'default';
+    btn.style.transform = 'none';
+
+    if (i === correctIdx) {
+      btn.style.background = cat.bg;
+      btn.style.border = '1.5px solid ' + cat.color;
+      btn.style.color = cat.color;
+    } else if (i === catIdx && i !== correctIdx) {
+      btn.style.background = 'rgba(239,68,68,0.1)';
+      btn.style.border = '1.5px solid #EF4444';
+      btn.style.color = '#FCA5A5';
+    } else {
+      btn.style.background = 'rgba(255,255,255,0.02)';
+      btn.style.border = '1.5px solid rgba(255,255,255,0.04)';
+      btn.style.color = '#475569';
+    }
+  }
+
+  setTimeout(function() {
+    if (gameRound >= MAX_ROUNDS) {
+      showDone();
+    } else {
+      nextRound();
+    }
+  }, 1100);
+}
+
+function showDone() {
+  var pct = gameTotal > 0 ? Math.round(gameScore / gameTotal * 100) : 0;
+  document.getElementById('doneEmoji').textContent = pct >= 80 ? '\uD83C\uDFC6' : '\uD83D\uDCDA';
+  document.getElementById('doneMsg').textContent = pct >= 90 ? 'BP classification pro!' : pct >= 70 ? 'Well done \u2014 a few to review.' : 'Study the table and try again!';
+  document.getElementById('doneScore').textContent = gameScore + '/' + gameTotal;
+  document.getElementById('doneScore').style.color = pct >= 80 ? '#10B981' : '#F59E0B';
+  document.getElementById('donePct').textContent = pct + '% accuracy';
+  showScreen('doneScreen');
+}
+</script>
+</body>
+</html>

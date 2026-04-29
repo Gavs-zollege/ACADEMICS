@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Phase Detective</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#1a0f1e,#1e1228,#14091c);font-family:'Manrope',sans-serif;padding:24px 16px;color:#f3e8ff}
+.wrap{max-width:740px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.header .icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#a080b8;font-weight:600;font-size:15px}
+.score{color:#a78bfa;font-weight:700;font-size:14px;margin-top:8px}
+.prompt{background:linear-gradient(135deg,rgba(244,114,182,.1),rgba(96,165,250,.1));padding:22px 28px;border-radius:18px;text-align:center;margin-bottom:20px;border:2px solid rgba(167,139,250,.2)}
+.prompt .label{color:#a080b8;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+.prompt .item{color:#f3e8ff;font-size:20px;font-weight:800}
+.prompt .rem{color:#a080b8;font-size:13px;margin-top:8px}
+.fb{text-align:center;padding:12px;margin-bottom:14px;border-radius:12px;font-weight:700;font-size:17px}
+.fb.ok{background:rgba(74,222,128,.13);color:#4ade80}
+.fb.no{background:rgba(251,113,133,.13);color:#fb7185}
+.buckets{display:flex;gap:12px;flex-wrap:wrap}
+.bucket{flex:1 1 180px;min-width:160px;background:#261830;border-radius:18px;padding:18px;cursor:pointer;transition:all .2s;min-height:130px}
+.bucket:hover{filter:brightness(1.12)}
+.bucket h3{font-weight:800;font-size:15px;text-align:center;margin-bottom:4px}
+.bucket .hint{color:#a080b8;font-size:11px;text-align:center;margin-bottom:12px;font-weight:600}
+.bucket .placed{padding:7px 11px;border-radius:10px;margin-bottom:5px;font-size:12px;font-weight:600}
+.bucket-0{border:2px solid rgba(244,114,182,.2)}.bucket-0 h3{color:#f472b6}.bucket-0 .placed{background:rgba(244,114,182,.07);border:1px solid rgba(244,114,182,.12)}
+.bucket-1{border:2px solid rgba(96,165,250,.2)}.bucket-1 h3{color:#60a5fa}.bucket-1 .placed{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.12)}
+.bucket-2{border:2px solid rgba(167,139,250,.2)}.bucket-2 h3{color:#a78bfa}.bucket-2 .placed{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.12)}
+.done{text-align:center;background:#261830;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0}
+.done p{color:#a080b8;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#f472b6;color:#1a0f1e;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="icon">📋</div>
+    <h1>QA Phase Detective</h1>
+    <p class="sub">Sort each error into the correct quality assurance phase</p>
+    <p class="score" id="scoreDisplay">Score: 0 / 12</p>
+  </div>
+  <div id="game">
+    <div class="prompt" id="promptBox"></div>
+    <div class="fb" id="feedback" style="display:none"></div>
+    <div class="buckets" id="bucketsRow"></div>
+  </div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const BUCKETS=["Pre-Analytical","Analytical","Post-Analytical"];
+const ICONS=["📋","⚙️","📤"];
+const HINTS=["Before testing","During testing","After testing"];
+const ALL=[
+  {text:"Wrong test ordered by the provider",b:0},{text:"Patient misidentification at collection",b:0},
+  {text:"Improper specimen labeling",b:0},{text:"Wrong container used for specimen",b:0},
+  {text:"Inadequate sample volume collected",b:0},{text:"Equipment malfunction during testing",b:1},
+  {text:"QC failure not caught before testing",b:1},{text:"Sample mix-up during analysis",b:1},
+  {text:"Procedures not followed correctly",b:1},{text:"Failure to report results to provider",b:2},
+  {text:"Incorrect data entry into health record",b:2},{text:"Excessive turnaround time for results",b:2},
+];
+let remaining,bContents,score;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+function init(){remaining=shuffle(ALL);bContents=BUCKETS.map(()=>[]);score=0;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';render()}
+function render(){
+  document.getElementById('scoreDisplay').textContent='Score: '+score+' / '+ALL.length;
+  const pb=document.getElementById('promptBox');
+  if(remaining.length>0){pb.style.display='block';pb.innerHTML='<div class="label">Which QA phase does this error belong to?</div><div class="item">'+remaining[0].text+'</div><div class="rem">'+remaining.length+' remaining</div>'}else pb.style.display='none';
+  const br=document.getElementById('bucketsRow');br.innerHTML='';
+  BUCKETS.forEach((name,i)=>{
+    const d=document.createElement('div');d.className='bucket bucket-'+i;d.onclick=()=>drop(i);
+    let h='<h3>'+ICONS[i]+' '+name+'</h3><div class="hint">'+HINTS[i]+'</div>';
+    bContents[i].forEach(t=>{h+='<div class="placed">✅ '+t+'</div>'});
+    d.innerHTML=h;br.appendChild(d);
+  });
+}
+function drop(bi){
+  if(remaining.length===0)return;const cur=remaining[0];const ok=cur.b===bi;
+  if(ok){bContents[bi].push(cur.text);score++}
+  const fb=document.getElementById('feedback');fb.style.display='block';fb.className='fb '+(ok?'ok':'no');
+  fb.textContent=ok?'✅ Correct!':'❌ That\'s a '+BUCKETS[cur.b]+' error';
+  remaining=remaining.slice(1);render();
+  if(remaining.length===0)setTimeout(showDone,900);
+  setTimeout(()=>{fb.style.display='none'},900);
+}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=10?'🏆':'💪')+'</div><h2>'+score+'/'+ALL.length+' Correct!</h2><p>Errors can occur at ANY phase. Pre-analytical errors (before testing) are the most common.</p><button class="btn" onclick="init()">🔄 Play Again</button>'}
+init();
+</script>
+</body>
+</html>

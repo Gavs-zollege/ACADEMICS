@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Normal or Abnormal?</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#150a1e,#1a1028,#10081a);font-family:'Sora',sans-serif;padding:24px 16px;color:#f0e6ff}
+.wrap{max-width:560px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.header .icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#a58ec4;font-weight:600;font-size:15px}
+.topbar{display:flex;justify-content:space-between;margin-bottom:12px}
+.topbar span{font-weight:700;font-size:14px}
+.topbar .ct{color:#a58ec4}
+.topbar .sc{color:#fbbf24}
+.bar{height:6px;background:#2a1a40;border-radius:10px;margin-bottom:24px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#22d3ee,#fb7185);border-radius:10px;transition:width .4s}
+.value-card{background:linear-gradient(135deg,#1e1230,#2a1a40);padding:36px 28px;border-radius:24px;text-align:center;margin-bottom:24px;border:2px solid rgba(34,211,238,.13)}
+.value-card .lab{color:#22d3ee;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}
+.value-card .val{font-weight:800;font-size:48px;margin-bottom:12px}
+.value-card .ref{color:#a58ec4;font-weight:600;font-size:15px;padding:8px 16px;background:rgba(21,10,30,.53);border-radius:10px;display:inline-block}
+.fb{text-align:center;padding:14px;margin-bottom:16px;border-radius:14px;font-weight:800;font-size:18px}
+.fb.ok{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.27);color:#4ade80}
+.fb.no{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.27);color:#fb7185}
+.btns{display:flex;gap:16px}
+.btns button{flex:1;padding:18px 20px;border-radius:16px;font-weight:800;font-size:20px;cursor:pointer;font-family:inherit;color:#f0e6ff;transition:all .2s}
+.btn-normal{background:rgba(74,222,128,.12);border:3px solid #4ade80}
+.btn-abnormal{background:rgba(251,113,133,.12);border:3px solid #fb7185}
+.btn-normal.chosen-ok{background:rgba(74,222,128,.25)}
+.btn-normal.chosen-bad{background:rgba(251,113,133,.25)}
+.btn-abnormal.chosen-ok{background:rgba(74,222,128,.25)}
+.btn-abnormal.chosen-bad{background:rgba(251,113,133,.25)}
+.done{text-align:center;background:#1e1230;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0}
+.done p{color:#a58ec4;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn-r{padding:14px 36px;border:none;border-radius:14px;background:#22d3ee;color:#150a1e;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="icon">🔬</div>
+    <h1>Normal or Abnormal?</h1>
+    <p class="sub">Classify each lab value against its reference range</p>
+  </div>
+  <div id="game"></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const ITEMS=[
+  {lab:"Hemoglobin (Male)",value:"16 g/dL",normal:true,range:"14–18 g/dL"},
+  {lab:"Fasting Glucose",value:"130 mg/dL",normal:false,range:"70–99 mg/dL"},
+  {lab:"WBC Count",value:"7,500/mm³",normal:true,range:"4,000–11,000/mm³"},
+  {lab:"Platelet Count",value:"120,000/mm³",normal:false,range:"150,000–450,000/mm³"},
+  {lab:"Total Cholesterol",value:"185 mg/dL",normal:true,range:"< 200 mg/dL"},
+  {lab:"HbA1C",value:"7.2%",normal:false,range:"4.0–5.6%"},
+  {lab:"Hematocrit (Female)",value:"40%",normal:true,range:"37–47%"},
+  {lab:"LDL Cholesterol",value:"145 mg/dL",normal:false,range:"< 100 mg/dL"},
+  {lab:"HDL (Male)",value:"55 mg/dL",normal:true,range:"> 40 mg/dL"},
+  {lab:"Triglycerides",value:"220 mg/dL",normal:false,range:"< 150 mg/dL"},
+  {lab:"RBC Count",value:"5.1 million/µL",normal:true,range:"4.2–5.9 million/µL"},
+  {lab:"MCV",value:"72 fL",normal:false,range:"80–98 fL"},
+];
+let ci=0,score=0,chosen=null;
+function renderQ(){
+  const g=document.getElementById('game'),it=ITEMS[ci];
+  let h='<div class="topbar"><span class="ct">'+(ci+1)+' / '+ITEMS.length+'</span><span class="sc">Score: '+score+'</span></div>';
+  h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/ITEMS.length*100)+'%"></div></div>';
+  h+='<div class="value-card"><div class="lab">'+it.lab+'</div><div class="val">'+it.value+'</div>';
+  if(chosen!==null) h+='<div class="ref">Reference: '+it.range+'</div>';
+  h+='</div>';
+  if(chosen!==null){
+    const ok=chosen===it.normal;
+    h+='<div class="fb '+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ It\'s actually '+(it.normal?'Normal':'Abnormal'))+'</div>';
+  }
+  const nCls=chosen===true?(it.normal?'chosen-ok':'chosen-bad'):'';
+  const aCls=chosen===false?(!it.normal?'chosen-ok':'chosen-bad'):'';
+  h+='<div class="btns"><button class="btn-normal '+nCls+'" '+(chosen===null?'onclick="pick(true)"':'')+'>✅ Normal</button>';
+  h+='<button class="btn-abnormal '+aCls+'" '+(chosen===null?'onclick="pick(false)"':'')+'>⚠️ Abnormal</button></div>';
+  g.innerHTML=h;
+}
+function pick(isNormal){
+  if(chosen!==null)return;
+  chosen=isNormal;if(isNormal===ITEMS[ci].normal)score++;
+  renderQ();
+  setTimeout(()=>{
+    if(ci+1<ITEMS.length){ci++;chosen=null;renderQ()}
+    else showDone();
+  },1800);
+}
+function showDone(){
+  document.getElementById('game').style.display='none';
+  const d=document.getElementById('doneBox');d.style.display='block';
+  d.innerHTML='<div class="big">'+(score>=10?'🏆':score>=7?'⭐':'💪')+'</div><h2>'+score+'/'+ITEMS.length+' Correct!</h2><p>MAs must recognize and immediately report out-of-range critical values.</p><button class="btn-r" onclick="reset()">🔄 Try Again</button>';
+}
+function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+renderQ();
+</script>
+</body>
+</html>

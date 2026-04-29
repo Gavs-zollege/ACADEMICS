@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Priority Triage Sorter</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#0f0a1e,#18122e,#0d0820);font-family:'Fredoka',sans-serif;padding:24px 16px;color:#ece6ff}
+.wrap{max-width:720px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.icon{font-size:44px}
+h1{font-weight:700;font-size:30px;margin:8px 0 4px}
+.sub{color:#9488b8;font-weight:500;font-size:15px}
+.score{color:#f472b6;font-weight:600;font-size:14px;margin-top:8px}
+.prompt{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(96,165,250,.12));padding:22px 28px;border-radius:18px;text-align:center;margin-bottom:20px;border:2px solid rgba(244,114,182,.25)}
+.prompt .label{color:#9488b8;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+.prompt .item{color:#ece6ff;font-size:20px;font-weight:700}
+.prompt .rem{color:#9488b8;font-size:13px;margin-top:8px}
+.fb{text-align:center;padding:12px;margin-bottom:14px;border-radius:12px;font-weight:700;font-size:17px}
+.fb.ok{background:rgba(74,222,128,.13);color:#4ade80}
+.fb.no{background:rgba(251,113,133,.13);color:#fb7185}
+.buckets{display:flex;gap:12px;flex-wrap:wrap}
+.bucket{flex:1 1 150px;min-width:140px;background:#1a1230;border-radius:18px;padding:16px;cursor:pointer;transition:all .2s;min-height:120px}
+.bucket:hover{filter:brightness(1.12)}
+.bucket h3{font-weight:700;font-size:15px;text-align:center;margin-bottom:4px}
+.bucket .hint{color:#9488b8;font-size:11px;text-align:center;margin-bottom:10px;font-weight:500}
+.bucket .placed{padding:7px 10px;border-radius:9px;margin-bottom:5px;font-size:12px;font-weight:600}
+.b0{border:2px solid rgba(239,68,68,.25)}.b0 h3{color:#ef4444}.b0 .placed{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.12)}
+.b1{border:2px solid rgba(251,191,36,.25)}.b1 h3{color:#fbbf24}.b1 .placed{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.12)}
+.b2{border:2px solid rgba(96,165,250,.25)}.b2 h3{color:#60a5fa}.b2 .placed{background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.12)}
+.b3{border:2px solid rgba(74,222,128,.25)}.b3 h3{color:#4ade80}.b3 .placed{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.12)}
+.done{text-align:center;background:#1a1230;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:700;font-size:28px;margin:12px 0 8px}
+.done .tip{color:#9488b8;font-weight:500;font-size:15px;margin-bottom:20px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#f472b6;color:#0f0a1e;font-weight:700;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><div class="icon">🚨</div><h1>Priority Triage Sorter</h1><p class="sub">Sort each patient call into the correct urgency level</p><p class="score" id="scoreDisplay">Score: 0 / 10</p></div>
+  <div id="game"><div class="prompt" id="promptBox"></div><div class="fb" id="feedback" style="display:none"></div><div class="buckets" id="bucketsRow"></div></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const BNAMES=["EMERGENCY","URGENT","SOON","ROUTINE"];
+const BICONS=["🚑","⚡","📋","🗓️"];
+const BHINTS=["911 / ER now","Within 24 hrs","Within days","Next available"];
+const ALL=[
+  {text:"Patient reports severe chest pain and difficulty breathing",b:0},
+  {text:"Parent says child is having a seizure right now",b:0},
+  {text:"Patient has a high fever (103°F) with worsening sore throat since yesterday",b:1},
+  {text:"Patient cut their hand deeply and bleeding won't stop with pressure",b:1},
+  {text:"Patient has a painful rash that appeared 2 days ago, not spreading",b:2},
+  {text:"Patient needs a medication refill — runs out in 3 days",b:2},
+  {text:"Patient wants to schedule their annual wellness exam",b:3},
+  {text:"Patient calling to book a routine follow-up after lab results",b:3},
+  {text:"Patient reports sudden numbness on one side of their body",b:0},
+  {text:"Patient has mild cold symptoms for 2 days, requesting an appointment",b:2},
+];
+let remaining,bContents,score;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+function init(){remaining=shuffle(ALL);bContents=BNAMES.map(()=>[]);score=0;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';render()}
+function render(){
+  document.getElementById('scoreDisplay').textContent='Score: '+score+' / '+ALL.length;
+  const pb=document.getElementById('promptBox');
+  if(remaining.length>0){pb.style.display='block';pb.innerHTML='<div class="label">How urgent is this call?</div><div class="item">'+remaining[0].text+'</div><div class="rem">'+remaining.length+' remaining</div>'}else pb.style.display='none';
+  const br=document.getElementById('bucketsRow');br.innerHTML='';
+  BNAMES.forEach((name,i)=>{const d=document.createElement('div');d.className='bucket b'+i;d.onclick=()=>drop(i);let h='<h3>'+BICONS[i]+' '+name+'</h3><div class="hint">'+BHINTS[i]+'</div>';bContents[i].forEach(t=>{h+='<div class="placed">✅ '+t+'</div>'});d.innerHTML=h;br.appendChild(d)});
+}
+function drop(bi){if(remaining.length===0)return;const cur=remaining[0];const ok=cur.b===bi;if(ok){bContents[bi].push(cur.text);score++}const fb=document.getElementById('feedback');fb.style.display='block';fb.className='fb '+(ok?'ok':'no');fb.textContent=ok?'✅ Correct!':'❌ That\'s '+BNAMES[cur.b];remaining=remaining.slice(1);render();if(remaining.length===0)setTimeout(showDone,900);setTimeout(()=>{fb.style.display='none'},900)}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=8?'🏆':'💪')+'</div><h2>'+score+'/'+ALL.length+' Correct!</h2><p class="tip">MAs cannot diagnose — always use screening protocols and decision trees to guide triage calls.</p><button class="btn" onclick="init()">🔄 Play Again</button>'}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Specimen Transport Steps</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#0a1520,#0e1e30,#081520);font-family:'Plus Jakarta Sans',sans-serif;padding:24px 16px;color:#e0f0ff}
+.wrap{max-width:640px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.header .icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#6898b8;font-weight:600;font-size:15px}
+.badge{display:inline-block;margin-top:12px;background:#112030;padding:6px 20px;border-radius:20px;border:1px solid rgba(34,211,238,.2);color:#22d3ee;font-weight:800;font-size:15px}
+.fb{text-align:center;padding:12px 18px;margin-bottom:14px;border-radius:14px}
+.fb.ok{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2)}
+.fb.no{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.2)}
+.fb strong{font-weight:800;font-size:17px}
+.fb strong.ok{color:#34d399}
+.fb strong.no{color:#fb7185}
+.fb .tip{color:#6898b8;font-weight:600;font-size:13px;margin-top:6px}
+.section-label{font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.section-label.done-l{color:#34d399}
+.section-label.pick{color:#f97066}
+.placed-item{display:flex;align-items:center;gap:14px;padding:12px 18px;background:rgba(52,211,153,.06);border-radius:12px;margin-bottom:6px;border:1px solid rgba(52,211,153,.13)}
+.placed-num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(52,211,153,.13);color:#34d399;font-weight:800;font-size:18px;flex-shrink:0}
+.placed-text{font-weight:700;font-size:15px}
+.pool{display:grid;gap:8px}
+.pool-item{padding:15px 20px;border-radius:14px;background:#1a3048;border:2px solid rgba(34,211,238,.13);font-weight:700;font-size:15px;cursor:pointer;transition:all .2s}
+.pool-item:hover{filter:brightness(1.15);border-color:rgba(34,211,238,.3)}
+.done-box{text-align:center;background:#112030;border-radius:24px;padding:40px;border:2px solid rgba(52,211,153,.25)}
+.done-box .big{font-size:56px}
+.done-box h2{font-weight:800;font-size:28px;margin:12px 0 8px}
+.done-box p{color:#6898b8;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#f97066;color:#fff;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="icon">🏆</div>
+    <h1>Specimen Transport Steps</h1>
+    <p class="sub">Tap the steps in the correct order — from collection to disposal</p>
+    <div class="badge" id="counter">0 / 6 placed</div>
+  </div>
+  <div id="game"></div>
+  <div id="doneBox" class="done-box" style="display:none">
+    <div class="big">🎉</div>
+    <h2>Perfect Sequence!</h2>
+    <p>Proper handling and transport maintain specimen integrity — every step counts.</p>
+    <button class="btn" onclick="resetGame()">🔄 Play Again</button>
+  </div>
+</div>
+<script>
+const ORDER=[
+  "Use the correct container for the ordered test",
+  "Process the specimen (centrifuge if needed)",
+  "Test urine within 1 hour or refrigerate",
+  "Place specimen in zip-close biohazard bag with requisition",
+  "Apply biohazard label for mail/transport",
+  "Dispose of materials in proper biohazard containers",
+];
+const TIPS=[
+  "Some tests need special tubes, preservatives, or light protection (e.g., bilirubin).",
+  "Swab specimens may need the fluid chamber broken. Follow the lab manual.",
+  "Delayed testing allows bacteria to grow, significantly altering results.",
+  "Dual-pocket bag: specimen in one side, requisition in the other.",
+  "Any specimen transported by mail MUST have biohazard identification on the outside.",
+  "Red bags for non-breakables. Sharps containers for breakable items. Follow OSHA.",
+];
+let pool,placed,fbData;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+function init(){pool=shuffle(ORDER);placed=[];fbData=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';render()}
+function render(){
+  document.getElementById('counter').textContent=placed.length+' / '+ORDER.length+' placed';
+  const g=document.getElementById('game');let h='';
+  if(fbData){
+    h+='<div class="fb '+(fbData.ok?'ok':'no')+'"><strong class="'+(fbData.ok?'ok':'no')+'">'+(fbData.ok?'✅ Correct!':'❌ That\'s not the next step — try again!')+'</strong>';
+    if(fbData.tip)h+='<div class="tip">'+fbData.tip+'</div>';
+    h+='</div>';
+  }
+  if(placed.length>0){
+    h+='<div style="margin-bottom:20px"><div class="section-label done-l">✅ Completed</div>';
+    placed.forEach((s,i)=>{h+='<div class="placed-item"><div class="placed-num">'+(i+1)+'</div><div class="placed-text">'+s+'</div></div>'});
+    h+='</div>';
+  }
+  if(pool.length>0){
+    h+='<div class="section-label pick">🎯 Tap step #'+(placed.length+1)+'</div><div class="pool">';
+    pool.forEach((s,i)=>{h+='<div class="pool-item" onclick="pick('+i+')">'+s+'</div>'});
+    h+='</div>';
+  }
+  g.innerHTML=h;
+}
+function pick(idx){
+  const step=pool[idx];const nextIdx=placed.length;
+  if(step===ORDER[nextIdx]){
+    placed.push(step);pool=pool.filter((_,i)=>i!==idx);
+    fbData={ok:true,tip:TIPS[nextIdx]};
+    render();
+    if(placed.length===ORDER.length)setTimeout(()=>{document.getElementById('game').style.display='none';document.getElementById('doneBox').style.display='block'},1000);
+    else setTimeout(()=>{fbData=null;render()},1500);
+  } else {
+    fbData={ok:false};render();
+    setTimeout(()=>{fbData=null;render()},1200);
+  }
+}
+function resetGame(){init()}
+init();
+</script>
+</body>
+</html>

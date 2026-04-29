@@ -1,0 +1,66 @@
+w3_activity_07_fix_the_denial.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fix The Denial!</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#18150a,#201c10,#141008);font-family:'Rubik',sans-serif;padding:24px 16px;color:#faf5e0}
+.wrap{max-width:640px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#b8a870;font-weight:600;font-size:15px}
+.topbar{display:flex;justify-content:space-between;margin-bottom:12px}
+.topbar .qn{color:#b8a870;font-weight:700;font-size:14px}
+.topbar .sc{color:#f59e0b;font-weight:800;font-size:14px}
+.bar{height:6px;background:#302a18;border-radius:10px;margin-bottom:20px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#f59e0b,#ef4444);border-radius:10px;transition:width .4s}
+.question{background:#252010;padding:22px 24px;border-radius:18px;margin-bottom:20px;border-left:4px solid #f59e0b}
+.question p{font-weight:800;font-size:18px;line-height:1.6}
+.opts{display:grid;gap:10px}
+.opt{padding:15px 20px;border-radius:14px;background:#302a18;border:2px solid #302a18;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;text-align:left}
+.opt:hover{filter:brightness(1.1)}
+.opt .letter{color:#f59e0b;font-weight:800;margin-right:12px}
+.opt.correct{background:rgba(74,222,128,.15);border-color:#4ade80}
+.opt.wrong{background:rgba(251,113,133,.15);border-color:#fb7185}
+.tip{margin-top:16px;padding:14px 20px;border-radius:14px;background:#252010}
+.tip strong{font-size:16px;display:block;margin-bottom:6px}
+.tip strong.ok{color:#4ade80}
+.tip strong.no{color:#fb7185}
+.tip span{color:#b8a870;font-weight:600;font-size:14px}
+.done{text-align:center;background:#252010;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0}
+.done p{color:#b8a870;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#f59e0b;color:#18150a;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><div class="icon">🔧</div><h1>Fix The Denial!</h1><p class="sub">Choose the correct fix for each claim denial scenario</p></div>
+  <div id="game"></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"DENIAL: Service not covered by the patient's plan.",opts:["Write it off — nothing can be done","Verify codes, confirm medical necessity is documented, correct and resubmit","Call the patient and ask them to pay","Change the diagnosis code to something covered"],a:1,tip:"Verify correct codes were billed, document medical necessity, and resubmit."},
+  {q:"DENIAL: Wrong diagnosis or procedure code submitted.",opts:["Ignore it and bill the patient","Audit documentation, correct the codes, resubmit with supporting records","Submit the same claim again","Wait 30 days and resubmit automatically"],a:1,tip:"Audit the chart, fix the coding error, and resubmit with supporting documentation."},
+  {q:"DENIAL: Patient eligibility issue — insurance inactive.",opts:["Cancel the patient's balance","Attach proof of eligibility verification and resubmit","Bill a different insurance company","Change the date of service"],a:1,tip:"Show you verified eligibility at check-in and resubmit for reconsideration."},
+  {q:"DENIAL: No medical necessity documented for the service.",opts:["Submit an appeal with clinical documentation supporting the need","Delete the claim from the system","Bill the patient for the full amount immediately","Change the procedure code to a cheaper one"],a:0,tip:"Submit an appeal with clinical notes that demonstrate why the service was needed."},
+  {q:"DENIAL: Missing preauthorization for the procedure.",opts:["The claim cannot be recovered","Verify if auth was obtained; request retroactive auth if applicable","Bill the patient — it's their fault","Resubmit the same claim without changes"],a:1,tip:"Check for an existing auth number; if none, request retroactive authorization."},
+  {q:"A Medicare patient's service may not be covered. What must be signed BEFORE the service?",opts:["HIPAA consent form","Advance Beneficiary Notice (ABN)","Assignment of Benefits","Notice of Privacy Practices"],a:1,tip:"Without a signed ABN before the service, the provider cannot bill the patient if Medicare denies."},
+  {q:"What is a clearinghouse?",opts:["A government agency that reviews claims","A go-between that scrubs claims for errors before submitting to payers","A patient billing department","An insurance company subsidiary"],a:1,tip:"Clearinghouses catch mistakes before they become denials — a critical step in clean claim submission."},
+];
+let ci=0,score=0,chosen=null;
+function renderQ(){const g=document.getElementById('game'),q=QS[ci];let h='<div class="topbar"><span class="qn">Scenario '+(ci+1)+'/'+QS.length+'</span><span class="sc">Score: '+score+'</span></div>';h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/QS.length*100)+'%"></div></div>';h+='<div class="question"><p>'+q.q+'</p></div><div class="opts">';q.opts.forEach((o,i)=>{let cls='opt';if(chosen!==null&&i===q.a)cls+=' correct';else if(chosen===i&&i!==q.a)cls+=' wrong';h+='<div class="'+cls+'" '+(chosen===null?'onclick="answer('+i+')"':'')+'><span class="letter">'+String.fromCharCode(65+i)+'</span>'+o+'</div>'});h+='</div>';if(chosen!==null){const ok=chosen===q.a;h+='<div class="tip"><strong class="'+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ Not quite!')+'</strong><span>'+q.tip+'</span></div>'}g.innerHTML=h}
+function answer(i){if(chosen!==null)return;chosen=i;if(i===QS[ci].a)score++;renderQ();setTimeout(()=>{if(ci+1<QS.length){ci++;chosen=null;renderQ()}else showDone()},2200)}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=6?'🏆':'💪')+'</div><h2>'+score+'/'+QS.length+' Correct!</h2><p>Most denials CAN be resolved — don\'t just write them off. Investigate and correct!</p><button class="btn" onclick="reset()">🔄 Try Again</button>'}
+function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+renderQ();
+</script>
+</body>
+</html>

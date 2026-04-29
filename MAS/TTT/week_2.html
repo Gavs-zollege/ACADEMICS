@@ -1,0 +1,307 @@
+week_2.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performing Point-of-Care Testing and Basic Lab Procedures</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.07);
+    --text: #c4cedf;
+    --text-bright: #e2e8f4;
+    --text-muted: #6b7a96;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; overflow: hidden;
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+  }
+  .app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .header {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 16px 24px 12px;
+  }
+  .header h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--text-bright); line-height: 1.1; margin-top: 2px;
+  }
+  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .main {
+    flex: 1; overflow: hidden;
+    display: flex; gap: 16px;
+    padding: 0 24px 16px;
+  }
+  .sidebar {
+    width: 250px; flex-shrink: 0;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    padding-right: 6px;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .topic-btn {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 8px 11px;
+    cursor: pointer; transition: all 0.2s ease;
+    width: 100%; text-align: left;
+    font-family: 'DM Sans', sans-serif; color: var(--text);
+  }
+  .topic-btn:hover { transform: translateX(2px); }
+  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .label {
+    font-size: 13px; font-weight: 500; flex: 1;
+    line-height: 1.3; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
+  .sidebar-divider {
+    height: 1px; background: var(--border);
+    margin: 4px 0; flex-shrink: 0;
+  }
+  .content {
+    flex: 1; overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .content-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .content-header .icon { font-size: 30px; }
+  .content-header .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700;
+  }
+  .content-header .title {
+    font-size: 18px; font-weight: 700;
+    color: var(--text-bright); line-height: 1.2;
+  }
+  .content-scroll {
+    flex: 1; overflow-y: auto; padding-right: 6px;
+  }
+  .content-scroll::-webkit-scrollbar { width: 3px; }
+  .content-scroll::-webkit-scrollbar-track { background: transparent; }
+  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .point {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px; border: 1px solid transparent;
+    animation: pointIn 0.3s ease both;
+  }
+  .point .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px;
+    animation: pointIn 0.3s ease both;
+  }
+  .takeaway-item .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #E63946, #FF6B35);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .welcome {
+    height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+  }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
+  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  @keyframes pointIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Performing Point-of-Care Testing and Basic Lab Procedures</h1>
+    <p>Point of Care Testing & Laboratory Procedures</p>
+  </div>
+  <div class="main">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content">
+      <div class="welcome">
+        <div class="big-icon">📚</div>
+        <p>Select a topic from the left to explore its key learning points</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var TOPICS = [
+  { id:1, num:"01", icon:"🔍", title:"Lab Requisitions & Specimen Labeling", color:"#E63946",
+    points:["A completed requisition must accompany every specimen sent to an outside lab","Label the container — never the lid — with patient name, DOB, date/time, and your initials","Verify labels against the health record and lab order before sending","Incorrect labeling is the most common source of laboratory error","Each specimen must be matched to the correct patient requisition before transport"] },
+  { id:2, num:"02", icon:"🧰", title:"CLIA-Waived Testing", color:"#457B9D",
+    points:["CLIA was established in 1988 to ensure quality in all diagnostic testing","Waived tests are the simplest category — low risk, easily performed in the office","Medical assistants are trained to perform CLIA-waived tests","Moderate- and high-complexity tests are performed in reference or hospital labs","Always follow quality control steps and check reagent expiration dates before testing"] },
+  { id:3, num:"03", icon:"🌈", title:"Common Point-of-Care Tests", color:"#2A9D8F",
+    points:["Urine pregnancy (hCG), rapid strep, dipstick urinalysis","Blood glucose (glucometer), hemoglobin, spun hematocrit","Hemoglobin A1C, cholesterol panel, H. pylori antibodies","Mononucleosis screen, influenza A & B (nasopharyngeal swab)","Fecal occult blood, drug testing — each requires correct specimen type"] },
+  { id:4, num:"04", icon:"🧪", title:"Collecting Nonblood Specimens", color:"#8338EC",
+    points:["Urine: random, first morning, clean-catch midstream, 24-hour, or catheterized","Stool (FOBT): patient avoids red meat, aspirin, vitamin C, and iron for 3 days prior","Cultures: always use sterile containers; never touch the inside of swabs or lids","Sputum: collected from the lower respiratory tract — instruct patient on deep cough technique","Treat all specimens as potentially infectious — use standard precautions"] },
+  { id:5, num:"05", icon:"📏", title:"Processing, Handling & Transporting Specimens", color:"#FF6B35",
+    points:["Test urine within 1 hour of collection — refrigerate if delayed","Some specimens require centrifuging or breaking the fluid chamber before transport","Use a dual-pocket zip-close bag: specimen in one pocket, requisition in the other","Wrap breakable containers in absorbent material and place in a biohazard bag","Mark biohazard clearly on any package sent through the mail"] },
+  { id:6, num:"06", icon:"💉", title:"Recognizing & Reporting Lab Values", color:"#E63946",
+    points:["Know normal reference ranges: WBC 4,000–11,000, fasting glucose 70–99 mg/dL","Hemoglobin: male 14–18 g/dL, female 12–16 g/dL; Hematocrit: male 42–50%, female 37–47%","Total cholesterol < 200 mg/dL; LDL < 100; HDL male > 40, female > 50; triglycerides < 150","Critical values must be reported to the provider immediately and documented","Never release lab results to a patient before the provider has reviewed and signed off"] },
+  { id:7, num:"07", icon:"🩸", title:"Chain of Custody", color:"#457B9D",
+    points:["Required for all drug and alcohol testing","Documents everyone who handles the specimen from collection to results","Patient (donor) must sign a consent form before collection begins","Donor should list all substances taken in the last 30 days","Copies go to the medical review officer, lab, patient, collector, and requesting party"] },
+  { id:8, num:"08", icon:"📋", title:"Quality Assurance — Three Phases", color:"#2A9D8F",
+    points:["Pre-analytical: ordering, collecting, labeling, and transporting the specimen","Analytical: running controls, testing, comparing results to reference ranges","Post-analytical: disposing, logging, provider review, and notifying the patient","Most errors occur in the pre-analytical phase","If any phase is skipped or done incorrectly, result accuracy cannot be guaranteed"] },
+  { id:9, num:"09", icon:"🩹", title:"Common Testing Errors", color:"#8338EC",
+    points:["Mislabeled specimens — the single most common lab error","Poor clean-catch instructions — leads to contaminated urine cultures","Patient non-compliance — fasting not completed, restricted foods not avoided","Expired reagents or controls used during testing","Urine left at room temperature too long — bacteria grow and alter results"] },
+  { id:10, num:"10", icon:"🏷️", title:"Vision Screening", color:"#FF6B35",
+    points:["Snellen chart: distance vision — adults at 20 ft, children at 10 ft","Each eye tested individually, then both together; corrective lenses allowed (document)","Jaeger chart: near vision — card held 14–16 inches from face","Ishihara plates: color vision — 11 plates; missing 4+ suggests a deficiency","Record the last line read without error as the final result"] },
+  { id:11, num:"11", icon:"⚙️", title:"Hearing Screening", color:"#E63946",
+    points:["Audiometry: patient wears headphones and signals when a tone is heard","Normal thresholds: adults hear tones below 25 dB, children below 15 dB","Sound amplitude measured in decibels (dB); frequency in hertz (Hz)","Tympanometry: measures eardrum movement — detects fluid or middle ear infection","Normal tympanogram shows a peak; abnormal result produces a flat line"] },
+  { id:12, num:"12", icon:"🔬", title:"Allergy Testing", color:"#457B9D",
+    points:["Patient must stop antihistamines 3 days before testing","Scratch test: diluted allergen applied to lightly scratched skin","Intradermal test: allergen injected just under the skin","Read results no sooner than 15 minutes after application","Larger wheal = stronger allergic reaction"] },
+  { id:13, num:"13", icon:"⭐", title:"Spirometry / Pulmonary Function Testing", color:"#2A9D8F",
+    points:["Measures how fast and how much air moves in and out of the lungs","Pre-test prep: no large meal 2 hr before, no smoking 1 hr before, no inhalers 6 hr before","Patient takes the deepest breath possible, seals lips on mouthpiece, blows as hard and fast as possible","Repeat until 3 acceptable attempts are obtained — coaching matters","Expected values: FEV1, FVC, and FEV1/FVC ratio all compared to predicted for age/gender/height"] },
+  { id:14, num:"14", icon:"📦", title:"Peak Flow Meter", color:"#8338EC",
+    points:["Measures the maximum speed of air expelled from the lungs","Used at home to monitor asthma and COPD","Start with marker at zero — stand or sit upright","Take a deep breath, seal lips on mouthpiece, blow as hard and fast as possible","Repeat 2–3 times; record the highest reading; ≥ 80% of personal best = well-controlled"] },
+];
+
+var TAKEAWAYS = [
+  "Label the container — not the lid — and verify it against the order before sending",
+  "CLIA-waived tests are the MA\'s domain — follow QC steps every time",
+  "Know reference ranges so you can recognize and report abnormal values immediately",
+  "Most lab errors happen before the specimen is ever tested — get the pre-analytical phase right",
+  "Patient coaching directly affects the accuracy of vision, hearing, spirometry, and allergy results",
+  "Treat every specimen as potentially infectious and follow standard precautions"
+];
+
+var activeId = null;
+var sidebar = document.getElementById('sidebar');
+var content = document.getElementById('content');
+
+function buildSidebar() {
+  TOPICS.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'topic-btn';
+    btn.dataset.id = t.id;
+    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+    btn.addEventListener('click', function() { selectTopic(t.id); });
+    btn.addEventListener('mouseenter', function() {
+      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+    });
+    btn.addEventListener('mouseleave', function() {
+      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+    });
+    sidebar.appendChild(btn);
+  });
+  var divider = document.createElement('div');
+  divider.className = 'sidebar-divider';
+  sidebar.appendChild(divider);
+  var tkBtn = document.createElement('button');
+  tkBtn.className = 'topic-btn';
+  tkBtn.dataset.id = 'takeaways';
+  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+  tkBtn.addEventListener('mouseenter', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+  });
+  tkBtn.addEventListener('mouseleave', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+  });
+  sidebar.appendChild(tkBtn);
+}
+
+function updateSidebarActive() {
+  var btns = sidebar.querySelectorAll('.topic-btn');
+  btns.forEach(function(btn) {
+    var id = btn.dataset.id;
+    var topic = TOPICS.find(function(t) { return t.id == id; });
+    var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
+    if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
+    if (isActive && topic) {
+      btn.style.background = topic.color + '20';
+      btn.style.borderColor = topic.color;
+    } else if (isActive && id === 'takeaways') {
+      btn.style.background = 'rgba(255,255,255,0.08)';
+      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    } else {
+      btn.style.background = 'var(--surface)';
+      btn.style.borderColor = 'var(--border)';
+    }
+  });
+}
+
+function renderTopic(t) {
+  var html = '<div class="content-header">' +
+    '<span class="icon">' + t.icon + '</span>' +
+    '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
+    '<div class="title">' + t.title + '</div></div></div>' +
+    '<div class="content-scroll">';
+  t.points.forEach(function(p, i) {
+    html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<p>' + p + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderTakeaways() {
+  var html = '<div class="content-header">' +
+    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<div><div class="title">Key Takeaways</div></div></div>' +
+    '<div class="content-scroll">';
+  TAKEAWAYS.forEach(function(t, i) {
+    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function selectTopic(id) {
+  activeId = id;
+  updateSidebarActive();
+  if (id === 'takeaways') {
+    content.innerHTML = renderTakeaways();
+  } else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) content.innerHTML = renderTopic(topic);
+  }
+  content.style.animation = 'none';
+  void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
+}
+
+buildSidebar();
+</script>
+</body>
+</html>

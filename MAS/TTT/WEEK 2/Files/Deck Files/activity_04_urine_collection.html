@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urine Collection Methods</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(155deg,#1a1235,#1e1540,#151030);font-family:'Outfit',sans-serif;padding:24px 16px;color:#ede9fe}
+.wrap{max-width:640px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.header .icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#9b8ec4;font-weight:600;font-size:15px}
+.topbar{display:flex;justify-content:space-between;margin-bottom:14px;padding:0 4px}
+.topbar span{font-weight:700;font-size:14px}
+.topbar .qn{color:#9b8ec4}
+.topbar .sc{color:#fb923c}
+.bar{height:6px;background:#2d2358;border-radius:10px;margin-bottom:20px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#818cf8,#fb923c);border-radius:10px;transition:width .4s}
+.question{background:#231b45;padding:22px 24px;border-radius:18px;margin-bottom:20px;border-left:4px solid #818cf8}
+.question p{font-weight:800;font-size:19px;line-height:1.6}
+.opts{display:grid;gap:10px}
+.opt{padding:15px 20px;border-radius:14px;background:#2d2358;border:2px solid #2d2358;font-weight:700;font-size:16px;cursor:pointer;transition:all .2s;text-align:left}
+.opt:hover{filter:brightness(1.15)}
+.opt .letter{color:#818cf8;font-weight:800;margin-right:12px}
+.opt.correct{background:rgba(74,222,128,.15);border-color:#4ade80}
+.opt.wrong{background:rgba(251,113,133,.15);border-color:#fb7185}
+.tip{margin-top:16px;padding:14px 20px;border-radius:14px;font-size:14px}
+.tip.ok{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2)}
+.tip.no{background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.2)}
+.tip strong{font-size:16px;display:block;margin-bottom:4px}
+.tip strong.ok{color:#4ade80}
+.tip strong.no{color:#fb7185}
+.tip span{color:#9b8ec4;font-weight:600}
+.done{text-align:center;background:#231b45;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0 8px}
+.done p{color:#9b8ec4;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#fb923c;color:#1a1235;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="icon">🚰</div>
+    <h1>Urine Collection Methods</h1>
+    <p class="sub">Pick the right collection method for each clinical scenario</p>
+  </div>
+  <div id="game"></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"A patient needs a pregnancy test. Which urine specimen is preferred?",opts:["Random","First Morning","Clean-Catch Midstream","24-Hour Collection"],a:1,tip:"First morning urine is most concentrated — best for detecting hCG."},
+  {q:"The provider orders a urine culture to check for infection.",opts:["Random Specimen","First Morning","Clean-Catch Midstream","Catheterized"],a:2,tip:"Clean-catch midstream reduces contamination for culture results."},
+  {q:"Total protein output over a full day must be measured.",opts:["Random","First Morning","Clean-Catch","24-Hour Collection"],a:3,tip:"24-hour collection captures everything — discard first void, collect all after."},
+  {q:"A quick routine screening is needed — no special timing required.",opts:["Random Specimen","First Morning","Clean-Catch Midstream","Catheterized"],a:0,tip:"Random specimens work for general screening at any time of day."},
+  {q:"The patient cannot void and a sterile sample is essential.",opts:["Random","Clean-Catch","24-Hour Collection","Catheterized Collection"],a:3,tip:"A catheter is inserted into the bladder when the patient can't void."},
+  {q:"Protein and nitrite evaluation requires the most concentrated sample.",opts:["Random","First Morning Specimen","Clean-Catch","24-Hour"],a:1,tip:"First morning urine is the most concentrated after overnight."},
+  {q:"The patient cleanses with 3 antiseptic wipes before collecting mid-stream.",opts:["Random","First Morning","Clean-Catch Midstream","Catheterized"],a:2,tip:"That's the clean-catch protocol — cleanse, void, then catch."},
+  {q:"A large container with preservatives is given to the patient to take home.",opts:["Random","First Morning","Clean-Catch","24-Hour Collection"],a:3,tip:"24-hour containers need preservatives and must be refrigerated."},
+];
+let ci=0,score=0,chosen=null;
+function renderQ(){
+  const g=document.getElementById('game');
+  const q=QS[ci];
+  let h='<div class="topbar"><span class="qn">Q '+(ci+1)+' / '+QS.length+'</span><span class="sc">Score: '+score+'</span></div>';
+  h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/QS.length*100)+'%"></div></div>';
+  h+='<div class="question"><p>'+q.q+'</p></div>';
+  h+='<div class="opts">';
+  q.opts.forEach((o,i)=>{
+    let cls='opt';
+    if(chosen!==null&&i===q.a)cls+=' correct';
+    else if(chosen===i&&i!==q.a)cls+=' wrong';
+    h+='<div class="'+cls+'" '+(chosen===null?'onclick="answer('+i+')"':'')+'><span class="letter">'+String.fromCharCode(65+i)+'</span>'+o+'</div>';
+  });
+  h+='</div>';
+  if(chosen!==null){
+    const ok=chosen===q.a;
+    h+='<div class="tip '+(ok?'ok':'no')+'"><strong class="'+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ Not quite!')+'</strong><span>'+q.tip+'</span></div>';
+  }
+  g.innerHTML=h;
+}
+function answer(i){
+  if(chosen!==null)return;
+  chosen=i;if(i===QS[ci].a)score++;
+  renderQ();
+  setTimeout(()=>{
+    if(ci+1<QS.length){ci++;chosen=null;renderQ()}
+    else showDone();
+  },2000);
+}
+function showDone(){
+  document.getElementById('game').style.display='none';
+  const d=document.getElementById('doneBox');d.style.display='block';
+  d.innerHTML='<div class="big">'+(score>=7?'🏆':score>=5?'⭐':'💪')+'</div><h2>'+score+'/'+QS.length+' Correct!</h2><p>Urine is the most common specimen — knowing each method is essential.</p><button class="btn" onclick="reset()">🔄 Try Again</button>';
+}
+function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+renderQ();
+</script>
+</body>
+</html>

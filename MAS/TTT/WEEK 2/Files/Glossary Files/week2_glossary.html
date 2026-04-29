@@ -1,0 +1,412 @@
+week2_glossary.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 2 Glossary — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #0e0e1a;
+    --text-secondary: #3a3a50;
+    --surface-1: #e0e0ec;
+    --surface-2: #d0d0dd;
+    --border: #c0c0cc;
+    --bg: #d8d8e4;
+    --card-shadow: 0 2px 12px rgba(26,26,46,0.06);
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text: #e4e4f0;
+      --text-secondary: #9898b0;
+      --surface-1: #1c1c2e;
+      --surface-2: #282840;
+      --border: #363650;
+      --bg: #111122;
+      --card-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 600;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C0392B; margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 900;
+    letter-spacing: -1px; margin-bottom: 6px; line-height: 1.1;
+  }
+  .header p { font-size: 13px; color: var(--text-secondary); }
+
+  /* Search */
+  .search-wrap { position: relative; margin-bottom: 20px; }
+  .search-wrap input {
+    width: 100%; padding: 14px 18px 14px 46px; border-radius: 14px;
+    border: 2px solid var(--border); background: var(--surface-1);
+    color: var(--text); font-size: 15px; outline: none; font-family: var(--font-body);
+    transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: #C0392B; }
+  .search-wrap .icon {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    font-size: 18px; opacity: .4;
+  }
+
+  /* Category accordion */
+  .cat-btn {
+    width: 100%; padding: 14px 18px; border-radius: 14px;
+    border: 2px solid var(--border); background: var(--surface-1);
+    cursor: pointer; display: flex; align-items: center; gap: 12px;
+    transition: all .2s; font-family: var(--font-body);
+  }
+  .cat-btn:hover { border-color: #aaa; }
+  .cat-btn .emoji { font-size: 22px; }
+  .cat-btn .name { font-weight: 700; color: var(--text); font-size: 15px; }
+  .cat-btn .count {
+    margin-left: auto; font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .cat-btn .arrow {
+    font-size: 14px; color: var(--text-secondary); transition: transform .25s;
+  }
+  .cat-btn.open .arrow { transform: rotate(180deg); }
+
+  /* Term cards */
+  .term-card {
+    padding: 13px 16px; border-radius: 11px; background: var(--surface-1);
+    border: 2px solid transparent; cursor: pointer; transition: all .15s;
+  }
+  .term-card:hover { border-color: var(--border); }
+  .term-card .term-name { font-weight: 800; font-size: 14px; color: var(--text); }
+  .term-card .term-def {
+    margin: 10px 0 4px; font-size: 13px; line-height: 1.65;
+    color: var(--text-secondary); font-weight: 600;
+  }
+
+  /* Search result card */
+  .result-card {
+    padding: 14px 18px; border-radius: 12px; background: var(--surface-1);
+    cursor: pointer; border: 2px solid var(--border); transition: all .2s;
+  }
+  .result-card .row { display: flex; align-items: center; gap: 10px; }
+  .result-card .r-emoji { font-size: 20px; }
+  .result-card .r-term { font-weight: 700; color: var(--text); font-size: 15px; }
+  .result-card .r-cat {
+    margin-left: auto; font-size: 11px; padding: 3px 10px;
+    border-radius: 20px; font-weight: 600;
+  }
+  .result-card .r-def {
+    margin: 12px 0 4px 30px; font-size: 14px; line-height: 1.6; color: var(--text-secondary);
+  }
+
+  /* Utilities */
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; }
+  .mb-6 { margin-bottom: 6px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; }
+  .gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 2 Glossary</h1>
+    <p id="header-subtitle"></p>
+  </div>
+
+  <!-- Browse Mode -->
+  <div id="browse-mode"></div>
+
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────
+const CATEGORIES = [
+  {
+    name: "Laboratory Basics & Requisitions", emoji: "🧪", color: "#2C3E50",
+    terms: [
+      { term: "Specimen", def: "A sample collected from a patient for laboratory analysis. Specimens can include blood, urine, stool, tissue, sputum, cerebrospinal fluid, or material collected via swab from a wound or body cavity." },
+      { term: "Laboratory Requisition", def: "A written or electronic order that accompanies a specimen to the lab. It includes patient demographics, the provider\'s authentication, the specific tests ordered, the specimen source, the date and time of collection, and the diagnosis code that establishes medical necessity." },
+      { term: "Diagnosis Code (ICD Code)", def: "A standardized code (from the International Classification of Diseases) that identifies the patient\'s condition or reason for testing. Required on lab requisitions to establish medical necessity for insurance billing." },
+      { term: "Medical Necessity", def: "The clinical justification for ordering a laboratory test or procedure. Tests must be medically necessary for insurance reimbursement, and the diagnosis code on the requisition documents this justification." },
+      { term: "Reference Laboratory", def: "An outside laboratory that receives, processes, and analyzes specimens sent from a provider\'s office or clinic. Specimens transported to a reference lab must be properly labeled, packaged, and accompanied by a completed requisition." },
+      { term: "Electronic Health Record (EHR)", def: "A digital version of a patient\'s complete medical record. Lab orders are entered, and results are received and documented in the EHR. Critical values and results must be recorded in the EHR promptly." },
+      { term: "Critical Value", def: "A laboratory result that falls significantly outside the normal reference range and may indicate a life-threatening condition. Critical values must be communicated to the provider immediately and documented in the medical record." },
+      { term: "Medical Technologist (MT)", def: "A certified laboratory professional who analyzes specimens, performs complex testing, and interprets results in a clinical laboratory setting." },
+      { term: "Medical Laboratory Technician (MLT)", def: "A certified laboratory professional who performs routine tests under the supervision of a medical technologist or pathologist." },
+      { term: "Phlebotomist", def: "A trained healthcare worker who specializes in drawing blood for laboratory testing. Works closely with medical assistants in the ambulatory care setting." },
+    ],
+  },
+  {
+    name: "CLIA & Quality Assurance", emoji: "✅", color: "#1A5276",
+    terms: [
+      { term: "CLIA (Clinical Laboratory Improvement Amendments)", def: "Federal legislation established in 1988 that regulates all laboratory testing performed on humans. CLIA sets quality standards for testing accuracy, reliability, and timeliness. The FDA determines the complexity level of each test." },
+      { term: "CLIA-Waived Testing", def: "The simplest category of laboratory testing. These tests are cleared for home use or can be easily performed in a provider\'s office with minimal risk of error. Medical assistants are trained to perform CLIA-waived tests. No CLIA certificate is required for the facility." },
+      { term: "Moderate-Complexity Testing", def: "A non-waived category of laboratory testing that requires a CLIA certificate and regular inspections. Typically performed by certified laboratory personnel in hospital or reference labs." },
+      { term: "High-Complexity Testing", def: "The most stringent CLIA category, requiring the highest level of training and ongoing proficiency testing. Examples include molecular diagnostics and genetic testing. Not typically found in ambulatory care settings." },
+      { term: "Provider-Performed Microscopy (PPM)", def: "A special CLIA exception that allows providers in ambulatory settings to microscopically examine certain specimens (such as urine or body fluids) even though microscopy is technically moderate complexity. Used to establish a preliminary diagnosis and begin treatment." },
+      { term: "Quality Control (QC)", def: "Specific steps taken to ensure the reliability and accuracy of a test. Includes checking reagent expiration dates, running control samples, calibrating instruments, and verifying results. Quality control is a component of the broader quality assurance program." },
+      { term: "Quality Assurance (QA)", def: "A comprehensive set of policies and procedures designed to monitor and improve the overall quality of patient care and laboratory testing. QA encompasses quality control measures but also includes broader operational standards like staff training and documentation practices." },
+      { term: "Control Sample", def: "A sample with a known value that is tested alongside patient specimens to verify that the testing method is producing accurate results. Controls must be run and documented regularly as part of quality control." },
+      { term: "Calibration", def: "The process of standardizing a laboratory instrument by comparing its measurements against a known reference standard. Required regularly for all laboratory equipment as part of preventive maintenance." },
+      { term: "Reagent", def: "A chemical substance used in a laboratory test to react with the analyte being measured. Reagents have expiration dates and must be stored properly. Using expired reagents is a common source of inaccurate results." },
+    ],
+  },
+  {
+    name: "Three-Phase Quality Assurance", emoji: "🔄", color: "#7D3C98",
+    terms: [
+      { term: "Pre-Analytical Phase", def: "The first phase of laboratory quality assurance. Includes all steps before the specimen is actually tested: receiving the provider\'s order, completing the requisition, collecting and labeling the specimen, and transporting it to the lab. Most laboratory errors occur in this phase." },
+      { term: "Analytical Phase", def: "The second phase of laboratory QA. Includes the actual testing of the specimen: running controls, testing the sample, comparing results to reference ranges, and logging findings in the health record." },
+      { term: "Post-Analytical Phase", def: "The final phase of laboratory QA. Includes properly disposing of specimens, logging results from outside labs, having the provider interpret and sign reports, notifying the patient, and documenting all communication in the medical record." },
+      { term: "Preanalytical Error", def: "An error that occurs before the specimen is tested — such as patient misidentification, wrong container, improper labeling, inadequate sample volume, or incorrect order entry. The most common category of lab error overall." },
+      { term: "Analytical Error", def: "An error that occurs during the testing process — such as equipment malfunction, sample mix-up, failure of quality controls, or failure to follow the testing procedure correctly." },
+      { term: "Postanalytical Error", def: "An error that occurs after testing is complete — such as failure to report a result, incorrect data entry, or excessive turnaround time that delays patient care." },
+    ],
+  },
+  {
+    name: "Point-of-Care Tests", emoji: "🩺", color: "#C0392B",
+    terms: [
+      { term: "Point-of-Care Testing (POC Testing)", def: "Laboratory testing performed at or near the patient\'s location — typically in a provider\'s office — rather than being sent to a central laboratory. Results are available quickly and guide immediate clinical decisions." },
+      { term: "Human Chorionic Gonadotropin (hCG)", def: "The hormone produced during pregnancy. Detected in urine or blood to confirm pregnancy. For point-of-care testing, a urine sample is used. The first morning specimen is preferred because it is more concentrated." },
+      { term: "Rapid Strep Test", def: "A CLIA-waived test that screens for Group A Streptococcus using a throat swab. Both sides of the posterior throat and tonsil area are swabbed. Tests for the presence of the Group A antigen and produces results in minutes." },
+      { term: "Reagent Strip (Dipstick)", def: "A chemical test strip used in urinalysis that contains pads sensitive to specific analytes in urine (such as glucose, protein, blood, nitrites, and pH). The strip is dipped in urine and the color changes are read visually or with an analyzer." },
+      { term: "Glucometer", def: "A handheld electronic device used to measure blood glucose levels from a small capillary blood sample obtained by fingerstick. Used for point-of-care blood glucose testing and screening for diabetes." },
+      { term: "Capillary Puncture (Fingerstick)", def: "A minimally invasive technique of collecting a small blood sample by pricking the fingertip (or heel in newborns). Used for point-of-care tests including glucose, hemoglobin, hematocrit, A1C, and cholesterol." },
+      { term: "Hemoglobin A1C (HbA1c)", def: "A blood test that measures the average blood glucose level over approximately 3 months by assessing the percentage of hemoglobin coated with glucose. Normal range: 4.0–5.6%. Used to monitor long-term diabetes management." },
+      { term: "Spun Hematocrit", def: "A CLIA-waived test that measures the percentage of red blood cells in whole blood. Blood is collected in microcapillary tubes via fingerstick, then centrifuged (spun) to separate the blood components." },
+      { term: "Fecal Occult Blood Test (FOBT)", def: "A test performed on a stool specimen to detect hidden (occult) blood that is not visible to the naked eye. Used to screen for gastrointestinal bleeding or colorectal disease. Requires dietary restrictions for 3 days prior to collection." },
+      { term: "Nasopharyngeal Swab", def: "A swab inserted into the nostril to collect a specimen from the nasopharynx. Used for influenza A and B testing. The swab must reach far enough to collect material from the back of the nasal passage." },
+      { term: "Epstein-Barr Virus (EBV)", def: "The virus responsible for infectious mononucleosis (mono). Detected via a CLIA-waived point-of-care capillary blood test that screens for the presence of EBV antibodies." },
+      { term: "Helicobacter pylori (H. pylori)", def: "A bacteria associated with stomach ulcers and gastritis. A whole blood point-of-care test can screen for H. pylori antibodies in the blood." },
+    ],
+  },
+  {
+    name: "Urine Specimen Collection", emoji: "🧫", color: "#D4AC0D",
+    terms: [
+      { term: "Random Urine Specimen", def: "A urine sample collected at any time of day without special preparation. Collected in a clean, non-sterile container. Used for general screening purposes." },
+      { term: "First Morning Specimen", def: "The first urine voided after waking, before consuming any fluids. This specimen is the most concentrated and is preferred for pregnancy testing and evaluating analytes such as protein and nitrites." },
+      { term: "Clean-Catch Midstream Specimen", def: "A urine collection technique designed to minimize contamination. The patient cleanses the genitalia with three separate antiseptic wipes, begins urinating into the toilet, then collects the mid-portion of the stream in a sterile container. Used for cultures and when a non-contaminated sample is required." },
+      { term: "24-Hour Urine Collection", def: "A method in which the patient discards their first morning urine, then collects all subsequent urine for the next 24 hours including the first morning void of the second day. Stored in a large container with preservatives. Used for quantitative analysis of substances such as protein or creatinine." },
+      { term: "Catheterized Urine Specimen", def: "A sterile urine sample collected by inserting a catheter through the urethra into the bladder. Used when a sterile specimen is required or when the patient is unable to void on their own. Performed by a provider or nurse; the MA prepares the patient and assists." },
+      { term: "Urinary Meatus", def: "The external opening of the urethra through which urine exits the body. The area around the urinary meatus is cleansed using antiseptic wipes before a clean-catch specimen is collected." },
+      { term: "Analyte", def: "A specific substance being tested or measured in a laboratory specimen. In urinalysis, analytes include glucose, protein, blood, ketones, nitrites, bilirubin, and pH." },
+      { term: "Supernatant", def: "The clear fluid layer that remains above the sediment after a specimen has been centrifuged. In urine processing, the supernatant may be removed before the sediment is examined microscopically." },
+      { term: "Centrifuge", def: "A laboratory instrument that spins specimens at high speed to separate components by density. Used to spin hematocrit tubes, prepare urine for microscopic analysis, and process some blood samples." },
+    ],
+  },
+  {
+    name: "Cultures & Chain of Custody", emoji: "⛓️", color: "#6C3483",
+    terms: [
+      { term: "Culture", def: "A laboratory procedure in which a specimen is placed in a growth medium to encourage the growth of microorganisms. Cultures identify the specific bacteria, fungi, or other organisms causing an infection and guide antibiotic treatment." },
+      { term: "Causative Agent", def: "The specific microorganism (bacteria, virus, fungus, or parasite) responsible for causing a particular infection or disease. Cultures are used to identify the causative agent so appropriate treatment can be selected." },
+      { term: "Standard Precautions", def: "A set of infection control practices applied to all patients and all specimens regardless of diagnosis. Includes handwashing, use of PPE (gloves, gowns, masks), proper handling of sharps, and safe disposal of biohazardous materials." },
+      { term: "Chain of Custody", def: "A legal documentation process that tracks who collected, handled, and tested a specimen from collection to final reporting. Required for drug and alcohol testing. Every person who handles the specimen must sign the chain of custody form." },
+      { term: "Biohazard", def: "A biological substance that poses a threat to human health, including blood, body fluids, and tissues. Biohazardous materials must be stored in red biohazard bags or sharps containers and labeled with the universal biohazard symbol." },
+      { term: "Medical Review Officer (MRO)", def: "A licensed physician trained to interpret drug test results. The MRO receives a copy of the chain of custody form and reviews all positive drug test results before they are reported to the requesting party." },
+      { term: "Consent Form", def: "A document signed by the patient (donor) before drug or alcohol testing that explains the purpose of the test and grants permission to collect the specimen, transport it for analysis, and release results to the requesting party." },
+    ],
+  },
+  {
+    name: "Specimen Transport & Handling", emoji: "📦", color: "#1E8449",
+    terms: [
+      { term: "Specimen Integrity", def: "The condition of a specimen that ensures it accurately reflects the patient\'s physiology at the time of collection. Integrity is maintained through proper labeling, timely testing, correct storage temperature, and appropriate packaging." },
+      { term: "Bilirubin", def: "A yellow compound produced from the breakdown of red blood cells. Urine samples being tested for bilirubin must be protected from light, which degrades the compound and leads to false-negative results. A dark container is used." },
+      { term: "Refrigeration of Specimens", def: "Urine specimens that cannot be tested within 1 hour of collection must be refrigerated (2–8°C / 35–46°F) to prevent bacterial growth and preserve the accuracy of results." },
+      { term: "Dual-Pocket Specimen Bag", def: "A clear plastic zip-close bag with two separate pockets used to transport specimens. One pocket holds the labeled specimen container; the other holds the lab requisition. Keeps the paperwork separated from the biological specimen." },
+      { term: "Absorbent Packaging", def: "Material wrapped around a fragile or breakable specimen container to protect it during transport and absorb any leakage if the container breaks. Placed inside a biohazard bag as an additional safety measure." },
+      { term: "OSHA Standards", def: "Regulations set by the Occupational Safety and Health Administration that protect healthcare workers from occupational exposure to hazardous materials, including biological specimens. Medical assistants must follow OSHA standards for specimen handling and disposal." },
+      { term: "Sharps Container", def: "A puncture-resistant, leak-proof container used to dispose of needles, lancets, capillary tubes, and any item that could cause a puncture wound. Required by OSHA for safe disposal of sharps." },
+    ],
+  },
+  {
+    name: "Lab Values & Hematology", emoji: "🩸", color: "#922B21",
+    terms: [
+      { term: "Hemoglobin (Hgb)", def: "The protein in red blood cells that carries oxygen. Measured in grams per deciliter (g/dL). Normal range: males 14–18 g/dL; females 12–16 g/dL. Low hemoglobin may indicate anemia." },
+      { term: "Hematocrit (Hct)", def: "The percentage of blood volume made up of red blood cells. Normal range: males 42–50%; females 37–47%. Used alongside hemoglobin to evaluate for anemia or polycythemia." },
+      { term: "Complete Blood Count (CBC)", def: "A comprehensive blood panel that measures white blood cells, red blood cells, platelets, hemoglobin, hematocrit, and MCV. One of the most commonly ordered laboratory tests in clinical practice." },
+      { term: "White Blood Cell Count (WBC)", def: "The number of white blood cells per cubic millimeter of blood. Normal range: 4,000–11,000/mm³. An elevated WBC may indicate infection or inflammation; a very low WBC may indicate immune suppression." },
+      { term: "Red Blood Cell Count (RBC)", def: "The number of red blood cells per microliter of blood. Normal range: 4.2–5.9 million/µL. Used to evaluate for anemia and blood disorders." },
+      { term: "Platelet Count", def: "The number of platelets (thrombocytes) per cubic millimeter of blood. Normal range: 150,000–450,000/mm³. Low platelet counts increase bleeding risk; high counts can increase clotting risk." },
+      { term: "Mean Corpuscular Volume (MCV)", def: "A measurement of the average size of red blood cells. Normal range: 80–98 fL. Used to classify the type of anemia — low MCV indicates small cells (microcytic); high MCV indicates large cells (macrocytic)." },
+      { term: "Fasting Glucose", def: "A blood test measuring the level of glucose in the blood after the patient has fasted (no food or drink other than water) for at least 8 hours. Normal range: 70–99 mg/dL. Used to screen for and monitor diabetes." },
+      { term: "Lipid Profile (Cholesterol Panel)", def: "A blood test that measures total cholesterol, LDL, HDL, and triglycerides to assess cardiovascular risk. Fasting is often preferred. Normal values: total cholesterol < 200 mg/dL; LDL < 100 mg/dL; HDL male > 40, female > 50 mg/dL; triglycerides < 150 mg/dL." },
+      { term: "LDL (Low-Density Lipoprotein)", def: "Often called \'bad\' cholesterol. High LDL levels are associated with atherosclerosis and increased cardiovascular risk. Normal value: less than 100 mg/dL." },
+      { term: "HDL (High-Density Lipoprotein)", def: "Often called \'good\' cholesterol. Higher HDL levels are associated with a lower risk of heart disease. Normal values: males > 40 mg/dL; females > 50 mg/dL." },
+      { term: "Triglycerides", def: "A type of fat found in the blood. Elevated triglycerides are a component of metabolic syndrome and cardiovascular risk. Normal value: less than 150 mg/dL." },
+    ],
+  },
+  {
+    name: "Vision Screening", emoji: "👁️", color: "#117A65",
+    terms: [
+      { term: "Snellen Chart", def: "A standardized wall chart used to screen distance vision. Adults stand 20 feet from the chart; children stand 10 feet. Letters decrease in size with each row. Results are recorded as a fraction (e.g., 20/20, 20/40)." },
+      { term: "Visual Acuity", def: "A measure of the sharpness and clarity of vision. Expressed as a fraction — the numerator is the testing distance (20 feet) and the denominator is the distance at which a person with typical vision can read the same line." },
+      { term: "Myopia", def: "Nearsightedness — difficulty seeing distant objects clearly while near vision is normal. Screened using the Snellen chart for distance vision." },
+      { term: "Hyperopia", def: "Farsightedness — difficulty seeing objects up close while distant vision may be relatively clear. Screened using the Jaeger chart for near vision." },
+      { term: "Presbyopia", def: "An age-related condition in which the lens of the eye loses flexibility, making it difficult to focus on nearby objects. Screened using the Jaeger chart. Commonly affects adults over 40." },
+      { term: "Jaeger Eye Chart", def: "A near-vision test card containing printed text in progressively smaller sizes. Held 14–16 inches from the patient\'s eyes. Used to screen for presbyopia and hyperopia. Each eye is tested individually, then together." },
+      { term: "Ishihara Color Plates", def: "A set of 11 colored plates used to screen for color vision deficiency. Each plate contains a number or pattern embedded in colored dots. The most common deficiency detected is red-green color blindness. Missing 4 or more plates suggests a color deficiency." },
+      { term: "Color Vision Deficiency", def: "The inability to distinguish certain colors from one another. The most common type is red-green deficiency. Screened using the Ishihara color plate test." },
+    ],
+  },
+  {
+    name: "Hearing Screening", emoji: "👂", color: "#2874A6",
+    terms: [
+      { term: "Audiometer", def: "An electronic instrument used to test hearing acuity by producing tones at controlled frequencies and amplitudes. Used in audiometry screening to identify hearing loss." },
+      { term: "Audiometry", def: "A hearing test that uses an audiometer to measure a patient\'s ability to hear sounds at different frequencies and volumes. The patient indicates when a tone is heard by pressing a button or raising a hand." },
+      { term: "Decibels (dB)", def: "The unit used to measure the loudness (amplitude) of sound. Normal hearing thresholds: adults should hear tones below 25 dB; children should hear tones below 15 dB." },
+      { term: "Hertz (Hz)", def: "The unit used to measure the frequency (pitch) of sound. An audiometer tests hearing across a range of frequencies. Higher hertz values correspond to higher-pitched sounds." },
+      { term: "Tympanometry", def: "A hearing test that measures movement of the tympanic membrane (eardrum) by changing the air pressure in the ear canal. A normal tympanogram shows a peak; an abnormal result produces a flat line. Useful for detecting fluid or infection in the middle ear." },
+      { term: "Tympanic Membrane", def: "The eardrum — a thin membrane separating the outer ear from the middle ear. Pressure changes caused by fluid or infection in the middle ear affect its movement and can be detected with tympanometry." },
+      { term: "Tympanogram", def: "The graphic readout produced during tympanometry. A normal tympanogram shows a distinct peak indicating eardrum mobility. A flat line indicates abnormal middle ear pressure or the presence of fluid." },
+    ],
+  },
+  {
+    name: "Allergy Testing", emoji: "🤧", color: "#B7950B",
+    terms: [
+      { term: "Allergen", def: "A substance that triggers an allergic reaction in a sensitized individual. Examples include pollen, pet dander, mold, foods, insect venom, and medications. Allergens are used in diluted form during allergy skin testing." },
+      { term: "Antihistamine", def: "A class of medication that blocks the action of histamine, reducing allergic symptoms. Patients must discontinue antihistamines for 3 days before allergy skin testing because they suppress the immune response and can cause false-negative results." },
+      { term: "Histamine", def: "A chemical released by the immune system during an allergic reaction that causes inflammation, itching, redness, and swelling. It is responsible for the wheal-and-flare response seen in allergy skin testing." },
+      { term: "Wheal", def: "A raised, round area of skin swelling (similar to a hive) that forms at the site of a positive allergy skin test. The size of the wheal correlates with the severity of the allergy — a larger wheal indicates a stronger reaction." },
+      { term: "Induration", def: "A hardened, raised area of tissue at the site of an injection or skin test. In intradermal allergy testing, induration of the injection site confirms a positive allergic response to the tested allergen." },
+      { term: "Scratch Test (Skin Prick Test)", def: "An allergy test in which a diluted allergen is applied to lightly scratched skin. A positive result produces a wheal-and-flare response at the test site within 15–20 minutes." },
+      { term: "Intradermal Test", def: "An allergy test in which a diluted allergen is injected just below the skin surface. An inflamed, indurated area at the injection site confirms an allergic response. Results are read no sooner than 15 minutes after application." },
+      { term: "False-Negative Result", def: "A test result that incorrectly indicates the absence of a condition that is actually present. In allergy testing, antihistamines can block the histamine response and produce a false-negative skin test result." },
+    ],
+  },
+  {
+    name: "Pulmonary Function Testing", emoji: "🫁", color: "#148F77",
+    terms: [
+      { term: "Spirometry", def: "A non-invasive pulmonary function test that measures how fast and how much air a patient can move into and out of the lungs. Produces a graphic result and is used to detect obstructive and restrictive lung diseases." },
+      { term: "Pulmonary Function Test (PFT)", def: "A group of tests that evaluate the lungs\' capacity to move air. Spirometry is the most common PFT performed in ambulatory care. Results are compared to predicted values based on the patient\'s age, gender, weight, and height." },
+      { term: "FEV1 (Forced Expiratory Volume in 1 Second)", def: "The volume of air a patient can forcefully exhale in the first second of a maximal exhalation. Expected value: 80–120% of predicted. A reduced FEV1 suggests airway obstruction (e.g., asthma, COPD)." },
+      { term: "FVC (Forced Vital Capacity)", def: "The total volume of air a patient can forcefully exhale after taking the deepest breath possible. Expected value: 80–120% of predicted. Reduced FVC can indicate restrictive or obstructive lung disease." },
+      { term: "FEV1/FVC Ratio", def: "The ratio of FEV1 to FVC, expressed as a percentage. Expected value: within 5% of the predicted ratio. A low ratio suggests obstructive lung disease; a normal ratio with reduced FVC suggests restrictive disease." },
+      { term: "TLC (Total Lung Capacity)", def: "The total volume of air in the lungs after a maximal inhalation. Expected value: 80–120% of predicted. Used to classify restrictive vs. obstructive lung disease." },
+      { term: "FRC (Functional Residual Capacity)", def: "The volume of air remaining in the lungs after a normal, passive exhalation. Expected value: 75–120% of predicted." },
+      { term: "RV (Residual Volume)", def: "The volume of air remaining in the lungs after a maximal forced exhalation — air that cannot be expelled. Expected value: 75–120% of predicted. Elevated RV is seen in emphysema and air trapping." },
+      { term: "Bronchodilator", def: "A medication (such as an inhaler or nebulizer treatment) that opens the airways by relaxing bronchial smooth muscle. Patients must withhold bronchodilators for at least 6 hours before spirometry testing to avoid falsely improved results." },
+      { term: "Peak Flow Meter", def: "A small, portable device that measures the forced expiratory volume — how fast air leaves the lungs in a single forceful breath. Used by patients at home to monitor lung function. A reading of 80% or better of the personal best is considered well-controlled." },
+      { term: "Peak Expiratory Flow Rate (PEFR)", def: "The maximum speed of exhalation measured by a peak flow meter. Used to monitor asthma and COPD. A drop in PEFR can signal worsening airway inflammation before symptoms worsen." },
+      { term: "COPD (Chronic Obstructive Pulmonary Disease)", def: "A progressive lung disease characterized by chronic airflow limitation. Includes emphysema and chronic bronchitis. Peak flow testing and spirometry are used to monitor disease progression." },
+    ],
+  },
+];
+
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+
+// ─── STATE ────────────────────────────────────────────────
+// Browse state
+let browseSearch = '';
+let browseOpenCat = null;
+let browseOpenTerm = null;
+
+// ─── INIT ─────────────────────────────────────────────────
+document.getElementById('header-subtitle').textContent =
+  `Point of Care Testing & Laboratory Procedures · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+
+renderBrowse();
+
+// ─── BROWSE MODE ──────────────────────────────────────────
+function renderBrowse() {
+  const el = document.getElementById('browse-mode');
+  const query = browseSearch.trim().toLowerCase();
+
+  let html = `
+    <div class="search-wrap">
+      <span class="icon">🔍</span>
+      <input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}"
+        oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" />
+    </div>`;
+
+  if (query) {
+    const filtered = ALL_TERMS.filter(t =>
+      t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query)
+    );
+    if (filtered.length === 0) {
+      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
+    } else {
+      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
+      filtered.forEach((t, i) => {
+        const isOpen = browseOpenTerm === `s-${i}`;
+        html += `
+          <div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();"
+               style="border-color:${isOpen ? t.color : 'var(--border)'}">
+            <div class="row">
+              <span class="r-emoji">${t.emoji}</span>
+              <span class="r-term">${escHtml(t.term)}</span>
+              <span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span>
+            </div>
+            ${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}
+          </div>`;
+      });
+      html += `</div>`;
+    }
+  } else {
+    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
+    CATEGORIES.forEach((cat, ci) => {
+      const isOpen = browseOpenCat === ci;
+      html += `
+        <div>
+          <button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();"
+            style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}">
+            <span class="emoji">${cat.emoji}</span>
+            <span class="name">${escHtml(cat.name)}</span>
+            <span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span>
+            <span class="arrow">▼</span>
+          </button>`;
+      if (isOpen) {
+        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
+        cat.terms.forEach((t, ti) => {
+          const tKey = `${ci}-${ti}`;
+          const tOpen = browseOpenTerm === tKey;
+          html += `
+            <div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();"
+                 style="border-color:${tOpen ? cat.color : 'transparent'}">
+              <span class="term-name">${escHtml(t.term)}</span>
+              ${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}
+            </div>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ─── HELPERS ──────────────────────────────────────────────
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

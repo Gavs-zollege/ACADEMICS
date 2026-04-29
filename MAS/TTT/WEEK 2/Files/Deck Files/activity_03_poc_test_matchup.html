@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POC Test Match-Up</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(155deg,#0f1f17,#132419,#0d1a20);font-family:'DM Sans',sans-serif;padding:24px 16px;color:#e8f5ec}
+.wrap{max-width:760px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.header .icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#7da98e;font-weight:600;font-size:15px}
+.badge{display:inline-block;margin-top:12px;background:#162a1f;padding:6px 20px;border-radius:20px;border:1px solid rgba(52,211,153,.2);color:#34d399;font-weight:800;font-size:15px}
+.cols{display:flex;gap:16px;flex-wrap:wrap}
+.col{flex:1 1 280px}
+.col-label{font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.col-label.tests{color:#34d399}
+.col-label.specs{color:#fbbf24}
+.card{padding:13px 16px;margin-bottom:7px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.card.test{background:#162a1f}
+.card.test.selected{background:rgba(251,113,133,.13);border-color:#fb7185}
+.card.test.matched{background:rgba(34,197,94,.06);border-color:#22c55e;opacity:.5;cursor:default}
+.card.spec{background:#1e3a28;font-weight:600;font-size:14px}
+.card.spec.used{background:rgba(34,197,94,.06);border-color:#22c55e;opacity:.5;cursor:default}
+.card.spec.wrong{background:rgba(251,113,133,.15);border-color:#fb7185;animation:shake .35s}
+.done{text-align:center;background:#162a1f;border-radius:24px;padding:40px;border:2px solid rgba(34,197,94,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0 8px}
+.done p{color:#7da98e;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#34d399;color:#0f1f17;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="icon">🩺</div>
+    <h1>POC Test Match-Up</h1>
+    <p class="sub">Match each point-of-care test to its correct specimen type</p>
+    <div class="badge" id="counter">0 / 10 matched</div>
+  </div>
+  <div id="game">
+    <div class="cols">
+      <div class="col" id="testsCol"><div class="col-label tests">🧪 Tests</div></div>
+      <div class="col" id="specsCol"><div class="col-label specs">🎯 Specimen Types</div></div>
+    </div>
+  </div>
+  <div id="doneBox" class="done" style="display:none">
+    <div class="big">🎉</div>
+    <h2>Perfect Match!</h2>
+    <p>Knowing the correct specimen type for each POC test prevents collection errors.</p>
+    <button class="btn" onclick="resetGame()">🔄 Play Again</button>
+  </div>
+</div>
+<script>
+const PAIRS=[
+  {item:"Urine Pregnancy Test",match:"Urine (first morning preferred)"},
+  {item:"Rapid Strep Test",match:"Throat swab"},
+  {item:"Blood Glucose",match:"Capillary blood (fingerstick)"},
+  {item:"Influenza A & B",match:"Nasopharyngeal swab"},
+  {item:"Fecal Occult Blood",match:"Stool specimen"},
+  {item:"Hemoglobin A1C",match:"Capillary blood"},
+  {item:"Cholesterol Panel",match:"Capillary blood + analyzer strip"},
+  {item:"Mononucleosis Screen",match:"Capillary blood (Epstein-Barr)"},
+  {item:"Drug Testing",match:"Urine or blood (chain of custody)"},
+  {item:"H. pylori Antibodies",match:"Whole blood sample"},
+];
+let shuffled,selected=null,matched={},count=0;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+function render(){
+  const tc=document.getElementById('testsCol'),sc=document.getElementById('specsCol');
+  tc.innerHTML='<div class="col-label tests">🧪 Tests</div>';
+  sc.innerHTML='<div class="col-label specs">🎯 Specimen Types</div>';
+  PAIRS.forEach((p,i)=>{
+    const d=document.createElement('div');
+    d.className='card test'+(matched[i]!==undefined?' matched':selected===i?' selected':'');
+    d.textContent=(matched[i]!==undefined?'✅ ':'')+p.item;
+    if(matched[i]===undefined)d.onclick=()=>{selected=i;render()};
+    tc.appendChild(d);
+  });
+  shuffled.forEach((m,i)=>{
+    const d=document.createElement('div');
+    const used=Object.values(matched).includes(i);
+    d.className='card spec'+(used?' used':'');
+    d.textContent=(used?'✅ ':'')+m.match;
+    d.id='spec-'+i;
+    if(!used)d.onclick=()=>tryMatch(i);
+    sc.appendChild(d);
+  });
+  document.getElementById('counter').textContent=count+' / '+PAIRS.length+' matched';
+}
+function tryMatch(mi){
+  if(selected===null)return;
+  if(PAIRS[selected].match===shuffled[mi].match){
+    matched[selected]=mi;count++;selected=null;render();
+    if(count===PAIRS.length){document.getElementById('game').style.display='none';document.getElementById('doneBox').style.display='block'}
+  } else {
+    const el=document.getElementById('spec-'+mi);el.classList.add('wrong');
+    setTimeout(()=>el.classList.remove('wrong'),500);
+  }
+}
+function resetGame(){
+  selected=null;matched={};count=0;shuffled=shuffle(PAIRS);
+  document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';render();
+}
+shuffled=shuffle(PAIRS);render();
+</script>
+</body>
+</html>

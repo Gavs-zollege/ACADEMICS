@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 3 Glossary — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #0e0e1a;
+    --text-secondary: #3a3a50;
+    --surface-1: #e0e0ec;
+    --surface-2: #d0d0dd;
+    --border: #c0c0cc;
+    --bg: #d8d8e4;
+    --card-shadow: 0 2px 12px rgba(26,26,46,0.06);
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text: #e4e4f0;
+      --text-secondary: #9898b0;
+      --surface-1: #1c1c2e;
+      --surface-2: #282840;
+      --border: #363650;
+      --bg: #111122;
+      --card-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 600;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C0392B; margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 900;
+    letter-spacing: -1px; margin-bottom: 6px; line-height: 1.1;
+  }
+  .header p { font-size: 13px; color: var(--text-secondary); }
+
+  /* Search */
+  .search-wrap { position: relative; margin-bottom: 20px; }
+  .search-wrap input {
+    width: 100%; padding: 14px 18px 14px 46px; border-radius: 14px;
+    border: 2px solid var(--border); background: var(--surface-1);
+    color: var(--text); font-size: 15px; outline: none; font-family: var(--font-body);
+    transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: #C0392B; }
+  .search-wrap .icon {
+    position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+    font-size: 18px; opacity: .4;
+  }
+
+  /* Category accordion */
+  .cat-btn {
+    width: 100%; padding: 14px 18px; border-radius: 14px;
+    border: 2px solid var(--border); background: var(--surface-1);
+    cursor: pointer; display: flex; align-items: center; gap: 12px;
+    transition: all .2s; font-family: var(--font-body);
+  }
+  .cat-btn:hover { border-color: #aaa; }
+  .cat-btn .emoji { font-size: 22px; }
+  .cat-btn .name { font-weight: 700; color: var(--text); font-size: 15px; }
+  .cat-btn .count {
+    margin-left: auto; font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .cat-btn .arrow {
+    font-size: 14px; color: var(--text-secondary); transition: transform .25s;
+  }
+  .cat-btn.open .arrow { transform: rotate(180deg); }
+
+  /* Term cards */
+  .term-card {
+    padding: 13px 16px; border-radius: 11px; background: var(--surface-1);
+    border: 2px solid transparent; cursor: pointer; transition: all .15s;
+  }
+  .term-card:hover { border-color: var(--border); }
+  .term-card .term-name { font-weight: 800; font-size: 14px; color: var(--text); }
+  .term-card .term-def {
+    margin: 10px 0 4px; font-size: 13px; line-height: 1.65;
+    color: var(--text-secondary); font-weight: 600;
+  }
+
+  /* Search result card */
+  .result-card {
+    padding: 14px 18px; border-radius: 12px; background: var(--surface-1);
+    cursor: pointer; border: 2px solid var(--border); transition: all .2s;
+  }
+  .result-card .row { display: flex; align-items: center; gap: 10px; }
+  .result-card .r-emoji { font-size: 20px; }
+  .result-card .r-term { font-weight: 700; color: var(--text); font-size: 15px; }
+  .result-card .r-cat {
+    margin-left: auto; font-size: 11px; padding: 3px 10px;
+    border-radius: 20px; font-weight: 600;
+  }
+  .result-card .r-def {
+    margin: 12px 0 4px 30px; font-size: 14px; line-height: 1.6; color: var(--text-secondary);
+  }
+
+  /* Utilities */
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; }
+  .mb-6 { margin-bottom: 6px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; }
+  .gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 3 Glossary</h1>
+    <p id="header-subtitle"></p>
+  </div>
+
+  <!-- Browse Mode -->
+  <div id="browse-mode"></div>
+
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────
+const CATEGORIES = [
+  {
+    name: "Practice Management & Medical Records", emoji: "🗂️", color: "#2C3E50",
+    terms: [
+      { term: "Practice Management System (PMS)", def: "The administrative side of a healthcare organization\'s software platform. Handles scheduling, patient demographics, billing, claim submission, and payment tracking. Most PMSs are integrated with the electronic health record." },
+      { term: "Electronic Medical Record (EMR)", def: "A digital version of a patient\'s medical and health information within a single healthcare organization. Replaces the paper chart and allows clinical documentation, ordering, and tracking of care — but typically only within the one practice." },
+      { term: "Electronic Health Record (EHR)", def: "A comprehensive digital record of a patient\'s health information accessible to authorized providers across different locations and organizations. Supports real-time data sharing, care coordination, and continuity of care across the healthcare system." },
+      { term: "Interoperability", def: "The ability of different healthcare systems and software to exchange, interpret, and use patient health information. Reduces duplicate testing, prevents errors, and ensures all providers have access to the most current patient data." },
+      { term: "Alphabetic Filing", def: "The most common method of organizing paper medical records — filed in order by the patient\'s last name. Within the chart, documents are assembled in reverse chronological order with the most recent record on top." },
+      { term: "Reverse Chronological Order", def: "A filing method in which the most recent document is placed at the top (or front) of the chart, and older documents appear below it. Standard for paper medical records." },
+      { term: "Medical Record Retention", def: "The required length of time a medical record must be kept before it may be legally destroyed. Varies by state law. Records must remain secure, organized, and accessible for the full retention period." },
+      { term: "Addendum", def: "An entry added to a medical record to correct or supplement previously documented information. Includes the date, time, and name of the person making the addendum. Errors in paper charts must be corrected with a single line through the error — never erased or whited out." },
+      { term: "Cloud Storage", def: "A method of storing electronic health records on remote servers accessed through the internet. EHR data is often backed up in real time to cloud storage located at an off-site location to protect against data loss." },
+      { term: "Notice of Privacy Practices (NPP)", def: "A required HIPAA document provided to patients that explains how their protected health information (PHI) may be used and disclosed by the healthcare organization. Patients must sign an acknowledgment of receipt." },
+      { term: "Advance Directive", def: "A legal document in which a patient states their wishes regarding medical care and end-of-life decisions in the event they become unable to communicate. Stored in the administrative section of the medical record." },
+      { term: "Assignment of Benefits", def: "A signed authorization from a patient that directs their insurance company to pay healthcare benefits directly to the provider rather than to the patient." },
+    ],
+  },
+  {
+    name: "Scheduling & Appointment Types", emoji: "📅", color: "#1A5276",
+    terms: [
+      { term: "Specific Time Scheduling", def: "A scheduling method in which each patient is assigned their own individual appointment slot. The most traditional and widely used approach in medical offices." },
+      { term: "Wave Scheduling", def: "A method in which multiple patients are booked at the top of each hour and seen in order of arrival. Provides flexibility within the hour and accounts for late arrivals or no-shows." },
+      { term: "Double-Booking", def: "A scheduling method in which two patients are given the same appointment time. Used when one patient requires lab work or testing that can run independently while the provider sees the other patient." },
+      { term: "Cluster Scheduling", def: "Grouping patients with similar appointment needs into the same time blocks — for example, scheduling all new patients on a specific day or all preventive exams on Friday mornings." },
+      { term: "New Patient", def: "A patient who has not received professional services from the provider (or any provider of the same group and specialty) within the past three years. New patient appointments require more time and more extensive documentation." },
+      { term: "Established Patient", def: "A patient who has received professional services from the same provider (or another provider in the same group and specialty) within the past three years. Established patient visits are generally shorter than new patient visits." },
+      { term: "Urgent Visit", def: "An appointment needed within 24 hours for a condition that requires prompt medical attention but is not life-threatening. Urgent visits are worked into the schedule as soon as possible, not placed in the next routine open slot." },
+      { term: "Preventive Care Visit", def: "A scheduled appointment focused on maintaining health, identifying risk factors, and conducting age-appropriate screenings. Examples include annual wellness exams, comprehensive physicals, and chronic care management check-ins." },
+      { term: "Comprehensive Visit", def: "An appointment at the highest coding level, often involving multiple complaints, complex or worsening chronic conditions, or a new patient with an extensive workup required." },
+      { term: "Schedule Matrix", def: "A pre-built template that defines when the provider is available for appointments. Blocks out time for hospital rounds, lunch, meetings, vacation, and other non-patient activities before the schedule is opened for booking." },
+      { term: "Telehealth / Virtual Visit", def: "A medical encounter conducted remotely via a secure video or phone platform. The provider and patient are in separate locations. Eligibility depends on the payer, type of service, provider preference, and the patient\'s access to and comfort with technology." },
+      { term: "After-Visit Summary (AVS)", def: "A document provided to the patient at checkout that summarizes the visit, including diagnoses, medication changes, instructions, and follow-up needs. Reviewed with the patient before they leave." },
+    ],
+  },
+  {
+    name: "Insurance & Financial Eligibility", emoji: "💳", color: "#C0392B",
+    terms: [
+      { term: "Insurance Eligibility Verification", def: "The process of confirming that a patient\'s insurance policy is active and that the plan covers the services being requested. Must be performed at the time of scheduling and again on the date of service." },
+      { term: "Premium", def: "The fixed amount a patient (or their employer) pays each month to maintain their health insurance coverage, regardless of whether any services are used." },
+      { term: "Copayment (Copay)", def: "A fixed dollar amount the patient pays at the time of each visit or prescription, regardless of the total cost of the service. Typically collected before the appointment begins." },
+      { term: "Deductible", def: "The dollar amount a patient must pay out-of-pocket for covered services before the insurance plan begins to pay. Resets annually on the plan\'s renewal date." },
+      { term: "Coinsurance", def: "The percentage of healthcare costs the patient is responsible for after the deductible has been met. For example, if the plan covers 80%, the patient is responsible for the remaining 20%." },
+      { term: "Out-of-Pocket Maximum", def: "The highest total amount a patient will pay for covered services in a plan year. Once this limit is reached, the insurance plan pays 100% of covered costs for the remainder of the year." },
+      { term: "Tier (Insurance Plan)", def: "A level of coverage offered within an insurance plan. Lower-tier plans typically have lower premiums but higher patient cost-sharing (deductibles, coinsurance). Higher-tier plans have higher premiums but lower out-of-pocket costs." },
+      { term: "Sliding Scale Fee", def: "A payment structure in which the patient\'s fees are adjusted based on their income level. Used by some clinics and public health programs to ensure patients with limited financial means can still access care." },
+      { term: "Indigent Program", def: "A government or community-funded program that provides free or low-cost medical care to patients who cannot afford to pay. MAs should be familiar with available programs to refer patients appropriately." },
+      { term: "Real-Time Adjudication (RTA)", def: "A process that allows a claim to be evaluated by the insurance company at the point of service, enabling immediate confirmation of coverage and patient financial responsibility." },
+    ],
+  },
+  {
+    name: "Preauthorization, Precertification & Referrals", emoji: "📋", color: "#7D3C98",
+    terms: [
+      { term: "Preauthorization", def: "Approval obtained from the patient\'s insurance carrier before a procedure, therapy, specialist consultation, non-emergency surgery, or hospitalization is performed. Confirms that the service is medically necessary and covered by the plan." },
+      { term: "Precertification", def: "A process of verifying that a patient\'s insurance plan includes a specific benefit. Unlike preauthorization, it does not confirm medical necessity or guarantee payment — it simply confirms that the benefit exists in the plan." },
+      { term: "Utilization Review", def: "A process used by insurance payers to evaluate the medical necessity and appropriateness of proposed or ongoing services. May result in approval, denial, or modification of the requested care." },
+      { term: "Referral", def: "An order or recommendation from a primary care provider directing a patient to a specialist or another healthcare provider for evaluation or treatment that falls outside the PCP\'s scope. Some insurance plans require a formal referral for specialty care to be covered." },
+      { term: "Treatment, Payment, and Operations (TPO)", def: "Three specific categories under HIPAA that permit the use and disclosure of protected health information without a separate signed authorization from the patient. Referrals fall under TPO, so a separate release form is not required unless organizational policy requires one." },
+      { term: "Electronic Referral", def: "A referral submitted digitally through the EHR, practice management system, or a payer\'s secure online portal. Must be sent through an encrypted, secure connection. A copy is retained in the patient\'s health record." },
+      { term: "Predetermination", def: "A voluntary process in which a provider submits a treatment plan to the payer in advance to get an estimate of how much the plan will pay. Does not guarantee coverage but helps set patient expectations." },
+      { term: "Prior Authorization Number", def: "A unique identifier issued by the insurance carrier when a preauthorization is approved. Must be included on the claim when billing for the authorized service. Claims submitted without the correct auth number may be denied." },
+    ],
+  },
+  {
+    name: "Diagnostic & Procedural Coding", emoji: "🏷️", color: "#D4AC0D",
+    terms: [
+      { term: "ICD-10-CM", def: "International Classification of Diseases, 10th Revision, Clinical Modification. The code set used to report diagnoses on claims. Codes are 3–7 alphanumeric characters and always begin with a letter. They describe the reason for the patient\'s visit — the condition, injury, location, and severity." },
+      { term: "CPT® (Current Procedural Terminology)", def: "A code set maintained by the American Medical Association used to report medical procedures and services provided by physicians and other qualified healthcare professionals. Codes are five digits and may include a two-digit modifier. Updated annually." },
+      { term: "HCPCS (Healthcare Common Procedure Coding System)", def: "A code set that covers services, supplies, equipment, and procedures not described by CPT. Includes alphanumeric codes. Required for billing Medicare and Medicaid for items such as durable medical equipment, ambulance transport, and certain therapies." },
+      { term: "Modifier", def: "A two-digit code appended to a CPT or HCPCS code that provides additional information about the service without changing its definition. Examples include indicating a service was performed on the left vs. right side, or that it was provided by more than one provider." },
+      { term: "Medical Necessity", def: "The clinical justification that a service, test, or procedure is appropriate for the patient\'s specific condition. Insurance payers require that a diagnosis code link to the procedure code to demonstrate medical necessity before reimbursing a claim." },
+      { term: "Superbill / Encounter Form", def: "A document that lists the diagnoses and procedures from a patient\'s visit, along with their corresponding codes. Used to generate the insurance claim. May be paper or electronic; customized to the practice\'s most commonly used codes." },
+      { term: "Code Sequencing", def: "The order in which diagnosis and procedure codes are listed on a claim. The principal diagnosis (the main reason for the visit) is listed first. Incorrect sequencing can result in denials or inaccurate reimbursement." },
+      { term: "E/M Services (Evaluation and Management)", def: "A category of CPT codes used to bill for the provider\'s cognitive work during patient encounters — assessing the patient, forming a diagnosis, and creating a treatment plan. The appropriate E/M code is selected based on the complexity of the visit." },
+      { term: "ICD-10-PCS", def: "International Classification of Diseases, 10th Revision, Procedure Coding System. Used exclusively for inpatient hospital procedure coding. Not used in ambulatory care or physician offices — those settings use CPT." },
+      { term: "Diagnosis Code Linkage", def: "The requirement that every procedure code on a claim be directly linked to a diagnosis code that justifies why that service was performed. Without proper linkage, the claim will be denied for lack of medical necessity." },
+    ],
+  },
+  {
+    name: "Revenue Cycle & Billing", emoji: "💰", color: "#1E8449",
+    terms: [
+      { term: "Revenue Cycle", def: "The complete financial process of a healthcare organization — from verifying patient eligibility before the visit to collecting the final payment after services are rendered. Every step of patient care touches the revenue cycle." },
+      { term: "Charge Reconciliation", def: "The process of verifying that all services provided have been accurately billed and that all payments, contractual adjustments, and write-offs have been correctly posted to the patient\'s account." },
+      { term: "Accounts Receivable (A/R)", def: "The total amount of money owed to the healthcare organization for services rendered but not yet paid. Tracked using aging reports that organize outstanding balances by how long they have been unpaid." },
+      { term: "A/R Aging Report", def: "A financial report that groups outstanding account balances by the length of time they have been unpaid (e.g., 0–30 days, 31–60 days, 61–90 days, 90+ days). Used to prioritize collection follow-up efforts." },
+      { term: "Contractual Adjustment", def: "The difference between a provider\'s billed charge and the amount the insurance plan has agreed to pay. This difference is written off and cannot be billed to the patient. Posted to the account when the insurance payment is received." },
+      { term: "Write-Off", def: "An amount removed from a patient\'s balance that is deemed uncollectible or that the provider has agreed not to bill. Examples include contractual adjustments, bad debt, and charity care." },
+      { term: "Clearinghouse", def: "A third-party company that receives electronic claims from providers, checks them for errors, reformats them to meet payer-specific requirements, and forwards them to the appropriate insurance companies. Acts as an intermediary that reduces claim rejections before submission." },
+      { term: "Clean Claim", def: "A claim that contains all required information, has no errors, and meets all payer requirements for submission. Clean claims are processed faster and are less likely to be denied." },
+      { term: "Timely Filing", def: "The requirement that a claim be submitted to the payer within a specified number of days from the date of service. Missing the timely filing deadline results in claim denial. Deadlines vary by payer — some allow up to one year, others much less." },
+      { term: "Explanation of Benefits (EOB)", def: "A document sent by the insurance company to the provider and/or patient after a claim is processed. It explains which services were covered, how much was paid, what was adjusted, and what patient responsibility remains." },
+      { term: "Adjudication", def: "The process by which an insurance company reviews a submitted claim, applies the patient\'s benefits and coverage rules, and determines how much to pay. The result is either payment, partial payment, or denial." },
+      { term: "Fee-for-Service (FFS)", def: "A payment model in which providers are reimbursed for each individual service they perform. Each visit, test, or procedure is billed and paid separately." },
+      { term: "Value-Based Care", def: "A reimbursement approach that rewards providers for quality outcomes, patient satisfaction, and cost-efficiency rather than the volume of services delivered. Examples include Pay for Performance (P4P) and Patient-Centered Medical Home (PCMH) models." },
+      { term: "Cycle Billing", def: "A billing method used by larger practices in which patient accounts are billed in segments throughout the month — for example, alphabetical groupings billed each week. Distributes workload and cash flow more evenly than monthly billing." },
+      { term: "Advance Beneficiary Notice (ABN)", def: "A form required by Medicare that notifies a patient in advance that a specific service may not be covered. The patient must sign the ABN before the service is provided, acknowledging that they accept financial responsibility if Medicare denies the claim." },
+    ],
+  },
+  {
+    name: "Claim Denials & Appeals", emoji: "⚖️", color: "#922B21",
+    terms: [
+      { term: "Claim Denial", def: "A determination by the insurance payer that a submitted claim will not be paid. Denials may be due to incorrect coding, missing information, lack of medical necessity, coverage exclusions, or authorization issues. Most denials can be appealed or corrected and resubmitted." },
+      { term: "Appeal", def: "A formal request submitted to the insurance payer asking them to reconsider a denied or underpaid claim. Appeals must typically be submitted within a specific timeframe and should include supporting documentation." },
+      { term: "Denial Management", def: "The process of identifying, analyzing, and resolving denied insurance claims. Involves correcting the error, gathering supporting documentation, and resubmitting or appealing the claim to recover owed reimbursement." },
+      { term: "Retroactive Authorization", def: "Authorization requested after a service has already been performed — typically when the original authorization was overlooked or the service was performed in an emergency. Not always granted by payers and should be avoided when possible." },
+      { term: "Eligibility Denial", def: "A claim denial issued because the patient was not covered by the insurance plan on the date of service, or because the coverage information submitted was incorrect. Resolved by providing proof of eligibility verification." },
+      { term: "Medical Necessity Denial", def: "A claim denial stating that the payer does not consider the service appropriate or medically justified for the patient\'s diagnosis. Resolved by submitting an appeal with clinical documentation supporting the need for the service." },
+    ],
+  },
+  {
+    name: "Auditing & Compliance", emoji: "🔍", color: "#117A65",
+    terms: [
+      { term: "Prospective Audit (Internal)", def: "A review of health records and coding performed before claims are submitted to the payer. Identifies errors in documentation or code selection that can be corrected before billing. Supports compliance and reduces denials." },
+      { term: "Retrospective Audit (Internal)", def: "A review of records and claims performed after billing. Used internally for statistical analysis, quality improvement, and identification of trends in coding or documentation practices." },
+      { term: "Retrospective Audit (External)", def: "A post-billing review conducted by a third-party payer or government agency. May target specific providers, specialties, or code patterns. Can result in requests for repayment if overpayments or errors are identified." },
+      { term: "Concurrent Review", def: "An audit performed during an inpatient hospital stay to evaluate documentation completeness and ensure the patient is receiving the appropriate level of care. Not typically performed in ambulatory care." },
+      { term: "CMS (Centers for Medicare & Medicaid Services)", def: "The federal agency that oversees the Medicare program and assists states with Medicaid administration. Publishes detailed documentation guidelines for providers and monitors claims for accuracy, fraud, and abuse." },
+      { term: "MACRA (Medicare Access and CHIP Reauthorization Act)", def: "A 2015 federal law that changed how Medicare reimburses Part B providers by shifting toward value-based payment models. Requires detailed documentation of quality metrics, screenings, and patient risk factors to qualify for incentive payments." },
+      { term: "Documentation Guidelines", def: "Rules published by CMS and other payers that specify how patient encounters must be documented to support the codes billed. Failure to follow documentation guidelines can result in denied claims, audits, and repayment demands." },
+      { term: "Fraud & Abuse", def: "Fraud involves intentional deception to receive improper payment (e.g., billing for services not rendered). Abuse involves billing practices that are improper but not necessarily intentional. Both are subject to federal penalties including fines and exclusion from Medicare/Medicaid." },
+      { term: "Compliance Program", def: "A formal organizational program designed to prevent, detect, and correct violations of healthcare laws and billing regulations. Includes written policies, staff training, internal audits, and a mechanism for reporting concerns." },
+    ],
+  },
+  {
+    name: "Patient Communication & HIPAA", emoji: "🔒", color: "#6C3483",
+    terms: [
+      { term: "Protected Health Information (PHI)", def: "Any individually identifiable health information held or transmitted by a covered entity — including names, dates, phone numbers, diagnoses, and insurance information. PHI must be protected under HIPAA regulations." },
+      { term: "HIPAA (Health Insurance Portability and Accountability Act)", def: "A federal law that establishes national standards for protecting the privacy and security of patient health information. Requires healthcare organizations to safeguard PHI and limits when and how it can be shared." },
+      { term: "Patient Portal", def: "A secure online platform that gives patients access to their own health records, including visit notes, lab results, immunizations, medications, and billing information. Patients can also message their provider, request appointments, and request prescription refills through the portal." },
+      { term: "Appointment Reminder", def: "A notification sent to the patient before their scheduled visit to reduce no-show rates. Can be delivered by automated phone call, text message, email, patient portal message, or appointment card." },
+      { term: "No-Show Policy", def: "A written office policy outlining the consequences for patients who miss appointments without adequate notice. Patients should be informed of this policy at the time of scheduling." },
+      { term: "Telehealth", def: "The delivery of healthcare services using secure electronic communication technology — typically a secure video platform — when the provider and patient are in different locations. Requires the patient to have access to a compatible device and internet connection." },
+      { term: "Synchronous Telehealth", def: "A real-time, live video or phone encounter between a provider and patient. Both parties are present at the same time, communicating interactively. Most telehealth visits in ambulatory care are synchronous." },
+      { term: "Patient Financial Responsibility", def: "The portion of a healthcare bill that is owed directly by the patient after insurance has paid its share. Includes copayments, deductibles, coinsurance, and any non-covered services. Should be communicated clearly before the visit." },
+    ],
+  },
+  {
+    name: "Inventory & Office Management", emoji: "📦", color: "#B7950B",
+    terms: [
+      { term: "Par Level", def: "The minimum quantity of a supply item that must be available on the shelf before a reorder is triggered. Set based on daily usage, delivery lead time, and the consequences of running out. Also called the threshold." },
+      { term: "Supply Chain", def: "The system of organizations, processes, and resources involved in producing and delivering supplies to the healthcare practice. Includes the supplier, ordering process, shipping, receiving, and stocking procedures." },
+      { term: "Inventory Log", def: "A record used to track the quantity, location, cost, vendor, and reorder frequency of all supplies in the office. Should be verified on a routine basis per office policy." },
+      { term: "Administrative Supplies", def: "Non-clinical office supplies used for the day-to-day operation of the practice, such as paper, printer cartridges, pens, and forms." },
+      { term: "Clinical Supplies", def: "Medical supplies used in the delivery of patient care, such as exam table paper, gloves, bandages, lancets, syringes, and specimen collection kits. Must be stored properly and monitored for expiration dates." },
+      { term: "Proper Body Mechanics", def: "Correct posture and movement techniques used when lifting, carrying, or repositioning heavy items — such as supply boxes — to prevent musculoskeletal injury." },
+      { term: "Equipment Inspection Log", def: "A record documenting the scheduled maintenance, calibration checks, and service history of clinical and administrative equipment. Required for both internal compliance and regulatory inspections." },
+      { term: "OSHA (Occupational Safety and Health Administration)", def: "The federal agency responsible for setting and enforcing workplace safety standards. In healthcare, OSHA regulations cover infection control, hazardous materials handling, sharps safety, and general workplace safety requirements." },
+      { term: "Calibration", def: "The process of verifying and adjusting a piece of equipment to ensure it produces accurate, reliable measurements. Clinical instruments — such as glucometers, spirometers, and electronic blood pressure machines — require periodic calibration per manufacturer and regulatory standards." },
+    ],
+  },
+];
+
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+
+// ─── STATE ────────────────────────────────────────────────
+// Browse state
+let browseSearch = '';
+let browseOpenCat = null;
+let browseOpenTerm = null;
+
+// ─── INIT ─────────────────────────────────────────────────
+document.getElementById('header-subtitle').textContent =
+  `Administrative Assisting · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+
+renderBrowse();
+
+// ─── BROWSE MODE ──────────────────────────────────────────
+function renderBrowse() {
+  const el = document.getElementById('browse-mode');
+  const query = browseSearch.trim().toLowerCase();
+
+  let html = `
+    <div class="search-wrap">
+      <span class="icon">🔍</span>
+      <input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}"
+        oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" />
+    </div>`;
+
+  if (query) {
+    const filtered = ALL_TERMS.filter(t =>
+      t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query)
+    );
+    if (filtered.length === 0) {
+      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
+    } else {
+      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
+      filtered.forEach((t, i) => {
+        const isOpen = browseOpenTerm === `s-${i}`;
+        html += `
+          <div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();"
+               style="border-color:${isOpen ? t.color : 'var(--border)'}">
+            <div class="row">
+              <span class="r-emoji">${t.emoji}</span>
+              <span class="r-term">${escHtml(t.term)}</span>
+              <span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span>
+            </div>
+            ${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}
+          </div>`;
+      });
+      html += `</div>`;
+    }
+  } else {
+    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
+    CATEGORIES.forEach((cat, ci) => {
+      const isOpen = browseOpenCat === ci;
+      html += `
+        <div>
+          <button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();"
+            style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}">
+            <span class="emoji">${cat.emoji}</span>
+            <span class="name">${escHtml(cat.name)}</span>
+            <span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span>
+            <span class="arrow">▼</span>
+          </button>`;
+      if (isOpen) {
+        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
+        cat.terms.forEach((t, ti) => {
+          const tKey = `${ci}-${ti}`;
+          const tOpen = browseOpenTerm === tKey;
+          html += `
+            <div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();"
+                 style="border-color:${tOpen ? cat.color : 'transparent'}">
+              <span class="term-name">${escHtml(t.term)}</span>
+              ${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}
+            </div>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+}
+
+// ─── HELPERS ──────────────────────────────────────────────
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

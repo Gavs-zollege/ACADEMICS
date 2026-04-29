@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLIA Complexity Sorter</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#1c1a2e,#221f38,#1a1830);font-family:'Fredoka',sans-serif;padding:24px 16px;color:#f1f0f7}
+.wrap{max-width:720px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.header .icon{font-size:44px}
+h1{font-weight:700;font-size:30px;margin:8px 0 4px}
+.sub{color:#8b87a8;font-weight:500;font-size:15px}
+.score{color:#f59e0b;font-weight:600;font-size:14px;margin-top:8px}
+.prompt{background:linear-gradient(135deg,rgba(168,139,250,.13),rgba(245,158,11,.13));padding:22px 28px;border-radius:18px;text-align:center;margin-bottom:20px;border:2px solid rgba(168,139,250,.27)}
+.prompt .label{color:#8b87a8;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+.prompt .item{color:#f1f0f7;font-size:22px;font-weight:700}
+.prompt .rem{color:#8b87a8;font-size:13px;margin-top:8px}
+.fb{text-align:center;padding:12px;margin-bottom:14px;border-radius:12px;font-weight:700;font-size:17px}
+.fb.ok{background:rgba(52,211,153,.13);color:#34d399}
+.fb.no{background:rgba(251,113,133,.13);color:#fb7185}
+.buckets{display:flex;gap:12px;flex-wrap:wrap}
+.bucket{flex:1 1 180px;min-width:160px;background:#272540;border-radius:18px;padding:18px;cursor:pointer;transition:all .2s;min-height:140px}
+.bucket:hover{filter:brightness(1.1)}
+.bucket h3{font-weight:700;font-size:16px;text-align:center;margin-bottom:4px}
+.bucket .hint{color:#8b87a8;font-size:12px;text-align:center;margin-bottom:12px;font-weight:500}
+.bucket .placed{padding:8px 12px;border-radius:10px;margin-bottom:6px;font-size:13px;font-weight:600}
+.bucket-0{border:2px solid rgba(16,185,129,.27)}.bucket-0 h3{color:#10b981}.bucket-0 .placed{background:rgba(16,185,129,.09);border:1px solid rgba(16,185,129,.13)}
+.bucket-1{border:2px solid rgba(245,158,11,.27)}.bucket-1 h3{color:#f59e0b}.bucket-1 .placed{background:rgba(245,158,11,.09);border:1px solid rgba(245,158,11,.13)}
+.bucket-2{border:2px solid rgba(239,68,68,.27)}.bucket-2 h3{color:#ef4444}.bucket-2 .placed{background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.13)}
+.done{text-align:center;background:#272540;border-radius:24px;padding:40px;border:2px solid rgba(52,211,153,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:700;font-size:28px;margin:12px 0 8px}
+.done .tip{color:#8b87a8;font-weight:500;font-size:15px;margin-bottom:20px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#f59e0b;color:#1c1a2e;font-weight:700;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="icon">🧪</div>
+    <h1>CLIA Complexity Sorter</h1>
+    <p class="sub">Sort each test into the correct CLIA complexity level</p>
+    <p class="score" id="scoreDisplay">Score: 0 / 10</p>
+  </div>
+  <div id="game">
+    <div class="prompt" id="promptBox"></div>
+    <div class="fb" id="feedback" style="display:none"></div>
+    <div class="buckets" id="bucketsRow"></div>
+  </div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const BUCKETS=["CLIA-Waived","Moderate Complexity","High Complexity"];
+const ICONS=["🏠","🏥","🔬"];
+const HINTS=["Office / Home","Hospital Lab","Reference Lab"];
+const ALL=[
+  {text:"Urine pregnancy test (hCG)",b:0},{text:"Blood glucose (glucometer)",b:0},
+  {text:"Rapid strep test",b:0},{text:"Dipstick urinalysis",b:0},
+  {text:"Fecal occult blood test",b:0},{text:"Routine hospital CBC",b:1},
+  {text:"Provider microscopy",b:1},{text:"Automated chemistry panels",b:1},
+  {text:"Molecular / genetic testing",b:2},{text:"Advanced cytology",b:2},
+];
+let remaining,bucketContents,score;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+function init(){
+  remaining=shuffle(ALL);bucketContents=BUCKETS.map(()=>[]);score=0;
+  document.getElementById('game').style.display='block';
+  document.getElementById('doneBox').style.display='none';
+  render();
+}
+function render(){
+  document.getElementById('scoreDisplay').textContent='Score: '+score+' / '+ALL.length;
+  const pb=document.getElementById('promptBox');
+  if(remaining.length>0){
+    pb.style.display='block';
+    pb.innerHTML='<div class="label">Sort this test → tap a bucket</div><div class="item">'+remaining[0].text+'</div><div class="rem">'+remaining.length+' remaining</div>';
+  } else pb.style.display='none';
+  const br=document.getElementById('bucketsRow');
+  br.innerHTML='';
+  BUCKETS.forEach((name,i)=>{
+    const d=document.createElement('div');
+    d.className='bucket bucket-'+i;
+    d.onclick=()=>drop(i);
+    let html='<h3>'+ICONS[i]+' '+name+'</h3><div class="hint">'+HINTS[i]+'</div>';
+    bucketContents[i].forEach(t=>{html+='<div class="placed">✅ '+t+'</div>'});
+    d.innerHTML=html;
+    br.appendChild(d);
+  });
+}
+function drop(bi){
+  if(remaining.length===0)return;
+  const cur=remaining[0];
+  const correct=cur.b===bi;
+  if(correct){bucketContents[bi].push(cur.text);score++}
+  const fb=document.getElementById('feedback');
+  fb.style.display='block';
+  fb.className='fb '+(correct?'ok':'no');
+  fb.textContent=correct?'✅ Correct!':'❌ Nope — belongs in '+BUCKETS[cur.b];
+  remaining=remaining.slice(1);
+  render();
+  if(remaining.length===0) setTimeout(showDone,900);
+  setTimeout(()=>{fb.style.display='none'},900);
+}
+function showDone(){
+  document.getElementById('game').style.display='none';
+  const d=document.getElementById('doneBox');d.style.display='block';
+  d.innerHTML='<div class="big">'+(score>=8?'🏆':'💪')+'</div><h2>'+score+'/'+ALL.length+' Correct!</h2><p class="tip">CLIA-waived tests are simple enough for home use. MAs perform these in ambulatory care.</p><button class="btn" onclick="init()">🔄 Play Again</button>';
+}
+init();
+</script>
+</body>
+</html>

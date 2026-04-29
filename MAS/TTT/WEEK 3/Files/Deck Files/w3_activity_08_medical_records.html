@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical Records Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(155deg,#08142a,#0c1e3a,#061028);font-family:'Lexend',sans-serif;padding:24px 16px;color:#dce8ff}
+.wrap{max-width:640px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#6890c0;font-weight:600;font-size:15px}
+.topbar{display:flex;justify-content:space-between;margin-bottom:12px}
+.topbar .qn{color:#6890c0;font-weight:700;font-size:14px}
+.topbar .sc{color:#22d3ee;font-weight:800;font-size:14px}
+.bar{height:6px;background:#162848;border-radius:10px;margin-bottom:20px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#22d3ee,#a78bfa);border-radius:10px;transition:width .4s}
+.question{background:#0e2040;padding:22px 24px;border-radius:18px;margin-bottom:20px;border-left:4px solid #22d3ee}
+.question p{font-weight:800;font-size:18px;line-height:1.6}
+.opts{display:grid;gap:10px}
+.opt{padding:15px 20px;border-radius:14px;background:#162848;border:2px solid #162848;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;text-align:left}
+.opt:hover{filter:brightness(1.15)}
+.opt .letter{color:#22d3ee;font-weight:800;margin-right:12px}
+.opt.correct{background:rgba(52,211,153,.15);border-color:#34d399}
+.opt.wrong{background:rgba(248,113,113,.15);border-color:#f87171}
+.tip{margin-top:16px;padding:14px 20px;border-radius:14px;background:#0e2040}
+.tip strong{font-size:16px;display:block;margin-bottom:6px}
+.tip strong.ok{color:#34d399}
+.tip strong.no{color:#f87171}
+.tip span{color:#6890c0;font-weight:600;font-size:14px}
+.done{text-align:center;background:#0e2040;border-radius:24px;padding:40px;border:2px solid rgba(52,211,153,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0}
+.done p{color:#6890c0;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#22d3ee;color:#08142a;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><div class="icon">📁</div><h1>Medical Records Challenge</h1><p class="sub">Test your knowledge of records management & documentation</p></div>
+  <div id="game"></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"How do you correct an error in a PAPER medical record?",opts:["Use white-out and rewrite","Erase and write over it","Single line through error, write correction, add date/time/initials","Remove the page and rewrite it"],a:2,tip:"Never erase or use correction fluid — records are legal documents. Single line, correction, date, time, initials."},
+  {q:"In the EHR, how are corrections handled?",opts:["Delete the entry and retype it","The system auto-logs who changed what; use the addendum feature","Email the correction to the provider","Print, correct by hand, and scan back in"],a:1,tip:"EHR automatically logs all changes. Use the addendum feature for corrections."},
+  {q:"SOAP notes stand for:",opts:["Standard, Objective, Assessment, Protocol","Subjective, Objective, Assessment, Plan","Summary, Observation, Analysis, Procedure","Subjective, Outcome, Assessment, Plan"],a:1,tip:"SOAP = Subjective, Objective, Assessment, Plan — the standard for progress notes."},
+  {q:"What is the After-Visit Summary (AVS)?",opts:["A bill sent to insurance","A document summarizing the visit given to the patient at check-out","The provider's personal notes","An internal quality report"],a:1,tip:"AVS summarizes diagnoses, medications, and follow-up needs — given at check-out."},
+  {q:"Paper medical records are filed:",opts:["By date of birth","By insurance number","Alphabetically by last name, most recent on top","By diagnosis code"],a:2,tip:"Filed alphabetically — most recent documents always go on top."},
+  {q:"Which section contains the Notice of Privacy Practices and consent forms?",opts:["Clinical section","Administrative section","Billing section","Provider section"],a:1,tip:"Administrative section: demographics, insurance, NPP, advance directives, consents, billing records."},
+  {q:"What is the superbill / encounter form used for?",opts:["Scheduling appointments","Recording diagnosis and procedure codes to generate the billing claim","Ordering lab tests","Filing insurance applications"],a:1,tip:"The superbill records ICD-10 and CPT codes from the visit — used to generate the claim."},
+  {q:"Who may access medical records?",opts:["Any office staff member","Only the billing department","Only authorized staff — HIPAA compliance required at all times","Anyone with the patient's name"],a:2,tip:"Only authorized staff may access records. HIPAA compliance must be maintained always."},
+];
+let ci=0,score=0,chosen=null;
+function renderQ(){const g=document.getElementById('game'),q=QS[ci];let h='<div class="topbar"><span class="qn">Q '+(ci+1)+'/'+QS.length+'</span><span class="sc">Score: '+score+'</span></div>';h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/QS.length*100)+'%"></div></div>';h+='<div class="question"><p>'+q.q+'</p></div><div class="opts">';q.opts.forEach((o,i)=>{let cls='opt';if(chosen!==null&&i===q.a)cls+=' correct';else if(chosen===i&&i!==q.a)cls+=' wrong';h+='<div class="'+cls+'" '+(chosen===null?'onclick="answer('+i+')"':'')+'><span class="letter">'+String.fromCharCode(65+i)+'</span>'+o+'</div>'});h+='</div>';if(chosen!==null){const ok=chosen===q.a;h+='<div class="tip"><strong class="'+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ Not quite!')+'</strong><span>'+q.tip+'</span></div>'}g.innerHTML=h}
+function answer(i){if(chosen!==null)return;chosen=i;if(i===QS[ci].a)score++;renderQ();setTimeout(()=>{if(ci+1<QS.length){ci++;chosen=null;renderQ()}else showDone()},2000)}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=7?'🏆':'💪')+'</div><h2>'+score+'/'+QS.length+' Correct!</h2><p>Complete, accurate documentation is both the foundation of reimbursement AND a legal record of care.</p><button class="btn" onclick="reset()">🔄 Try Again</button>'}
+function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+renderQ();
+</script>
+</body>
+</html>

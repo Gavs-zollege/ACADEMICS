@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Error Spotter</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#1a1810,#1e1b12,#141208);font-family:'Rubik',sans-serif;padding:24px 16px;color:#faf5e8}
+.wrap{max-width:640px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.header .icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#b8a87a;font-weight:600;font-size:15px}
+.topbar{display:flex;justify-content:space-between;margin-bottom:12px}
+.topbar .qn{color:#b8a87a;font-weight:700;font-size:14px}
+.topbar .sc{color:#f59e0b;font-weight:800;font-size:14px}
+.bar{height:6px;background:#332e20;border-radius:10px;margin-bottom:20px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#f59e0b,#fb7185);border-radius:10px;transition:width .4s}
+.question{background:#252218;padding:22px 24px;border-radius:18px;margin-bottom:20px;border-left:4px solid #f59e0b}
+.question p{font-weight:800;font-size:18px;line-height:1.6}
+.opts{display:grid;gap:10px}
+.opt{padding:15px 20px;border-radius:14px;background:#332e20;border:2px solid #332e20;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;text-align:left}
+.opt:hover{filter:brightness(1.1)}
+.opt .letter{color:#f59e0b;font-weight:800;margin-right:12px}
+.opt.correct{background:rgba(74,222,128,.15);border-color:#4ade80}
+.opt.wrong{background:rgba(251,113,133,.15);border-color:#fb7185}
+.tip{margin-top:16px;padding:14px 20px;border-radius:14px;background:#252218}
+.tip strong{font-size:16px;display:block;margin-bottom:6px}
+.tip strong.ok{color:#4ade80}
+.tip strong.no{color:#fb7185}
+.tip span{color:#b8a87a;font-weight:600;font-size:14px}
+.done{text-align:center;background:#252218;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0}
+.done p{color:#b8a87a;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#f59e0b;color:#1a1810;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="icon">⚠️</div>
+    <h1>Error Spotter</h1>
+    <p class="sub">Identify what went wrong in each lab scenario</p>
+  </div>
+  <div id="game"></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"The MA labeled the LID of the urine cup instead of the container. What's the risk?",opts:["No risk — lids are fine for labeling","Lids can be swapped between containers, causing dangerous mix-ups","The label will fade faster on the lid","The lid is too small for all the info"],a:1,tip:"Always label the CONTAINER, not the lid. Lids can be accidentally swapped."},
+  {q:"A patient ate breakfast before a fasting glucose test. What should the MA do?",opts:["Run the test anyway and note it","Reschedule the test","Have the patient wait 2 hours then run it","Draw blood but label it 'non-fasting'"],a:1,tip:"Never process a specimen collected under incorrect conditions — reschedule."},
+  {q:"The MA opens reagent strips and notices they expired last month.",opts:["Use them — they're good for 90 days past expiration","Do NOT use — expired reagents give invalid results","Test one strip first to check","Only use for screening, not diagnostics"],a:1,tip:"Always check expiration dates. Expired supplies produce inaccurate results."},
+  {q:"A urine sample sat at room temperature for 3 hours.",opts:["It's fine — urine is stable at room temp","Bacteria have likely grown, altering results","Only the color changes; chemistry is unaffected","Shake it well before testing"],a:1,tip:"Urine must be tested within 1 hour or refrigerated to prevent bacterial growth."},
+  {q:"During a throat culture, the MA touched the inside of the swab container.",opts:["It doesn't matter — it's just for transport","Outside organisms now contaminate the specimen","Just wipe the edge and continue","Only the lid needs to stay sterile"],a:1,tip:"Never touch the inside of sterile containers — contamination masks the real pathogen."},
+  {q:"The MA collects a specimen but doesn't match it to the requisition before transport.",opts:["The lab will figure it out","The specimen may be tested for the wrong patient or test","It only matters for blood specimens","The requisition isn't needed until results come back"],a:1,tip:"Every specimen MUST be paired with the correct requisition before transport."},
+  {q:"A patient wasn't instructed about FOBT prep and ate red meat the day before.",opts:["Red meat doesn't affect the test","This can cause a false-positive result","It only matters if they ate more than 8oz","The lab adjusts for dietary factors"],a:1,tip:"Red meat, aspirin, NSAIDs, vitamin C, and iron can all cause false-positive FOBT results."},
+];
+let ci=0,score=0,chosen=null;
+function renderQ(){
+  const g=document.getElementById('game'),q=QS[ci];
+  let h='<div class="topbar"><span class="qn">Scenario '+(ci+1)+'/'+QS.length+'</span><span class="sc">Score: '+score+'</span></div>';
+  h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/QS.length*100)+'%"></div></div>';
+  h+='<div class="question"><p>'+q.q+'</p></div><div class="opts">';
+  q.opts.forEach((o,i)=>{
+    let cls='opt';if(chosen!==null&&i===q.a)cls+=' correct';else if(chosen===i&&i!==q.a)cls+=' wrong';
+    h+='<div class="'+cls+'" '+(chosen===null?'onclick="answer('+i+')"':'')+'><span class="letter">'+String.fromCharCode(65+i)+'</span>'+o+'</div>';
+  });
+  h+='</div>';
+  if(chosen!==null){const ok=chosen===q.a;h+='<div class="tip"><strong class="'+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ Not quite!')+'</strong><span>'+q.tip+'</span></div>'}
+  g.innerHTML=h;
+}
+function answer(i){if(chosen!==null)return;chosen=i;if(i===QS[ci].a)score++;renderQ();setTimeout(()=>{if(ci+1<QS.length){ci++;chosen=null;renderQ()}else showDone()},2200)}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=6?'🏆':'💪')+'</div><h2>'+score+'/'+QS.length+' Correct!</h2><p>Prevention requires attention at every step — pre-analytical errors are the most common!</p><button class="btn" onclick="reset()">🔄 Try Again</button>'}
+function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+renderQ();
+</script>
+</body>
+</html>

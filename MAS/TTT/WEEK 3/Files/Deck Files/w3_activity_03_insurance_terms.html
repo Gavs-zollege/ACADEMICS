@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Insurance Terms Match</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(155deg,#091a1a,#0e2626,#0a1820);font-family:'DM Sans',sans-serif;padding:24px 16px;color:#e0f5f0}
+.wrap{max-width:740px;margin:0 auto}
+.header{text-align:center;margin-bottom:28px}
+.icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#6aaa98;font-weight:600;font-size:15px}
+.badge{display:inline-block;margin-top:12px;background:#0e2626;padding:6px 20px;border-radius:20px;border:1px solid rgba(45,212,191,.2);color:#2dd4bf;font-weight:800;font-size:15px}
+.cols{display:flex;gap:16px;flex-wrap:wrap}
+.col{flex:1 1 280px;min-width:220px}
+.col-label{font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.col-label.items{color:#2dd4bf}
+.col-label.matches{color:#fbbf24}
+.card{padding:14px 18px;margin-bottom:8px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.card.item{background:#0e2626}
+.card.item.selected{background:rgba(251,191,36,.15);border-color:#fbbf24}
+.card.item.matched{background:rgba(52,211,153,.1);border-color:#34d399;opacity:.55;cursor:default}
+.card.match{background:#122e2e;font-weight:600;font-size:14px}
+.card.match.used{background:rgba(52,211,153,.1);border-color:#34d399;opacity:.55;cursor:default}
+.card.match.wrong{background:rgba(239,83,80,.15);border-color:#ef5350;animation:shake .35s}
+.done{text-align:center;background:#0e2626;border-radius:24px;padding:40px;border:2px solid rgba(52,211,153,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0 8px}
+.done p{color:#34d399;font-weight:700;font-size:16px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#2dd4bf;color:#091a1a;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><div class="icon">💳</div><h1>Insurance Terms Match</h1><p class="sub">Match each insurance term to its definition</p><div class="badge" id="counter">0 / 8 matched</div></div>
+  <div id="game"><div class="cols"><div class="col" id="itemsCol"><div class="col-label items">📌 Terms</div></div><div class="col" id="matchesCol"><div class="col-label matches">🎯 Definitions</div></div></div></div>
+  <div id="doneBox" class="done" style="display:none"><div class="big">🏆</div><h2>All Matched!</h2><p>Understanding these terms helps prevent claim denials and patient billing errors!</p><button class="btn" onclick="resetGame()">🔄 Play Again</button></div>
+</div>
+<script>
+const PAIRS=[
+  {item:"Premium",match:"Monthly payment to maintain insurance coverage"},
+  {item:"Copayment (Copay)",match:"Fixed amount paid at each visit regardless of total cost"},
+  {item:"Deductible",match:"Amount patient pays out-of-pocket before insurance kicks in"},
+  {item:"Coinsurance",match:"Patient's share of costs after deductible is met (e.g., 20%)"},
+  {item:"Preauthorization",match:"Prior approval confirming a service is medically necessary and covered"},
+  {item:"Precertification",match:"Verifies a benefit exists but does NOT guarantee payment"},
+  {item:"Eligibility",match:"Confirmation that patient's insurance is active and benefits are in effect"},
+  {item:"Sliding Scale",match:"Fee schedule adjusted based on patient's income"},
+];
+let shuffled,selected=null,matched={},count=0;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+function render(){const ic=document.getElementById('itemsCol'),mc=document.getElementById('matchesCol');ic.innerHTML='<div class="col-label items">📌 Terms</div>';mc.innerHTML='<div class="col-label matches">🎯 Definitions</div>';PAIRS.forEach((p,i)=>{const d=document.createElement('div');d.className='card item'+(matched[i]!==undefined?' matched':selected===i?' selected':'');d.textContent=(matched[i]!==undefined?'✅ ':'')+p.item;if(matched[i]===undefined)d.onclick=()=>{selected=i;render()};ic.appendChild(d)});shuffled.forEach((m,i)=>{const d=document.createElement('div');const used=Object.values(matched).includes(i);d.className='card match'+(used?' used':'');d.textContent=(used?'✅ ':'')+m.match;d.id='m-'+i;if(!used)d.onclick=()=>tryMatch(i);mc.appendChild(d)});document.getElementById('counter').textContent=count+' / '+PAIRS.length+' matched'}
+function tryMatch(mi){if(selected===null)return;if(PAIRS[selected].match===shuffled[mi].match){matched[selected]=mi;count++;selected=null;render();if(count===PAIRS.length){document.getElementById('game').style.display='none';document.getElementById('doneBox').style.display='block'}}else{const el=document.getElementById('m-'+mi);el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),500)}}
+function resetGame(){selected=null;matched={};count=0;shuffled=shuffle(PAIRS);document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';render()}
+shuffled=shuffle(PAIRS);render();
+</script>
+</body>
+</html>

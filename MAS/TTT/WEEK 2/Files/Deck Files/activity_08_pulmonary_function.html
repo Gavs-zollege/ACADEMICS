@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulmonary Function Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(155deg,#0d1a0f,#112010,#0a150c);font-family:'Quicksand',sans-serif;padding:24px 16px;color:#e6f7ea}
+.wrap{max-width:600px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.header .icon{font-size:44px}
+h1{font-weight:700;font-size:30px;margin:8px 0 4px}
+.sub{color:#7aab88;font-weight:600;font-size:15px}
+.topbar{display:flex;justify-content:space-between;margin-bottom:12px}
+.topbar .ct{color:#7aab88;font-weight:700;font-size:14px}
+.topbar .sc{color:#fbbf24;font-weight:700;font-size:14px}
+.bar{height:6px;background:#1c3820;border-radius:10px;margin-bottom:24px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#22c55e,#a3e635);border-radius:10px;transition:width .4s}
+.statement{background:#142818;padding:24px 28px;border-radius:20px;margin-bottom:24px;border-left:4px solid #a3e635}
+.statement p{font-weight:700;font-size:20px;line-height:1.7}
+.blank{display:inline-block;padding:4px 18px;border-radius:10px;margin:0 4px;font-weight:700;min-width:50px;text-align:center}
+.blank.empty{background:rgba(163,230,53,.13);color:#fbbf24;border-bottom:3px solid #fbbf24}
+.blank.ok{background:rgba(74,222,128,.2);color:#4ade80;border-bottom:3px solid #4ade80}
+.blank.no{background:rgba(251,113,133,.2);color:#fb7185;border-bottom:3px solid #fb7185}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid button{padding:16px 20px;border-radius:14px;background:#1c3820;border:2px solid #1c3820;color:#e6f7ea;font-weight:700;font-size:22px;cursor:pointer;font-family:inherit;transition:all .2s}
+.grid button:hover{filter:brightness(1.15)}
+.grid button.ok{background:rgba(74,222,128,.13);border-color:#4ade80}
+.grid button.no{background:rgba(251,113,133,.13);border-color:#fb7185}
+.tip{margin-top:16px;padding:14px 20px;border-radius:14px;background:#142818}
+.tip strong{font-size:16px;display:block;margin-bottom:6px}
+.tip strong.ok{color:#4ade80}
+.tip strong.no{color:#fb7185}
+.tip span{color:#7aab88;font-weight:600;font-size:14px}
+.done{text-align:center;background:#142818;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:700;font-size:28px;margin:12px 0}
+.done p{color:#7aab88;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#a3e635;color:#0d1a0f;font-weight:700;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="icon">🫁</div>
+    <h1>Pulmonary Function Pro</h1>
+    <p class="sub">Fill in the blanks on spirometry & peak flow</p>
+  </div>
+  <div id="game"></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const ITEMS=[
+  {text:"FEV1 stands for Forced Expiratory Volume in |___| second(s).",answer:"1",opts:["1","5","10","30"],tip:"FEV1 = how much air exhaled in the FIRST second of a forced breath."},
+  {text:"Patients should avoid large meals for |___| hours before spirometry.",answer:"2",opts:["1","2","4","6"],tip:"No large meals 2 hours before. Also no smoking 1 hour before."},
+  {text:"No bronchodilators (inhalers) for at least |___| hours before testing.",answer:"6",opts:["2","4","6","12"],tip:"Bronchodilators dilate airways — using them before testing skews results."},
+  {text:"A peak flow reading ≥ |___|% of personal best means well-controlled.",answer:"80",opts:["50","60","70","80"],tip:"80% or above = green zone. Below 80% indicates worsening control."},
+  {text:"Spirometry is repeated until |___| acceptable attempts are obtained.",answer:"3",opts:["1","2","3","5"],tip:"3 good attempts — proper coaching from the MA is essential."},
+  {text:"The expected value for FEV1 and FVC is |___|–120% of predicted.",answer:"80",opts:["60","70","80","90"],tip:"80–120% of predicted is the normal range for most spirometry values."},
+  {text:"Patient demographics include age, gender, weight, and |___|.",answer:"height",opts:["race","height","blood type","BMI"],tip:"Age, gender, weight, and HEIGHT calculate predicted lung values."},
+  {text:"Peak flow meters monitor chronic conditions like asthma and |___|.",answer:"COPD",opts:["Diabetes","COPD","Hypertension","Anemia"],tip:"Peak flow tracks how well air leaves the lungs — key for asthma and COPD."},
+];
+let ci=0,score=0,chosen=null;
+function renderQ(){
+  const g=document.getElementById('game'),it=ITEMS[ci];
+  let h='<div class="topbar"><span class="ct">'+(ci+1)+'/'+ITEMS.length+'</span><span class="sc">Score: '+score+'</span></div>';
+  h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/ITEMS.length*100)+'%"></div></div>';
+  const parts=it.text.split('|___|');
+  let blankCls='blank empty',blankText='???';
+  if(chosen!==null){blankCls='blank '+(chosen===it.answer?'ok':'no');blankText=chosen}
+  h+='<div class="statement"><p>'+parts[0]+'<span class="'+blankCls+'">'+blankText+'</span>'+parts[1]+'</p></div>';
+  h+='<div class="grid">';
+  it.opts.forEach(o=>{
+    let cls='';if(chosen===o)cls=o===it.answer?'ok':'no';
+    h+='<button class="'+cls+'" '+(chosen===null?'onclick="pick(\''+o+'\')"':'')+'>'+o+'</button>';
+  });
+  h+='</div>';
+  if(chosen!==null){const ok=chosen===it.answer;h+='<div class="tip"><strong class="'+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ Answer: '+it.answer)+'</strong><span>'+it.tip+'</span></div>'}
+  g.innerHTML=h;
+}
+function pick(o){if(chosen!==null)return;chosen=o;if(o===ITEMS[ci].answer)score++;renderQ();setTimeout(()=>{if(ci+1<ITEMS.length){ci++;chosen=null;renderQ()}else showDone()},1800)}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=7?'🏆':'💪')+'</div><h2>'+score+'/'+ITEMS.length+' Correct!</h2><p>Patient coaching directly affects spirometry accuracy — practice those instructions!</p><button class="btn" onclick="reset()">🔄 Try Again</button>'}
+function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+renderQ();
+</script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sterilization Process – Drag the Words</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f1117;
+    --card-bg: #1a1c25;
+    --card-border: #2a2d3a;
+    --text: #e8e6e3;
+    --text-muted: #8b8d97;
+    --accent: #6ee7b7;
+    --accent-glow: rgba(110, 231, 183, 0.15);
+    --accent-dark: #064e3b;
+    --wrong: #f87171;
+    --slot-bg: #12131a;
+    --slot-border: #3a3d4a;
+    --slot-active: rgba(110, 231, 183, 0.25);
+  }
+
+  html, body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .bg-pattern {
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(110, 231, 183, 0.06), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(110, 231, 183, 0.03), transparent);
+    pointer-events: none;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 14px 8px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 7px;
+    flex-shrink: 0;
+  }
+
+  .top-bar h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px; font-weight: 400;
+  }
+  .top-bar h1 span { color: var(--accent); }
+
+  .stats {
+    display: flex; gap: 12px; align-items: center;
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+  }
+  .stats .val { color: var(--accent); font-weight: 700; font-size: 14px; font-family: 'DM Serif Display', serif; }
+  .stats .wrong-val { color: var(--wrong); }
+
+  .btns { display: flex; gap: 5px; }
+
+  .btn-sm {
+    padding: 5px 12px; border-radius: 7px;
+    font-size: 11px; font-weight: 700; border: none;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+  }
+  .btn-reset { background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--card-border); }
+
+  /* Word bank */
+  .word-bank {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 9px;
+    padding: 6px 10px;
+    margin-bottom: 7px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-height: 36px;
+  }
+
+  .bank-label {
+    font-size: 8px; font-weight: 700; letter-spacing: 1.2px;
+    text-transform: uppercase; color: var(--text-muted); white-space: nowrap;
+  }
+
+  .word-chip {
+    display: inline-flex; align-items: center;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #232636, #1e2030);
+    border: 1.5px solid var(--slot-border);
+    border-radius: 6px;
+    font-size: 11.5px; font-weight: 600; color: var(--text);
+    cursor: grab; user-select: none;
+    transition: all 0.25s; touch-action: none;
+  }
+  .word-chip:hover { border-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow); transform: translateY(-1px); }
+  .word-chip.dragging { opacity: 0.4; transform: scale(0.95); }
+  .word-chip.placed { display: none; }
+  .word-chip.rejected {
+    animation: rejectPop 0.5s ease;
+    border-color: var(--wrong);
+    box-shadow: 0 0 12px var(--wrong) 20;
+  }
+
+  @keyframes rejectPop {
+    0% { transform: scale(0.7); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Steps grid */
+  .steps {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(4, 1fr);
+    gap: 5px;
+    min-height: 0;
+  }
+
+  .step-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 9px;
+    padding: 6px 8px;
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .step-card::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--card-border); transition: background 0.3s;
+  }
+  .step-card.correct::before { background: var(--accent); }
+  .step-card.wrong-flash::before { background: var(--wrong); }
+
+  .step-num {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 5px;
+    background: var(--slot-bg);
+    border: 1px solid var(--card-border);
+    font-family: 'DM Serif Display', serif;
+    font-size: 12px; color: var(--text-muted);
+    transition: all 0.3s;
+  }
+  .step-card.correct .step-num { background: var(--accent-dark); border-color: var(--accent); color: var(--accent); }
+
+  .step-body { flex: 1; min-width: 0; }
+
+  .drop-zone {
+    display: flex; align-items: center;
+    width: 100%; height: 26px;
+    padding: 0 8px;
+    background: var(--slot-bg);
+    border: 1.5px dashed var(--slot-border);
+    border-radius: 5px;
+    font-size: 11px; font-weight: 700; color: var(--text-muted);
+    transition: all 0.2s; margin-bottom: 3px;
+  }
+  .drop-zone .ph { font-style: italic; font-weight: 400; font-size: 9.5px; opacity: 0.5; }
+  .drop-zone.drag-over { border-color: var(--accent); background: var(--slot-active); box-shadow: 0 0 12px var(--accent-glow); }
+  .drop-zone.locked {
+    border-style: solid; border-color: var(--accent);
+    background: rgba(110,231,183,0.12); color: var(--accent);
+    pointer-events: none;
+  }
+  .drop-zone.wrong-flash {
+    border-color: var(--wrong);
+    background: rgba(248,113,113,0.12);
+    color: var(--wrong);
+    animation: shake 0.4s ease;
+  }
+
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
+
+  .step-desc { font-size: 10px; color: var(--text-muted); line-height: 1.4; }
+
+  .step-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
+
+  /* Result overlay */
+  .result-overlay { display:none; position:fixed; inset:0; background:rgba(15,17,23,0.88); backdrop-filter:blur(8px); z-index:100; align-items:center; justify-content:center; }
+  .result-overlay.show { display: flex; }
+
+  .result-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 18px; padding: 32px 28px; text-align: center;
+    max-width: 340px; width: 88%;
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from{transform:scale(0.8);opacity:0} to{transform:scale(1);opacity:1} }
+
+  .result-emoji { font-size: 40px; margin-bottom: 8px; }
+  .result-card h2 { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 4px; }
+  .result-card p { color: var(--text-muted); font-size: 12px; margin-bottom: 16px; line-height: 1.5; }
+  .result-score { font-size: 36px; font-family: 'DM Serif Display', serif; color: var(--accent); margin-bottom: 2px; }
+  .result-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 16px; }
+  .stars { font-size: 24px; margin-bottom: 12px; letter-spacing: 4px; }
+
+  .btn-play {
+    padding: 9px 24px; border-radius: 9px;
+    font-size: 13px; font-weight: 700; border: none; cursor: pointer;
+    background: var(--accent); color: #064e3b; font-family: 'DM Sans', sans-serif;
+  }
+
+  .drag-ghost {
+    position: fixed; pointer-events: none; z-index: 999;
+    padding: 4px 10px;
+    background: linear-gradient(135deg,#232636,#1e2030);
+    border: 1.5px solid var(--accent); border-radius: 6px;
+    font-size: 11.5px; font-weight: 600; color: var(--accent);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.4), 0 0 14px var(--accent-glow);
+    font-family: 'DM Sans', sans-serif; display: none;
+  }
+
+  /* Confetti burst on correct */
+  .confetti-burst {
+    position: absolute;
+    pointer-events: none;
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    overflow: hidden;
+    z-index: 5;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 5px; height: 5px;
+    border-radius: 1px;
+    animation: confettiFall 0.7s ease-out forwards;
+    opacity: 0;
+  }
+  @keyframes confettiFall {
+    0% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(0.3); }
+  }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+<div class="app">
+  <div class="top-bar">
+    <h1>Sterilization <span>Process</span></h1>
+    <div class="stats">
+      <span><span class="val" id="correctCount">0</span>/7</span>
+      <span>✗ <span class="val wrong-val" id="wrongCount">0</span></span>
+    </div>
+    <div class="btns">
+      <button class="btn-sm btn-reset" onclick="resetGame()">↻ Reset</button>
+    </div>
+  </div>
+
+  <div class="word-bank">
+    <span class="bank-label">DRAG →</span>
+    <div id="wordBank" style="display:contents;"></div>
+  </div>
+
+  <div class="steps" id="stepsContainer"></div>
+</div>
+
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-card">
+    <div class="result-emoji" id="resultEmoji">🏆</div>
+    <div class="stars" id="resultStars"></div>
+    <h2 id="resultTitle">Perfect!</h2>
+    <div class="result-score" id="resultScore">100%</div>
+    <div class="result-label">Accuracy</div>
+    <p id="resultMsg"></p>
+    <button class="btn-play" onclick="resetGame(); document.getElementById('resultOverlay').classList.remove('show');">Play Again</button>
+  </div>
+</div>
+
+<div class="drag-ghost" id="dragGhost"></div>
+
+<script>
+const DATA = [
+  { step: "Transport", desc: "Move contaminated instruments in a leakproof container while wearing PPE." },
+  { step: "Cleaning", desc: "Use ultrasonic cleaners or instrument washers. If delayed, place in a holding solution." },
+  { step: "Packaging", desc: "Wrap instruments, use a chemical indicator inside, and label packages." },
+  { step: "Sterilization", desc: "Load and operate the sterilizer properly, ensuring instruments are spaced for circulation." },
+  { step: "Storage", desc: "Store in a dry, clean area; use first-in, first-out rotation." },
+  { step: "Delivery", desc: "Transport to the point of use while maintaining sterility." },
+  { step: "Quality Assurance", desc: "Monitor sterilization effectiveness through biological indicators and record-keeping." }
+];
+
+let correctCount = 0;
+let wrongCount = 0;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function init(){
+  const bank=document.getElementById('wordBank'), container=document.getElementById('stepsContainer');
+  bank.innerHTML=''; container.innerHTML='';
+  correctCount=0; wrongCount=0; updateUI();
+
+  shuffle(DATA.map(d=>d.step)).forEach(word=>{
+    const c=document.createElement('div');
+    c.className='word-chip'; c.draggable=true; c.dataset.word=word; c.textContent=word;
+    c.addEventListener('dragstart',onDragStart);
+    c.addEventListener('dragend',onDragEnd);
+    c.addEventListener('touchstart',onTouchStart,{passive:false});
+    c.addEventListener('touchmove',onTouchMove,{passive:false});
+    c.addEventListener('touchend',onTouchEnd);
+    bank.appendChild(c);
+  });
+
+  DATA.forEach((item,i)=>{
+    const card=document.createElement('div');
+    card.className='step-card';
+    card.innerHTML=`<div class="step-num">${i+1}</div><div class="step-body"><div class="drop-zone" data-index="${i}" data-answer="${item.step}"><span class="ph">Drop here…</span></div><div class="step-desc">${item.desc}</div></div>`;
+    container.appendChild(card);
+    const zone=card.querySelector('.drop-zone');
+    zone.addEventListener('dragover',e=>e.preventDefault());
+    zone.addEventListener('dragenter',e=>{e.preventDefault();if(!zone.classList.contains('locked'))zone.classList.add('drag-over');});
+    zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+    zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');if(!zone.classList.contains('locked'))tryPlace(zone,draggedWord);});
+  });
+}
+
+let draggedWord=null;
+function onDragStart(e){draggedWord=e.target.dataset.word;e.target.classList.add('dragging');}
+function onDragEnd(e){e.target.classList.remove('dragging');draggedWord=null;}
+
+const ghost=document.getElementById('dragGhost');
+let touchWord=null,touchChip=null;
+
+function onTouchStart(e){
+  e.preventDefault(); touchChip=e.currentTarget; touchWord=touchChip.dataset.word;
+  touchChip.classList.add('dragging');
+  ghost.textContent=touchWord; ghost.style.display='block';
+  const t=e.touches[0]; ghost.style.left=(t.clientX-40)+'px'; ghost.style.top=(t.clientY-14)+'px';
+}
+function onTouchMove(e){
+  e.preventDefault(); const t=e.touches[0];
+  ghost.style.left=(t.clientX-40)+'px'; ghost.style.top=(t.clientY-14)+'px';
+  document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over'));
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  if(el){const z=el.closest('.drop-zone');if(z&&!z.classList.contains('locked'))z.classList.add('drag-over');}
+}
+function onTouchEnd(e){
+  ghost.style.display='none'; if(touchChip)touchChip.classList.remove('dragging');
+  const t=e.changedTouches[0],el=document.elementFromPoint(t.clientX,t.clientY);
+  if(el){const z=el.closest('.drop-zone');if(z&&!z.classList.contains('locked'))tryPlace(z,touchWord);}
+  document.querySelectorAll('.drop-zone').forEach(z=>z.classList.remove('drag-over'));
+  touchWord=null;touchChip=null;
+}
+
+function tryPlace(zone, word){
+  if(!word) return;
+  const answer = zone.dataset.answer;
+  const card = zone.closest('.step-card');
+  const chip = document.querySelector(`.word-chip[data-word="${word}"]`);
+
+  if(word === answer){
+    // CORRECT
+    correctCount++;
+    zone.innerHTML = word;
+    zone.classList.add('locked');
+    card.classList.add('correct');
+    if(chip) chip.classList.add('placed');
+    spawnConfetti(card);
+    updateUI();
+    if(correctCount === 7) setTimeout(showResult, 600);
+  } else {
+    // WRONG — reject it
+    wrongCount++;
+    zone.classList.add('wrong-flash');
+    card.classList.add('wrong-flash');
+    zone.innerHTML = `<span style="font-size:11px;font-weight:700;color:var(--wrong);">✗ ${word}</span>`;
+
+    // Briefly show the wrong word, then clear
+    setTimeout(()=>{
+      zone.classList.remove('wrong-flash');
+      card.classList.remove('wrong-flash');
+      zone.innerHTML = '<span class="ph">Drop here…</span>';
+    }, 600);
+
+    // Flash the chip red in the bank
+    if(chip){
+      chip.classList.add('rejected');
+      setTimeout(()=> chip.classList.remove('rejected'), 600);
+    }
+
+    updateUI();
+  }
+}
+
+function spawnConfetti(card){
+  const burst = document.createElement('div');
+  burst.className = 'confetti-burst';
+  const colors = ['#6ee7b7','#34d399','#a7f3d0','#fbbf24','#60a5fa','#f9a8d4'];
+  for(let i=0;i<12;i++){
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.left = (40 + Math.random()*20) + '%';
+    p.style.top = '40%';
+    p.style.setProperty('--tx', (Math.random()*80-40)+'px');
+    p.style.setProperty('--ty', (Math.random()*-50-20)+'px');
+    p.style.setProperty('--rot', (Math.random()*360)+'deg');
+    p.style.animationDelay = (Math.random()*0.15)+'s';
+    p.style.width = (3+Math.random()*4)+'px';
+    p.style.height = (3+Math.random()*4)+'px';
+    burst.appendChild(p);
+  }
+  card.appendChild(burst);
+  setTimeout(()=> burst.remove(), 900);
+}
+
+function updateUI(){
+  document.getElementById('correctCount').textContent = correctCount;
+  document.getElementById('wrongCount').textContent = wrongCount;
+}
+
+function showResult(){
+  const total = correctCount + wrongCount;
+  const acc = Math.round((correctCount / total) * 100);
+  const stars = wrongCount === 0 ? '★★★' : wrongCount <= 3 ? '★★☆' : '★☆☆';
+  document.getElementById('resultEmoji').textContent = wrongCount===0 ? '🏆' : wrongCount<=3 ? '🎉' : '💪';
+  document.getElementById('resultStars').textContent = stars;
+  document.getElementById('resultTitle').textContent = wrongCount===0 ? 'Perfect!' : wrongCount<=3 ? 'Great Job!' : 'Keep Practicing!';
+  document.getElementById('resultScore').textContent = acc + '%';
+  document.getElementById('resultMsg').textContent = wrongCount===0 ? 'Zero mistakes — you nailed every step!' : `You got there with ${wrongCount} wrong attempt${wrongCount>1?'s':''}. Try for a perfect score!`;
+  document.getElementById('resultOverlay').classList.add('show');
+}
+
+function resetGame(){
+  document.querySelectorAll('.step-card').forEach(c=>c.classList.remove('correct','wrong-flash'));
+  init();
+}
+
+init();
+</script>
+</body>
+</html>

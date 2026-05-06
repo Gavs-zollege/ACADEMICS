@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Questions: Legal and Ethical Responsibilities in Medicine</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-deep: #0e0c15;
+    --bg-card: #1a1525;
+    --bg-card-hover: #252035;
+    --accent: #a78bfa;
+    --accent-glow: rgba(167, 139, 250, 0.25);
+    --wrong: #f87171;
+    --wrong-glow: rgba(248, 113, 113, 0.25);
+    --text-primary: #f5f3ff;
+    --text-secondary: #8b80aa;
+    --border: #2d2545;
+    --option-bg: #14101e;
+    --option-border: #2a2240;
+    --gradient-start: #a78bfa;
+    --gradient-end: #fb923c;
+  }
+
+  html, body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    height: 100%; width: 100%;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 20% 15%, rgba(167, 139, 250, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 85%, rgba(251, 146, 60, 0.04) 0%, transparent 50%);
+    z-index: 0; pointer-events: none;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    max-width: 720px; width: 100%; height: 100vh;
+    margin: 0 auto; padding: 14px 16px 10px;
+    display: flex; flex-direction: column;
+  }
+
+  .start-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 1; text-align: center; animation: fadeUp 0.7s ease;
+  }
+  .start-screen .icon { font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 0 24px var(--accent-glow)); }
+  .start-screen h1 {
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.2rem;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px; max-width: 580px; line-height: 1.4;
+  }
+  .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 490px; }
+  .badge-row { display: flex; gap: 10px; margin: 14px 0 24px; flex-wrap: wrap; justify-content: center; }
+  .badge {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px;
+    padding: 5px 14px; font-size: 0.78rem; font-weight: 700; color: var(--accent);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gradient-start), #8b5cf6);
+    color: #0e0c15; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
+    border: none; border-radius: 12px; padding: 13px 40px; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 24px var(--accent-glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 32px var(--accent-glow); }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-sm { padding: 10px 28px; font-size: 0.9rem; }
+
+  .btn-secondary {
+    background: var(--bg-card); border: 2px solid var(--accent);
+    color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem;
+    border-radius: 12px; padding: 10px 28px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(167, 139, 250, 0.1); }
+
+  .progress-wrapper { flex-shrink: 0; margin-bottom: 10px; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .progress-header span { font-weight: 700; font-size: 0.8rem; color: var(--text-secondary); }
+  .progress-header .q-count { color: var(--accent); font-family: 'Space Mono', monospace; font-size: 0.88rem; }
+  .progress-track {
+    width: 100%; height: 7px; background: var(--bg-card); border-radius: 100px;
+    overflow: hidden; border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    border-radius: 100px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .live-score {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px;
+    padding: 3px 12px; font-weight: 700; font-size: 0.78rem;
+  }
+  .live-score .correct-count { color: var(--accent); }
+  .live-score .wrong-count { color: var(--wrong); }
+
+  .question-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 18px 20px; animation: fadeUp 0.4s ease; position: relative;
+    overflow-y: auto; flex: 1; display: flex; flex-direction: column;
+  }
+  .question-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  }
+  .q-type-badge {
+    display: inline-block; background: rgba(251, 146, 60, 0.12); color: #fdba74;
+    font-size: 0.68rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 5px; margin-bottom: 8px; flex-shrink: 0;
+  }
+  .question-text { font-size: 1.05rem; font-weight: 700; line-height: 1.45; margin-bottom: 14px; flex-shrink: 0; }
+
+  .options-list { display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
+
+  .option-btn {
+    width: 100%; text-align: left; background: var(--option-bg); border: 2px solid var(--option-border);
+    border-radius: 11px; padding: 10px 14px; font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem; font-weight: 600; color: var(--text-primary); cursor: pointer;
+    transition: all 0.2s; display: flex; align-items: center; gap: 10px; position: relative;
+  }
+  .option-btn:hover:not(.disabled) {
+    background: var(--bg-card-hover); border-color: var(--accent);
+    transform: translateX(3px); box-shadow: 0 0 16px var(--accent-glow);
+  }
+  .option-letter {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.8rem; color: var(--text-secondary);
+    border: 1px solid var(--border); transition: all 0.2s;
+  }
+  .option-btn:hover:not(.disabled) .option-letter {
+    background: var(--accent); color: var(--bg-deep); border-color: var(--accent);
+  }
+  .option-btn.correct {
+    background: rgba(167, 139, 250, 0.12); border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow); animation: popIn 0.35s ease;
+  }
+  .option-btn.correct .option-letter { background: var(--accent); color: var(--bg-deep); border-color: var(--accent); }
+  .option-btn.correct .check-icon { display: block; }
+
+  .option-btn.wrong {
+    background: rgba(248, 113, 113, 0.12); border-color: var(--wrong);
+    box-shadow: 0 0 20px var(--wrong-glow); animation: shake 0.4s ease;
+  }
+  .option-btn.wrong .option-letter { background: var(--wrong); color: #fff; border-color: var(--wrong); }
+  .option-btn.wrong .x-icon { display: block; }
+
+  .option-btn.disabled { pointer-events: none; opacity: 0.5; }
+  .option-btn.correct.disabled { opacity: 1; }
+
+  .check-icon, .x-icon { display: none; position: absolute; right: 14px; font-size: 1.1rem; font-weight: 900; }
+  .check-icon { color: var(--accent); }
+  .x-icon { color: var(--wrong); }
+
+  .feedback-box {
+    margin-top: 10px; padding: 9px 12px; border-radius: 10px;
+    font-weight: 600; font-size: 0.82rem; line-height: 1.4;
+    animation: fadeUp 0.3s ease; display: flex; align-items: flex-start; gap: 10px;
+    flex-shrink: 0;
+  }
+  .feedback-box.correct-fb { background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.3); }
+  .feedback-box.wrong-fb { background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.3); }
+  .feedback-box .fb-icon { font-size: 1rem; flex-shrink: 0; }
+
+  .next-btn-wrap { margin-top: 10px; display: flex; justify-content: flex-end; flex-shrink: 0; }
+
+  .results-screen {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; animation: fadeUp 0.6s ease;
+    overflow: hidden;
+  }
+  .results-top { flex-shrink: 0; }
+  .results-screen .icon { font-size: 52px; margin-bottom: 6px; }
+  .results-screen h2 {
+    font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; margin-bottom: 2px;
+  }
+  .score-display {
+    font-size: 3.2rem; font-weight: 900; margin: 10px 0;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .score-subtitle { color: var(--text-secondary); font-weight: 600; margin-bottom: 18px; font-size: 0.92rem; }
+  .results-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+
+  .review-section {
+    width: 100%; max-width: 720px; flex: 1; overflow-y: auto;
+    text-align: left; min-height: 0;
+  }
+  .review-section h3 {
+    font-size: 0.9rem; font-weight: 800; margin-bottom: 10px;
+    color: var(--text-secondary); letter-spacing: 0.5px;
+    position: sticky; top: 0; background: var(--bg-deep); padding: 4px 0 6px; z-index: 2;
+  }
+  .review-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 8px;
+  }
+  .review-card .rv-q { font-weight: 700; font-size: 0.86rem; margin-bottom: 5px; }
+  .review-card .rv-status { font-weight: 800; font-size: 0.72rem; margin-bottom: 3px; letter-spacing: 0.5px; }
+  .review-card .rv-status.rv-correct { color: var(--accent); }
+  .review-card .rv-status.rv-wrong { color: var(--wrong); }
+  .review-card .rv-answer { font-weight: 600; color: var(--text-secondary); font-size: 0.82rem; }
+  .review-card .rv-answer strong { color: var(--accent); }
+  .review-card .rv-explain { margin-top: 4px; font-size: 0.78rem; color: var(--text-secondary); font-weight: 600; }
+
+  .timer-bar {
+    display: flex; align-items: center; gap: 5px; font-weight: 700; font-size: 0.8rem; color: var(--text-secondary);
+  }
+  .timer-bar .time { font-family: 'Space Mono', monospace; color: var(--text-primary); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes popIn { 0% { transform: scale(0.96); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+
+  .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+  .confetti-piece {
+    position: absolute; width: 10px; height: 10px; border-radius: 2px; opacity: 0;
+    animation: confettiFall 2.5s ease-out forwards;
+  }
+  @keyframes confettiFall {
+    0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.3); }
+  }
+
+  .question-card::-webkit-scrollbar, .review-section::-webkit-scrollbar { width: 5px; }
+  .question-card::-webkit-scrollbar-track, .review-section::-webkit-scrollbar-track { background: transparent; }
+  .question-card::-webkit-scrollbar-thumb, .review-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  @media (max-width: 600px) {
+    .start-screen h1 { font-size: 1.05rem; }
+    .question-text { font-size: 0.93rem; }
+    .option-btn { padding: 8px 11px; font-size: 0.83rem; }
+    .option-letter { width: 24px; height: 24px; font-size: 0.73rem; }
+    .score-display { font-size: 2.6rem; }
+    .app { padding: 10px 10px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    type: "mcq",
+    question: "What is the main difference between ethics and law in healthcare?",
+    options: ["Ethics are based on religion; laws are not", "Laws guide personal behavior; ethics guide legal decisions", "Ethics guide what is right or wrong; laws define what is legal or illegal", "Ethics only apply to physicians"],
+    correct: 2,
+    explanation: "Ethics address moral principles of right and wrong conduct, while laws are formal rules enacted by government that define what is legal or illegal. Both guide healthcare behavior but from different foundations."
+  },
+  {
+    type: "tf",
+    question: "Ethical conflicts in healthcare often involve competing values.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — ethical dilemmas arise when two or more valid principles conflict, such as patient autonomy vs. beneficence, requiring careful consideration to determine the best course of action."
+  },
+  {
+    type: "tf",
+    question: "HIPAA allows for casual discussions of patient cases in public spaces.",
+    options: ["True", "False"],
+    correct: 1,
+    explanation: "False — HIPAA strictly prohibits discussing patient information in public areas such as hallways, elevators, cafeterias, or social media. Patient information must only be shared in private, authorized settings."
+  },
+  {
+    type: "tf",
+    question: "Ethical drift refers to how professionals may slowly abandon ethical standards over time.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — ethical drift is the gradual erosion of ethical standards that occurs when small compromises accumulate over time, often without the professional realizing it."
+  },
+  {
+    type: "tf",
+    question: "The principle of justice means treating all patients fairly.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — justice in healthcare ethics means fair and equitable treatment of all patients regardless of race, gender, socioeconomic status, or personal beliefs."
+  },
+  {
+    type: "tf",
+    question: "Social media use by MAs is never related to ethical concerns.",
+    options: ["True", "False"],
+    correct: 1,
+    explanation: "False — social media poses significant ethical risks including inadvertent HIPAA violations, sharing identifiable patient information, or posting content that undermines professional credibility."
+  },
+  {
+    type: "tf",
+    question: "Reporting medical errors is both a legal and ethical responsibility.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — medical errors must be reported promptly. Legally, it protects the facility and ensures proper documentation. Ethically, it prioritizes patient safety and transparency."
+  },
+  {
+    type: "mcq",
+    question: "Which ethical principle means \"doing good\" for the patient?",
+    options: ["Nonmaleficence", "Beneficence", "Autonomy", "Justice"],
+    correct: 1,
+    explanation: "Beneficence means acting in the patient's best interest and doing good. Nonmaleficence means \"do no harm,\" autonomy respects patient decisions, and justice ensures fairness."
+  },
+  {
+    type: "mcq",
+    question: "What does the principle of autonomy emphasize in patient care?",
+    options: ["Preventing lawsuits", "Ensuring provider control", "Respecting the patient's right to make decisions", "Limiting patient involvement in care"],
+    correct: 2,
+    explanation: "Autonomy recognizes and respects each patient's right to make informed decisions about their own healthcare, including the right to refuse treatment."
+  },
+  {
+    type: "mcq",
+    question: "Which government agency oversees workplace safety in healthcare settings?",
+    options: ["CDC", "OSHA", "CMS", "DEA"],
+    correct: 1,
+    explanation: "OSHA (Occupational Safety and Health Administration) sets and enforces workplace safety standards, including bloodborne pathogen protocols, hazard communication, and PPE requirements in healthcare."
+  },
+  {
+    type: "mcq",
+    question: "What is an example of professional ethics in a clinical setting?",
+    options: ["Offering personal opinions about a patient's choices", "Maintaining patient confidentiality even outside the clinic", "Sharing patient stories to entertain friends", "Prioritizing personal beliefs over patient needs"],
+    correct: 1,
+    explanation: "Professional ethics require maintaining patient confidentiality at all times — including outside the workplace. Sharing patient information in any non-authorized setting is a violation."
+  },
+  {
+    type: "mcq",
+    question: "What is the purpose of the NHA Code of Ethics?",
+    options: ["To enforce legal action against MAs", "To standardize ethical behavior among medical assistants", "To limit patient choices", "To simplify clinical documentation"],
+    correct: 1,
+    explanation: "The NHA Code of Ethics provides a framework of professional standards that guide medical assistants in ethical decision-making, conduct, and patient care practices."
+  },
+  {
+    type: "mcq",
+    question: "What should an MA do upon witnessing a legal or ethical violation?",
+    options: ["Ignore it unless a supervisor notices", "Report it professionally and promptly", "Post about it anonymously online", "Confront the person publicly"],
+    correct: 1,
+    explanation: "MAs have a professional duty to report violations through proper channels — promptly and professionally — to protect patients and maintain facility integrity."
+  },
+  {
+    type: "mcq",
+    question: "Which of the following is a legal duty related to patient rights?",
+    options: ["Asking patients to waive their confidentiality rights", "Refusing to treat patients with controversial views", "Ensuring informed consent before procedures", "Telling patients they cannot refuse treatment"],
+    correct: 2,
+    explanation: "Informed consent is both a legal requirement and an ethical obligation — patients must understand and agree to procedures before they are performed."
+  },
+  {
+    type: "tf",
+    question: "Healthcare compliance is optional for medical assistants.",
+    options: ["True", "False"],
+    correct: 1,
+    explanation: "False — healthcare compliance (HIPAA, OSHA, facility policies) is mandatory for all healthcare workers, including medical assistants. Non-compliance can result in disciplinary action or legal consequences."
+  }
+];
+
+let state = {
+  screen: 'start', currentQ: 0, answers: [], correctCount: 0, wrongCount: 0,
+  answered: false, selectedIdx: null, shuffledQuestions: [],
+  timer: 0, timerInterval: null, showReview: false,
+};
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  state.shuffledQuestions = shuffleArray(QUESTIONS.map((q, i) => ({ ...q, origIdx: i })));
+  state.currentQ = 0; state.answers = []; state.correctCount = 0; state.wrongCount = 0;
+  state.answered = false; state.selectedIdx = null; state.screen = 'quiz';
+  state.timer = 0; state.showReview = false;
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(() => { state.timer++; updateTimer(); }, 1000);
+  render();
+}
+
+function formatTime(s) { return Math.floor(s/60) + ':' + (s%60).toString().padStart(2,'0'); }
+
+function updateTimer() {
+  const el = document.getElementById('timer-time');
+  if (el) el.textContent = formatTime(state.timer);
+}
+
+function selectAnswer(idx) {
+  if (state.answered) return;
+  state.answered = true; state.selectedIdx = idx;
+  const q = state.shuffledQuestions[state.currentQ];
+  const isCorrect = idx === q.correct;
+  if (isCorrect) state.correctCount++; else state.wrongCount++;
+  state.answers.push({ qIdx: q.origIdx, selected: idx, correct: isCorrect });
+  render();
+}
+
+function nextQuestion() {
+  if (state.currentQ < state.shuffledQuestions.length - 1) {
+    state.currentQ++; state.answered = false; state.selectedIdx = null; render();
+  } else { clearInterval(state.timerInterval); state.screen = 'results'; render(); }
+}
+
+function showResults() { clearInterval(state.timerInterval); state.screen = 'results'; render(); }
+
+function spawnConfetti() {
+  const c = document.createElement('div'); c.className = 'confetti-container'; document.body.appendChild(c);
+  const colors = ['#a78bfa','#fb923c','#22d3ee','#4ade80','#f472b6','#facc15'];
+  for (let i = 0; i < 50; i++) {
+    const p = document.createElement('div'); p.className = 'confetti-piece';
+    p.style.left = Math.random()*100+'%'; p.style.top = '-10px';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay = Math.random()*1.2+'s';
+    p.style.animationDuration = (1.8+Math.random()*1.5)+'s';
+    p.style.width = (6+Math.random()*8)+'px'; p.style.height = (6+Math.random()*8)+'px';
+    c.appendChild(p);
+  }
+  setTimeout(() => c.remove(), 4000);
+}
+
+function getGrade(pct) {
+  if (pct === 100) return { emoji:'🏆', msg:'PERFECT SCORE!', sub:'Flawless — you nailed every question!' };
+  if (pct >= 80) return { emoji:'🌟', msg:'EXCELLENT!', sub:'Outstanding — you\'re well prepared!' };
+  if (pct >= 60) return { emoji:'👍', msg:'GOOD JOB!', sub:'Solid work — review what you missed.' };
+  if (pct >= 40) return { emoji:'📖', msg:'KEEP STUDYING', sub:'Getting there — check the explanations.' };
+  return { emoji:'💪', msg:'DON\'T GIVE UP', sub:'Review and retry — you\'ve got this!' };
+}
+
+function render() {
+  const app = document.getElementById('app');
+
+  if (state.screen === 'start') {
+    app.innerHTML = `
+      <div class="start-screen">
+        <div class="icon">⚖️</div>
+        <h1>Legal and Ethical Responsibilities in Medicine</h1>
+        <p>Practice questions on bioethics principles, HIPAA, OSHA, NHA Code of Ethics, informed consent, compliance, and professional conduct.</p>
+        <div class="badge-row">
+          <span class="badge">📋 15 Questions</span>
+          <span class="badge">🔀 Shuffled</span>
+          <span class="badge">⏱ Timed</span>
+        </div>
+        <button class="btn-primary" onclick="startQuiz()">Start Quiz →</button>
+      </div>`;
+    return;
+  }
+
+  if (state.screen === 'quiz') {
+    const q = state.shuffledQuestions[state.currentQ];
+    const total = state.shuffledQuestions.length;
+    const pct = ((state.currentQ + (state.answered ? 1 : 0)) / total * 100);
+    const letters = ['A','B','C','D'];
+    const typeBadge = q.type === 'tf' ? 'TRUE / FALSE' : 'MULTIPLE CHOICE';
+
+    let optionsHTML = q.options.map((opt, i) => {
+      let cls = 'option-btn';
+      if (state.answered) {
+        if (i === q.correct) cls += ' correct';
+        else if (i === state.selectedIdx && i !== q.correct) cls += ' wrong';
+        if (i !== q.correct && i !== state.selectedIdx) cls += ' disabled';
+      }
+      return `<button class="${cls}" onclick="selectAnswer(${i})">
+        <span class="option-letter">${letters[i]}</span>
+        <span>${opt}</span>
+        <span class="check-icon">✓</span>
+        <span class="x-icon">✗</span>
+      </button>`;
+    }).join('');
+
+    let feedbackHTML = '';
+    if (state.answered) {
+      const isCorrect = state.selectedIdx === q.correct;
+      feedbackHTML = `
+        <div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
+          <span class="fb-icon">${isCorrect ? '✅' : '❌'}</span>
+          <div>
+            <strong style="font-size:0.85rem;">${isCorrect ? 'Correct!' : 'Incorrect — Answer: ' + q.options[q.correct]}</strong><br>
+            <span style="color:var(--text-secondary);font-size:0.8rem;">${q.explanation}</span>
+          </div>
+        </div>
+        <div class="next-btn-wrap">
+          <button class="btn-primary btn-sm" onclick="${state.currentQ < total - 1 ? 'nextQuestion()' : 'showResults()'}">
+            ${state.currentQ < total - 1 ? 'Next →' : 'Results →'}
+          </button>
+        </div>`;
+    }
+
+    app.innerHTML = `
+      <div class="progress-wrapper">
+        <div class="progress-header">
+          <div class="timer-bar">⏱ <span class="time" id="timer-time">${formatTime(state.timer)}</span></div>
+          <span class="q-count">Q${state.currentQ + 1}/${total}</span>
+          <div class="live-score">
+            <span class="correct-count">✓ ${state.correctCount}</span>
+            <span style="color:var(--border)">|</span>
+            <span class="wrong-count">✗ ${state.wrongCount}</span>
+          </div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="question-card">
+        <span class="q-type-badge">${typeBadge}</span>
+        <div class="question-text">${q.question}</div>
+        <div class="options-list">${optionsHTML}</div>
+        ${feedbackHTML}
+      </div>`;
+    return;
+  }
+
+  if (state.screen === 'results') {
+    const total = QUESTIONS.length;
+    const pct = Math.round(state.correctCount / total * 100);
+    const grade = getGrade(pct);
+
+    let reviewHTML = state.answers.map(a => {
+      const q = QUESTIONS[a.qIdx];
+      return `<div class="review-card">
+        <div class="rv-status ${a.correct ? 'rv-correct' : 'rv-wrong'}">${a.correct ? '✓ CORRECT' : '✗ INCORRECT'}</div>
+        <div class="rv-q">${q.question}</div>
+        <div class="rv-answer">${a.correct ? '' : 'Your answer: <span style="color:var(--wrong)">' + q.options[a.selected] + '</span><br>'}Correct: <strong>${q.options[q.correct]}</strong></div>
+        <div class="rv-explain">${q.explanation}</div>
+      </div>`;
+    }).join('');
+
+    app.innerHTML = `
+      <div class="results-screen">
+        <div class="results-top">
+          <div class="icon">${grade.emoji}</div>
+          <h2>${grade.msg}</h2>
+          <div class="score-display">${pct}%</div>
+          <div class="score-subtitle">${state.correctCount}/${total} correct · ${formatTime(state.timer)}</div>
+          <div class="results-actions">
+            <button class="btn-primary btn-sm" onclick="startQuiz()">🔄 Retake</button>
+            <button class="btn-secondary" onclick="toggleReview()">📋 ${state.showReview ? 'Hide' : 'Review'}</button>
+          </div>
+        </div>
+        <div class="review-section" id="review-section" style="display:${state.showReview ? 'flex' : 'none'}; flex-direction:column;">
+          <h3>📝 ANSWER REVIEW</h3>
+          ${reviewHTML}
+        </div>
+      </div>`;
+
+    if (pct >= 80) setTimeout(spawnConfetti, 300);
+  }
+}
+
+function toggleReview() {
+  state.showReview = !state.showReview;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

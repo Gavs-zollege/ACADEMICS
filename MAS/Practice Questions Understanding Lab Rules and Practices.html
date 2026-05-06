@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Questions: Practical Skills: Minor Surgical Assistance</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--bg-deep:#090e12;--bg-card:#111a22;--bg-card-hover:#192630;--accent:#06b6d4;--accent-glow:rgba(6,182,212,0.22);--wrong:#fb7185;--wrong-glow:rgba(251,113,133,0.25);--text-primary:#ecfeff;--text-secondary:#6b9aad;--border:#162a38;--option-bg:#0d151c;--option-border:#1a3040;--gradient-start:#06b6d4;--gradient-end:#8b5cf6}
+  html,body{font-family:'Outfit',sans-serif;background:var(--bg-deep);color:var(--text-primary);height:100%;width:100%;overflow:hidden}
+  body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 15%,rgba(6,182,212,0.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 85%,rgba(139,92,246,0.04) 0%,transparent 50%);z-index:0;pointer-events:none}
+  .app{position:relative;z-index:1;max-width:720px;width:100%;height:100vh;margin:0 auto;padding:14px 16px 10px;display:flex;flex-direction:column}
+
+  .start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;animation:fadeUp .7s ease}
+  .start-screen .icon{font-size:52px;margin-bottom:12px;filter:drop-shadow(0 0 24px var(--accent-glow))}
+  .start-screen h1{font-family:'Space Mono',monospace;font-weight:700;font-size:1.2rem;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;max-width:580px;line-height:1.4}
+  .start-screen p{color:var(--text-secondary);font-size:.92rem;font-weight:600;margin-bottom:6px;max-width:490px}
+  .badge-row{display:flex;gap:10px;margin:14px 0 24px;flex-wrap:wrap;justify-content:center}
+  .badge{background:var(--bg-card);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:.78rem;font-weight:700;color:var(--accent)}
+
+  .btn-primary{background:linear-gradient(135deg,var(--gradient-start),#0891b2);color:#090e12;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;border:none;border-radius:12px;padding:13px 40px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 24px var(--accent-glow)}
+  .btn-primary:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 32px var(--accent-glow)}
+  .btn-primary:active{transform:scale(.97)}
+  .btn-sm{padding:10px 28px;font-size:.9rem}
+  .btn-secondary{background:var(--bg-card);border:2px solid var(--accent);color:var(--accent);font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem;border-radius:12px;padding:10px 28px;cursor:pointer;transition:all .2s}
+  .btn-secondary:hover{background:rgba(6,182,212,.1)}
+
+  .progress-wrapper{flex-shrink:0;margin-bottom:10px}
+  .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+  .progress-header span{font-weight:700;font-size:.8rem;color:var(--text-secondary)}
+  .progress-header .q-count{color:var(--accent);font-family:'Space Mono',monospace;font-size:.88rem}
+  .progress-track{width:100%;height:7px;background:var(--bg-card);border-radius:100px;overflow:hidden;border:1px solid var(--border)}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--gradient-start),var(--gradient-end));border-radius:100px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+  .live-score{display:inline-flex;align-items:center;gap:5px;background:var(--bg-card);border:1px solid var(--border);border-radius:100px;padding:3px 12px;font-weight:700;font-size:.78rem}
+  .live-score .correct-count{color:var(--accent)}
+  .live-score .wrong-count{color:var(--wrong)}
+
+  .question-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;animation:fadeUp .4s ease;position:relative;overflow-y:auto;flex:1;display:flex;flex-direction:column}
+  .question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gradient-start),var(--gradient-end))}
+  .q-type-badge{display:inline-block;background:rgba(139,92,246,.12);color:#c4b5fd;font-size:.68rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;padding:3px 10px;border-radius:5px;margin-bottom:8px;flex-shrink:0}
+  .question-text{font-size:1.05rem;font-weight:700;line-height:1.45;margin-bottom:14px;flex-shrink:0}
+
+  .options-list{display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+  .option-btn{width:100%;text-align:left;background:var(--option-bg);border:2px solid var(--option-border);border-radius:11px;padding:10px 14px;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;color:var(--text-primary);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;position:relative}
+  .option-btn:hover:not(.disabled){background:var(--bg-card-hover);border-color:var(--accent);transform:translateX(3px);box-shadow:0 0 16px var(--accent-glow)}
+  .option-letter{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:var(--text-secondary);border:1px solid var(--border);transition:all .2s}
+  .option-btn:hover:not(.disabled) .option-letter{background:var(--accent);color:var(--bg-deep);border-color:var(--accent)}
+  .option-btn.correct{background:rgba(6,182,212,.12);border-color:var(--accent);box-shadow:0 0 20px var(--accent-glow);animation:popIn .35s ease}
+  .option-btn.correct .option-letter{background:var(--accent);color:var(--bg-deep);border-color:var(--accent)}
+  .option-btn.correct .check-icon{display:block}
+  .option-btn.wrong{background:rgba(251,113,133,.12);border-color:var(--wrong);box-shadow:0 0 20px var(--wrong-glow);animation:shake .4s ease}
+  .option-btn.wrong .option-letter{background:var(--wrong);color:#fff;border-color:var(--wrong)}
+  .option-btn.wrong .x-icon{display:block}
+  .option-btn.disabled{pointer-events:none;opacity:.5}
+  .option-btn.correct.disabled{opacity:1}
+  .check-icon,.x-icon{display:none;position:absolute;right:14px;font-size:1.1rem;font-weight:900}
+  .check-icon{color:var(--accent)}
+  .x-icon{color:var(--wrong)}
+
+  .feedback-box{margin-top:10px;padding:9px 12px;border-radius:10px;font-weight:600;font-size:.82rem;line-height:1.4;animation:fadeUp .3s ease;display:flex;align-items:flex-start;gap:10px;flex-shrink:0}
+  .feedback-box.correct-fb{background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.3)}
+  .feedback-box.wrong-fb{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3)}
+  .feedback-box .fb-icon{font-size:1rem;flex-shrink:0}
+  .next-btn-wrap{margin-top:10px;display:flex;justify-content:flex-end;flex-shrink:0}
+
+  .results-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:fadeUp .6s ease;overflow:hidden}
+  .results-top{flex-shrink:0}
+  .results-screen .icon{font-size:52px;margin-bottom:6px}
+  .results-screen h2{font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;margin-bottom:2px}
+  .score-display{font-size:3.2rem;font-weight:900;margin:10px 0;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .score-subtitle{color:var(--text-secondary);font-weight:600;margin-bottom:18px;font-size:.92rem}
+  .results-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+
+  .review-section{width:100%;max-width:720px;flex:1;overflow-y:auto;text-align:left;min-height:0}
+  .review-section h3{font-size:.9rem;font-weight:800;margin-bottom:10px;color:var(--text-secondary);position:sticky;top:0;background:var(--bg-deep);padding:4px 0 6px;z-index:2}
+  .review-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .review-card .rv-q{font-weight:700;font-size:.86rem;margin-bottom:5px}
+  .review-card .rv-status{font-weight:800;font-size:.72rem;margin-bottom:3px}
+  .review-card .rv-status.rv-correct{color:var(--accent)}
+  .review-card .rv-status.rv-wrong{color:var(--wrong)}
+  .review-card .rv-answer{font-weight:600;color:var(--text-secondary);font-size:.82rem}
+  .review-card .rv-answer strong{color:var(--accent)}
+  .review-card .rv-explain{margin-top:4px;font-size:.78rem;color:var(--text-secondary);font-weight:600}
+
+  .timer-bar{display:flex;align-items:center;gap:5px;font-weight:700;font-size:.8rem;color:var(--text-secondary)}
+  .timer-bar .time{font-family:'Space Mono',monospace;color:var(--text-primary)}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes popIn{0%{transform:scale(.96)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+  .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+  .confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;opacity:0;animation:confettiFall 2.5s ease-out forwards}
+  @keyframes confettiFall{0%{opacity:1;transform:translateY(-20px) rotate(0) scale(1)}100%{opacity:0;transform:translateY(100vh) rotate(720deg) scale(.3)}}
+  .question-card::-webkit-scrollbar,.review-section::-webkit-scrollbar{width:5px}
+  .question-card::-webkit-scrollbar-track,.review-section::-webkit-scrollbar-track{background:transparent}
+  .question-card::-webkit-scrollbar-thumb,.review-section::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+  @media(max-width:600px){.start-screen h1{font-size:1.05rem}.question-text{font-size:.93rem}.option-btn{padding:8px 11px;font-size:.83rem}.option-letter{width:24px;height:24px;font-size:.73rem}.score-display{font-size:2.6rem}.app{padding:10px 10px 6px}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+const QUESTIONS=[
+  {question:"Which of the following is considered a minor surgical procedure?",options:["Open-heart surgery","Skin lesion removal","Kidney transplant","Appendectomy"],correct:1,explanation:"Minor surgeries are superficial, low-risk procedures such as skin lesion removal, mole excision, or I&D of abscesses — performed under local anesthesia in an outpatient setting."},
+  {question:"What is the primary purpose of a hemostat?",options:["Cut tissue","Hold dressings","Clamp blood vessels","Remove sutures"],correct:2,explanation:"Hemostats are locking clamps used to compress blood vessels and control bleeding during surgical procedures."},
+  {question:"What must be confirmed before a procedure begins?",options:["Lunch breaks","Consent and patient identity","The room temperature","Patient's insurance provider"],correct:1,explanation:"Verifying patient identity (two identifiers) and obtaining signed informed consent are mandatory safety steps before any procedure."},
+  {question:"What should the MA do if a sterile field is contaminated?",options:["Ignore it","Tell the patient","Recreate the sterile field","Ask the provider to continue"],correct:2,explanation:"Any contamination — even suspected — requires discarding the compromised field and setting up a completely new sterile field to prevent infection."},
+  {question:"Which instrument is used to suture wounds?",options:["Forceps","Needle holder","Retractor","Hemostat"],correct:1,explanation:"A needle holder (needle driver) securely grips the curved suturing needle, allowing the provider to pass it through tissue with precision."},
+  {question:"What is the most appropriate way to open a sterile pack?",options:["Tear it from the bottom","Touch the inside with bare hands","Pull edges without touching the inside","Ask the patient to open it"],correct:2,explanation:"Open sterile packs by pulling the outer edges apart without touching the sterile inner contents. The inside of the wrapper becomes the sterile field."},
+  {question:"A local anesthetic is used to:",options:["Relax the patient","Stop systemic infection","Prevent pain in a small area","Put the patient to sleep"],correct:2,explanation:"Local anesthetics (like lidocaine) numb a specific, targeted area to prevent pain during minor procedures without affecting consciousness."},
+  {question:"Which of the following should go in a sharps container?",options:["Gauze","Scalpel blade","Gloves","Alcohol wipe"],correct:1,explanation:"Scalpel blades, needles, and any sharp instruments that can puncture skin must be disposed of in puncture-resistant sharps containers — never in regular trash."},
+  {question:"After surgery, an MA must always:",options:["Leave instruments in the sink","Apply a sterile dressing","Remove the sutures","Take the patient home"],correct:1,explanation:"Applying a sterile dressing protects the wound from contamination post-procedure. The MA also provides wound care instructions to the patient."},
+  {question:'The term "aseptic" means:',options:["Not clean","Germ-free","Slightly dirty","Contagious"],correct:1,explanation:"Aseptic means free from disease-causing microorganisms. Aseptic technique is used during surgical procedures to maintain a sterile environment and prevent infection."},
+  {question:"Which of these is outside the scope of an MA?",options:["Handing instruments","Educating patients","Suturing a wound","Taking vital signs"],correct:2,explanation:"Suturing is a provider-level skill outside the MA's scope of practice. MAs assist by preparing instruments, handing supplies, and documenting — but never suture."},
+  {question:"Why is informed consent important?",options:["It ensures the office gets paid","It allows the patient to refuse","It's only needed for insurance","It's not required for minor surgeries"],correct:1,explanation:"Informed consent is a legal and ethical requirement — it ensures the patient understands the procedure, risks, benefits, and alternatives, and grants them the right to refuse."},
+  {question:"What is the most common sign of wound infection?",options:["Pale skin","Cool temperature","Redness and swelling","Hair loss"],correct:2,explanation:"Redness, swelling, warmth, pain, and purulent drainage are classic signs of wound infection that should be reported to the provider promptly."},
+  {question:"What is a retractor used for?",options:["Cut sutures","Hold tissue back","Inject medication","Sterilize instruments"],correct:1,explanation:"Retractors hold back tissue and skin edges to improve the provider's visibility and access to the surgical site during a procedure."},
+  {question:"If a patient becomes dizzy during a procedure, you should:",options:["Tell them to relax","Report it to the provider immediately","Leave the room","Turn off the lights"],correct:1,explanation:"Dizziness during a procedure may indicate a vasovagal response, bleeding, or adverse reaction — notify the provider immediately and monitor the patient's vitals."}
+];
+
+let state={screen:'start',currentQ:0,answers:[],correctCount:0,wrongCount:0,answered:false,selectedIdx:null,shuffledQuestions:[],timer:0,timerInterval:null,showReview:false};
+
+function shuffleArray(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function startQuiz(){state.shuffledQuestions=shuffleArray(QUESTIONS.map((q,i)=>({...q,origIdx:i})));state.currentQ=0;state.answers=[];state.correctCount=0;state.wrongCount=0;state.answered=false;state.selectedIdx=null;state.screen='quiz';state.timer=0;state.showReview=false;clearInterval(state.timerInterval);state.timerInterval=setInterval(()=>{state.timer++;updateTimer();},1000);render();}
+function formatTime(s){return Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0');}
+function updateTimer(){const el=document.getElementById('timer-time');if(el)el.textContent=formatTime(state.timer);}
+function selectAnswer(idx){if(state.answered)return;state.answered=true;state.selectedIdx=idx;const q=state.shuffledQuestions[state.currentQ];const ok=idx===q.correct;if(ok)state.correctCount++;else state.wrongCount++;state.answers.push({qIdx:q.origIdx,selected:idx,correct:ok});render();}
+function nextQuestion(){if(state.currentQ<state.shuffledQuestions.length-1){state.currentQ++;state.answered=false;state.selectedIdx=null;render();}else{clearInterval(state.timerInterval);state.screen='results';render();}}
+function showResults(){clearInterval(state.timerInterval);state.screen='results';render();}
+function spawnConfetti(){const c=document.createElement('div');c.className='confetti-container';document.body.appendChild(c);const cols=['#06b6d4','#8b5cf6','#fbbf24','#4ade80','#f472b6','#fb923c'];for(let i=0;i<50;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.left=Math.random()*100+'%';p.style.top='-10px';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.animationDelay=Math.random()*1.2+'s';p.style.animationDuration=(1.8+Math.random()*1.5)+'s';p.style.width=(6+Math.random()*8)+'px';p.style.height=(6+Math.random()*8)+'px';c.appendChild(p);}setTimeout(()=>c.remove(),4000);}
+function getGrade(p){if(p===100)return{emoji:'🏆',msg:'PERFECT SCORE!',sub:'Flawless — every question!'};if(p>=80)return{emoji:'🌟',msg:'EXCELLENT!',sub:'Outstanding — well prepared!'};if(p>=60)return{emoji:'👍',msg:'GOOD JOB!',sub:'Solid — review what you missed.'};if(p>=40)return{emoji:'📖',msg:'KEEP STUDYING',sub:'Getting there — check explanations.'};return{emoji:'💪',msg:"DON'T GIVE UP",sub:'Review and retry!'};}
+
+function render(){
+  const app=document.getElementById('app');
+  if(state.screen==='start'){app.innerHTML=`<div class="start-screen"><div class="icon">🔪</div><h1>Practical Skills: Minor Surgical Assistance</h1><p>Practice questions on sterile technique, surgical instruments, informed consent, wound care, sharps safety, and the MA's role in minor procedures.</p><div class="badge-row"><span class="badge">📋 15 Questions</span><span class="badge">🔀 Shuffled</span><span class="badge">⏱ Timed</span></div><button class="btn-primary" onclick="startQuiz()">Start Quiz →</button></div>`;return;}
+
+  if(state.screen==='quiz'){
+    const q=state.shuffledQuestions[state.currentQ],total=state.shuffledQuestions.length;
+    const pct=((state.currentQ+(state.answered?1:0))/total*100);
+    const L=['A','B','C','D'];
+    let opts=q.options.map((o,i)=>{let c='option-btn';if(state.answered){if(i===q.correct)c+=' correct';else if(i===state.selectedIdx&&i!==q.correct)c+=' wrong';if(i!==q.correct&&i!==state.selectedIdx)c+=' disabled';}return`<button class="${c}" onclick="selectAnswer(${i})"><span class="option-letter">${L[i]}</span><span>${o}</span><span class="check-icon">✓</span><span class="x-icon">✗</span></button>`;}).join('');
+    let fb='';if(state.answered){const ok=state.selectedIdx===q.correct;fb=`<div class="feedback-box ${ok?'correct-fb':'wrong-fb'}"><span class="fb-icon">${ok?'✅':'❌'}</span><div><strong style="font-size:.85rem;">${ok?'Correct!':'Incorrect — Answer: '+q.options[q.correct]}</strong><br><span style="color:var(--text-secondary);font-size:.8rem;">${q.explanation}</span></div></div><div class="next-btn-wrap"><button class="btn-primary btn-sm" onclick="${state.currentQ<total-1?'nextQuestion()':'showResults()'}">${state.currentQ<total-1?'Next →':'Results →'}</button></div>`;}
+    app.innerHTML=`<div class="progress-wrapper"><div class="progress-header"><div class="timer-bar">⏱ <span class="time" id="timer-time">${formatTime(state.timer)}</span></div><span class="q-count">Q${state.currentQ+1}/${total}</span><div class="live-score"><span class="correct-count">✓ ${state.correctCount}</span><span style="color:var(--border)">|</span><span class="wrong-count">✗ ${state.wrongCount}</span></div></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div><div class="question-card"><span class="q-type-badge">MULTIPLE CHOICE</span><div class="question-text">${q.question}</div><div class="options-list">${opts}</div>${fb}</div>`;return;
+  }
+
+  if(state.screen==='results'){
+    const total=QUESTIONS.length,pct=Math.round(state.correctCount/total*100),grade=getGrade(pct);
+    let rev=state.answers.map(a=>{const q=QUESTIONS[a.qIdx];return`<div class="review-card"><div class="rv-status ${a.correct?'rv-correct':'rv-wrong'}">${a.correct?'✓ CORRECT':'✗ INCORRECT'}</div><div class="rv-q">${q.question}</div><div class="rv-answer">${a.correct?'':`Your answer: <span style="color:var(--wrong)">${q.options[a.selected]}</span><br>`}Correct: <strong>${q.options[q.correct]}</strong></div><div class="rv-explain">${q.explanation}</div></div>`;}).join('');
+    app.innerHTML=`<div class="results-screen"><div class="results-top"><div class="icon">${grade.emoji}</div><h2>${grade.msg}</h2><div class="score-display">${pct}%</div><div class="score-subtitle">${state.correctCount}/${total} correct · ${formatTime(state.timer)}</div><div class="results-actions"><button class="btn-primary btn-sm" onclick="startQuiz()">🔄 Retake</button><button class="btn-secondary" onclick="toggleReview()">📋 ${state.showReview?'Hide':'Review'}</button></div></div><div class="review-section" id="review-section" style="display:${state.showReview?'flex':'none'};flex-direction:column;"><h3>📝 ANSWER REVIEW</h3>${rev}</div></div>`;
+    if(pct>=80)setTimeout(spawnConfetti,300);
+  }
+}
+function toggleReview(){state.showReview=!state.showReview;render();}
+render();
+</script>
+</body>
+</html>

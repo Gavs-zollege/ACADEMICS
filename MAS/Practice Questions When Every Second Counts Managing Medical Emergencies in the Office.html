@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Questions: Understanding Lab Rules and Practices</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--bg-deep:#080c18;--bg-card:#101828;--bg-card-hover:#182236;--accent:#3b82f6;--accent-glow:rgba(59,130,246,0.22);--wrong:#fb7185;--wrong-glow:rgba(251,113,133,0.25);--text-primary:#eff6ff;--text-secondary:#7092c0;--border:#1a2e4a;--option-bg:#0c1420;--option-border:#1c3250;--gradient-start:#3b82f6;--gradient-end:#f59e0b}
+  html,body{font-family:'Outfit',sans-serif;background:var(--bg-deep);color:var(--text-primary);height:100%;width:100%;overflow:hidden}
+  body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 20% 15%,rgba(59,130,246,0.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 85%,rgba(245,158,11,0.04) 0%,transparent 50%);z-index:0;pointer-events:none}
+  .app{position:relative;z-index:1;max-width:720px;width:100%;height:100vh;margin:0 auto;padding:14px 16px 10px;display:flex;flex-direction:column}
+
+  .start-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;animation:fadeUp .7s ease}
+  .start-screen .icon{font-size:52px;margin-bottom:12px;filter:drop-shadow(0 0 24px var(--accent-glow))}
+  .start-screen h1{font-family:'Space Mono',monospace;font-weight:700;font-size:1.25rem;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;max-width:560px;line-height:1.4}
+  .start-screen p{color:var(--text-secondary);font-size:.92rem;font-weight:600;margin-bottom:6px;max-width:490px}
+  .badge-row{display:flex;gap:10px;margin:14px 0 24px;flex-wrap:wrap;justify-content:center}
+  .badge{background:var(--bg-card);border:1px solid var(--border);border-radius:100px;padding:5px 14px;font-size:.78rem;font-weight:700;color:var(--accent)}
+
+  .btn-primary{background:linear-gradient(135deg,var(--gradient-start),#2563eb);color:#080c18;font-family:'Outfit',sans-serif;font-weight:800;font-size:1rem;border:none;border-radius:12px;padding:13px 40px;cursor:pointer;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 24px var(--accent-glow)}
+  .btn-primary:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 32px var(--accent-glow)}
+  .btn-primary:active{transform:scale(.97)}
+  .btn-sm{padding:10px 28px;font-size:.9rem}
+  .btn-secondary{background:var(--bg-card);border:2px solid var(--accent);color:var(--accent);font-family:'Outfit',sans-serif;font-weight:700;font-size:.9rem;border-radius:12px;padding:10px 28px;cursor:pointer;transition:all .2s}
+  .btn-secondary:hover{background:rgba(59,130,246,.1)}
+
+  .progress-wrapper{flex-shrink:0;margin-bottom:10px}
+  .progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+  .progress-header span{font-weight:700;font-size:.8rem;color:var(--text-secondary)}
+  .progress-header .q-count{color:var(--accent);font-family:'Space Mono',monospace;font-size:.88rem}
+  .progress-track{width:100%;height:7px;background:var(--bg-card);border-radius:100px;overflow:hidden;border:1px solid var(--border)}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--gradient-start),var(--gradient-end));border-radius:100px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+  .live-score{display:inline-flex;align-items:center;gap:5px;background:var(--bg-card);border:1px solid var(--border);border-radius:100px;padding:3px 12px;font-weight:700;font-size:.78rem}
+  .live-score .correct-count{color:var(--accent)}
+  .live-score .wrong-count{color:var(--wrong)}
+
+  .question-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;animation:fadeUp .4s ease;position:relative;overflow-y:auto;flex:1;display:flex;flex-direction:column}
+  .question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gradient-start),var(--gradient-end))}
+  .q-type-badge{display:inline-block;background:rgba(245,158,11,.12);color:#fde68a;font-size:.68rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;padding:3px 10px;border-radius:5px;margin-bottom:8px;flex-shrink:0}
+  .question-text{font-size:1.05rem;font-weight:700;line-height:1.45;margin-bottom:14px;flex-shrink:0}
+
+  .options-list{display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+  .option-btn{width:100%;text-align:left;background:var(--option-bg);border:2px solid var(--option-border);border-radius:11px;padding:10px 14px;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;color:var(--text-primary);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;position:relative}
+  .option-btn:hover:not(.disabled){background:var(--bg-card-hover);border-color:var(--accent);transform:translateX(3px);box-shadow:0 0 16px var(--accent-glow)}
+  .option-letter{flex-shrink:0;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;color:var(--text-secondary);border:1px solid var(--border);transition:all .2s}
+  .option-btn:hover:not(.disabled) .option-letter{background:var(--accent);color:var(--bg-deep);border-color:var(--accent)}
+  .option-btn.correct{background:rgba(59,130,246,.12);border-color:var(--accent);box-shadow:0 0 20px var(--accent-glow);animation:popIn .35s ease}
+  .option-btn.correct .option-letter{background:var(--accent);color:var(--bg-deep);border-color:var(--accent)}
+  .option-btn.correct .check-icon{display:block}
+  .option-btn.wrong{background:rgba(251,113,133,.12);border-color:var(--wrong);box-shadow:0 0 20px var(--wrong-glow);animation:shake .4s ease}
+  .option-btn.wrong .option-letter{background:var(--wrong);color:#fff;border-color:var(--wrong)}
+  .option-btn.wrong .x-icon{display:block}
+  .option-btn.disabled{pointer-events:none;opacity:.5}
+  .option-btn.correct.disabled{opacity:1}
+  .check-icon,.x-icon{display:none;position:absolute;right:14px;font-size:1.1rem;font-weight:900}
+  .check-icon{color:var(--accent)}
+  .x-icon{color:var(--wrong)}
+
+  .flashcard-input{width:100%;background:var(--option-bg);border:2px solid var(--option-border);border-radius:11px;padding:10px 14px;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;color:var(--text-primary);resize:none;min-height:55px;outline:none;transition:border-color .2s}
+  .flashcard-input:focus{border-color:var(--accent)}
+  .flashcard-input::placeholder{color:var(--text-secondary);font-weight:500}
+  .reveal-btn-wrap{margin-top:10px;display:flex;justify-content:center;flex-shrink:0}
+  .self-grade{display:flex;gap:8px;margin-top:8px;justify-content:center}
+  .self-grade button{font-family:'Outfit',sans-serif;font-weight:700;font-size:.82rem;border:none;border-radius:8px;padding:8px 20px;cursor:pointer;transition:all .2s}
+  .self-grade .grade-correct{background:var(--accent);color:#fff}
+  .self-grade .grade-wrong{background:var(--wrong);color:#fff}
+
+  .feedback-box{margin-top:10px;padding:9px 12px;border-radius:10px;font-weight:600;font-size:.82rem;line-height:1.4;animation:fadeUp .3s ease;display:flex;align-items:flex-start;gap:10px;flex-shrink:0}
+  .feedback-box.correct-fb{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3)}
+  .feedback-box.wrong-fb{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.3)}
+  .feedback-box.neutral-fb{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25)}
+  .feedback-box .fb-icon{font-size:1rem;flex-shrink:0}
+  .next-btn-wrap{margin-top:10px;display:flex;justify-content:flex-end;flex-shrink:0}
+
+  .results-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:fadeUp .6s ease;overflow:hidden}
+  .results-top{flex-shrink:0}
+  .results-screen .icon{font-size:52px;margin-bottom:6px}
+  .results-screen h2{font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;margin-bottom:2px}
+  .score-display{font-size:3.2rem;font-weight:900;margin:10px 0;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .score-subtitle{color:var(--text-secondary);font-weight:600;margin-bottom:18px;font-size:.92rem}
+  .results-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+
+  .review-section{width:100%;max-width:720px;flex:1;overflow-y:auto;text-align:left;min-height:0}
+  .review-section h3{font-size:.9rem;font-weight:800;margin-bottom:10px;color:var(--text-secondary);position:sticky;top:0;background:var(--bg-deep);padding:4px 0 6px;z-index:2}
+  .review-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+  .review-card .rv-q{font-weight:700;font-size:.86rem;margin-bottom:5px}
+  .review-card .rv-status{font-weight:800;font-size:.72rem;margin-bottom:3px}
+  .review-card .rv-status.rv-correct{color:var(--accent)}
+  .review-card .rv-status.rv-wrong{color:var(--wrong)}
+  .review-card .rv-answer{font-weight:600;color:var(--text-secondary);font-size:.82rem}
+  .review-card .rv-answer strong{color:var(--accent)}
+  .review-card .rv-explain{margin-top:4px;font-size:.78rem;color:var(--text-secondary);font-weight:600}
+
+  .timer-bar{display:flex;align-items:center;gap:5px;font-weight:700;font-size:.8rem;color:var(--text-secondary)}
+  .timer-bar .time{font-family:'Space Mono',monospace;color:var(--text-primary)}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes popIn{0%{transform:scale(.96)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+  .confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+  .confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;opacity:0;animation:confettiFall 2.5s ease-out forwards}
+  @keyframes confettiFall{0%{opacity:1;transform:translateY(-20px) rotate(0) scale(1)}100%{opacity:0;transform:translateY(100vh) rotate(720deg) scale(.3)}}
+  .question-card::-webkit-scrollbar,.review-section::-webkit-scrollbar{width:5px}
+  .question-card::-webkit-scrollbar-track,.review-section::-webkit-scrollbar-track{background:transparent}
+  .question-card::-webkit-scrollbar-thumb,.review-section::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+  @media(max-width:600px){.start-screen h1{font-size:1.08rem}.question-text{font-size:.93rem}.option-btn{padding:8px 11px;font-size:.83rem}.option-letter{width:24px;height:24px;font-size:.73rem}.score-display{font-size:2.6rem}.app{padding:10px 10px 6px}}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+const QUESTIONS=[
+  {type:"mcq",question:"Which type of lab test is most commonly performed by medical assistants?",options:["Moderate complexity","High complexity","Waived tests","Molecular testing"],correct:2,explanation:"MAs are trained to perform CLIA-waived tests — simple, low-risk procedures like urine dipsticks, rapid strep tests, and glucose monitoring that don't require extensive lab training."},
+  {type:"tf",question:"SDS (Safety Data Sheets) contain first aid, PPE, and storage instructions for chemicals.",options:["True","False"],correct:0,explanation:"True — SDS are required by OSHA and provide critical safety information including hazard identification, first aid measures, PPE requirements, and proper storage and handling."},
+  {type:"open",question:"Why might a patient feel anxious about specimen collection?",answer:"Patients may feel embarrassed about providing certain specimens (urine, stool) or fear the results of the test. Fear of needles or pain can also contribute to anxiety.",keyPoints:["Embarrassment","Fear of results","Fear of pain/needles"]},
+  {type:"open",question:"What would you do if a patient refuses specimen collection due to anxiety?",answer:"Reassure the patient calmly, explain the importance of the test, answer their questions, and offer to reschedule if needed. Respect their decision while educating them about the benefits.",keyPoints:["Reassure calmly","Explain importance","Offer to reschedule","Respect their decision"]},
+  {type:"open",question:"QA vs. QC — what's the difference?",answer:"QA (Quality Assurance) is the big-picture system of policies, procedures, and training designed to prevent problems. QC (Quality Control) is the specific testing of controls to verify that individual test results are accurate.",keyPoints:["QA = overall system / prevention","QC = specific test accuracy checks"]},
+  {type:"open",question:"Give an example of a point-of-care (POC) test and its purpose.",answer:"The hCG urine test is a POC test used to detect pregnancy. Other examples include rapid strep tests, blood glucose monitoring, and rapid flu tests — all performed at the time of patient care.",keyPoints:["hCG urine test / pregnancy","Rapid strep / glucose / flu","Performed at time of care"]},
+  {type:"open",question:"What is an important safety precaution when performing fecal occult blood testing?",answer:"Wear gloves and follow standard precautions. Clean all surfaces after testing. Treat every specimen as potentially biohazardous regardless of appearance.",keyPoints:["Wear gloves","Standard precautions","Treat all specimens as biohazardous"]},
+  {type:"mcq",question:"What is the main reason for performing quality control (QC) procedures?",options:["To reduce paperwork","To ensure accurate test results","To avoid having to repeat the test","To make the process faster"],correct:1,explanation:"QC ensures testing equipment is functioning properly and results are reliable — preventing misdiagnosis or incorrect treatment due to faulty testing."},
+  {type:"mcq",question:"What should be included in a properly labeled specimen container?",options:["Patient initials and test type","Date, patient ID number, and test result","Patient's full name, DOB, date, and time","Lab tech's name and credentials"],correct:2,explanation:"Proper specimen labeling requires: patient's full name, date of birth, date and time of collection. This prevents mix-ups and ensures test validity."},
+  {type:"mcq",question:"Which of the following is considered a biological hazard?",options:["Broken glass","Bleach","Blood specimen","Torn gloves"],correct:2,explanation:"Blood is a biohazard because it may carry bloodborne pathogens like HIV or hepatitis. Proper PPE and biohazard disposal methods are required."},
+  {type:"mcq",question:"Which agency regulates safety standards in the laboratory?",options:["CMS","OSHA","DEA","AAMA"],correct:1,explanation:"OSHA (Occupational Safety and Health Administration) sets federal workplace safety standards including PPE use, exposure control plans, and lab safety training requirements."},
+  {type:"tf",question:"Quality assurance focuses only on test results, not procedures.",options:["True","False"],correct:1,explanation:"False — QA encompasses the entire process: training, documentation, protocols, equipment maintenance, and procedures — not just the final test results."},
+  {type:"tf",question:"Point-of-care tests should be checked for expiration dates before use.",options:["True","False"],correct:0,explanation:"True — using expired test kits can yield inaccurate results. Checking expiration dates is standard protocol before performing any POC test."},
+  {type:"tf",question:"A clean-catch midstream urine sample helps prevent contamination.",options:["True","False"],correct:0,explanation:"True — the clean-catch midstream technique reduces contamination from skin bacteria and external flora, making urinalysis results more accurate."},
+  {type:"tf",question:"It's acceptable to eat or drink in a laboratory if you wear gloves.",options:["True","False"],correct:1,explanation:"False — eating or drinking in a lab is strictly prohibited regardless of PPE. Gloves do not protect against ingesting hazardous substances or cross-contaminating food."}
+];
+
+let state={screen:'start',currentQ:0,answers:[],correctCount:0,wrongCount:0,answered:false,selectedIdx:null,shuffledQuestions:[],timer:0,timerInterval:null,showReview:false,revealed:false};
+
+function shuffleArray(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function startQuiz(){state.shuffledQuestions=shuffleArray(QUESTIONS.map((q,i)=>({...q,origIdx:i})));state.currentQ=0;state.answers=[];state.correctCount=0;state.wrongCount=0;state.answered=false;state.selectedIdx=null;state.screen='quiz';state.timer=0;state.showReview=false;state.revealed=false;clearInterval(state.timerInterval);state.timerInterval=setInterval(()=>{state.timer++;updateTimer();},1000);render();}
+function formatTime(s){return Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0');}
+function updateTimer(){const el=document.getElementById('timer-time');if(el)el.textContent=formatTime(state.timer);}
+function selectAnswer(idx){if(state.answered)return;state.answered=true;state.selectedIdx=idx;const q=state.shuffledQuestions[state.currentQ];const ok=idx===q.correct;if(ok)state.correctCount++;else state.wrongCount++;state.answers.push({qIdx:q.origIdx,selected:idx,correct:ok,type:q.type});render();}
+function revealAnswer(){state.revealed=true;render();}
+function selfGrade(ok){state.answered=true;const q=state.shuffledQuestions[state.currentQ];if(ok)state.correctCount++;else state.wrongCount++;state.answers.push({qIdx:q.origIdx,selected:null,correct:ok,type:'open'});render();}
+function nextQuestion(){if(state.currentQ<state.shuffledQuestions.length-1){state.currentQ++;state.answered=false;state.selectedIdx=null;state.revealed=false;render();}else{clearInterval(state.timerInterval);state.screen='results';render();}}
+function showResults(){clearInterval(state.timerInterval);state.screen='results';render();}
+function spawnConfetti(){const c=document.createElement('div');c.className='confetti-container';document.body.appendChild(c);const cols=['#3b82f6','#f59e0b','#22d3ee','#4ade80','#f472b6','#a78bfa'];for(let i=0;i<50;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.left=Math.random()*100+'%';p.style.top='-10px';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.animationDelay=Math.random()*1.2+'s';p.style.animationDuration=(1.8+Math.random()*1.5)+'s';p.style.width=(6+Math.random()*8)+'px';p.style.height=(6+Math.random()*8)+'px';c.appendChild(p);}setTimeout(()=>c.remove(),4000);}
+function getGrade(p){if(p===100)return{emoji:'🏆',msg:'PERFECT SCORE!',sub:'Flawless — every question!'};if(p>=80)return{emoji:'🌟',msg:'EXCELLENT!',sub:'Outstanding — well prepared!'};if(p>=60)return{emoji:'👍',msg:'GOOD JOB!',sub:'Solid — review what you missed.'};if(p>=40)return{emoji:'📖',msg:'KEEP STUDYING',sub:'Getting there — check explanations.'};return{emoji:'💪',msg:"DON'T GIVE UP",sub:'Review and retry!'};}
+
+function render(){
+  const app=document.getElementById('app');
+  if(state.screen==='start'){app.innerHTML=`<div class="start-screen"><div class="icon">🔬</div><h1>Understanding Lab Rules and Practices</h1><p>Practice questions on CLIA-waived tests, quality assurance vs. control, specimen labeling, lab safety, SDS, biohazards, and point-of-care testing.</p><div class="badge-row"><span class="badge">📋 15 Questions</span><span class="badge">✍️ Mixed Types</span><span class="badge">🔀 Shuffled</span><span class="badge">⏱ Timed</span></div><button class="btn-primary" onclick="startQuiz()">Start Quiz →</button></div>`;return;}
+
+  if(state.screen==='quiz'){
+    const q=state.shuffledQuestions[state.currentQ],total=state.shuffledQuestions.length;
+    const pct=((state.currentQ+(state.answered?1:0))/total*100);
+    const L=['A','B','C','D'];
+    let badge='MULTIPLE CHOICE';if(q.type==='tf')badge='TRUE / FALSE';if(q.type==='open')badge='WRITTEN RESPONSE';
+    let body='';
+
+    if(q.type==='mcq'||q.type==='tf'){
+      let opts=q.options.map((o,i)=>{let c='option-btn';if(state.answered){if(i===q.correct)c+=' correct';else if(i===state.selectedIdx&&i!==q.correct)c+=' wrong';if(i!==q.correct&&i!==state.selectedIdx)c+=' disabled';}return`<button class="${c}" onclick="selectAnswer(${i})"><span class="option-letter">${L[i]}</span><span>${o}</span><span class="check-icon">✓</span><span class="x-icon">✗</span></button>`;}).join('');
+      let fb='';if(state.answered){const ok=state.selectedIdx===q.correct;fb=`<div class="feedback-box ${ok?'correct-fb':'wrong-fb'}"><span class="fb-icon">${ok?'✅':'❌'}</span><div><strong style="font-size:.85rem;">${ok?'Correct!':'Incorrect — Answer: '+q.options[q.correct]}</strong><br><span style="color:var(--text-secondary);font-size:.8rem;">${q.explanation}</span></div></div><div class="next-btn-wrap"><button class="btn-primary btn-sm" onclick="${state.currentQ<total-1?'nextQuestion()':'showResults()'}">${state.currentQ<total-1?'Next →':'Results →'}</button></div>`;}
+      body=`<div class="options-list">${opts}</div>${fb}`;
+    }else if(q.type==='open'){
+      if(!state.answered&&!state.revealed){body=`<textarea class="flashcard-input" id="open-input" placeholder="Type your answer…" rows="3"></textarea><div class="reveal-btn-wrap"><button class="btn-primary btn-sm" onclick="revealAnswer()">Reveal Answer</button></div>`;}
+      else if(state.revealed&&!state.answered){body=`<div class="feedback-box neutral-fb"><span class="fb-icon">📝</span><div><strong style="font-size:.83rem;">Model Answer:</strong><br><span style="color:var(--text-primary);font-size:.8rem;">${q.answer}</span><div style="margin-top:5px;font-size:.76rem;color:var(--text-secondary);"><strong>Key:</strong> ${q.keyPoints.join(' · ')}</div></div></div><div style="text-align:center;margin-top:6px;font-weight:700;font-size:.8rem;color:var(--text-secondary);">How did you do?</div><div class="self-grade"><button class="grade-correct" onclick="selfGrade(true)">✓ I Got It</button><button class="grade-wrong" onclick="selfGrade(false)">✗ Missed It</button></div>`;}
+      else{const a=state.answers[state.answers.length-1];body=`<div class="feedback-box ${a.correct?'correct-fb':'wrong-fb'}"><span class="fb-icon">${a.correct?'✅':'❌'}</span><div><strong style="font-size:.83rem;">${a.correct?'Marked Correct!':'Marked Incorrect'}</strong><br><span style="color:var(--text-primary);font-size:.8rem;">${q.answer}</span></div></div><div class="next-btn-wrap"><button class="btn-primary btn-sm" onclick="${state.currentQ<total-1?'nextQuestion()':'showResults()'}">${state.currentQ<total-1?'Next →':'Results →'}</button></div>`;}
+    }
+
+    app.innerHTML=`<div class="progress-wrapper"><div class="progress-header"><div class="timer-bar">⏱ <span class="time" id="timer-time">${formatTime(state.timer)}</span></div><span class="q-count">Q${state.currentQ+1}/${total}</span><div class="live-score"><span class="correct-count">✓ ${state.correctCount}</span><span style="color:var(--border)">|</span><span class="wrong-count">✗ ${state.wrongCount}</span></div></div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div><div class="question-card"><span class="q-type-badge">${badge}</span><div class="question-text">${q.question}</div>${body}</div>`;return;
+  }
+
+  if(state.screen==='results'){
+    const total=QUESTIONS.length,pct=Math.round(state.correctCount/total*100),grade=getGrade(pct);
+    let rev=state.answers.map(a=>{const q=QUESTIONS[a.qIdx];let ad='';if(a.type==='open')ad=`Answer: <strong>${q.answer}</strong>`;else ad=`${a.correct?'':`Your answer: <span style="color:var(--wrong)">${q.options[a.selected]}</span><br>`}Correct: <strong>${q.options[q.correct]}</strong>`;return`<div class="review-card"><div class="rv-status ${a.correct?'rv-correct':'rv-wrong'}">${a.correct?'✓ CORRECT':'✗ INCORRECT'}</div><div class="rv-q">${q.question}</div><div class="rv-answer">${ad}</div><div class="rv-explain">${q.explanation||q.answer}</div></div>`;}).join('');
+    app.innerHTML=`<div class="results-screen"><div class="results-top"><div class="icon">${grade.emoji}</div><h2>${grade.msg}</h2><div class="score-display">${pct}%</div><div class="score-subtitle">${state.correctCount}/${total} correct · ${formatTime(state.timer)}</div><div class="results-actions"><button class="btn-primary btn-sm" onclick="startQuiz()">🔄 Retake</button><button class="btn-secondary" onclick="toggleReview()">📋 ${state.showReview?'Hide':'Review'}</button></div></div><div class="review-section" id="review-section" style="display:${state.showReview?'flex':'none'};flex-direction:column;"><h3>📝 ANSWER REVIEW</h3>${rev}</div></div>`;
+    if(pct>=80)setTimeout(spawnConfetti,300);
+  }
+}
+function toggleReview(){state.showReview=!state.showReview;render();}
+render();
+</script>
+</body>
+</html>

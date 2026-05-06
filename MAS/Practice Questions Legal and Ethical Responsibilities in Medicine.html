@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Questions: From Checkups to Immunizations: Pediatric Office Practices</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-deep: #0a1410;
+    --bg-card: #12221a;
+    --bg-card-hover: #1a3226;
+    --accent: #4ade80;
+    --accent-glow: rgba(74, 222, 128, 0.25);
+    --wrong: #fb7185;
+    --wrong-glow: rgba(251, 113, 133, 0.25);
+    --text-primary: #f0fdf4;
+    --text-secondary: #7daa90;
+    --border: #1e3a28;
+    --option-bg: #0e1c14;
+    --option-border: #213d2b;
+    --gradient-start: #4ade80;
+    --gradient-end: #facc15;
+  }
+
+  html, body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    height: 100%; width: 100%;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(ellipse at 20% 15%, rgba(74, 222, 128, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 85%, rgba(250, 204, 21, 0.04) 0%, transparent 50%);
+    z-index: 0; pointer-events: none;
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    max-width: 720px; width: 100%; height: 100vh;
+    margin: 0 auto; padding: 14px 16px 10px;
+    display: flex; flex-direction: column;
+  }
+
+  .start-screen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 1; text-align: center; animation: fadeUp 0.7s ease;
+  }
+  .start-screen .icon { font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 0 24px var(--accent-glow)); }
+  .start-screen h1 {
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.2rem;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px; max-width: 580px; line-height: 1.4;
+  }
+  .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 480px; }
+  .badge-row { display: flex; gap: 10px; margin: 14px 0 24px; flex-wrap: wrap; justify-content: center; }
+  .badge {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px;
+    padding: 5px 14px; font-size: 0.78rem; font-weight: 700; color: var(--accent);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gradient-start), #22c55e);
+    color: #0a1410; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
+    border: none; border-radius: 12px; padding: 13px 40px; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 24px var(--accent-glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 32px var(--accent-glow); }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-sm { padding: 10px 28px; font-size: 0.9rem; }
+
+  .btn-secondary {
+    background: var(--bg-card); border: 2px solid var(--accent);
+    color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem;
+    border-radius: 12px; padding: 10px 28px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: rgba(74, 222, 128, 0.1); }
+
+  .progress-wrapper { flex-shrink: 0; margin-bottom: 10px; }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+  .progress-header span { font-weight: 700; font-size: 0.8rem; color: var(--text-secondary); }
+  .progress-header .q-count { color: var(--accent); font-family: 'Space Mono', monospace; font-size: 0.88rem; }
+  .progress-track {
+    width: 100%; height: 7px; background: var(--bg-card); border-radius: 100px;
+    overflow: hidden; border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    border-radius: 100px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .live-score {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px;
+    padding: 3px 12px; font-weight: 700; font-size: 0.78rem;
+  }
+  .live-score .correct-count { color: var(--accent); }
+  .live-score .wrong-count { color: var(--wrong); }
+
+  .question-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 18px 20px; animation: fadeUp 0.4s ease; position: relative;
+    overflow-y: auto; flex: 1; display: flex; flex-direction: column;
+  }
+  .question-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  }
+  .q-type-badge {
+    display: inline-block; background: rgba(250, 204, 21, 0.12); color: #fde047;
+    font-size: 0.68rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 5px; margin-bottom: 8px; flex-shrink: 0;
+  }
+  .question-text { font-size: 1.05rem; font-weight: 700; line-height: 1.45; margin-bottom: 14px; flex-shrink: 0; }
+
+  .options-list { display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
+
+  .option-btn {
+    width: 100%; text-align: left; background: var(--option-bg); border: 2px solid var(--option-border);
+    border-radius: 11px; padding: 10px 14px; font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem; font-weight: 600; color: var(--text-primary); cursor: pointer;
+    transition: all 0.2s; display: flex; align-items: center; gap: 10px; position: relative;
+  }
+  .option-btn:hover:not(.disabled) {
+    background: var(--bg-card-hover); border-color: var(--accent);
+    transform: translateX(3px); box-shadow: 0 0 16px var(--accent-glow);
+  }
+  .option-letter {
+    flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px;
+    background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.8rem; color: var(--text-secondary);
+    border: 1px solid var(--border); transition: all 0.2s;
+  }
+  .option-btn:hover:not(.disabled) .option-letter {
+    background: var(--accent); color: var(--bg-deep); border-color: var(--accent);
+  }
+  .option-btn.correct {
+    background: rgba(74, 222, 128, 0.12); border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow); animation: popIn 0.35s ease;
+  }
+  .option-btn.correct .option-letter { background: var(--accent); color: var(--bg-deep); border-color: var(--accent); }
+  .option-btn.correct .check-icon { display: block; }
+
+  .option-btn.wrong {
+    background: rgba(251, 113, 133, 0.12); border-color: var(--wrong);
+    box-shadow: 0 0 20px var(--wrong-glow); animation: shake 0.4s ease;
+  }
+  .option-btn.wrong .option-letter { background: var(--wrong); color: #fff; border-color: var(--wrong); }
+  .option-btn.wrong .x-icon { display: block; }
+
+  .option-btn.disabled { pointer-events: none; opacity: 0.5; }
+  .option-btn.correct.disabled { opacity: 1; }
+
+  .check-icon, .x-icon { display: none; position: absolute; right: 14px; font-size: 1.1rem; font-weight: 900; }
+  .check-icon { color: var(--accent); }
+  .x-icon { color: var(--wrong); }
+
+  .feedback-box {
+    margin-top: 10px; padding: 9px 12px; border-radius: 10px;
+    font-weight: 600; font-size: 0.82rem; line-height: 1.4;
+    animation: fadeUp 0.3s ease; display: flex; align-items: flex-start; gap: 10px;
+    flex-shrink: 0;
+  }
+  .feedback-box.correct-fb { background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.3); }
+  .feedback-box.wrong-fb { background: rgba(251, 113, 133, 0.1); border: 1px solid rgba(251, 113, 133, 0.3); }
+  .feedback-box .fb-icon { font-size: 1rem; flex-shrink: 0; }
+
+  .next-btn-wrap { margin-top: 10px; display: flex; justify-content: flex-end; flex-shrink: 0; }
+
+  .results-screen {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; animation: fadeUp 0.6s ease;
+    overflow: hidden;
+  }
+  .results-top { flex-shrink: 0; }
+  .results-screen .icon { font-size: 52px; margin-bottom: 6px; }
+  .results-screen h2 {
+    font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; margin-bottom: 2px;
+  }
+  .score-display {
+    font-size: 3.2rem; font-weight: 900; margin: 10px 0;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .score-subtitle { color: var(--text-secondary); font-weight: 600; margin-bottom: 18px; font-size: 0.92rem; }
+  .results-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
+
+  .review-section {
+    width: 100%; max-width: 720px; flex: 1; overflow-y: auto;
+    text-align: left; min-height: 0;
+  }
+  .review-section h3 {
+    font-size: 0.9rem; font-weight: 800; margin-bottom: 10px;
+    color: var(--text-secondary); letter-spacing: 0.5px;
+    position: sticky; top: 0; background: var(--bg-deep); padding: 4px 0 6px; z-index: 2;
+  }
+  .review-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 8px;
+  }
+  .review-card .rv-q { font-weight: 700; font-size: 0.86rem; margin-bottom: 5px; }
+  .review-card .rv-status { font-weight: 800; font-size: 0.72rem; margin-bottom: 3px; letter-spacing: 0.5px; }
+  .review-card .rv-status.rv-correct { color: var(--accent); }
+  .review-card .rv-status.rv-wrong { color: var(--wrong); }
+  .review-card .rv-answer { font-weight: 600; color: var(--text-secondary); font-size: 0.82rem; }
+  .review-card .rv-answer strong { color: var(--accent); }
+  .review-card .rv-explain { margin-top: 4px; font-size: 0.78rem; color: var(--text-secondary); font-weight: 600; }
+
+  .timer-bar {
+    display: flex; align-items: center; gap: 5px; font-weight: 700; font-size: 0.8rem; color: var(--text-secondary);
+  }
+  .timer-bar .time { font-family: 'Space Mono', monospace; color: var(--text-primary); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes popIn { 0% { transform: scale(0.96); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+
+  .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+  .confetti-piece {
+    position: absolute; width: 10px; height: 10px; border-radius: 2px; opacity: 0;
+    animation: confettiFall 2.5s ease-out forwards;
+  }
+  @keyframes confettiFall {
+    0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.3); }
+  }
+
+  .question-card::-webkit-scrollbar, .review-section::-webkit-scrollbar { width: 5px; }
+  .question-card::-webkit-scrollbar-track, .review-section::-webkit-scrollbar-track { background: transparent; }
+  .question-card::-webkit-scrollbar-thumb, .review-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  @media (max-width: 600px) {
+    .start-screen h1 { font-size: 1.05rem; }
+    .question-text { font-size: 0.93rem; }
+    .option-btn { padding: 8px 11px; font-size: 0.83rem; }
+    .option-letter { width: 24px; height: 24px; font-size: 0.73rem; }
+    .score-display { font-size: 2.6rem; }
+    .app { padding: 10px 10px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    question: "What age range defines pediatric patients?",
+    options: ["0–12 months", "Birth to 21 years", "Birth to 18 years", "1–17 years"],
+    correct: 2,
+    explanation: "Pediatric care spans from birth through 18 years of age."
+  },
+  {
+    question: "Which muscle is recommended for intramuscular injections in infants?",
+    options: ["Deltoid", "Gluteus maximus", "Trapezius", "Vastus lateralis"],
+    correct: 3,
+    explanation: "The vastus lateralis (outer thigh) is the safest and most developed IM injection site for infants."
+  },
+  {
+    question: "When should head circumference be measured?",
+    options: ["Only at birth", "Until age 3", "After age 5", "Once a year for all children"],
+    correct: 1,
+    explanation: "Head circumference is routinely monitored from birth until 3 years of age to track brain and skull growth."
+  },
+  {
+    question: "What is the MA's primary role during a pediatric procedure?",
+    options: ["Diagnose illness", "Administer anesthesia", "Support the child and assist provider", "Interpret X-rays"],
+    correct: 2,
+    explanation: "The MA supports the child emotionally, assists the provider with the procedure, and documents — diagnosing and prescribing are outside their scope."
+  },
+  {
+    question: "Which of the following is part of routine pediatric care?",
+    options: ["Pap smear", "EKG", "Lead screening", "Mammogram"],
+    correct: 2,
+    explanation: "Lead screening is a routine pediatric test, typically performed around 12 months and 24 months, to detect lead exposure."
+  },
+  {
+    question: "Where should a Snellen chart be placed for testing a 5-year-old?",
+    options: ["On the floor", "10 feet away", "20 feet away", "5 feet away"],
+    correct: 2,
+    explanation: "The Snellen chart is positioned 20 feet from the patient for standard distance vision testing, regardless of the child's age."
+  },
+  {
+    question: "What does CDC stand for in the context of immunizations?",
+    options: ["Centers for Disease Control and Prevention", "Clinical Doctoral Corporation", "Certified Development Committee", "Children's Diagnostic Center"],
+    correct: 0,
+    explanation: "The CDC (Centers for Disease Control and Prevention) sets immunization schedules and public health guidelines nationwide."
+  },
+  {
+    question: "A 2-year-old child should receive an injection in which site?",
+    options: ["Deltoid", "Dorsogluteal", "Vastus lateralis", "Biceps"],
+    correct: 2,
+    explanation: "The vastus lateralis remains the preferred IM injection site for toddlers due to its well-developed muscle mass at this age."
+  },
+  {
+    question: "When is a child most likely to receive the MMR vaccine?",
+    options: ["At birth", "At 6 months", "At 12–15 months", "At 5 years"],
+    correct: 2,
+    explanation: "The first dose of MMR (measles, mumps, rubella) vaccine is typically administered between 12–15 months of age per the CDC schedule."
+  },
+  {
+    question: "Which technique helps reduce anxiety during pediatric procedures?",
+    options: ["Use of sharp language", "Delaying procedures", "Using toys and explaining steps", "Ignoring questions"],
+    correct: 2,
+    explanation: "Distraction techniques (toys, games) combined with age-appropriate explanations of each step help reduce fear and anxiety in children."
+  },
+  {
+    question: "What action should an MA take if they suspect child abuse?",
+    options: ["Tell the parent", "Say nothing", "Document and report to supervisor", "Ask the child for confirmation in front of parent"],
+    correct: 2,
+    explanation: "MAs are mandatory reporters — they must objectively document observations and report suspected abuse to their supervisor or appropriate authority."
+  },
+  {
+    question: "How should vaccines be documented?",
+    options: ["With a sticker only", "Record only the date", "Include date, lot number, manufacturer, and site", "No documentation is required"],
+    correct: 2,
+    explanation: "Complete vaccine documentation must include: date administered, vaccine name, lot number, manufacturer, injection site, route, and the administrator's name."
+  }
+];
+
+let state = {
+  screen: 'start', currentQ: 0, answers: [], correctCount: 0, wrongCount: 0,
+  answered: false, selectedIdx: null, shuffledQuestions: [],
+  timer: 0, timerInterval: null, showReview: false,
+};
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  state.shuffledQuestions = shuffleArray(QUESTIONS.map((q, i) => ({ ...q, origIdx: i })));
+  state.currentQ = 0; state.answers = []; state.correctCount = 0; state.wrongCount = 0;
+  state.answered = false; state.selectedIdx = null; state.screen = 'quiz';
+  state.timer = 0; state.showReview = false;
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(() => { state.timer++; updateTimer(); }, 1000);
+  render();
+}
+
+function formatTime(s) { return Math.floor(s/60) + ':' + (s%60).toString().padStart(2,'0'); }
+
+function updateTimer() {
+  const el = document.getElementById('timer-time');
+  if (el) el.textContent = formatTime(state.timer);
+}
+
+function selectAnswer(idx) {
+  if (state.answered) return;
+  state.answered = true; state.selectedIdx = idx;
+  const q = state.shuffledQuestions[state.currentQ];
+  const isCorrect = idx === q.correct;
+  if (isCorrect) state.correctCount++; else state.wrongCount++;
+  state.answers.push({ qIdx: q.origIdx, selected: idx, correct: isCorrect });
+  render();
+}
+
+function nextQuestion() {
+  if (state.currentQ < state.shuffledQuestions.length - 1) {
+    state.currentQ++; state.answered = false; state.selectedIdx = null; render();
+  } else { clearInterval(state.timerInterval); state.screen = 'results'; render(); }
+}
+
+function showResults() { clearInterval(state.timerInterval); state.screen = 'results'; render(); }
+
+function spawnConfetti() {
+  const c = document.createElement('div'); c.className = 'confetti-container'; document.body.appendChild(c);
+  const colors = ['#4ade80','#facc15','#60a5fa','#fb923c','#e879f9','#2dd4bf'];
+  for (let i = 0; i < 50; i++) {
+    const p = document.createElement('div'); p.className = 'confetti-piece';
+    p.style.left = Math.random()*100+'%'; p.style.top = '-10px';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDelay = Math.random()*1.2+'s';
+    p.style.animationDuration = (1.8+Math.random()*1.5)+'s';
+    p.style.width = (6+Math.random()*8)+'px'; p.style.height = (6+Math.random()*8)+'px';
+    c.appendChild(p);
+  }
+  setTimeout(() => c.remove(), 4000);
+}
+
+function getGrade(pct) {
+  if (pct === 100) return { emoji:'🏆', msg:'PERFECT SCORE!', sub:'Flawless — you nailed every question!' };
+  if (pct >= 80) return { emoji:'🌟', msg:'EXCELLENT!', sub:'Outstanding — you\'re well prepared!' };
+  if (pct >= 60) return { emoji:'👍', msg:'GOOD JOB!', sub:'Solid work — review what you missed.' };
+  if (pct >= 40) return { emoji:'📖', msg:'KEEP STUDYING', sub:'Getting there — check the explanations.' };
+  return { emoji:'💪', msg:'DON\'T GIVE UP', sub:'Review and retry — you\'ve got this!' };
+}
+
+function render() {
+  const app = document.getElementById('app');
+
+  if (state.screen === 'start') {
+    app.innerHTML = `
+      <div class="start-screen">
+        <div class="icon">👶</div>
+        <h1>From Checkups to Immunizations: Pediatric Office Practices</h1>
+        <p>Practice questions on pediatric assessments, immunizations, injection sites, growth monitoring, and child safety protocols.</p>
+        <div class="badge-row">
+          <span class="badge">📋 12 Questions</span>
+          <span class="badge">🔀 Shuffled</span>
+          <span class="badge">⏱ Timed</span>
+        </div>
+        <button class="btn-primary" onclick="startQuiz()">Start Quiz →</button>
+      </div>`;
+    return;
+  }
+
+  if (state.screen === 'quiz') {
+    const q = state.shuffledQuestions[state.currentQ];
+    const total = state.shuffledQuestions.length;
+    const pct = ((state.currentQ + (state.answered ? 1 : 0)) / total * 100);
+    const letters = ['A','B','C','D'];
+
+    let optionsHTML = q.options.map((opt, i) => {
+      let cls = 'option-btn';
+      if (state.answered) {
+        if (i === q.correct) cls += ' correct';
+        else if (i === state.selectedIdx && i !== q.correct) cls += ' wrong';
+        if (i !== q.correct && i !== state.selectedIdx) cls += ' disabled';
+      }
+      return `<button class="${cls}" onclick="selectAnswer(${i})">
+        <span class="option-letter">${letters[i]}</span>
+        <span>${opt}</span>
+        <span class="check-icon">✓</span>
+        <span class="x-icon">✗</span>
+      </button>`;
+    }).join('');
+
+    let feedbackHTML = '';
+    if (state.answered) {
+      const isCorrect = state.selectedIdx === q.correct;
+      feedbackHTML = `
+        <div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
+          <span class="fb-icon">${isCorrect ? '✅' : '❌'}</span>
+          <div>
+            <strong style="font-size:0.85rem;">${isCorrect ? 'Correct!' : 'Incorrect — Answer: ' + q.options[q.correct]}</strong><br>
+            <span style="color:var(--text-secondary);font-size:0.8rem;">${q.explanation}</span>
+          </div>
+        </div>
+        <div class="next-btn-wrap">
+          <button class="btn-primary btn-sm" onclick="${state.currentQ < total - 1 ? 'nextQuestion()' : 'showResults()'}">
+            ${state.currentQ < total - 1 ? 'Next →' : 'Results →'}
+          </button>
+        </div>`;
+    }
+
+    app.innerHTML = `
+      <div class="progress-wrapper">
+        <div class="progress-header">
+          <div class="timer-bar">⏱ <span class="time" id="timer-time">${formatTime(state.timer)}</span></div>
+          <span class="q-count">Q${state.currentQ + 1}/${total}</span>
+          <div class="live-score">
+            <span class="correct-count">✓ ${state.correctCount}</span>
+            <span style="color:var(--border)">|</span>
+            <span class="wrong-count">✗ ${state.wrongCount}</span>
+          </div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="question-card">
+        <span class="q-type-badge">MULTIPLE CHOICE</span>
+        <div class="question-text">${q.question}</div>
+        <div class="options-list">${optionsHTML}</div>
+        ${feedbackHTML}
+      </div>`;
+    return;
+  }
+
+  if (state.screen === 'results') {
+    const total = QUESTIONS.length;
+    const pct = Math.round(state.correctCount / total * 100);
+    const grade = getGrade(pct);
+
+    let reviewHTML = state.answers.map(a => {
+      const q = QUESTIONS[a.qIdx];
+      return `<div class="review-card">
+        <div class="rv-status ${a.correct ? 'rv-correct' : 'rv-wrong'}">${a.correct ? '✓ CORRECT' : '✗ INCORRECT'}</div>
+        <div class="rv-q">${q.question}</div>
+        <div class="rv-answer">${a.correct ? '' : 'Your answer: <span style="color:var(--wrong)">' + q.options[a.selected] + '</span><br>'}Correct: <strong>${q.options[q.correct]}</strong></div>
+        <div class="rv-explain">${q.explanation}</div>
+      </div>`;
+    }).join('');
+
+    app.innerHTML = `
+      <div class="results-screen">
+        <div class="results-top">
+          <div class="icon">${grade.emoji}</div>
+          <h2>${grade.msg}</h2>
+          <div class="score-display">${pct}%</div>
+          <div class="score-subtitle">${state.correctCount}/${total} correct · ${formatTime(state.timer)}</div>
+          <div class="results-actions">
+            <button class="btn-primary btn-sm" onclick="startQuiz()">🔄 Retake</button>
+            <button class="btn-secondary" onclick="toggleReview()">📋 ${state.showReview ? 'Hide' : 'Review'}</button>
+          </div>
+        </div>
+        <div class="review-section" id="review-section" style="display:${state.showReview ? 'flex' : 'none'}; flex-direction:column;">
+          <h3>📝 ANSWER REVIEW</h3>
+          ${reviewHTML}
+        </div>
+      </div>`;
+
+    if (pct >= 80) setTimeout(spawnConfetti, 300);
+  }
+}
+
+function toggleReview() {
+  state.showReview = !state.showReview;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

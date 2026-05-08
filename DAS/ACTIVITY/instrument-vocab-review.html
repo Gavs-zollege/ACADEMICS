@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instrument Vocabulary Knowledge Checks</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--bg-dark:#141619;--bg-panel:#1e2024;--bg-card:#282b30;--accent-blue:#1a6fad;--accent-blue-light:#2a8fd4;--accent-blue-glow:rgba(42,143,212,0.15);--accent-gold:#d4a843;--accent-gold-dim:rgba(212,168,67,0.15);--text-primary:#e8eaed;--text-secondary:#9ca3af;--text-muted:#6b7280;--border-accent:#d4a843;--success:#22c55e;--success-dark:#16a34a;--success-glow:rgba(34,197,94,0.18);--error:#ef4444;--error-glow:rgba(239,68,68,0.18);--surface-border:#32363c}
+  html,body{font-family:'Source Sans Pro',sans-serif;background:var(--bg-dark);color:var(--text-primary);height:100vh;overflow:hidden}
+  .top-bar{background:#0d0e10;padding:6px 24px;font-size:12px;color:var(--text-muted);letter-spacing:.5px;border-bottom:1px solid var(--surface-border);flex-shrink:0}
+  .page-container{max-width:1100px;margin:0 auto;padding:10px 20px;height:calc(100vh - 30px);display:flex;flex-direction:column}
+  .slide{display:none;animation:fadeSlideIn .45s ease forwards;flex:1;overflow-y:auto}
+  .slide.active{display:flex;flex-direction:column}
+  @keyframes fadeSlideIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes popIn{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+  @keyframes shakeReject{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-3px)}90%{transform:translateX(3px)}}
+  @keyframes lockInGlow{0%{box-shadow:0 0 0 0 rgba(34,197,94,.5)}50%{box-shadow:0 0 20px 4px rgba(34,197,94,.35)}100%{box-shadow:0 0 8px 1px rgba(34,197,94,.1)}}
+  @keyframes dotPop{0%{transform:scale(0)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+  @keyframes slotPulse{0%,100%{border-color:rgba(42,143,212,.25);color:rgba(42,143,212,.4)}50%{border-color:rgba(42,143,212,.55);color:rgba(42,143,212,.7)}}
+
+  .title-wrapper{background:var(--bg-panel);border:2px solid var(--border-accent);border-radius:6px;position:relative;overflow:hidden;flex:1;display:flex;flex-direction:column}
+  .title-badge{position:absolute;top:0;right:0;background:#444;color:#fff;padding:8px 20px;font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;letter-spacing:1px;text-transform:uppercase;z-index:2}
+  .title-header{background:var(--accent-blue);display:inline-block;padding:10px 32px 10px 20px;margin:20px 0 0 0}
+  .title-header h1{font-family:'Oswald',sans-serif;font-weight:700;font-size:24px;letter-spacing:.5px;color:#fff}
+  .title-body{padding:16px 22px;flex:1;display:flex;flex-direction:column}
+  .intro-card{background:var(--bg-card);border:1px solid var(--surface-border);border-radius:6px;padding:16px 20px;margin-bottom:14px}
+  .intro-card p{font-size:14px;line-height:1.55;margin-bottom:10px}
+  .intro-card p:last-child{margin-bottom:0}
+  .tip-row{display:flex;gap:14px;align-items:stretch;margin-bottom:14px;flex:1;min-height:0}
+  .tip-preview{flex:0 0 240px;background:var(--bg-card);border:1px solid var(--surface-border);border-radius:6px;overflow:hidden}
+  .tip-preview-header{background:var(--accent-blue);padding:8px 14px;font-family:'Oswald',sans-serif;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#fff}
+  .tip-preview-sub{background:var(--accent-blue-light);padding:6px 14px;font-weight:700;font-size:12px;color:#fff}
+  .tip-preview-body{padding:8px 14px;font-size:11px;color:var(--text-secondary);line-height:1.4}
+  .tip-preview-tag{display:inline-block;background:#444;color:#ccc;padding:3px 10px;font-size:10px;border-radius:3px;margin:6px 14px 10px}
+  .tip-text{flex:1;background:var(--bg-card);border:1px solid var(--surface-border);border-radius:6px;padding:14px;display:flex;align-items:center}
+  .tip-text p{font-size:13px;line-height:1.5;color:var(--text-secondary)}
+  .begin-btn-row{text-align:right;flex-shrink:0}
+  .btn-primary{background:var(--accent-blue);color:#fff;border:none;padding:10px 40px;font-family:'Oswald',sans-serif;font-weight:600;font-size:16px;letter-spacing:1px;border-radius:24px;cursor:pointer;transition:all .25s ease;text-transform:uppercase}
+  .btn-primary:hover{background:var(--accent-blue-light);transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,111,173,.4)}
+
+  .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+  .section-label{font-family:'Oswald',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent-gold)}
+  .progress-text{font-size:11px;color:var(--text-muted)}
+  .progress-bar-track{width:100%;height:4px;background:#282b30;border-radius:3px;margin-bottom:8px;overflow:hidden;flex-shrink:0}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent-blue),var(--accent-blue-light));border-radius:3px;transition:width .4s ease}
+  .quiz-card{background:var(--bg-panel);border:1px solid var(--surface-border);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;flex:1;min-height:0}
+  .quiz-card-header{background:var(--accent-blue);padding:10px 20px;font-family:'Oswald',sans-serif;font-size:15px;font-weight:600;letter-spacing:.5px;flex-shrink:0;color:#fff}
+  .quiz-card-body{padding:12px 20px;flex:1;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+  .question-text{font-size:15px;line-height:1.5;margin-bottom:14px}
+  .feedback-box{margin-top:8px;padding:10px 14px;border-radius:6px;font-size:13px;line-height:1.4;display:none;flex-shrink:0}
+  .feedback-box.show{display:block;animation:fadeSlideIn .3s ease}
+  .feedback-box.correct-fb{background:var(--success-glow);border-left:4px solid var(--success)}
+  .feedback-box.wrong-fb{background:var(--error-glow);border-left:4px solid var(--error)}
+  .next-btn-row{text-align:right;margin-top:8px;flex-shrink:0}
+  .btn-next{background:var(--accent-blue);color:#fff;border:none;padding:8px 28px;font-family:'Oswald',sans-serif;font-weight:600;font-size:13px;letter-spacing:.5px;border-radius:18px;cursor:pointer;transition:all .2s ease;display:none}
+  .btn-next.show{display:inline-block;animation:fadeSlideIn .3s ease}
+  .btn-next:hover{background:var(--accent-blue-light)}
+
+  .options-grid{display:flex;flex-direction:column;gap:8px}
+  .option-btn{background:var(--bg-card);border:2px solid var(--surface-border);border-radius:8px;padding:10px 16px;text-align:left;font-size:14px;font-family:'Source Sans Pro',sans-serif;color:var(--text-primary);cursor:pointer;transition:all .2s ease;display:flex;align-items:center;gap:12px}
+  .option-btn:hover:not(.disabled){border-color:var(--accent-blue-light);background:#2e3238}
+  .option-letter{flex:0 0 28px;height:28px;background:#3a3e44;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-weight:600;font-size:12px;color:#fff}
+  .option-btn.correct{border-color:var(--success);background:var(--success-glow)}
+  .option-btn.correct .option-letter{background:var(--success-dark)}
+  .option-btn.wrong{border-color:var(--error);background:var(--error-glow)}
+  .option-btn.wrong .option-letter{background:var(--error)}
+  .option-btn.disabled{pointer-events:none;opacity:.6}
+  .option-btn.disabled.correct{opacity:1}
+
+  .dnd-instruction{font-size:13px;color:var(--text-secondary);margin-bottom:10px;line-height:1.4}
+  .dnd-instruction strong{color:var(--text-primary)}
+  .drag-chip{background:linear-gradient(135deg,#1a6fad,#1e7ec2);border:2px solid rgba(42,143,212,.5);border-radius:8px;padding:8px 10px;font-weight:600;font-size:12px;color:#fff;cursor:grab;user-select:none;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.08);transition:all .22s ease}
+  .drag-chip:active{cursor:grabbing}
+  .drag-chip:hover:not(.locked){transform:translateY(-3px);box-shadow:0 8px 20px rgba(26,111,173,.45);border-color:rgba(90,176,238,.7)}
+  .drag-chip.locked{background:linear-gradient(135deg,var(--success-dark),var(--success));border-color:rgba(34,197,94,.5);opacity:.35;pointer-events:none;transform:scale(.92);cursor:default}
+  .slot-chip{background:linear-gradient(135deg,var(--success-dark),var(--success));border:2px solid rgba(34,197,94,.7);border-radius:6px;padding:5px 10px;font-weight:700;font-size:11px;color:#fff;text-align:center;animation:popIn .35s ease;box-shadow:0 2px 10px rgba(34,197,94,.3)}
+  .dnd-bank-label{font-family:'Oswald',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--accent-gold);padding-bottom:4px;border-bottom:1px solid var(--accent-gold-dim);margin-bottom:2px}
+
+  .dnd-layout{display:flex;gap:14px;flex:1;min-height:0}
+  .dnd-bank{flex:0 0 170px;display:flex;flex-direction:column;gap:6px}
+  .dnd-targets{flex:1;display:flex;flex-direction:column;gap:6px}
+  .dnd-col-headers{display:flex;margin-bottom:2px}
+  .col-h{font-family:'Oswald',sans-serif;font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted)}
+  .col-h-func{flex:1;padding-left:28px}
+  .col-h-answer{flex:0 0 180px;text-align:center;color:var(--accent-blue-light)}
+  .drop-row{display:flex;align-items:stretch;border-radius:8px;overflow:hidden;border:2px solid var(--surface-border);background:var(--bg-card);position:relative;transition:all .3s ease}
+  .drop-row .row-num{position:absolute;top:-1px;left:-1px;width:22px;height:22px;border-radius:0 0 6px 0;background:var(--surface-border);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:10px;font-weight:600;color:var(--text-muted);z-index:1}
+  .drop-row.drag-hover{border-color:var(--accent-blue-light);background:linear-gradient(135deg,var(--bg-card),rgba(42,143,212,.06));box-shadow:0 0 18px var(--accent-blue-glow)}
+  .drop-row.matched{border-color:var(--success);animation:lockInGlow .8s ease forwards}
+  .drop-row.matched .row-num{background:var(--success-dark);color:#fff}
+  .drop-row.matched .drop-desc{color:var(--text-primary)}
+  .drop-row.rejected{animation:shakeReject .5s ease}
+  .drop-desc{flex:1;padding:8px 12px 8px 28px;font-size:12.5px;line-height:1.4;color:var(--text-secondary);border-right:1px solid var(--surface-border);display:flex;align-items:center}
+  .drop-slot{flex:0 0 180px;min-height:44px;display:flex;align-items:center;justify-content:center;padding:6px 10px;background:rgba(42,143,212,.06);border-left:2px dashed rgba(42,143,212,.3);position:relative}
+  .drop-slot.empty{background:repeating-linear-gradient(-45deg,rgba(42,143,212,.03),rgba(42,143,212,.03) 6px,transparent 6px,transparent 12px)}
+  .drop-slot.empty::before{content:'DROP HERE';display:flex;align-items:center;justify-content:center;width:100%;height:32px;border:2px dashed rgba(42,143,212,.35);border-radius:6px;font-family:'Oswald',sans-serif;font-size:10px;font-weight:600;letter-spacing:2px;color:rgba(42,143,212,.5);animation:slotPulse 2s ease-in-out infinite}
+  .drop-row.drag-hover .drop-slot{background:rgba(42,143,212,.12);border-left-color:var(--accent-blue-light)}
+  .drop-row.drag-hover .drop-slot.empty::before{border-color:var(--accent-blue-light);color:var(--accent-blue-light);animation:none}
+  .drop-row.matched .drop-slot{background:var(--success-glow);border-left-color:var(--success);border-left-style:solid}
+  .match-icon{position:absolute;right:5px;top:4px;font-size:12px;color:var(--success);display:none}
+  .drop-row.matched .match-icon{display:block;animation:dotPop .4s ease}
+
+  .dnd-tally{display:flex;align-items:center;gap:10px;margin-top:8px;padding:8px 14px;background:var(--bg-card);border-radius:8px;border:1px solid var(--surface-border);flex-shrink:0}
+  .dnd-tally .tally-label{font-family:'Oswald',sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted)}
+  .tally-pips{display:flex;gap:6px;flex:1}
+  .tally-pip{width:24px;height:24px;border-radius:50%;background:#1e2024;border:2px solid var(--surface-border);display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;transition:all .3s ease}
+  .tally-pip.filled{background:var(--success-dark);border-color:var(--success);color:#fff;animation:dotPop .4s ease}
+  .tally-count{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--text-muted);margin-left:auto}
+  .tally-count.complete{color:var(--success)}
+  .tally-count span{color:var(--text-primary)}
+
+  .results-card{background:var(--bg-panel);border:2px solid var(--border-accent);border-radius:8px;overflow:hidden;text-align:center}
+  .results-header{background:var(--accent-blue);padding:14px;font-family:'Oswald',sans-serif;font-size:20px;font-weight:700;letter-spacing:1px;color:#fff}
+  .results-body{padding:24px 28px}
+  .score-ring{width:130px;height:130px;margin:0 auto 20px;position:relative}
+  .score-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .score-ring-bg{fill:none;stroke:#282b30;stroke-width:10}
+  .score-ring-fill{fill:none;stroke:var(--accent-blue-light);stroke-width:10;stroke-linecap:round;stroke-dasharray:408.4;stroke-dashoffset:408.4;transition:stroke-dashoffset 1.5s ease}
+  .score-ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Oswald',sans-serif;font-size:36px;font-weight:700}
+  .results-breakdown{display:flex;justify-content:center;gap:36px;margin-bottom:20px}
+  .breakdown-item{text-align:center}
+  .breakdown-num{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700}
+  .breakdown-num.green{color:var(--success)}.breakdown-num.red{color:var(--error)}
+  .breakdown-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted)}
+  .results-message{font-size:15px;color:var(--text-secondary);margin-bottom:20px;line-height:1.4}
+
+  @media(max-width:700px){.tip-row{flex-direction:column}.tip-preview{flex:auto}.dnd-layout{flex-direction:column}.dnd-bank{flex:auto;flex-direction:row;flex-wrap:wrap}.drop-row{flex-direction:column}.drop-slot{flex:auto;min-height:48px}.drop-desc{border-right:none;border-bottom:1px solid var(--surface-border);padding-left:34px}.title-header h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="top-bar">Instrument Vocabulary Knowledge Checks</div>
+<div class="page-container">
+
+  <!-- SLIDE 0: TITLE -->
+  <div class="slide active" id="slide-0">
+    <div class="title-wrapper">
+      <div class="title-badge">Knowledge Checks</div>
+      <div class="title-header"><h1>Instrument Vocabulary Review</h1></div>
+      <div class="title-body">
+        <div class="intro-card">
+          <p>Now that you have reviewed the instrument vocabulary, you will complete the review Knowledge Checks.</p>
+          <p>If you are finding a particular section difficult, then you will want to review that section in your learning portal once you are finished.</p>
+        </div>
+        <div class="tip-row">
+          <div class="tip-preview">
+            <div class="tip-preview-header">Restorative Instruments Review</div>
+            <div class="tip-preview-sub">Knowledge Check: Identify</div>
+            <div class="tip-preview-body">Drag the item names below on the left to the image that best depicts them on the right.</div>
+            <span class="tip-preview-tag">Sectional</span>
+          </div>
+          <div class="tip-text"><p>If you are struggling to select the correct answers on a page, make sure to take note of the section in the top left corner. Then, refer back to that section in your learning portal for more practice.</p></div>
+        </div>
+        <div class="begin-btn-row"><button class="btn-primary" onclick="goToSlide(1)">Begin</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: DND TEXT (Crown & Bridge) -->
+  <div class="slide" id="slide-1">
+    <div class="quiz-header"><span class="section-label">Crown &amp; Bridge Instruments</span><span class="progress-text">Activity 1 of 6</span></div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:16%"></div></div>
+    <div class="quiz-card"><div class="quiz-card-header">Knowledge Check: Recall</div><div class="quiz-card-body">
+      <p class="dnd-instruction"><strong>Drag each instrument name</strong> to its matching function. Only correct matches will be accepted — incorrect drops will bounce back. Match all 5 to continue.</p>
+      <div class="dnd-layout"><div class="dnd-bank" id="bank1"></div><div class="dnd-targets" id="targets1"></div></div>
+      <div class="dnd-tally"><span class="tally-label">Matched</span><div class="tally-pips" id="pips1"></div><div class="tally-count" id="count1"><span>0</span>/5</div></div>
+      <div class="feedback-box" id="fb1"></div>
+      <div class="next-btn-row"><button class="btn-next" id="next1" onclick="goToSlide(2)">Next →</button></div>
+    </div></div>
+  </div>
+
+  <!-- SLIDES 2-6: MC -->
+  <div class="slide" id="slide-2">
+    <div class="quiz-header"><span class="section-label">Restorative Instruments</span><span class="progress-text">Question 2 of 6</span></div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:33%"></div></div>
+    <div class="quiz-card"><div class="quiz-card-header">Knowledge Check: Identify</div><div class="quiz-card-body">
+      <p class="question-text">Which instrument is commonly used to place and condense amalgam into a prepared cavity?</p>
+      <div class="options-grid">
+        <button class="option-btn" onclick="checkMC(this,'q1',false)"><span class="option-letter">A</span>Explorer</button>
+        <button class="option-btn" onclick="checkMC(this,'q1',true)"><span class="option-letter">B</span>Amalgam Carrier</button>
+        <button class="option-btn" onclick="checkMC(this,'q1',false)"><span class="option-letter">C</span>Howe Plier</button>
+        <button class="option-btn" onclick="checkMC(this,'q1',false)"><span class="option-letter">D</span>Spoon Excavator</button>
+      </div>
+      <div class="feedback-box" id="q1-feedback"></div>
+      <div class="next-btn-row"><button class="btn-next" id="q1-next" onclick="goToSlide(3)">Next →</button></div>
+    </div></div>
+  </div>
+
+  <div class="slide" id="slide-3">
+    <div class="quiz-header"><span class="section-label">Restorative Instruments</span><span class="progress-text">Question 3 of 6</span></div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:50%"></div></div>
+    <div class="quiz-card"><div class="quiz-card-header">Knowledge Check: Identify</div><div class="quiz-card-body">
+      <p class="question-text">A Tofflemire retainer is used in combination with which of the following?</p>
+      <div class="options-grid">
+        <button class="option-btn" onclick="checkMC(this,'q2',false)"><span class="option-letter">A</span>Rubber Dam Clamp</button>
+        <button class="option-btn" onclick="checkMC(this,'q2',false)"><span class="option-letter">B</span>Cotton Roll</button>
+        <button class="option-btn" onclick="checkMC(this,'q2',true)"><span class="option-letter">C</span>Matrix Band</button>
+        <button class="option-btn" onclick="checkMC(this,'q2',false)"><span class="option-letter">D</span>Wedge only</button>
+      </div>
+      <div class="feedback-box" id="q2-feedback"></div>
+      <div class="next-btn-row"><button class="btn-next" id="q2-next" onclick="goToSlide(4)">Next →</button></div>
+    </div></div>
+  </div>
+
+  <div class="slide" id="slide-4">
+    <div class="quiz-header"><span class="section-label">Examination Instruments</span><span class="progress-text">Question 4 of 6</span></div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:66%"></div></div>
+    <div class="quiz-card"><div class="quiz-card-header">Knowledge Check: Identify</div><div class="quiz-card-body">
+      <p class="question-text">Which instrument has a thin, flexible, sharp point used to detect calculus, caries, and other irregularities on tooth surfaces?</p>
+      <div class="options-grid">
+        <button class="option-btn" onclick="checkMC(this,'q3',false)"><span class="option-letter">A</span>Mouth Mirror</button>
+        <button class="option-btn" onclick="checkMC(this,'q3',true)"><span class="option-letter">B</span>Explorer</button>
+        <button class="option-btn" onclick="checkMC(this,'q3',false)"><span class="option-letter">C</span>Periodontal Probe</button>
+        <button class="option-btn" onclick="checkMC(this,'q3',false)"><span class="option-letter">D</span>Cotton Plier</button>
+      </div>
+      <div class="feedback-box" id="q3-feedback"></div>
+      <div class="next-btn-row"><button class="btn-next" id="q3-next" onclick="goToSlide(5)">Next →</button></div>
+    </div></div>
+  </div>
+
+  <div class="slide" id="slide-5">
+    <div class="quiz-header"><span class="section-label">Surgical Instruments</span><span class="progress-text">Question 5 of 6</span></div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:83%"></div></div>
+    <div class="quiz-card"><div class="quiz-card-header">Knowledge Check: Identify</div><div class="quiz-card-body">
+      <p class="question-text">Which instrument is used to reflect soft tissue away from bone during a surgical extraction?</p>
+      <div class="options-grid">
+        <button class="option-btn" onclick="checkMC(this,'q4',false)"><span class="option-letter">A</span>Elevator</button>
+        <button class="option-btn" onclick="checkMC(this,'q4',false)"><span class="option-letter">B</span>Forceps</button>
+        <button class="option-btn" onclick="checkMC(this,'q4',true)"><span class="option-letter">C</span>Periosteal Elevator</button>
+        <button class="option-btn" onclick="checkMC(this,'q4',false)"><span class="option-letter">D</span>Rongeur</button>
+      </div>
+      <div class="feedback-box" id="q4-feedback"></div>
+      <div class="next-btn-row"><button class="btn-next" id="q4-next" onclick="goToSlide(6)">Next →</button></div>
+    </div></div>
+  </div>
+
+  <div class="slide" id="slide-6">
+    <div class="quiz-header"><span class="section-label">Composite Instruments</span><span class="progress-text">Question 6 of 6</span></div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%"></div></div>
+    <div class="quiz-card"><div class="quiz-card-header">Knowledge Check: Identify</div><div class="quiz-card-body">
+      <p class="question-text">A composite placement instrument is typically made of which material to prevent sticking?</p>
+      <div class="options-grid">
+        <button class="option-btn" onclick="checkMC(this,'q5',false)"><span class="option-letter">A</span>Stainless Steel</button>
+        <button class="option-btn" onclick="checkMC(this,'q5',false)"><span class="option-letter">B</span>Carbon Fiber</button>
+        <button class="option-btn" onclick="checkMC(this,'q5',true)"><span class="option-letter">C</span>Anodized Aluminum / Teflon-coated</button>
+        <button class="option-btn" onclick="checkMC(this,'q5',false)"><span class="option-letter">D</span>Titanium</button>
+      </div>
+      <div class="feedback-box" id="q5-feedback"></div>
+      <div class="next-btn-row"><button class="btn-next" id="q5-next" onclick="showResults()">See Results →</button></div>
+    </div></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="slide" id="slide-results">
+    <div class="results-card">
+      <div class="results-header">Knowledge Check Complete</div>
+      <div class="results-body">
+        <div class="score-ring"><svg viewBox="0 0 140 140"><circle class="score-ring-bg" cx="70" cy="70" r="65"/><circle class="score-ring-fill" id="score-ring" cx="70" cy="70" r="65"/></svg><div class="score-ring-text" id="score-pct">0%</div></div>
+        <div class="results-breakdown">
+          <div class="breakdown-item"><div class="breakdown-num green" id="res-correct">0</div><div class="breakdown-label">Correct</div></div>
+          <div class="breakdown-item"><div class="breakdown-num red" id="res-wrong">0</div><div class="breakdown-label">Incorrect</div></div>
+        </div>
+        <p class="results-message" id="results-msg"></p>
+        <button class="btn-primary" onclick="resetQuiz()">Try Again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const totalScored=10;
+let mcScore=0,dnd1Score=0;
+const mcAnswered={};
+
+function goToSlide(n){document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));document.getElementById(n==='results'?'slide-results':'slide-'+n).classList.add('active');}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+/* DND1 */
+const dnd1Data=[
+  {id:'bite-stick',name:'Bite Stick',desc:'To seat permanent crown while patient bites in centric occlusion'},
+  {id:'cb-scissors',name:'Crown & Bridge Scissors',desc:'To trim aluminum temporary crowns on gingival side; to trim custom temporary crowns'},
+  {id:'cont-pliers',name:'Contouring Pliers',desc:'To crimp and contour marginal edge of temporary crown or stainless steel crown'},
+  {id:'triple-tray',name:'Triple Tray',desc:'To take final impressions for crown and bridge restorations, opposing teeth, and bite registration with one impression'},
+  {id:'cord-packer',name:'Cord Packer',desc:'To place gingival retraction cord in sulcus area after tooth is prepared for a crown and before final impressions are taken'},
+];
+let dnd1Matched,dnd1Busy;
+
+function buildDnD1(){
+  dnd1Score=0;dnd1Matched=new Set();dnd1Busy=false;
+  const bank=document.getElementById('bank1'),tgt=document.getElementById('targets1'),pips=document.getElementById('pips1');
+  bank.innerHTML='<div class="dnd-bank-label">Instruments</div>';tgt.innerHTML='';pips.innerHTML='';
+  document.getElementById('count1').innerHTML='<span>0</span>/5';
+  document.getElementById('count1').classList.remove('complete');
+  document.getElementById('fb1').className='feedback-box';
+  document.getElementById('next1').classList.remove('show');
+
+  shuffle(dnd1Data).forEach(it=>{
+    const c=document.createElement('div');c.className='drag-chip';c.textContent=it.name;c.draggable=true;
+    c.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',it.id);});
+    addTouch(c,it.id);bank.appendChild(c);
+  });
+
+  const hd=document.createElement('div');hd.className='dnd-col-headers';
+  hd.innerHTML='<span class="col-h col-h-func">Function / Description</span><span class="col-h col-h-answer">▼ Your Answer</span>';
+  tgt.appendChild(hd);
+
+  shuffle(dnd1Data).forEach((it,i)=>{
+    const r=document.createElement('div');r.className='drop-row';r.setAttribute('data-id',it.id);
+    r.innerHTML='<div class="row-num">'+(i+1)+'</div><div class="drop-desc">'+it.desc+'</div><div class="drop-slot empty" id="s1-'+it.id+'"><span class="match-icon">✓</span></div>';
+    r.addEventListener('dragover',e=>{e.preventDefault();if(!dnd1Matched.has(it.id))r.classList.add('drag-hover');});
+    r.addEventListener('dragleave',()=>r.classList.remove('drag-hover'));
+    r.addEventListener('drop',e=>{e.preventDefault();r.classList.remove('drag-hover');tryM1(e.dataTransfer.getData('text/plain'),it.id);});
+    tgt.appendChild(r);
+  });
+  for(let i=0;i<5;i++){const p=document.createElement('div');p.className='tally-pip';p.id='p1-'+i;pips.appendChild(p);}
+}
+
+function tryM1(cid,tid){
+  if(!cid||dnd1Busy||dnd1Matched.has(tid))return;
+  const row=document.querySelector('#targets1 .drop-row[data-id="'+tid+'"]');
+  if(cid===tid){
+    dnd1Busy=true;dnd1Matched.add(tid);dnd1Score++;
+    document.querySelectorAll('#bank1 .drag-chip').forEach(c=>{if(c.textContent===dnd1Data.find(d=>d.id===cid).name)c.classList.add('locked');});
+    row.classList.add('matched');
+    const sl=document.getElementById('s1-'+tid);sl.classList.remove('empty');
+    const sc=document.createElement('div');sc.className='slot-chip';sc.textContent=dnd1Data.find(d=>d.id===cid).name;sl.appendChild(sc);
+    const pip=document.getElementById('p1-'+(dnd1Matched.size-1));if(pip){pip.classList.add('filled');pip.textContent='✓';}
+    document.getElementById('count1').innerHTML='<span>'+dnd1Matched.size+'</span>/5';
+    setTimeout(()=>{dnd1Busy=false;},300);
+    if(dnd1Matched.size===5){document.getElementById('count1').classList.add('complete');document.getElementById('fb1').className='feedback-box show correct-fb';document.getElementById('fb1').textContent='Excellent! You matched all 5 instruments correctly.';document.getElementById('next1').classList.add('show');}
+  }else{
+    dnd1Busy=true;row.classList.add('rejected');setTimeout(()=>{row.classList.remove('rejected');dnd1Busy=false;},550);
+  }
+}
+
+/* TOUCH */
+function addTouch(chip,chipId){
+  chip.addEventListener('touchstart',function(e){
+    if(chip.classList.contains('locked')||dnd1Busy)return;
+    e.preventDefault();
+    const ghost=chip.cloneNode(true);ghost.style.cssText='position:fixed;z-index:9999;pointer-events:none;opacity:0.85;width:'+chip.offsetWidth+'px;';
+    document.body.appendChild(ghost);chip.style.opacity='0.3';
+    const mv=(x,y)=>{ghost.style.left=(x-ghost.offsetWidth/2)+'px';ghost.style.top=(y-ghost.offsetHeight/2)+'px';};
+    mv(e.touches[0].clientX,e.touches[0].clientY);
+    const onMv=ev=>{ev.preventDefault();const t=ev.touches[0];mv(t.clientX,t.clientY);
+      document.querySelectorAll('#targets1 .drop-row').forEach(r=>r.classList.remove('drag-hover'));
+      const el=document.elementFromPoint(t.clientX,t.clientY);
+      if(el){const r=el.closest('.drop-row');if(r&&!dnd1Matched.has(r.getAttribute('data-id')))r.classList.add('drag-hover');}};
+    const onEnd=ev=>{document.removeEventListener('touchmove',onMv);document.removeEventListener('touchend',onEnd);
+      ghost.remove();chip.style.opacity='';
+      document.querySelectorAll('#targets1 .drop-row').forEach(r=>r.classList.remove('drag-hover'));
+      const t=ev.changedTouches[0];const el=document.elementFromPoint(t.clientX,t.clientY);
+      if(el){const r=el.closest('.drop-row');if(r)tryM1(chipId,r.getAttribute('data-id'));}};
+    document.addEventListener('touchmove',onMv,{passive:false});
+    document.addEventListener('touchend',onEnd);
+  },{passive:false});
+}
+
+/* MC */
+const mcFb={q1:{c:"Correct! The amalgam carrier transports and places amalgam into the cavity preparation.",w:"Not quite. The amalgam carrier is designed to place amalgam into a prepared cavity."},q2:{c:"Correct! The Tofflemire retainer holds a matrix band in place to provide a temporary wall.",w:"Not quite. The Tofflemire retainer is used with a matrix band to form a wall for restorative material."},q3:{c:"Correct! The explorer's sharp, flexible tip is ideal for detecting surface irregularities.",w:"Not quite. The explorer has a thin, sharp point used to detect caries, calculus, and defects."},q4:{c:"Correct! The periosteal elevator lifts and separates soft tissue from bone.",w:"Not quite. The periosteal elevator reflects soft tissue from bone during surgical procedures."},q5:{c:"Correct! Non-stick coatings prevent composite resin from adhering to the instrument.",w:"Not quite. Composite instruments use anodized aluminum or Teflon coatings to prevent sticking."}};
+
+function checkMC(btn,qid,ok){if(mcAnswered[qid])return;mcAnswered[qid]=true;
+  btn.closest('.quiz-card-body').querySelectorAll('.option-btn').forEach(b=>{b.classList.add('disabled');if(b===btn&&!ok)b.classList.add('wrong');if(b.getAttribute('onclick').includes('true'))b.classList.add('correct');});
+  const fb=document.getElementById(qid+'-feedback'),nb=document.getElementById(qid+'-next');
+  if(ok){mcScore++;fb.className='feedback-box show correct-fb';fb.textContent=mcFb[qid].c;}
+  else{fb.className='feedback-box show wrong-fb';fb.textContent=mcFb[qid].w;}nb.classList.add('show');}
+
+/* RESULTS */
+function showResults(){goToSlide('results');const t=dnd1Score+mcScore,p=Math.round(t/totalScored*100);
+  document.getElementById('score-pct').textContent=p+'%';document.getElementById('res-correct').textContent=t;document.getElementById('res-wrong').textContent=totalScored-t;
+  setTimeout(()=>{document.getElementById('score-ring').style.strokeDashoffset=408.4-(p/100)*408.4;},100);
+  let m='';if(p===100)m="Outstanding! You've mastered every instrument. Keep up the great work!";else if(p>=80)m="Great job! Review the items you missed for a perfect score next time.";else if(p>=60)m="Good effort. Revisit your learning portal to strengthen weaker areas.";else m="Keep practicing! Review the instrument sections in your learning portal and try again.";
+  document.getElementById('results-msg').textContent=m;}
+
+function resetQuiz(){mcScore=0;Object.keys(mcAnswered).forEach(k=>delete mcAnswered[k]);
+  for(let i=1;i<=5;i++){const q='q'+i,sl=document.getElementById('slide-'+(i+1));if(!sl)continue;
+    sl.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('correct','wrong','disabled'));
+    const f=document.getElementById(q+'-feedback');if(f){f.className='feedback-box';f.textContent='';}
+    const n=document.getElementById(q+'-next');if(n)n.classList.remove('show');}
+  document.getElementById('score-ring').style.strokeDashoffset=408.4;buildDnD1();goToSlide(0);}
+
+buildDnD1();
+</script>
+</body>
+</html>

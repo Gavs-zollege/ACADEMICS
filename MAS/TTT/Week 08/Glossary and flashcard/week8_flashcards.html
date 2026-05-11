@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 8 Flashcards — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #e4e4f0;
+    --text-secondary: #9898b0;
+    --surface-1: #1c1c2e;
+    --surface-2: #282840;
+    --border: #363650;
+    --bg: #0d0d1a;
+    --card-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C0392B; margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 900;
+    letter-spacing: -1px; margin-bottom: 6px; line-height: 1.1;
+  }
+  .header p { font-size: 13px; color: var(--text-secondary); }
+  .flashcard {
+    width: 100%; max-width: 500px; min-height: 250px; border-radius: 22px;
+    cursor: pointer; padding: 34px; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12); transition: all .35s cubic-bezier(.4,0,.2,1);
+    user-select: none; position: relative; margin: 0 auto;
+  }
+  .flashcard .label {
+    position: absolute; top: 16px; left: 20px; font-size: 11px;
+    font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .7;
+  }
+  .flashcard .hint {
+    position: absolute; top: 16px; right: 20px; font-size: 11px; opacity: .5;
+  }
+  .flashcard h2 {
+    margin: 0; font-family: var(--font-display); font-size: 26px;
+    font-weight: 900; line-height: 1.2; letter-spacing: -.5px;
+  }
+  .flashcard .def-text {
+    margin: 0; font-size: 15px; line-height: 1.65; color: var(--text-secondary);
+  }
+  .progress-bar {
+    height: 6px; border-radius: 6px; background: var(--surface-2); overflow: hidden;
+  }
+  .progress-bar .fill {
+    height: 100%; border-radius: 6px; transition: width .3s;
+  }
+  .pill {
+    padding: 8px 16px; border-radius: 24px; font-weight: 700;
+    cursor: pointer; font-size: 13px; transition: all .2s; font-family: var(--font-body);
+  }
+  .pill-primary {
+    border: none; color: #fff; padding: 13px 34px; font-size: 15px;
+    border-radius: 30px; letter-spacing: .3px;
+  }
+  .pill-outline {
+    background: transparent; border: 2px solid;
+  }
+  .chip {
+    padding: 8px 14px; border-radius: 20px; border: 2px solid;
+    font-weight: 600; cursor: pointer; font-size: 13px; transition: all .2s;
+    font-family: var(--font-body); white-space: nowrap;
+  }
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; }
+  .mb-6 { margin-bottom: 6px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; }
+  .gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 8 Flashcards</h1>
+    <p id="header-subtitle"></p>
+  </div>
+  <div id="flash-mode"></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "Healthcare Systems, Roles & Settings", emoji: "🏥", color: "#2471A3",
+    terms: [
+      { term: "Scope of Practice", def: "The specific duties a healthcare professional is legally authorized and trained to perform based on education, credentials, and state regulations. MAs work under physician supervision. Scope varies by state." },
+      { term: "Ambulatory / Outpatient Care", def: "Healthcare delivered where the patient is not admitted overnight. Includes medical offices, urgent care, specialty clinics, and outpatient surgery centers. Most MAs work in ambulatory care." },
+      { term: "Inpatient Care", def: "Healthcare provided while a patient is admitted and stays in a hospital overnight. Used for more serious conditions requiring continuous monitoring, surgery, or intensive treatment." },
+      { term: "Patient-Centered Medical Home (PCMH)", def: "A care delivery model where a PCP leads an interprofessional team to coordinate all aspects of a patient's care. MAs are integral team members supporting clinical care and patient education." },
+      { term: "Hospice Care", def: "End-of-life care focused on comfort, dignity, and quality of life rather than curative treatment. Can be provided at home or in a facility." },
+      { term: "Home Health", def: "Skilled healthcare services delivered to patients in their home who have difficulty leaving. Must be ordered by a provider for a defined recovery period based on a specific acute event." },
+      { term: "Mobile Health Unit", def: "A transportable healthcare service bringing medical care to underserved or rural communities. Examples: mobile stroke units, mammogram buses, vaccination sites, and mobile urgent care." },
+      { term: "Telehealth", def: "Healthcare services delivered remotely via technology. Effective for follow-ups, chronic condition management, and patient education. Not appropriate for physical examinations or new unexplained symptoms." },
+      { term: "Patient Portal", def: "A secure, web-based EHR feature allowing patients to view health information, test results, visit notes, send messages, and schedule appointments." },
+      { term: "Fee-for-Service", def: "A payment model where providers are reimbursed for each specific service performed. Benefit: patients pay only for services used. Risk: can incentivize volume over quality." },
+      { term: "Value-Based Care", def: "A payment model rewarding providers for improving outcomes and reducing costs. Summarized by the Quadruple Aim: better outcomes, better satisfaction, lower cost, and professional well-being." },
+      { term: "HMO (Health Maintenance Organization)", def: "A managed care plan with a specific provider network. Requires a PCP, referrals for specialists, and precertification for procedures." },
+      { term: "PPO (Preferred Provider Organization)", def: "A managed care plan offering more flexibility. No PCP required, patients may self-refer to specialists. In-network costs less than out-of-network." },
+      { term: "Patient Navigation / Care Coordination", def: "An expanded MA role guiding patients through the healthcare system — understanding care plans, connecting with specialists, coordinating referrals, and identifying barriers like transportation or finances." },
+    ],
+  },
+  {
+    name: "Providers, Credentials & Licensure", emoji: "🩺", color: "#C0392B",
+    terms: [
+      { term: "Medical Doctor (MD)", def: "An allopathic physician licensed to diagnose, prescribe, and perform surgery. Requires undergraduate education, four years of medical school, a two-to-seven-year residency, and passing the USMLE." },
+      { term: "Doctor of Osteopathic Medicine (DO)", def: "A physician with training equivalent to an MD, plus osteopathic manipulative therapy (OMT). Same full scope of practice as an MD. Takes a holistic approach to care." },
+      { term: "Physician Assistant (PA)", def: "A licensed midlevel provider practicing medicine under MD/DO direction. Can make clinical decisions, diagnose, and prescribe. Requires four years of college plus two years of PA school." },
+      { term: "Nurse Practitioner (NP)", def: "An advanced practice registered nurse (APRN) with graduate-level clinical training. Can diagnose and prescribe. May practice independently in some states." },
+      { term: "Licensed Practical Nurse (LPN/LVN)", def: "A licensed nurse with approximately one year of accredited training. Limited scope — vital signs, basic wound care, some medication administration under supervision." },
+      { term: "Registered Nurse (RN)", def: "A licensed nurse with an associate's, diploma, or bachelor's degree and broad clinical scope. Can work in clinical settings, public health, administration, and education." },
+      { term: "Licensure", def: "A mandatory, state-issued authorization to practice a regulated profession. Required for physicians before practicing. No state currently requires MAs to hold a license, though some require one for specific tasks." },
+      { term: "Certification", def: "A voluntary credential obtained by passing a national exam. Not legally required for most MAs but increases job placement, wages, and career advancement." },
+      { term: "Continuing Education (CE)", def: "Educational activities completed after initial certification to maintain up-to-date knowledge. NHA-certified MAs must complete 10 hours of CE or retake the exam to renew every two years." },
+      { term: "Certified Medical Assistant (CMA / RMA)", def: "The two most widely recognized MA credentials: CMA (AAMA) and RMA (AMT). Obtained by passing a national certification examination." },
+    ],
+  },
+  {
+    name: "Pharmacology & Medication Classifications", emoji: "💊", color: "#7D3C98",
+    terms: [
+      { term: "Pharmacology", def: "The study of medications — their classifications, mechanisms of action, therapeutic effects, side effects, and interactions." },
+      { term: "Medication Classification", def: "Grouping medications by their therapeutic action. Some drugs belong to more than one class. Example: hydrochlorothiazide is both a diuretic and an antihypertensive." },
+      { term: "Analgesic", def: "A medication that relieves pain. Includes OTC options (acetaminophen, ibuprofen) and prescription opioids (hydrocodone, codeine). Some analgesics also treat seizures (e.g., gabapentin)." },
+      { term: "Antihypertensive", def: "A medication to lower blood pressure. Includes ACE inhibitors (lisinopril), beta-blockers (metoprolol), ARBs (valsartan), calcium channel blockers, and diuretics." },
+      { term: "Diuretic", def: "A medication that increases urine production to eliminate excess fluid. Used for edema, hypertension, and heart failure. Examples: furosemide, hydrochlorothiazide." },
+      { term: "Oral Hypoglycemic", def: "A medication taken by mouth to lower blood glucose in type 2 diabetes. Examples: metformin (first-line), glyburide, pioglitazone. Insulin is used when oral medications are insufficient." },
+      { term: "Antibiotic", def: "A medication to treat bacterial infections. Common examples: amoxicillin, ciprofloxacin, sulfamethoxazole. Ineffective against viral infections." },
+      { term: "Anticoagulant", def: "A medication that slows or prevents blood clotting. Used for stroke prevention, DVT, and PE. Examples: warfarin, apixaban, heparin. Increases bleeding risk." },
+      { term: "Bronchodilator", def: "A medication relaxing airway muscles to improve airflow. Used for asthma and COPD. Examples: albuterol (rescue), theophylline (long-acting)." },
+      { term: "Antilipemic", def: "A medication to lower blood cholesterol or triglycerides. Examples: atorvastatin (statin), fenofibrate, cholestyramine." },
+      { term: "Over-the-Counter (OTC) Medication", def: "A medication purchased without a prescription. Regulated by the FDA. Common OTCs: acetaminophen, ibuprofen, diphenhydramine. Patients should still report OTC use during intake." },
+    ],
+  },
+  {
+    name: "Controlled Substances", emoji: "🔐", color: "#C2185B",
+    terms: [
+      { term: "Controlled Substances Act (CSA)", def: "A federal law classifying substances with abuse potential into five schedules. Regulates prescribing, storage, dispensing, and documentation. Enforced by the DEA." },
+      { term: "Schedule I", def: "Highest abuse potential with no accepted medical use. Cannot be prescribed. Examples: heroin, LSD, mescaline, cannabis (federally)." },
+      { term: "Schedule II", def: "High abuse potential with accepted medical use but risk of severe dependence. Must be hand-signed, stored in a locked cabinet, and cannot be refilled. Examples: morphine, oxycodone, fentanyl, amphetamine." },
+      { term: "Schedule III", def: "Moderate to low dependence potential. Can be refilled up to 5 times in 6 months. Examples: ketamine, anabolic steroids, acetaminophen with codeine, buprenorphine." },
+      { term: "Schedule IV", def: "Low abuse potential. Can be refilled up to 5 times in 6 months. Examples: tramadol, benzodiazepines (diazepam, alprazolam, clonazepam, lorazepam)." },
+      { term: "Schedule V", def: "Lowest abuse potential among controlled substances. Often preparations with limited narcotics. Examples: diphenoxylate/atropine, guaifenesin with codeine, pregabalin." },
+    ],
+  },
+  {
+    name: "Drug Effects, Interactions & Safety", emoji: "⚠️", color: "#D68910",
+    terms: [
+      { term: "Therapeutic Effect", def: "The intended, beneficial action of a medication — the reason it was prescribed. Example: lisinopril's therapeutic effect is sustained reduction in blood pressure." },
+      { term: "Side Effect", def: "A predictable, unintended but not necessarily harmful response to a medication. Example: diphenhydramine causes sedation. Side effects often subside as the body adjusts." },
+      { term: "Adverse Effect", def: "An unintended, harmful response that may require discontinuing the drug or seeking immediate care. Example: angioedema from lisinopril is a rare but potentially fatal adverse effect." },
+      { term: "Indication", def: "The specific condition for which a medication is prescribed. Example: the indication for metformin is type 2 diabetes." },
+      { term: "Contraindication", def: "A condition that makes a medication inadvisable or dangerous. The most common contraindication is a prior allergic reaction to that medication." },
+      { term: "Drug Interaction", def: "A change in a medication's effect caused by another medication, food, or supplement. Example: grapefruit juice interferes with simvastatin metabolism, increasing toxicity risk." },
+      { term: "Hypersensitivity (Allergic Reaction)", def: "An immune response to a medication ranging from mild (rash) to life-threatening (anaphylaxis). Allergies must be reviewed, confirmed, and updated at every visit." },
+      { term: "Anaphylaxis", def: "A severe, potentially life-threatening allergic reaction with airway spasm, facial/throat swelling, and dangerous blood pressure drop. Requires immediate epinephrine and emergency care." },
+      { term: "Look-Alike / Sound-Alike (LASA) Medications", def: "Medications with similar names or packaging creating risk of errors. Examples: clonidine/Klonopin, hydroxyzine/hydralazine. Prevention: tall-man lettering, separate storage, triple label checks." },
+      { term: "Tall-Man Lettering", def: "A strategy capitalizing the letters that differ between similar drug names. Example: hydrOXYzine vs. hydrALAzine. Recommended by the Institute for Safe Medication Practices." },
+    ],
+  },
+  {
+    name: "Dosage Calculations & Measurements", emoji: "🔢", color: "#148F77",
+    terms: [
+      { term: "Metric System", def: "The standard measurement system in medicine for weight (kg, g, mg, mcg) and volume (L, mL). Units change by factors of 1,000. Example: 0.088 mg = 88 mcg." },
+      { term: "Standard (Household) Measurement", def: "Common household units for oral liquid medications. Key equivalencies: 1 tsp = 5 mL; 1 tbsp = 15 mL; 1 fl oz = 30 mL; 1 cup = 240 mL; 2.2 lb = 1 kg." },
+      { term: "Ratio and Proportion Method", def: "A dosage calculation using the known relationship between dose and unit. Set up as a proportion and cross-multiply. Example: 25 mg/1 cap = 50 mg/x cap → x = 2 capsules." },
+      { term: "Desired-Over-Have Formula", def: "(Desired dose ÷ Dose on hand) × Quantity = Amount to give. Example: (50 mg ÷ 25 mg) × 1 capsule = 2 capsules." },
+      { term: "Pediatric Dosing by Weight", def: "The most accurate method for pediatric doses: (1) convert lb to kg (÷ 2.2); (2) multiply by mg/kg/day; (3) divide by doses per day; (4) calculate volume using available concentration." },
+      { term: "Body Surface Area (BSA)", def: "A measure used for the most accurate pediatric drug dose (up to age 12). Determined using a nomogram. Formula: (child's BSA ÷ 1.7 m²) × adult dose = child's dose." },
+      { term: "Half-Life", def: "The time for drug concentration in the body to be reduced by half. Determines dosing intervals — if the next dose is not given before half-life expires, drug levels may fall below therapeutic range." },
+    ],
+  },
+  {
+    name: "Pharmacokinetics & Medication Administration", emoji: "💉", color: "#1A5276",
+    terms: [
+      { term: "Pharmacokinetics", def: "The study of how the body processes a medication — absorption, distribution, metabolism, and excretion (ADME). Helps predict when a drug takes effect, peaks, and how long it lasts." },
+      { term: "Absorption", def: "The process by which a medication enters the bloodstream. Route affects speed: IV is fastest (direct); oral tablets are slowest (must dissolve and move through GI tract). Food can slow or inactivate some medications." },
+      { term: "Distribution", def: "The bloodstream carrying an absorbed medication to tissues and organs. The blood-brain barrier and placental barrier limit distribution to certain areas. Medication safety in pregnancy is a critical consideration." },
+      { term: "Metabolism", def: "The liver (primarily) and kidneys convert active medication into inactive metabolites. Affected by age, organ health, other medications, and genetics. Infants and older adults metabolize most slowly." },
+      { term: "Excretion", def: "Elimination of drug metabolites from the body, primarily through urine via the kidneys. Also through feces, saliva, sweat, bile, breast milk, or exhaled air. Patients with kidney/liver disease may need dose adjustments." },
+      { term: "Rights of Medication Administration", def: "A safety checklist: the original five rights (patient, medication, dose, time, route) expanded to seven — add right technique and right documentation. Skipping any right increases error risk." },
+      { term: "Three Label Checks ('Three Befores')", def: "Check the medication label three times: (1) when removing from storage; (2) when preparing the dose; (3) when returning the container or discarding it. Also check the expiration date each time." },
+      { term: "Intradermal (ID) Injection", def: "Injection into the superficial skin layers at 10–15 degrees. Used for allergy testing and TB skin tests. Common sites: inner forearm and upper chest." },
+      { term: "Subcutaneous (SQ) Injection", def: "Injection into the fat layer beneath the skin at 45 degrees. Sites: upper arm, abdomen, buttocks, upper outer thighs. Used for insulin, low-molecular-weight heparins, and some vaccines." },
+      { term: "Intramuscular (IM) Injection", def: "Injection deep into muscle tissue at 90 degrees. Sites: deltoid, vastus lateralis, ventrogluteal. Used for vaccines, antibiotics, and hormonal medications." },
+    ],
+  },
+  {
+    name: "Nutrition, Vitamins & Eating Disorders", emoji: "🥗", color: "#1E8449",
+    terms: [
+      { term: "Macronutrients", def: "The three major calorie-containing nutrients: proteins (4 cal/g), carbohydrates (4 cal/g), and fats (9 cal/g). Water, vitamins, and minerals are essential but do not provide calories." },
+      { term: "Protein", def: "Large molecules built from amino acids. Used to repair and build tissues, support immune function, and maintain fluid balance. Essential during pregnancy, breastfeeding, infancy, adolescence, and recovery." },
+      { term: "Carbohydrate", def: "The body's primary energy source from plant foods. Simple carbs provide quick energy; complex carbs (fiber, whole grains) provide sustained energy and support digestion. Excess stored as glycogen, then body fat." },
+      { term: "Fat (Lipid)", def: "A concentrated energy source at 9 cal/g. Essential for fat-soluble vitamin absorption (A, D, E, K), hormone production, and cell membrane structure. Unsaturated fats are healthier; saturated and trans fats raise LDL." },
+      { term: "Fat-Soluble Vitamins", def: "Vitamins A, D, E, and K — stored in body fat and liver. Toxicity is possible with excessive supplementation. Vitamin A excess causes headaches and bone thickening; Vitamin D excess can cause kidney failure." },
+      { term: "Water-Soluble Vitamins", def: "B vitamins (B1, B2, B3, B6, B12, folate, pantothenic acid, biotin) and Vitamin C. Excess is generally excreted in urine. Very high supplemental doses of B3 and B6 can still cause adverse effects." },
+      { term: "MyPlate", def: "A USDA nutrition education tool based on Dietary Guidelines for Americans at myplate.gov. Provides individualized recommendations based on age, sex, height, weight, and activity level." },
+      { term: "Food Label", def: "A required nutrition facts panel on packaged food. Includes serving size, calories, macronutrients, sodium, cholesterol, fiber, vitamins, and minerals. Nutrient amounts are per serving, not per package." },
+      { term: "Dietary Supplement", def: "A product containing vitamins, minerals, herbs, amino acids, or botanical substances. FDA regulates supplements with looser standards than prescription drugs. Patients should always disclose supplement use." },
+      { term: "Anorexia Nervosa", def: "A potentially life-threatening eating disorder characterized by self-starvation, extreme fear of weight gain, and distorted body image. Warning signs: severe weight loss (≥15%), amenorrhea, ritualistic eating, excessive exercise." },
+      { term: "Bulimia Nervosa", def: "An eating disorder with repeated binge-purge cycles (vomiting, laxatives, or diuretics). Physical consequences: electrolyte imbalances, erosion of tooth enamel, esophageal damage. Requires prompt treatment." },
+      { term: "Binge Eating Disorder", def: "Repeatedly consuming unusually large amounts of food quickly past fullness, often due to emotional distress, without purging. Leads to obesity and related comorbidities. Treated with behavioral therapy and nutrition counseling." },
+    ],
+  },
+];
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+let flashDeck = [];
+let flashIdx = 0;
+let flashFlipped = false;
+let flashKnown = 0;
+let flashLearning = 0;
+let flashDone = false;
+let flashSelectedCats = new Set(CATEGORIES.map((_, i) => i));
+let flashStarted = false;
+document.getElementById('header-subtitle').textContent =
+  `Foundational Knowledge & Basic Science · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+renderFlash();
+function startFlashDeck() {
+  const terms = CATEGORIES.flatMap((cat, ci) =>
+    flashSelectedCats.has(ci) ? cat.terms.map(t => ({ ...t, color: cat.color, emoji: cat.emoji, category: cat.name })) : []
+  );
+  flashDeck = shuffle([...terms]);
+  flashIdx = 0; flashFlipped = false; flashKnown = 0; flashLearning = 0; flashDone = false; flashStarted = true;
+  renderFlash();
+}
+function flashToggleCat(i) {
+  if (flashSelectedCats.has(i)) {
+    if (flashSelectedCats.size > 1) flashSelectedCats.delete(i);
+  } else { flashSelectedCats.add(i); }
+  renderFlash();
+}
+function flashMark(isKnown) {
+  if (isKnown) flashKnown++; else flashLearning++;
+  if (flashIdx + 1 >= flashDeck.length) { flashDone = true; renderFlash(); return; }
+  flashIdx++; flashFlipped = false; renderFlash();
+}
+function renderFlash() {
+  const el = document.getElementById('flash-mode');
+  if (!flashStarted || flashDeck.length === 0) {
+    let html = `<div class="text-center" style="padding:40px 0">
+      <p style="font-size:18px;margin-bottom:20px;color:var(--text)">Select categories and start studying!</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px">`;
+    CATEGORIES.forEach((c, i) => {
+      const sel = flashSelectedCats.has(i);
+      html += `<button class="chip" onclick="flashToggleCat(${i})"
+        style="border-color:${c.color};background:${sel ? c.color : 'transparent'};color:${sel ? '#fff' : c.color}">
+        ${c.emoji} ${escHtml(c.name)}</button>`;
+    });
+    html += `</div>
+      <button class="pill-primary" style="background:#E74C3C" onclick="startFlashDeck()">Shuffle & Start →</button>
+    </div>`;
+    el.innerHTML = html; return;
+  }
+  if (flashDone) {
+    const total = flashKnown + flashLearning;
+    const pct = Math.round((flashKnown / total) * 100);
+    const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '💪' : '📖';
+    el.innerHTML = `
+      <div class="text-center" style="padding:40px 0">
+        <div style="font-size:48px;margin-bottom:12px">${emoji}</div>
+        <h3 style="margin:0 0 8px">Round Complete!</h3>
+        <p style="color:var(--text-secondary);font-size:15px;margin:0 0 24px">
+          ${flashKnown} knew it · ${flashLearning} still learning · ${pct}% mastery
+        </p>
+        <div style="width:100%;max-width:300px;height:10px;border-radius:10px;background:var(--surface-2);margin:0 auto 24px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;border-radius:10px;background:linear-gradient(90deg,#27AE60,#2ECC71);transition:width .6s"></div>
+        </div>
+        <button class="pill-primary" style="background:#3498DB" onclick="flashDeck=[];flashStarted=false;flashDone=false;renderFlash()">New Round</button>
+      </div>`;
+    return;
+  }
+  const card = flashDeck[flashIdx];
+  const pctProgress = ((flashIdx / flashDeck.length) * 100);
+  el.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;padding:12px 0">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;width:100%">
+        <span style="font-size:13px;color:var(--text-secondary);font-weight:600">${flashIdx + 1}/${flashDeck.length}</span>
+        <div class="progress-bar" style="flex:1"><div class="fill" style="width:${pctProgress}%;background:${card.color}"></div></div>
+        <span style="font-size:12px;color:var(--text-secondary)">✓${flashKnown} ✗${flashLearning}</span>
+      </div>
+      <div class="flashcard" onclick="flashFlipped=!flashFlipped;renderFlash();"
+           style="background:${flashFlipped ? 'var(--surface-1)' : card.color};color:${flashFlipped ? 'var(--text)' : '#fff'}">
+        <span class="label">${flashFlipped ? 'Definition' : card.emoji + ' ' + escHtml(card.category)}</span>
+        <span class="hint">${flashFlipped ? '' : 'tap to flip'}</span>
+        ${!flashFlipped
+          ? `<h2>${escHtml(card.term)}</h2>`
+          : `<p class="def-text">${escHtml(card.def)}</p>`
+        }
+      </div>
+      ${flashFlipped ? `
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <button class="pill pill-outline" style="border-color:#E74C3C;color:#E74C3C;padding:12px 28px;font-size:14px" onclick="flashMark(false)">Still Learning</button>
+          <button class="pill-primary" style="background:#27AE60;padding:12px 28px;font-size:14px" onclick="flashMark(true)">Got It! ✓</button>
+        </div>` : ''}
+    </div>`;
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Science Behind Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.07);
+    --text: #c4cedf;
+    --text-bright: #e2e8f4;
+    --text-muted: #6b7a96;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; overflow: hidden;
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+  }
+  .app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .header {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 16px 24px 12px;
+  }
+  .header h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--text-bright); line-height: 1.1; margin-top: 2px;
+  }
+  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .main {
+    flex: 1; overflow: hidden;
+    display: flex; gap: 16px;
+    padding: 0 24px 16px;
+  }
+  .sidebar {
+    width: 250px; flex-shrink: 0;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    padding-right: 6px;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .topic-btn {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 8px 11px;
+    cursor: pointer; transition: all 0.2s ease;
+    width: 100%; text-align: left;
+    font-family: 'DM Sans', sans-serif; color: var(--text);
+  }
+  .topic-btn:hover { transform: translateX(2px); }
+  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .label {
+    font-size: 13px; font-weight: 500; flex: 1;
+    line-height: 1.3; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
+  .sidebar-divider {
+    height: 1px; background: var(--border);
+    margin: 4px 0; flex-shrink: 0;
+  }
+  .content {
+    flex: 1; overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .content-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .content-header .icon { font-size: 30px; }
+  .content-header .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700;
+  }
+  .content-header .title {
+    font-size: 18px; font-weight: 700;
+    color: var(--text-bright); line-height: 1.2;
+  }
+  .content-scroll {
+    flex: 1; overflow-y: auto; padding-right: 6px;
+  }
+  .content-scroll::-webkit-scrollbar { width: 3px; }
+  .content-scroll::-webkit-scrollbar-track { background: transparent; }
+  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .point {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px; border: 1px solid transparent;
+    animation: pointIn 0.3s ease both;
+  }
+  .point .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px;
+    animation: pointIn 0.3s ease both;
+  }
+  .takeaway-item .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #E63946, #FF6B35);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .welcome {
+    height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+  }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
+  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  @keyframes pointIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    html, body { overflow: auto; height: auto; }
+    .app { height: auto; min-height: 100vh; overflow: visible; }
+    .header { padding: 14px 16px 10px; }
+    .header h1 { font-size: 22px; }
+    .main {
+      flex-direction: column;
+      padding: 0 12px 16px;
+      overflow: visible;
+    }
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      gap: 6px;
+      padding-right: 0;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
+    .topic-btn {
+      flex-shrink: 0;
+      min-width: max-content;
+      padding: 7px 12px;
+    }
+    .sidebar-divider {
+      width: 1px; height: auto;
+      min-height: 28px;
+      margin: 0 2px;
+    }
+    .content {
+      overflow: visible;
+      min-height: 60vh;
+      padding: 16px;
+    }
+    .content-scroll { overflow: visible; }
+    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>The Science Behind Healthcare</h1>
+    <p>Roles, Medications, Nutrition & Payment Models</p>
+  </div>
+  <div class="main">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content">
+      <div class="welcome">
+        <div class="big-icon">📚</div>
+        <p>Select a topic to explore its key learning points</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var TOPICS = [
+  { id:1, num:"01", icon:"🔍", title:"MA Roles, Responsibilities & Scope of Practice", color:"#E63946",
+    points:["MAs work alongside providers in outpatient/ambulatory settings and can be cross-trained in both administrative and clinical duties","Administrative duties: scheduling, registration, billing, insurance claims, correspondence, collecting copays","Clinical duties: vital signs, specimen collection, diagnostic testing (EKG, spirometry), patient prep, immunizations","Patient navigation and care coordination are growing parts of the MA role — helping patients move through the healthcare system","Scope of practice is defined by state law and organizational policy — MAs may not practice medicine and can only perform tasks they are trained and authorized to do"] },
+  { id:2, num:"02", icon:"🧰", title:"Medical Providers & Allied Health Personnel", color:"#457B9D",
+    points:["MD (allopathic): diagnoses, treats, prescribes, performs procedures — 8 years of school + residency + board exams","DO (osteopathic): same as MD plus osteopathic manipulative therapy (OMT)","PA: practices under MD/DO supervision; 4 years college + 2 years PA school; can make clinical decisions","NP: advanced nursing degree beyond RN; diagnoses and prescribes for common illnesses; independent in some states","Allied health: LPN/LVN (limited scope, vital signs, wound care), RN (broad scope), lab tech, pharmacy tech, PT, OT, radiology tech"] },
+  { id:3, num:"03", icon:"🌈", title:"Licensing vs. Certification", color:"#2A9D8F",
+    points:["Licensure: state-issued, mandatory for physicians — allows diagnosis and treatment; controlled by the state board of medical examiners","Methods: by examination (standard), reciprocity (another state\'s license recognized), or endorsement (national board certification)","No state currently requires MAs to be licensed — but some states require a license for specific tasks like phlebotomy or EKG","Certification: generally optional for MAs; obtained by passing a national exam; demonstrates competency and boosts hiring, wages, and advancement","Maintaining certification: NHA-certified MAs must renew every two years — retake the exam or complete 10 hours of continuing education"] },
+  { id:4, num:"04", icon:"🧪", title:"Healthcare Organizations & Delivery Models", color:"#8338EC",
+    points:["Inpatient: care during hospital admission. Outpatient/ambulatory: care in a clinic or office — where most MAs work","Patient-Centered Medical Home (PCMH): PCP leads an interprofessional team coordinating all care — prevention through end of life","Hospice: end-of-life comfort care for terminal patients — can be outpatient or inpatient","Home health: skilled nursing, PT, OT, speech therapy delivered at home — ordered by a provider for a set recovery period","Mobile health units: bring care to underserved communities (stroke units, mobile vaccination, urgent care, mammogram buses)"] },
+  { id:5, num:"05", icon:"📏", title:"Technology-Based Methods — Telehealth & Patient Portals", color:"#FF6B35",
+    points:["Telehealth: healthcare delivered by video or phone — effective for follow-ups, chronic condition reviews, lab result discussions, patient education","In-person is still required for physical exams, new or unexplained pain, and diagnostic testing (labs, imaging)","MA telehealth duties: confirm email, send visit link, test connection in advance, participate in visit to collect history and medication info","Patient portals: patients log in to view results, visit notes, education materials, and send secure messages to the care team","MA portal duties: upload documents, assist patients with enrollment and setup, understand clinic policies for appropriate portal use"] },
+  { id:6, num:"06", icon:"💉", title:"Healthcare Payment Models", color:"#E63946",
+    points:["Fee-for-service: providers bill per service — every visit, test, and procedure has a code and charge; patients pay only for what they use","Risk: fee-for-service can incentivize unnecessary services rather than quality outcomes","Value-based care: rewards providers for keeping patients healthy — tied to the Quadruple Aim (better outcomes, satisfaction, lower cost, provider well-being)","HMO: requires referrals and precertifications; care within a defined network","PPO: more flexibility — no PCP required, can see specialists without referral; in-network costs less than out-of-network"] },
+  { id:7, num:"07", icon:"🩸", title:"General vs. Specialty Healthcare & Ancillary Services", color:"#457B9D",
+    points:["General practitioners / family medicine / internists: manage routine care, chronic conditions, preventive health — the patient\'s first point of contact","Specialty care: used when a condition is complex or beyond the PCP\'s expertise — cardiologist, neurologist, endocrinologist, oncologist, etc.","MAs coordinate referrals between primary and specialty care — gathering records, scheduling, tracking authorizations","Ancillary services: urgent care, lab services, diagnostic imaging (X-ray, CT, MRI, ultrasound), physical therapy, occupational therapy","Complementary therapies: acupuncture (needle-based), chiropractic (spinal alignment), energy therapy, herbal supplements"] },
+  { id:8, num:"08", icon:"📋", title:"Medication Classifications & Controlled Substances", color:"#2A9D8F",
+    points:["Classifications are based on therapeutic action: analgesics (pain), antihypertensives (BP), diuretics (fluid), oral hypoglycemics (glucose), bronchodilators (airway)","Some medications belong to more than one class — hydrochlorothiazide is both a diuretic and an antihypertensive","The Controlled Substances Act (CSA) created 5 schedules based on abuse potential and medical use","Schedule I: no medical use (heroin, LSD). Schedule II: high abuse risk, approved use (oxycodone, fentanyl, amphetamine — hand-signed, secure storage, no refills)","Schedules III–V: decreasing risk — may not be refilled more than 5 times or later than 6 months after the prescription date"] },
+  { id:9, num:"09", icon:"🩹", title:"Side Effects, Adverse Effects, Indications & Contraindications", color:"#8338EC",
+    points:["Therapeutic effect: the intended, beneficial reason a medication is prescribed","Side effect: predictable and nearly unavoidable — but not harmful. Example: sedation from diphenhydramine (antihistamine)","Adverse effect: unintended and potentially harmful — may prevent further use. Example: facial swelling (angioedema) from lisinopril","Indication: the symptom or condition a medication is prescribed to treat","Contraindication: a condition that makes a medication inadvisable or dangerous — most commonly a prior allergic reaction (hypersensitivity)"] },
+  { id:10, num:"10", icon:"🏷️", title:"Dosage Calculations & Measurement Conversions", color:"#FF6B35",
+    points:["Metric: weight in kg, g, mg, mcg — move decimal 3 places per step. Volume: L, mL. 1,000 mcg = 1 mg; 1,000 mg = 1 g","Standard conversions: 1 tsp = 5 mL | 1 tbsp = 15 mL | 1 oz = 30 mL | 2.2 lb = 1 kg","Proportion method: if 25 mg = 1 capsule, then 50 mg = ? Cross-multiply: 1×50 = 25x → x = 2 capsules","Desired-over-have formula: (Desired ÷ Have) × Quantity = Dose — gives the same result","Pediatric dosing: convert weight to kg (÷ 2.2), multiply by prescribed mg/kg/day, divide by number of doses per day, then calculate volume"] },
+  { id:11, num:"11", icon:"⚙️", title:"Medication Forms, Routes & Look-Alike/Sound-Alike Safety", color:"#E63946",
+    points:["Common forms: tablets, capsules, caplets (oral); patches (topical transdermal); inhalers/aerosols (inhalation); suppositories (rectal/vaginal); injectable liquids (IM, SQ, ID)","Routes: oral (PO), topical, intradermal (10–15°), subcutaneous (45°), intramuscular (90°), inhalation, vaginal, rectal","Look-alike/sound-alike pairs: clonidine ↔ KlonoPIN (clonazepam), hydroxyzine ↔ hydralazine, hydrocodone ↔ hydromorphone","Prevention: check label 3 times; use tall-man lettering (hydrOXYzine vs. hydrALAzine); never abbreviate medication names","Store look-alike medications in separate locations; add cautionary labels to alert staff"] },
+  { id:12, num:"12", icon:"🔬", title:"Pharmacokinetics & the Rights of Medication Administration", color:"#457B9D",
+    points:["Absorption: drug moves from the administration site into the bloodstream — IV is fastest; oral tablets are slowest","Distribution: bloodstream carries the drug to tissues — blood-brain barrier and placental barrier can limit delivery","Metabolism: liver converts active drug to metabolites — infants and older adults metabolize slowest; kidney and liver disease also slow this process","Excretion: kidneys eliminate most metabolites through urine — half-life determines dosing intervals","The 7 Rights: right patient, medication, dose, time, route, technique, and documentation — perform these checks every single time"] },
+  { id:13, num:"13", icon:"⭐", title:"Storage, Disposal & Medication Information Sources", color:"#2A9D8F",
+    points:["Schedule II drugs must be stored in a locked, secured steel cabinet — inner and outer locks with different keys; must be anchored if under 750 lbs","Always check expiration dates — never administer expired medication; dispose per facility and DEA guidelines","Perform three label checks: when removing from storage, when preparing the dose, and when returning or discarding the container","Physicians\' Desk Reference (PDR): updated annually; includes photographs of medications to identify pills brought in without original packaging","Other reliable sources: manufacturer package inserts, FDA.gov, approved online databases — always use provider-recommended resources"] },
+  { id:14, num:"14", icon:"📦", title:"Dietary Nutrients, Guidelines & Food Labels", color:"#8338EC",
+    points:["Six major nutrients: water, protein (4 cal/g), carbohydrates (4 cal/g), fats (9 cal/g), vitamins, and minerals","Protein: repairs and builds tissue; essential and non-essential amino acids; extra needed during pregnancy, surgery recovery, illness","Carbohydrates: primary energy source — simple sugars vs. complex carbs (fiber, whole grains); excess stored as glycogen then body fat","Fats: energy reserve, fat-soluble vitamin absorption, hormone production — unsaturated (healthy) vs. saturated and trans fats (raise LDL)","Food labels: always check serving size first — calories and nutrients listed are per serving, not per package; MyPlate (myplate.gov) provides personalized guidelines"] },
+  { id:15, num:"15", icon:"💊", title:"Vitamins, Supplements & Eating Disorders", color:"#FF6B35",
+    points:["Fat-soluble vitamins (A, D, E, K): stored in fat — excess can build up to toxic levels; Vitamin K can reduce effectiveness of blood thinners","Water-soluble vitamins (B vitamins, C): excess excreted in urine; B6 and B3 toxicity can occur with very high supplemental doses","Common supplements: St. John\'s Wort (interacts with warfarin and oral contraceptives), melatonin (sleep), glucosamine (joints), ginkgo biloba (memory) — always document and report to provider","Anorexia nervosa: self-starvation, distorted body image, amenorrhea — life-threatening; report to provider immediately","Bulimia nervosa: binge-purge cycle — causes electrolyte imbalance, esophageal damage, tooth erosion. Binge eating disorder: chronic overeating without purging — leads to obesity and its comorbidities"] },
+];
+
+var TAKEAWAYS = [
+  "Know your scope of practice for your state — MAs can only perform tasks they are trained, authorized, and state-approved to do",
+  "Certification is optional in most states but directly improves your career — keep it current with continuing education",
+  "Medication classification is based on therapeutic action — some medications belong to multiple classes",
+  "Schedule II controlled substances require hand-signed prescriptions, secure storage, and no refills — know the regulations cold",
+  "Always perform the three label checks and all seven rights of medication administration — every time, no exceptions",
+  "Proper nutrition is a foundation of health — patients with diabetes, kidney disease, and celiac disease all need specific dietary guidance"
+];
+
+var activeId = null;
+var sidebar = document.getElementById('sidebar');
+var content = document.getElementById('content');
+
+function buildSidebar() {
+  TOPICS.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'topic-btn';
+    btn.dataset.id = t.id;
+    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+    btn.addEventListener('click', function() { selectTopic(t.id); });
+    btn.addEventListener('mouseenter', function() {
+      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+    });
+    btn.addEventListener('mouseleave', function() {
+      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+    });
+    sidebar.appendChild(btn);
+  });
+  var divider = document.createElement('div');
+  divider.className = 'sidebar-divider';
+  sidebar.appendChild(divider);
+  var tkBtn = document.createElement('button');
+  tkBtn.className = 'topic-btn';
+  tkBtn.dataset.id = 'takeaways';
+  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+  tkBtn.addEventListener('mouseenter', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+  });
+  tkBtn.addEventListener('mouseleave', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+  });
+  sidebar.appendChild(tkBtn);
+}
+
+function updateSidebarActive() {
+  var btns = sidebar.querySelectorAll('.topic-btn');
+  btns.forEach(function(btn) {
+    var id = btn.dataset.id;
+    var topic = TOPICS.find(function(t) { return t.id == id; });
+    var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
+    if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
+    if (isActive && topic) {
+      btn.style.background = topic.color + '20';
+      btn.style.borderColor = topic.color;
+    } else if (isActive && id === 'takeaways') {
+      btn.style.background = 'rgba(255,255,255,0.08)';
+      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    } else {
+      btn.style.background = 'var(--surface)';
+      btn.style.borderColor = 'var(--border)';
+    }
+  });
+}
+
+function renderTopic(t) {
+  var html = '<div class="content-header">' +
+    '<span class="icon">' + t.icon + '</span>' +
+    '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
+    '<div class="title">' + t.title + '</div></div></div>' +
+    '<div class="content-scroll">';
+  t.points.forEach(function(p, i) {
+    html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<p>' + p + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderTakeaways() {
+  var html = '<div class="content-header">' +
+    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<div><div class="title">Key Takeaways</div></div></div>' +
+    '<div class="content-scroll">';
+  TAKEAWAYS.forEach(function(t, i) {
+    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function selectTopic(id) {
+  activeId = id;
+  updateSidebarActive();
+  if (id === 'takeaways') {
+    content.innerHTML = renderTakeaways();
+  } else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) content.innerHTML = renderTopic(topic);
+  }
+  content.style.animation = 'none';
+  void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
+}
+
+buildSidebar();
+</script>
+</body>
+</html>

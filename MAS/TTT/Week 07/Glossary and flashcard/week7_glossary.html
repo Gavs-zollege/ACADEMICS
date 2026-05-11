@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 Glossary — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
+  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
+  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
+  .header{text-align:center;margin-bottom:28px}
+  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
+  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
+  .header p{font-size:13px;color:var(--text-secondary)}
+  .search-wrap{position:relative;margin-bottom:20px}
+  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
+  .search-wrap input:focus{border-color:#C0392B}
+  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
+  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
+  .cat-btn:hover{border-color:#aaa}
+  .cat-btn .emoji{font-size:22px}
+  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
+  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
+  .cat-btn.open .arrow{transform:rotate(180deg)}
+  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
+  .term-card:hover{border-color:var(--border)}
+  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
+  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
+  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
+  .result-card .row{display:flex;align-items:center;gap:10px}
+  .result-card .r-emoji{font-size:20px}
+  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
+  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 7 Glossary</h1>
+    <p id="header-subtitle"></p>
+  </div>
+  <div id="browse-mode"></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "Communication Fundamentals", emoji: "🗣️", color: "#2C3E50",
+    terms: [
+      { term: "Communication Cycle", def: "The process by which a message is sent from one person (the sender), transmitted through a channel, and received and interpreted by another person (the receiver). Effective communication occurs only when the intended meaning of the message is accurately received and understood." },
+      { term: "Therapeutic Communication", def: "A structured, purposeful communication approach used in healthcare that builds trust, comfort, and a genuine therapeutic relationship between the provider and the patient. Techniques include displaying empathy, rephrasing, asking open-ended questions, pausing to allow processing, and summarizing. Directly impacts patient comfort, decision-making, and health outcomes." },
+      { term: "Active Listening", def: "A communication technique that involves being fully present and engaged during a conversation — focused on what is being said, how it is being said, and the underlying intent. Active listening involves nonjudgmental body language, paraphrasing to confirm understanding, and allowing the speaker to finish without interrupting." },
+      { term: "Paraphrasing", def: "Restating what someone has said in your own words to confirm that you received the message accurately. An essential step when relaying information between a patient and a provider. Example: 'So if I understand correctly, the pain started two days ago and gets worse when you walk — is that right?'" },
+      { term: "Empathy", def: "The ability to recognize, understand, and acknowledge another person's feelings or situation — and to communicate that understanding sincerely. Empathy builds trust and is a cornerstone of therapeutic communication. It is distinct from sympathy, which involves feeling sorry for someone rather than connecting with their experience." },
+      { term: "Probing Question", def: "An open-ended question designed to gather more detailed information or encourage a patient to expand on a topic. Example: 'Can you tell me more about when the pain started and what makes it better or worse?'" },
+      { term: "Open-Ended Question", def: "A question that invites a detailed response rather than a simple yes or no. Used to start conversations, explore concerns, and give the patient freedom to share what they feel is most important. Example: 'How have you been feeling since your last visit?'" },
+      { term: "Closed-Ended Question", def: "A question that seeks a brief, specific answer — often yes, no, or a specific piece of data. Used to confirm information or gather precise facts. Example: 'Are you currently taking aspirin?' or 'What is your current home address?'" },
+    ],
+  },
+  {
+    name: "Communication Styles", emoji: "🎭", color: "#7D3C98",
+    terms: [
+      { term: "Assertive Communication", def: "The ideal communication style in healthcare. Assertive communication is direct, clear, and respectful — it delivers the intended message confidently without being aggressive or dismissive. Includes appropriate eye contact, controlled tone, and professional body language." },
+      { term: "Passive Communication", def: "A communication style characterized by a quiet, hesitant, and submissive manner. Passive communicators may struggle to express their needs or concerns clearly and often avoid conflict. The appropriate response is to gently draw them out with open-ended questions and reassurance." },
+      { term: "Aggressive Communication", def: "A communication style that is loud, abrasive, and often physically intrusive — minimal personal space, fast gestures, and elevated volume. Frequently stems from fear, pain, or frustration. The appropriate response is to remain calm, lower your own voice, and never match the aggression." },
+      { term: "Manipulative Communication", def: "An indirect, one-sided communication style in which the communicator has a hidden agenda. Can feel flattering, patronizing, or insincere. The appropriate response is to stay grounded, remain professional, and focus on facts." },
+      { term: "Visual Communicator", def: "A person who prefers to receive and process information visually — through written materials, diagrams, or demonstrations. Often uses hands and facial expressions when communicating. Responds well to written instructions and visual aids." },
+      { term: "Auditory Communicator", def: "A person who learns and communicates best through listening and verbal explanation. Responds well to clear verbal instructions and benefits from having information repeated out loud." },
+      { term: "Kinesthetic Communicator", def: "A person who learns and communicates best through hands-on experience and physical activity. Responds well to demonstrations, role-play, and practice-based learning." },
+    ],
+  },
+  {
+    name: "Nonverbal Communication", emoji: "🤝", color: "#1A5276",
+    terms: [
+      { term: "Nonverbal Communication", def: "Any communication that does not use spoken or written words. Includes body language, facial expressions, eye contact, posture, gestures, personal space, and touch. Nonverbal cues must align with the spoken message — when they contradict each other, the listener typically trusts the nonverbal over the verbal." },
+      { term: "Body Language", def: "The use of physical gestures, posture, movement, and facial expressions to convey a message. Body language is constantly communicating — an MA's posture and facial expressions signal engagement or disinterest before a single word is spoken." },
+      { term: "Eye Contact", def: "A component of nonverbal communication that signals engagement, attentiveness, and trustworthiness when used appropriately. Maintaining appropriate eye contact during patient interactions shows respect and builds rapport. Avoiding it can signal discomfort or lack of interest." },
+      { term: "Personal Space", def: "The physical distance a person maintains between themselves and others during interaction. Invading a person's personal space can cause discomfort and shut down the communication process. Cultural norms around personal space vary widely and should be respected." },
+      { term: "Therapeutic Touch", def: "A deliberate, caring, and appropriate physical gesture — such as a gentle touch on the shoulder or a high-five — used to convey comfort, encouragement, or support to a patient. Always ask for the patient's consent before initiating any touch. Therapeutic touch is not appropriate in all situations or for all patients." },
+      { term: "Haptics", def: "The study and use of touch as a form of communication. In healthcare, appropriate haptic communication includes handshakes, reassuring touches on the arm or shoulder, and other consensual physical gestures of comfort and acknowledgment." },
+    ],
+  },
+  {
+    name: "Diversity, Culture & Bias", emoji: "🌍", color: "#C0392B",
+    terms: [
+      { term: "Stereotype", def: "A generalized, oversimplified assumption about a person based on their membership in a group — for example, their race, religion, gender, age, or culture. Stereotypes interfere with accurate communication and must be actively identified and eliminated in patient care." },
+      { term: "Bias", def: "A prejudice — conscious or unconscious — for or against a person or group. Biases influence how information is sent and received and can cause a patient to feel disrespected or dismissed. Reducing bias requires ongoing self-awareness and a commitment to treating each patient as an individual." },
+      { term: "Generalization", def: "Making a broad assumption about an individual based on limited information about the group they belong to. Example: assuming a patient will refuse a blood transfusion based solely on their religion without confirming their personal preference. Always verify individual preferences directly with the patient." },
+      { term: "Cultural Competence", def: "The ability to effectively communicate with and provide care to patients from diverse cultural backgrounds. Involves knowledge, awareness, and sensitivity to cultural differences in health beliefs, communication styles, pain expression, and treatment preferences." },
+      { term: "Psychosocial Care", def: "Care that addresses the psychological, social, and spiritual needs of the patient — not just the physical. Provided through therapeutic communication with cultural sensitivity. Effective psychosocial care improves patient well-being, engagement, and health outcomes. Examples include motivational enhancement, structured counseling, and supportive conversation." },
+      { term: "Gender Identity", def: "A person's internal, deeply held sense of their own gender. May or may not correspond to the sex assigned at birth. In healthcare, always ask patients their preferred name, preferred pronouns (e.g., he/him, she/her, they/them), and preferred title — never assume based on appearance or chart information." },
+      { term: "Preferred Pronouns", def: "The pronouns a person uses to refer to themselves (e.g., she/her, he/him, they/them). Asking for and using a patient's preferred pronouns is a basic act of respect that builds trust and creates a safe, inclusive care environment." },
+      { term: "Interpreter", def: "A qualified professional who facilitates communication between individuals who speak different languages. Providing a professional interpreter for patients with limited English proficiency is both legally required under federal civil rights law and essential for accurate, safe communication. Never use children as interpreters for medical conversations." },
+    ],
+  },
+  {
+    name: "Telephone & Written Communication", emoji: "📞", color: "#1E8449",
+    terms: [
+      { term: "HIPAA (Health Insurance Portability and Accountability Act)", def: "A federal law establishing national standards for protecting the privacy and security of patient health information (PHI). In telephone communication, HIPAA requires verifying the caller's identity before sharing any PHI and limiting disclosures to authorized individuals. PHI includes names, dates, diagnoses, contact information, and any other individually identifiable health data." },
+      { term: "The Five P's of Telephone Etiquette", def: "A framework for professional telephone communication in healthcare: (1) Polite — use a soft, warm tone; (2) Prepared — have all relevant information ready; (3) to the Point — be concise and focused; (4) Perceptive — don't waste the caller's time with irrelevant conversation; (5) cooPerative — provide the information needed, or connect the caller to someone who can." },
+      { term: "Full Block Format", def: "A business letter format in which every element — date, address, salutation, body, and closing — is aligned flush with the left margin. The most commonly used format in healthcare organizations. It is formal, clean, and professional." },
+      { term: "Modified Block Format", def: "A business letter format in which the body and inside address are left-justified, but the date, complimentary closing, and signature begin at the center of the page. A modified version also allows indented paragraphs." },
+      { term: "Simplified Format", def: "A business letter format in which all text is left-justified and neither a salutation nor a complimentary closing is included. Used in specific circumstances where a formal greeting and closing are not appropriate." },
+      { term: "Certified Mail", def: "A postal service option that provides proof of mailing and delivery of a letter. Used in healthcare when it is critical to confirm that the recipient received the communication — for example, notifying a patient of abnormal lab results when all other contact methods have been unsuccessful, or when a provider formally terminates a patient relationship." },
+      { term: "Letterhead", def: "Official organizational stationery that includes the name, logo, address, phone number, and other identifying information of the healthcare organization. All formal business letters must be written on letterhead, as it authenticates the correspondence as an official communication from the facility." },
+      { term: "Business Correspondence", def: "Any formal written communication produced in a professional context — including letters, emails, faxes, and reports. All business correspondence in healthcare must be grammatically correct, free of errors, professional in tone, and compliant with HIPAA guidelines. It becomes part of the permanent legal record." },
+    ],
+  },
+  {
+    name: "Conflict Management & Customer Service", emoji: "⚖️", color: "#922B21",
+    terms: [
+      { term: "Conflict Management", def: "A structured process for managing situations in which differences arise and resolution appears difficult. Involves active listening, identifying shared goals, exploring possible solutions, and working toward an outcome that is acceptable to all parties. The goal is a win-win resolution — not determining who was right or wrong." },
+      { term: "De-Escalation", def: "A deliberate set of communication techniques used to reduce the intensity of a tense or confrontational situation before it becomes uncontrolled. Techniques include lowering your voice, maintaining a calm demeanor, using open body language, giving the other person space to speak, and avoiding defensive or aggressive responses." },
+      { term: "\"I\" Statement", def: "A communication technique in which you express how you feel or what you observe from your own perspective, rather than making judgments about the other person's behavior. Example: 'I understand this situation is frustrating' rather than 'You're being difficult.' \"I\" statements reduce defensiveness and keep conversations productive." },
+      { term: "Cause-and-Effect Analysis", def: "A proactive process of identifying potential causes of problems and analyzing their likely effects so that preventive measures can be put in place. In healthcare, applied to patient safety, workplace hazards, and recurring customer service complaints." },
+      { term: "Risk Management", def: "An organizational process for identifying, evaluating, and reducing potential risks to patient safety and employee well-being in the healthcare environment. Includes physical safety assessments, policy compliance monitoring, and incident documentation." },
+      { term: "Incident / Event Report", def: "A formal written documentation of an unusual occurrence, adverse event, or potential safety concern in the healthcare environment. Must include the date, time, persons involved, a detailed description of the event, and any immediate actions taken. Every significant incident must be documented — 'if it isn't documented, it didn't happen.'" },
+      { term: "Patient Satisfaction Survey", def: "A tool used by healthcare organizations to measure patients' experiences and perceptions of the care they received. Results are used to identify patterns, address concerns proactively, and improve the overall patient experience before issues escalate to formal complaints." },
+      { term: "Win-Win Resolution", def: "A conflict resolution outcome in which all parties feel that their core concerns have been addressed and that the solution is fair and workable. Achieved by shifting focus from opposing positions to shared underlying goals." },
+    ],
+  },
+  {
+    name: "Teamwork, Professionalism & Special Communication Contexts", emoji: "👥", color: "#117A65",
+    terms: [
+      { term: "Health Care Surrogate", def: "A person legally authorized to make healthcare decisions on behalf of a patient who is unable to make or communicate decisions for themselves. Before sharing any patient information with a health care surrogate, confirm that the patient has authorized the disclosure and that the surrogate's legal standing has been documented." },
+      { term: "Crucial Conversation", def: "A high-stakes conversation involving strong emotions, differing viewpoints, or significant consequences. Examples include informing a patient of a terminal diagnosis, discussing financial hardship with a patient, or addressing a concern with a colleague or provider. Requires extra preparation, empathy, active listening, and emotional regulation." },
+      { term: "Release of Information", def: "A signed authorization from the patient that permits the healthcare organization to share their protected health information (PHI) with a specified individual or entity. Must be completed, signed, and documented in the health record before any health information is shared with family members, caregivers, or other authorized parties." },
+      { term: "Professional Presence", def: "The overall impression a healthcare professional creates through their appearance, communication, behavior, and attitude. Encompasses appropriate dress and grooming, a positive demeanor, polished verbal and nonverbal communication, punctuality, and consistent professionalism in all interactions." },
+      { term: "Professionalism", def: "A broad standard of conduct expected of healthcare workers that encompasses behaviors, appearance, communication, work ethic, and relationships. Professionalism is not situational — it must be present in every interaction, with every patient, colleague, and stakeholder, regardless of the circumstances." },
+      { term: "Personal Boundaries", def: "The professional limits maintained between a healthcare worker and patients, colleagues, and other professional contacts. Professional boundaries prohibit sharing personal stories, other patients' experiences, or unrelated personal information during patient interactions. Personal relationships must be kept outside the work environment." },
+      { term: "Closed Captioning (Telehealth)", def: "A telehealth feature that displays live written captions of spoken words during a virtual visit. Particularly valuable for patients with hearing loss. When available, the MA should offer closed captioning to any patient who may benefit from it." },
+      { term: "Scope of Practice", def: "The defined set of actions, procedures, and responsibilities that a healthcare professional is legally authorized and trained to perform. In communication, scope of practice means staying within professional limits — not offering medical advice, diagnoses, or opinions that fall outside the MA's role." },
+    ],
+  }
+];
+
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+let browseSearch = '';
+let browseOpenCat = null;
+let browseOpenTerm = null;
+document.getElementById('header-subtitle').textContent =
+  `Communication & Customer Service · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+renderBrowse();
+function renderBrowse() {
+  const el = document.getElementById('browse-mode');
+  const query = browseSearch.trim().toLowerCase();
+  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
+  if (query) {
+    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
+    if (filtered.length === 0) {
+      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
+    } else {
+      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
+      filtered.forEach((t, i) => {
+        const isOpen = browseOpenTerm === `s-${i}`;
+        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
+      });
+      html += `</div>`;
+    }
+  } else {
+    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
+    CATEGORIES.forEach((cat, ci) => {
+      const isOpen = browseOpenCat === ci;
+      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
+      if (isOpen) {
+        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
+        cat.terms.forEach((t, ti) => {
+          const tKey = `${ci}-${ti}`;
+          const tOpen = browseOpenTerm === tKey;
+          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+}
+function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+</script>
+</body>
+</html>

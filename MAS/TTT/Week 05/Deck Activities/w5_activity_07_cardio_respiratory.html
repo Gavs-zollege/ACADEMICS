@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardio & Respiratory Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;background:linear-gradient(160deg,#12080a,#201410,#18100e);font-family:'Rubik',sans-serif;padding:24px 16px;color:#fce8dc}.wrap{max-width:640px;margin:0 auto}.header{text-align:center;margin-bottom:24px}.icon{font-size:44px}h1{font-weight:800;font-size:30px;margin:8px 0 4px}.sub{color:#b89070;font-weight:600;font-size:15px}.topbar{display:flex;justify-content:space-between;margin-bottom:12px}.topbar .qn{color:#b89070;font-weight:700;font-size:14px}.topbar .sc{color:#e8a064;font-weight:800;font-size:14px}.bar{height:6px;background:#2a1a10;border-radius:10px;margin-bottom:20px;overflow:hidden}.bar-fill{height:100%;background:linear-gradient(90deg,#e8a064,#ef4444);border-radius:10px;transition:width .4s}.question{background:#201410;padding:22px 24px;border-radius:18px;margin-bottom:20px;border-left:4px solid #e8a064}.question p{font-weight:800;font-size:18px;line-height:1.6}.opts{display:grid;gap:10px}.opt{padding:15px 20px;border-radius:14px;background:#2a1a10;border:2px solid #2a1a10;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;text-align:left}.opt:hover{filter:brightness(1.1)}.opt .letter{color:#e8a064;font-weight:800;margin-right:12px}.opt.correct{background:rgba(74,222,128,.15);border-color:#4ade80}.opt.wrong{background:rgba(251,113,133,.15);border-color:#fb7185}.tip{margin-top:16px;padding:14px 20px;border-radius:14px;background:#201410}.tip strong{font-size:16px;display:block;margin-bottom:6px}.tip strong.ok{color:#4ade80}.tip strong.no{color:#fb7185}.tip span{color:#b89070;font-weight:600;font-size:14px}.done{text-align:center;background:#201410;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}.done .big{font-size:56px}.done h2{font-weight:800;font-size:28px;margin:12px 0}.done p{color:#b89070;font-weight:600;font-size:15px;margin-bottom:24px}.btn{padding:14px 36px;border:none;border-radius:14px;background:#e8a064;color:#12080a;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><div class="icon">🫀</div><h1>Cardio & Respiratory Quiz</h1><p class="sub">Test your heart and lungs knowledge</p></div>
+  <div id="game"></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"The heart's natural pacemaker is the:",opts:["AV node","Bundle of His","SA node","Purkinje fibers"],a:2,tip:"SA node initiates the heartbeat. AV node is the gatekeeper that relays it."},
+  {q:"Blood flow: deoxygenated blood goes from the right heart to the:",opts:["Body (systemic)","Brain","Lungs (pulmonary circulation)","Liver"],a:2,tip:"Right heart → lungs for oxygenation → left heart → body."},
+  {q:"The thickest layer of the heart wall is the:",opts:["Pericardium","Endocardium","Epicardium","Myocardium"],a:3,tip:"Myocardium = muscular middle layer. It does the heavy work of contraction."},
+  {q:"Gas exchange occurs in the:",opts:["Bronchi","Trachea","Alveoli","Larynx"],a:2,tip:"Alveoli are tiny air sacs where O₂ enters blood and CO₂ exits."},
+  {q:"The right lung has ___ lobes; the left has ___.",opts:["2; 3","3; 2","3; 3","2; 2"],a:1,tip:"Right = 3 lobes, Left = 2 lobes (heart takes space on the left)."},
+  {q:"Arteries carry blood ___ the heart; veins carry blood ___ the heart.",opts:["Toward; away from","Away from; toward","Only oxygenated; only deoxygenated","Up; down"],a:1,tip:"Arteries = Away from heart. Veins = toward heart (remember: A = Away)."},
+  {q:"Cilia in the trachea function to:",opts:["Absorb oxygen","Trap and sweep out particles and debris","Produce mucus only","Regulate temperature"],a:1,tip:"Cilia are hairlike structures that sweep debris to protect the airways."},
+  {q:"The larynx is also known as the:",opts:["Wind pipe","Voice box","Throat","Nasal cavity"],a:1,tip:"Larynx = voice box, located above the trachea. Produces sound."},
+];
+let ci=0,score=0,chosen=null;
+function renderQ(){const g=document.getElementById('game'),q=QS[ci];let h='<div class="topbar"><span class="qn">Q '+(ci+1)+'/'+QS.length+'</span><span class="sc">Score: '+score+'</span></div>';h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/QS.length*100)+'%"></div></div>';h+='<div class="question"><p>'+q.q+'</p></div><div class="opts">';q.opts.forEach((o,i)=>{let cls='opt';if(chosen!==null&&i===q.a)cls+=' correct';else if(chosen===i&&i!==q.a)cls+=' wrong';h+='<div class="'+cls+'" '+(chosen===null?'onclick="answer('+i+')"':'')+'><span class="letter">'+String.fromCharCode(65+i)+'</span>'+o+'</div>'});h+='</div>';if(chosen!==null){const ok=chosen===q.a;h+='<div class="tip"><strong class="'+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ Not quite!')+'</strong><span>'+q.tip+'</span></div>'}g.innerHTML=h}
+function answer(i){if(chosen!==null)return;chosen=i;if(i===QS[ci].a)score++;renderQ();setTimeout(()=>{if(ci+1<QS.length){ci++;chosen=null;renderQ()}else showDone()},2000)}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=7?'🏆':'💪')+'</div><h2>'+score+'/'+QS.length+' Correct!</h2><p>The cardiovascular and respiratory systems work together to deliver oxygen and remove waste.</p><button class="btn" onclick="reset()">🔄 Try Again</button>'}
+function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+renderQ();
+</script>
+</body>
+</html>

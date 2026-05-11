@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communication & Customer Service</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.07);
+    --text: #c4cedf;
+    --text-bright: #e2e8f4;
+    --text-muted: #6b7a96;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; overflow: hidden;
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+  }
+  .app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .header {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 16px 24px 12px;
+  }
+  .header h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--text-bright); line-height: 1.1; margin-top: 2px;
+  }
+  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .main {
+    flex: 1; overflow: hidden;
+    display: flex; gap: 16px;
+    padding: 0 24px 16px;
+  }
+  .sidebar {
+    width: 250px; flex-shrink: 0;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    padding-right: 6px;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .topic-btn {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 8px 11px;
+    cursor: pointer; transition: all 0.2s ease;
+    width: 100%; text-align: left;
+    font-family: 'DM Sans', sans-serif; color: var(--text);
+  }
+  .topic-btn:hover { transform: translateX(2px); }
+  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .label {
+    font-size: 13px; font-weight: 500; flex: 1;
+    line-height: 1.3; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
+  .sidebar-divider {
+    height: 1px; background: var(--border);
+    margin: 4px 0; flex-shrink: 0;
+  }
+  .content {
+    flex: 1; overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .content-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .content-header .icon { font-size: 30px; }
+  .content-header .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700;
+  }
+  .content-header .title {
+    font-size: 18px; font-weight: 700;
+    color: var(--text-bright); line-height: 1.2;
+  }
+  .content-scroll {
+    flex: 1; overflow-y: auto; padding-right: 6px;
+  }
+  .content-scroll::-webkit-scrollbar { width: 3px; }
+  .content-scroll::-webkit-scrollbar-track { background: transparent; }
+  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .point {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px; border: 1px solid transparent;
+    animation: pointIn 0.3s ease both;
+  }
+  .point .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px;
+    animation: pointIn 0.3s ease both;
+  }
+  .takeaway-item .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #E63946, #FF6B35);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .welcome {
+    height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+  }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
+  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  @keyframes pointIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    html, body { overflow: auto; height: auto; }
+    .app { height: auto; min-height: 100vh; overflow: visible; }
+    .header { padding: 14px 16px 10px; }
+    .header h1 { font-size: 22px; }
+    .main {
+      flex-direction: column;
+      padding: 0 12px 16px;
+      overflow: visible;
+    }
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      gap: 6px;
+      padding-right: 0;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
+    .topic-btn {
+      flex-shrink: 0;
+      min-width: max-content;
+      padding: 7px 12px;
+    }
+    .sidebar-divider {
+      width: 1px; height: auto;
+      min-height: 28px;
+      margin: 0 2px;
+    }
+    .content {
+      overflow: visible;
+      min-height: 60vh;
+      padding: 16px;
+    }
+    .content-scroll { overflow: visible; }
+    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Communication & Customer Service</h1>
+    <p>Professional Interactions in Healthcare</p>
+  </div>
+  <div class="main">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content">
+      <div class="welcome">
+        <div class="big-icon">📚</div>
+        <p>Select a topic to explore its key learning points</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var TOPICS = [
+  { id:1, num:"01", icon:"🔍", title:"Recognize Diversity of Patient Cultures & Backgrounds", color:"#E63946",
+    points:["Every patient comes with their own cultural background, traditions, values, and beliefs — these directly affect how care is experienced","Cultural differences influence how patients communicate pain, make decisions, and respond to treatment recommendations","Knowledge of diverse backgrounds helps prevent stereotyping and offensive assumptions — but never generalize","Health beliefs vary widely: some patients prefer holistic approaches; others rely on medication; some may not express pain openly","Take the initiative to learn about the cultures most commonly represented in your practice — it makes you a better communicator"] },
+  { id:2, num:"02", icon:"🧰", title:"Recognize Stereotypes & Biases", color:"#457B9D",
+    points:["Stereotypes are generalized assumptions about a group of people — they oversimplify and often mislead","Biases are prejudices for or against a person or group — they enter communication without us realizing it","Both interfere with the ability to send and receive messages accurately and respectfully","Examples: assuming a patient\'s religion determines their treatment preferences, or assuming a patient\'s language based on their appearance","The solution is not just awareness — it is actively checking your assumptions and asking rather than assuming"] },
+  { id:3, num:"03", icon:"🌈", title:"Modify Communication for Diverse Audiences", color:"#2A9D8F",
+    points:["Adjust your language to match the patient\'s level of understanding — use lay terms with patients, medical terminology with colleagues","For patients with hearing loss: face them directly, enunciate clearly, and ask if they have questions — do not shout","For patients with visual impairment: provide large-print materials and use descriptive language","For patients with cognitive impairment: use simple, concrete words and phrases appropriate to their comprehension level","Nonverbal cues — facial expressions, posture, personal space — communicate loudly; make sure they match your words"] },
+  { id:4, num:"04", icon:"🧪", title:"Modify Communication Based on Special Considerations", color:"#8338EC",
+    points:["Consider the patient\'s age: the approach used with a 5-year-old is very different from one used with a 65-year-old","Ask patients with physical disabilities how they prefer to be assisted — never make assumptions about what they need","Use a professional interpreter for patients with limited English proficiency — avoid relying on children as interpreters","Always ask for the patient\'s preferred name, pronouns, and title — do not assume based on appearance or chart information","Psychosocial care — addressing the patient\'s psychological, social, and spiritual needs — is part of every interaction"] },
+  { id:5, num:"05", icon:"📏", title:"Modify Communication Based on Type of Visit", color:"#FF6B35",
+    points:["In-person visits: full nonverbal communication is available — use eye contact, posture, and body language intentionally","Virtual (telehealth) visits: check audio and video before the visit begins to prevent wasted time","In telehealth, verbal communication carries more weight because nonverbal cues are reduced — choose words carefully","Ask the patient to repeat information back to confirm understanding — comprehension is harder to assess through a screen","Closed captioning is available on many telehealth platforms — offer it to patients with hearing loss"] },
+  { id:6, num:"06", icon:"💉", title:"Clarify & Relay Communications Between Patients & Providers", color:"#E63946",
+    points:["The MA acts as a communication bridge — accuracy in relaying messages directly affects patient safety","Paraphrase what the patient told you before relaying it to the provider: \"Mrs. Garcia said the pain began yesterday and feels sharp — is that right?\"","Ask clarifying questions whenever you are uncertain — it is always better to clarify than to guess","Active listening is essential: be fully present, take notes if needed, and confirm understanding before walking away","When relaying provider instructions to patients, use plain language and ask the patient to repeat the instructions back"] },
+  { id:7, num:"07", icon:"🩸", title:"Telephone Communication & HIPAA", color:"#457B9D",
+    points:["Verify the caller\'s identity before sharing any patient information — confirm name and date of birth at minimum","HIPAA requires that patient health information (PHI) is shared only with authorized individuals","The Five P\'s: Polite (soft tone), Prepared (have relevant details ready), to the Point, Perceptive (don\'t waste time), cooPerative (find help if needed)","Smile while talking — it comes through in your voice and sets a positive tone for the caller","Voicemail: leave your name, practice name, callback number, and hours — never include clinical details in a voicemail message"] },
+  { id:8, num:"08", icon:"📋", title:"Prepare Written & Electronic Communications", color:"#2A9D8F",
+    points:["All written communication becomes part of the permanent legal medical record — accuracy and professionalism are non-negotiable","Emails: use secure email software, include a subject line and proper closing, check grammar, avoid slang and abbreviations","Business letters use full block format in most healthcare settings — all lines flush left, on official letterhead","Certified mail is used when it is critical to confirm receipt — for example, informing a patient of abnormal results when other methods have failed","Proofread everything before it is sent — have a colleague review formal letters before they go out"] },
+  { id:9, num:"09", icon:"🩹", title:"Handle Challenging Customer Service Occurrences", color:"#8338EC",
+    points:["Stay calm — never match a patient\'s frustration, aggression, or negative energy with your own","Use \"I\" statements instead of \"You\" statements: \"I understand this is frustrating\" reduces defensiveness; \"You seem upset\" can escalate","Allow the patient to express their concern fully before responding — feeling heard reduces anger","Remove distractions and interruptions during challenging conversations — give the patient your full attention","Recognize when a situation needs a supervisor: if your own attempts have not resolved the issue, escalate appropriately — do not wait"] },
+  { id:10, num:"10", icon:"🏷️", title:"Conflict Management & Complaint Resolution", color:"#FF6B35",
+    points:["Effective conflict resolution starts with finding the shared goal — most parties agree on the desired outcome even when they disagree on the approach","Resolution process: let each person express concerns → active listening → identify possible solutions → confirm all parties are satisfied","The goal is a win-win — not deciding who was right","Patient satisfaction surveys are a proactive tool — they surface patterns and concerns before they become formal complaints","Document all challenging interactions in detail: date, time, parties involved, summary of the conversation, and the outcome"] },
+  { id:11, num:"11", icon:"⚙️", title:"Engage in Crucial Conversations", color:"#E63946",
+    points:["Crucial conversations involve high stakes, strong emotions, or opposing viewpoints — they require extra care and preparation","Examples: informing a patient of a terminal diagnosis, discussing a past-due balance, relaying a provider\'s difficult recommendation","Approach these conversations with empathy, patience, and active listening — not scripts","Before sharing patient information with a caregiver or health care surrogate, confirm that the patient has authorized the conversation","With healthcare colleagues, maintain professionalism even when the conversation is uncomfortable — the shared goal is always quality patient care"] },
+  { id:12, num:"12", icon:"🔬", title:"Facilitate Teamwork & Team Engagement", color:"#457B9D",
+    points:["Every member of the healthcare team plays a specific role — all roles matter equally to the patient\'s experience","Open, honest communication among team members reduces errors, builds trust, and improves outcomes","Gossip, negativity, and dramatic outbursts have no place in the healthcare environment — they undermine trust and patient safety","Personal feelings are natural — but they must never compromise your professionalism or your care of patients","A team that communicates well, respects each other\'s roles, and works cooperatively produces measurably better patient outcomes"] },
+  { id:13, num:"13", icon:"⭐", title:"Demonstrate Professionalism", color:"#2A9D8F",
+    points:["Professionalism encompasses appearance, communication, behavior, work ethic, and relationships — all of it, all the time","Appearance: follow your facility\'s dress code — your appearance sends the first message before you say a word","Communication: your tone, word choice, and attitude reflect you and the entire organization in every interaction","Work ethic: be on time, follow through, take ownership of your responsibilities, and manage your time effectively","The MA is often the first person a patient encounters — that first impression sets the tone for the entire healthcare experience"] },
+];
+
+var TAKEAWAYS = [
+  "Assertive communication is the goal — firm, respectful, and direct. Never match aggression with aggression",
+  "Recognize and eliminate stereotypes and biases — always ask rather than assume",
+  "Nonverbal cues speak as loudly as words — make sure your body language matches your message",
+  "All written and phone communications must follow HIPAA guidelines — verify identity before sharing any patient information",
+  "In a conflict, find the shared goal — most parties want the same outcome and just disagree on how to get there",
+  "Professionalism is not optional — it is present in every interaction, every day, in everything you do and say"
+];
+
+var activeId = null;
+var sidebar = document.getElementById('sidebar');
+var content = document.getElementById('content');
+
+function buildSidebar() {
+  TOPICS.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'topic-btn';
+    btn.dataset.id = t.id;
+    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+    btn.addEventListener('click', function() { selectTopic(t.id); });
+    btn.addEventListener('mouseenter', function() {
+      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+    });
+    btn.addEventListener('mouseleave', function() {
+      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+    });
+    sidebar.appendChild(btn);
+  });
+  var divider = document.createElement('div');
+  divider.className = 'sidebar-divider';
+  sidebar.appendChild(divider);
+  var tkBtn = document.createElement('button');
+  tkBtn.className = 'topic-btn';
+  tkBtn.dataset.id = 'takeaways';
+  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+  tkBtn.addEventListener('mouseenter', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+  });
+  tkBtn.addEventListener('mouseleave', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+  });
+  sidebar.appendChild(tkBtn);
+}
+
+function updateSidebarActive() {
+  var btns = sidebar.querySelectorAll('.topic-btn');
+  btns.forEach(function(btn) {
+    var id = btn.dataset.id;
+    var topic = TOPICS.find(function(t) { return t.id == id; });
+    var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
+    if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
+    if (isActive && topic) {
+      btn.style.background = topic.color + '20';
+      btn.style.borderColor = topic.color;
+    } else if (isActive && id === 'takeaways') {
+      btn.style.background = 'rgba(255,255,255,0.08)';
+      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    } else {
+      btn.style.background = 'var(--surface)';
+      btn.style.borderColor = 'var(--border)';
+    }
+  });
+}
+
+function renderTopic(t) {
+  var html = '<div class="content-header">' +
+    '<span class="icon">' + t.icon + '</span>' +
+    '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
+    '<div class="title">' + t.title + '</div></div></div>' +
+    '<div class="content-scroll">';
+  t.points.forEach(function(p, i) {
+    html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<p>' + p + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderTakeaways() {
+  var html = '<div class="content-header">' +
+    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<div><div class="title">Key Takeaways</div></div></div>' +
+    '<div class="content-scroll">';
+  TAKEAWAYS.forEach(function(t, i) {
+    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function selectTopic(id) {
+  activeId = id;
+  updateSidebarActive();
+  if (id === 'takeaways') {
+    content.innerHTML = renderTakeaways();
+  } else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) content.innerHTML = renderTopic(topic);
+  }
+  content.style.animation = 'none';
+  void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
+}
+
+buildSidebar();
+</script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 5 Glossary — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
+  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
+  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
+  .header{text-align:center;margin-bottom:28px}
+  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
+  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
+  .header p{font-size:13px;color:var(--text-secondary)}
+  .search-wrap{position:relative;margin-bottom:20px}
+  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
+  .search-wrap input:focus{border-color:#C0392B}
+  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
+  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
+  .cat-btn:hover{border-color:#aaa}
+  .cat-btn .emoji{font-size:22px}
+  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
+  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
+  .cat-btn.open .arrow{transform:rotate(180deg)}
+  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
+  .term-card:hover{border-color:var(--border)}
+  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
+  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
+  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
+  .result-card .row{display:flex;align-items:center;gap:10px}
+  .result-card .r-emoji{font-size:20px}
+  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
+  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 5 Glossary</h1>
+    <p id="header-subtitle"></p>
+  </div>
+  <div id="browse-mode"></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "Cell Structure & Function", emoji: "🔬", color: "#2C3E50",
+    terms: [
+      { term: "Cell", def: "The smallest structural and functional unit of all living things. Every tissue, organ, and body system is ultimately composed of cells. All human cells share the same foundational components, though some have specialized structures based on their function." },
+      { term: "Plasma Membrane", def: "The selectively permeable outer boundary of the cell, composed of a phospholipid bilayer embedded with proteins. Controls what enters and exits the cell and separates the cell's interior from the surrounding environment. Essential to cell survival." },
+      { term: "Cytoplasm", def: "The gel-like fluid that fills the interior of the cell. Composed primarily of water with dissolved electrolytes, nutrients, and metabolic waste products. Serves as the medium for chemical reactions and contains all suspended organelles." },
+      { term: "Nucleus", def: "The large, spherical organelle near the center of the cell that serves as the cell's control center. Contains the cell's DNA (genetic material) and regulates all cell activities including growth, metabolism, and reproduction." },
+      { term: "Nuclear Membrane", def: "The double-layered, porous membrane surrounding the nucleus. Protects the nucleus while selectively allowing specific materials to pass through." },
+      { term: "Nucleolus", def: "A dense structure inside the nucleus, not enclosed by its own membrane. Responsible for forming RNA and ribosomes. Most cells contain one to four nucleoli." },
+      { term: "Mitochondria", def: "Elongated, rod-shaped organelles that function as the cell's power plant. Convert nutrients into adenosine triphosphate (ATP), the cell's primary energy currency. Contain their own DNA." },
+      { term: "Adenosine Triphosphate (ATP)", def: "The molecule that stores and transfers energy within cells. Produced by the mitochondria, ATP is the usable energy source that powers virtually every cellular process." },
+      { term: "Ribosomes", def: "Small granules composed of RNA, found either in the nucleolus or floating throughout the cytoplasm. Responsible for protein synthesis — building proteins for use both inside and outside the cell." },
+      { term: "Endoplasmic Reticulum (ER)", def: "A complex network of membrane-enclosed, fluid-filled channels and sacs that connects the cell membrane to the nuclear membrane. Transports materials throughout the cell. The rough ER (studded with ribosomes) supports protein synthesis; the smooth ER supports lipid and steroid synthesis." },
+      { term: "Golgi Apparatus", def: "A stack of flat, membrane-enclosed sacs connected to the endoplasmic reticulum, typically found near the nucleus. Acts as the cell's packaging and shipping plant — processes materials secreted by the cell, prepares them for export, and forms lysosomes." },
+      { term: "Lysosomes", def: "Membrane-enclosed sacs formed by the Golgi apparatus. Contain digestive enzymes that break down cellular waste materials, damaged organelles, and foreign substances that have entered the cell." },
+      { term: "Cytoskeleton", def: "An internal framework of protein microfilaments and microtubules that maintains the cell's shape, keeps organelles in place, and moves organelles within the cell as needed." },
+      { term: "Centrioles", def: "Paired, rod-shaped structures made of microtubules located near the nucleus. Play a critical role in cell reproduction by distributing chromosomes evenly to each new daughter cell during cell division." },
+      { term: "Cilia", def: "Short, hair-like microtubule projections on the surface of certain cells. Aid in moving substances along the cell surface. Cilia lining the trachea and nasal passages sweep debris and pathogens away from the respiratory tract." },
+    ],
+  },
+  {
+    name: "Body Planes, Cavities & Positional Terms", emoji: "🧭", color: "#1A5276",
+    terms: [
+      { term: "Anatomical Position", def: "The standard reference frame used in anatomy: the body is standing upright, facing forward, arms at the sides, with palms facing forward and toes pointing forward. All directional terms are described relative to this position." },
+      { term: "Sagittal Plane", def: "An imaginary vertical cut that divides the body into left and right sections. The midsagittal plane divides the body into equal left and right halves along the body's midline." },
+      { term: "Transverse Plane", def: "A horizontal cut that divides the body into upper (superior) and lower (inferior) sections. Also called the axial plane." },
+      { term: "Frontal (Coronal) Plane", def: "A vertical cut that divides the body into anterior (front) and posterior (back) sections." },
+      { term: "Cranial Cavity", def: "Located within the skull; houses the brain and meninges." },
+      { term: "Thoracic Cavity", def: "Located within the chest; contains the lungs, heart, major blood vessels, and trachea." },
+      { term: "Abdominal Cavity", def: "Located below the diaphragm in the midsection of the body; contains the stomach, small and large intestines, liver, gallbladder, pancreas, and spleen." },
+      { term: "Pelvic Cavity", def: "Located inferior to the abdominal cavity; contains the urinary bladder and reproductive organs." },
+      { term: "Anterior / Posterior", def: "Anterior means toward the front of the body (also called ventral). Posterior means toward the back of the body (also called dorsal)." },
+      { term: "Superior / Inferior", def: "Superior means above, or toward the head. Inferior means below, or toward the feet." },
+      { term: "Medial / Lateral", def: "Medial means closer to the midline of the body. Lateral means further from the midline, toward the side." },
+      { term: "Proximal / Distal", def: "Proximal means closer to the body's trunk or point of origin. Distal means further from the trunk." },
+      { term: "Supine", def: "Lying flat on the back, face upward." },
+      { term: "Prone", def: "Lying flat on the stomach, face downward." },
+      { term: "Fowler's Position", def: "A sitting position with the back of the examination table raised to 90 degrees. Used for procedures requiring an upright seated patient." },
+      { term: "Semi-Fowler's Position", def: "A partially upright position with the back raised to approximately 45 degrees. Used for patients at risk of vasovagal syncope during procedures, and for certain respiratory conditions." },
+      { term: "Dorsal Recumbent", def: "The patient lies face upward with knees flexed and feet flat on the table. Used for pelvic and abdominal examinations." },
+    ],
+  },
+  {
+    name: "Body Systems", emoji: "🫀", color: "#C0392B",
+    terms: [
+      { term: "Homeostasis", def: "The body's ability to maintain a stable, balanced internal environment despite changes in the external environment. The nervous and endocrine systems are the primary regulators, though all body systems contribute. Disruption of homeostasis in one system typically affects others." },
+      { term: "Integumentary System", def: "The body system composed of the skin, hair, nails, and glands. The skin is the largest organ of the body. Functions include protection, temperature regulation, sensation, excretion (through sweat), and vitamin D production." },
+      { term: "Skeletal System", def: "The framework of 206 bones that provides structure, supports posture, protects internal organs, and serves as attachment points for muscles. Red bone marrow produces blood cells through hematopoiesis. Bones store calcium." },
+      { term: "Hematopoiesis", def: "The process of producing new blood cells. Occurs in the red bone marrow of certain bones, including the sternum, vertebrae, and long bones. Produces red blood cells, white blood cells, and platelets." },
+      { term: "Muscular System", def: "Composed of three muscle types: skeletal (voluntary, attached to bones), smooth (involuntary, in hollow organs and blood vessels), and cardiac (specialized fibers in the heart only). Responsible for all movement, both voluntary and involuntary." },
+      { term: "Cardiovascular System", def: "Consists of the heart, arteries, veins, and capillaries. The heart pumps blood throughout the body to deliver oxygen and nutrients and remove waste products. The average adult heart beats 60–80 times per minute at rest." },
+      { term: "Sinoatrial (SA) Node", def: "The heart's natural pacemaker, located in the right atrium. Generates the electrical impulse that initiates each heartbeat. Impulse travels through the AV node → Bundle of His → bundle branches → Purkinje fibers." },
+      { term: "Respiratory System", def: "Moves air into and out of the lungs through the nose, pharynx, larynx, trachea, bronchi, and alveoli. Works with the cardiovascular system to deliver oxygen to body tissues and eliminate carbon dioxide." },
+      { term: "Nervous System", def: "The body's primary control and communication system. Divided into the central nervous system (brain and spinal cord) and peripheral nervous system (all nerves outside the CNS). Controls all other body systems through electrical impulses." },
+      { term: "Somatic Nervous System", def: "The branch of the peripheral nervous system that controls voluntary (skeletal) muscle movement. Afferent neurons carry sensory information to the CNS; efferent neurons carry motor responses from the CNS to the muscles." },
+      { term: "Autonomic Nervous System", def: "The branch of the peripheral nervous system that controls automatic (involuntary) body functions such as heart rate, breathing, and digestion. Divided into the sympathetic (fight or flight) and parasympathetic (rest and digest) branches." },
+      { term: "Endocrine System", def: "A system of glands and organs that produce, store, and release hormones directly into the bloodstream to regulate body functions. Works with the nervous system to maintain homeostasis. Key glands include the pituitary, thyroid, adrenal glands, and pancreas." },
+      { term: "Lymphatic / Immune System", def: "The lymphatic system collects and filters interstitial fluid; the immune system uses B-cells, T-cells, lymph nodes, and the spleen to identify and destroy pathogens. Four types of immunity: naturally/artificially acquired active and passive." },
+      { term: "Urinary System", def: "Filters the blood and eliminates liquid waste. The kidneys produce urine, which travels through the ureters to the bladder for storage, and then exits the body via the urethra." },
+      { term: "Gastrointestinal (GI) System", def: "Responsible for ingesting, digesting, and absorbing nutrients, and eliminating solid waste. Begins at the oral cavity and ends at the anus. Accessory organs (liver, pancreas, gallbladder) aid digestion without being part of the main alimentary canal." },
+    ],
+  },
+  {
+    name: "Common Diseases & Conditions", emoji: "🦠", color: "#922B21",
+    terms: [
+      { term: "Hypertension", def: "Consistently elevated blood pressure — systolic ≥ 130 mmHg or diastolic ≥ 80 mmHg. Often called the 'silent killer' because it produces no symptoms in early stages. Risk factors include genetics, obesity, smoking, and high sodium intake. Managed with lifestyle changes and medications." },
+      { term: "Myocardial Infarction (MI)", def: "A heart attack — occurs when blood flow to a portion of the cardiac muscle is blocked (typically by atherosclerosis of a coronary artery), causing the muscle to become ischemic and die. Symptoms: chest pain, nausea, sweating, shortness of breath." },
+      { term: "Atherosclerosis", def: "Hardening and narrowing of the arteries due to buildup of fatty plaques on artery walls. A leading cause of coronary artery disease, stroke, and peripheral artery disease. Risk factors include high cholesterol, smoking, diabetes, and hypertension." },
+      { term: "Cerebrovascular Accident (CVA / Stroke)", def: "Sudden loss of brain function due to a blocked or ruptured blood vessel in the brain. Recognized using the FAST acronym: Facial drooping, Arm weakness, Speech difficulty, Time to call 911. A medical emergency — time to treatment is critical." },
+      { term: "Type 1 Diabetes Mellitus", def: "A chronic autoimmune condition in which the pancreas produces little or no insulin. Typically diagnosed in childhood. Requires daily insulin therapy. Symptoms include excessive thirst, frequent urination, fatigue, and unexplained weight loss." },
+      { term: "Type 2 Diabetes Mellitus", def: "A chronic condition caused by insulin resistance, typically related to genetics, obesity, and lifestyle. Usually develops in adulthood but increasingly seen in adolescents. Managed with diet, exercise, oral medications, and insulin if needed." },
+      { term: "Hypothyroidism", def: "Underproduction of thyroid hormone by the thyroid gland. Causes fatigue, weight gain, cold intolerance, dry skin, and constipation. Diagnosed by blood tests measuring TSH and thyroxine. Treated with synthetic thyroid hormone (levothyroxine)." },
+      { term: "Hyperthyroidism", def: "Overproduction of thyroid hormone, leading to rapid heartbeat, weight loss, increased appetite, sweating, tremors, and anxiety. Graves' disease is the most common cause. Treated with antithyroid medications, radioactive iodine, or surgery." },
+      { term: "Asthma", def: "A chronic respiratory condition in which airway inflammation causes the lining of air passages to swell and tighten, reducing airflow. Symptoms include wheezing, chest tightness, and shortness of breath. Triggered by allergens, exercise, or irritants. Treated with inhaled and oral medications." },
+      { term: "COPD (Chronic Obstructive Pulmonary Disease)", def: "A chronic lung disease that obstructs airflow, usually caused by a combination of chronic bronchitis and emphysema. The primary cause is smoking. Symptoms include progressive shortness of breath and chronic cough with mucus production." },
+      { term: "Osteoarthritis", def: "The most common form of arthritis — caused by degeneration of articular cartilage and changes in the joint. Leads to pain, stiffness, and reduced flexibility in affected joints. Treated with physical therapy, exercise, steroid injections, and joint replacement if severe." },
+      { term: "Osteoporosis", def: "A condition of reduced bone mineral density, making bones weaker and more prone to fracture. Often asymptomatic until a fracture occurs. Diagnosed with a DEXA scan. Risk factors include aging, inadequate calcium intake, and hormonal changes." },
+      { term: "Gastroesophageal Reflux Disease (GERD)", def: "A condition in which the lower esophageal sphincter malfunctions, allowing stomach acid to back up into the esophagus. Causes heartburn, nausea, and difficulty swallowing. Managed with dietary changes, antacids, and in severe cases, surgery." },
+      { term: "Urinary Tract Infection (UTI)", def: "An infection in any part of the urinary system, most commonly caused by Escherichia coli (E. coli). Symptoms include a persistent urge to urinate, burning with urination, cloudy or strong-smelling urine, and pelvic or flank pain. Treated with antibiotics." },
+    ],
+  },
+  {
+    name: "Diagnostic Measures & Treatment", emoji: "🔍", color: "#7D3C98",
+    terms: [
+      { term: "Biopsy", def: "The removal of a small tissue sample from the body for microscopic examination. Used to confirm or rule out a diagnosis of cancer or other disease. Types include needle biopsy, punch biopsy, and excisional biopsy." },
+      { term: "Computed Tomography (CT Scan)", def: "A diagnostic imaging technique that uses X-rays from multiple angles to create detailed cross-sectional images of the body. Provides more detail than standard X-rays. Uses radiation; contrast material may be given orally or intravenously to enhance visibility." },
+      { term: "Magnetic Resonance Imaging (MRI)", def: "A diagnostic imaging technique that uses a strong electromagnetic field and radio waves to produce detailed images of soft tissues, organs, and the brain. Does not use ionizing radiation. Contrast agent gadolinium may be used." },
+      { term: "Ultrasound", def: "A diagnostic imaging technique that uses high-frequency sound waves to produce images of internal organs, blood vessels, and developing fetuses. No radiation is involved. Commonly used for abdominal, pelvic, and cardiac evaluation." },
+      { term: "Nuclear Medicine", def: "Diagnostic imaging that involves administering radioactive tracers (radiopharmaceuticals) to assess how organs and tissues function. Examples include PET scans (used for cancer and brain disorders), SPECT scans (used for stroke assessment), and MUGA scans (for heart muscle evaluation)." },
+      { term: "Contrast Material", def: "A substance administered orally, by injection, or intravenously to make certain body structures appear more visible (radiopaque) on imaging studies. Common contrast agents include barium, iodine, and gadolinium." },
+      { term: "Radiolucent / Radiopaque", def: "Radiolucent refers to structures that appear dark on imaging studies because they have low density (e.g., air-filled lungs). Radiopaque refers to structures that appear bright or white because they are dense (e.g., bone) or have been enhanced by contrast material." },
+      { term: "Infusion Therapy", def: "The delivery of fluids, medications, nutrients, or blood products directly into the bloodstream through an intravenous (IV) line. Used for hydration, antibiotic therapy, chemotherapy, and blood transfusions." },
+      { term: "Chemotherapy", def: "The use of cytotoxic (cell-killing) medications to treat cancer by targeting and destroying rapidly dividing cells. Can be administered orally or intravenously. Side effects include nausea, hair loss, fatigue, and increased infection risk due to suppression of bone marrow." },
+      { term: "Endemic / Epidemic / Pandemic", def: "Endemic: a disease consistently present in a region at a normal expected rate. Epidemic: a sudden, significant increase in cases beyond what is normally expected. Pandemic: a worldwide outbreak crossing international borders (e.g., COVID-19)." },
+    ],
+  },
+  {
+    name: "Medical Terminology", emoji: "🧬", color: "#1E8449",
+    terms: [
+      { term: "Word Root", def: "The foundation of a medical term that conveys its core meaning. Examples: cardi (heart), hepat (liver), nephr (kidney), neur (nerve), oste (bone), gastr (stomach), derm (skin), pulmon (lung), arthr (joint)." },
+      { term: "Combining Form", def: "A word root joined to a combining vowel (usually 'o') to make it easier to attach to suffixes or other roots. Example: cardi/o, gastr/o, arthr/o. The combining vowel is used when the following suffix begins with a consonant." },
+      { term: "Prefix", def: "A word component attached to the beginning of a medical term that modifies its meaning. Examples: hyper- (above/excess), hypo- (below/deficient), brady- (slow), tachy- (fast), a-/an- (without), peri- (around), endo- (within), hemi- (half)." },
+      { term: "Suffix", def: "A word component attached to the end of a medical term that modifies or completes its meaning. Examples: -itis (inflammation), -ectomy (removal), -ology (study of), -algia (pain), -pathy (disease), -plasty (surgical repair), -scopy (visual examination), -megaly (enlargement)." },
+      { term: "The Joint Commission (TJC) Do Not Use List", def: "A list of abbreviations, acronyms, and symbols that The Joint Commission prohibits in clinical documentation because of their high potential for misinterpretation and medication errors. Examples of prohibited terms include U (for units), q.d. (for daily), and MS (for morphine or magnesium sulfate)." },
+      { term: "Lay Term", def: "A plain-language word or phrase used to describe a medical condition or procedure in a way that is easily understood by patients. Using lay terms with patients improves comprehension and adherence. Examples: hypertension = high blood pressure; myocardial infarction = heart attack; edema = swelling." },
+      { term: "Acronym", def: "An abbreviation formed from the first letters of a series of words and pronounced as a word. Examples in medicine: FAST (Facial drooping, Arm weakness, Speech difficulty, Time) for stroke recognition; RICE (Rest, Ice, Compression, Elevation) for sprains." },
+      { term: "Medical Terminology", def: "The specialized vocabulary of the healthcare field, built primarily from Greek and Latin roots, prefixes, and suffixes. Understanding how to build and decode medical terms allows healthcare workers to understand new terms they encounter without having memorized them individually." },
+    ],
+  },
+  {
+    name: "Developmental Stages & Psychology", emoji: "🧠", color: "#117A65",
+    terms: [
+      { term: "Erikson's Stages of Development", def: "A theory developed by Erik Erikson outlining eight psychosocial stages from infancy through older adulthood. Each stage presents a central crisis that must be resolved for healthy psychological development. Society, culture, and interpersonal relationships all influence the outcome of each stage." },
+      { term: "Trust vs. Mistrust (Infancy)", def: "The first of Erikson's stages. The infant must develop trust in their primary caregiver and begin to trust their own body. Successful resolution results in confidence and optimism. Failure leads to suspiciousness and difficulty forming relationships." },
+      { term: "Autonomy vs. Shame & Doubt (Toddler)", def: "The toddler develops a sense of independence and self-control. Success leads to confidence and self-control. Failure leads to a lack of self-confidence, shame, and anger." },
+      { term: "Identity vs. Role Confusion (Adolescent)", def: "The adolescent works to establish a sense of personal identity and direction. Success leads to emotional stability and sound decision-making. Failure leads to role confusion, rebelliousness, and lack of personal goals." },
+      { term: "Ego Integrity vs. Despair (Older Adult)", def: "The final Erikson stage. The older adult reflects on their life. Success leads to wisdom and a sense of self-worth. Failure leads to despair, regret, and fear of death." },
+      { term: "Defense Mechanism", def: "An unconscious coping strategy used to protect the mind from uncomfortable emotions such as anxiety, guilt, fear, or shame. Individuals are generally unaware they are using these strategies. They can be adaptive (helpful) or maladaptive (hindering growth)." },
+      { term: "Denial", def: "A defense mechanism in which a person refuses to accept a difficult reality. Example: a patient denies a cancer diagnosis and refuses further testing. Support without reinforcing the denial — provide factual information with provider approval." },
+      { term: "Projection", def: "A defense mechanism in which a person attributes their own uncomfortable feelings or impulses to someone else. Example: a patient blames staff for being uncaring when they are actually experiencing their own fear or anger." },
+      { term: "Rationalization", def: "A defense mechanism in which a person uses logical-sounding explanations to justify an unacceptable behavior or situation. Example: 'My partner drinks every night to relieve work stress' — avoiding addressing the real concern." },
+      { term: "Displacement", def: "A defense mechanism in which a person redirects difficult emotions away from the real source onto a less-threatening person or object. Example: an MA frustrated with a difficult patient taking it out on a malfunctioning piece of equipment." },
+      { term: "Regression", def: "A defense mechanism in which a person reverts to earlier, more childlike behaviors when under stress. Example: a patient refusing to cooperate with a care plan using a petulant or defiant manner." },
+      { term: "White Coat Syndrome", def: "A phenomenon in which a patient's blood pressure is significantly higher in a clinical setting than when measured at home, due to anxiety about the medical encounter. Recognized as an objective indicator of stress. May result in falsely elevated BP readings during office visits." },
+    ],
+  },
+  {
+    name: "Mental Health Conditions", emoji: "💔", color: "#D4AC0D",
+    terms: [
+      { term: "Depression", def: "A mood disorder involving a persistent chemical imbalance in the brain that causes extreme sadness, fatigue, loss of motivation, hopelessness, and sometimes thoughts of self-harm. Affects daily functioning. Best managed with a combination of therapy, healthy lifestyle changes, and medication." },
+      { term: "Anxiety Disorder", def: "A category of mental health disorders characterized by excessive, uncontrolled fear and worry that significantly interferes with daily functioning. Physical symptoms include rapid heart rate, sweating, and shortness of breath. Treated with therapy, lifestyle changes, and medication." },
+      { term: "Post-Traumatic Stress Disorder (PTSD)", def: "A condition that develops in some individuals following a traumatic or terrifying event. Symptoms include intrusive memories (flashbacks), avoidance of reminders of the event, negative changes in thinking and mood, sleep disturbance, and heightened reactivity. Treated with psychotherapy, exposure therapy, and medication." },
+      { term: "Attention-Deficit/Hyperactivity Disorder (ADHD)", def: "A chronic neurodevelopmental condition that typically begins in childhood and often continues into adulthood. Characterized by inattention (difficulty focusing, following directions, and staying organized), hyperactivity (constant movement, excessive talking), and impulsivity. More commonly diagnosed in males. Treated with medications and behavior therapy." },
+      { term: "Stressor", def: "Any event, circumstance, or condition that causes anxiety or stress. Stressors can be environmental (pollution, overcrowding, natural disasters), socioeconomic (debt, job loss, housing instability), or psychological (grief, guilt, depression). Even positive events can act as stressors." },
+      { term: "Environmental Stressor", def: "A physical or situational factor in the environment that creates enough stress to interfere with daily functioning. Examples include air pollution, overcrowding, language and cultural barriers, natural disasters, theft, and violence. Major environmental stressors can trigger or worsen PTSD." },
+      { term: "Socioeconomic Stressor", def: "Financial or social circumstances that create ongoing anxiety and adversity. Examples include inability to afford medications or diagnostic procedures, job loss, housing instability, medical debt, and lack of health insurance. MAs frequently encounter patients navigating these challenges." },
+    ],
+  },
+  {
+    name: "End of Life & Stages of Grief", emoji: "🕊️", color: "#6C3483",
+    terms: [
+      { term: "Anticipatory Grief", def: "The experience of grief symptoms before a loss has actually occurred. Common in patients with terminal illness and their families who are preparing for death. Involves the same emotional stages as grief that occurs after a loss." },
+      { term: "Kübler-Ross Stages of Grief", def: "A widely recognized five-stage model of grief developed by Elisabeth Kübler-Ross based on her work with dying patients: Denial, Anger, Bargaining, Depression, and Acceptance. Not everyone moves through the stages in order, and some stages may be skipped or revisited. There is no 'correct' way to grieve." },
+      { term: "Denial (Grief)", def: "The first stage — the grieving person cannot or will not accept that the loss is happening or has already occurred. Thought process: 'No, not me.' The MA should support the patient without reinforcing the denial, and can offer written information about the illness and options with provider approval." },
+      { term: "Anger (Grief)", def: "The second stage — the grieving person directs hostility outward, often toward healthcare staff, family, or anyone who seems able to fix what cannot be fixed. Thought process: 'Why me?' The MA should not take the anger personally and should recognize it as an expected part of grieving." },
+      { term: "Bargaining (Grief)", def: "The third stage — the grieving person attempts to negotiate or make deals to delay or avoid the loss. They may seek alternative treatments, make promises, or search for a cure. Thought process: 'Yes, me, but...' The MA should listen attentively and allow the patient to express feelings freely." },
+      { term: "Depression (Grief)", def: "The fourth stage — the reality of the situation sets in and the patient feels profound sadness, withdrawal, and helplessness. They may express regret or self-blame. Thought process: 'Yes, it's me.' The MA should sit with the patient without pressure, offer support, and facilitate referrals to counseling or support groups." },
+      { term: "Acceptance (Grief)", def: "The fifth stage — the grieving person begins to come to terms with the loss and makes plans for moving forward. For dying patients, this may include making end-of-life arrangements and reconnecting with loved ones. Thought process: 'Yes, me, and I'm ready.' The MA should offer encouragement, education, and continued support." },
+      { term: "Advance Directive", def: "A legal document in which a patient expresses their wishes regarding medical care in the event they become unable to communicate or make decisions. Types include a living will (treatment preferences) and a durable power of attorney for healthcare (designating a decision-maker). Stored in the administrative section of the health record." },
+      { term: "Hospice Care", def: "A specialized form of care focused on comfort, quality of life, and emotional support for patients who are no longer pursuing curative treatment for a terminal illness. Also supports the patient's family. Referrals to hospice are an important resource MAs should be prepared to facilitate." },
+    ],
+  }
+];
+
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+let browseSearch = '';
+let browseOpenCat = null;
+let browseOpenTerm = null;
+document.getElementById('header-subtitle').textContent =
+  `Anatomy & Physiology · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+renderBrowse();
+function renderBrowse() {
+  const el = document.getElementById('browse-mode');
+  const query = browseSearch.trim().toLowerCase();
+  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
+  if (query) {
+    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
+    if (filtered.length === 0) {
+      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
+    } else {
+      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
+      filtered.forEach((t, i) => {
+        const isOpen = browseOpenTerm === `s-${i}`;
+        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
+      });
+      html += `</div>`;
+    }
+  } else {
+    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
+    CATEGORIES.forEach((cat, ci) => {
+      const isOpen = browseOpenCat === ci;
+      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
+      if (isOpen) {
+        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
+        cat.terms.forEach((t, ti) => {
+          const tKey = `${ci}-${ti}`;
+          const tOpen = browseOpenTerm === tKey;
+          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+}
+function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+</script>
+</body>
+</html>

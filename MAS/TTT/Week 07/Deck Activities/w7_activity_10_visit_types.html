@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>In-Person vs Telehealth</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;background:linear-gradient(160deg,#0a1520,#0e1e30,#081520);font-family:'Plus Jakarta Sans',sans-serif;padding:24px 16px;color:#e0f0ff}.wrap{max-width:560px;margin:0 auto}.header{text-align:center;margin-bottom:24px}.icon{font-size:44px}h1{font-weight:800;font-size:28px;margin:8px 0 4px}.sub{color:#6898b8;font-weight:600;font-size:15px}.topbar{display:flex;justify-content:space-between;margin-bottom:12px}.topbar span{font-weight:700;font-size:14px}.topbar .ct{color:#6898b8}.topbar .sc{color:#fbbf24}.bar{height:6px;background:#1a3048;border-radius:10px;margin-bottom:24px;overflow:hidden}.bar-fill{height:100%;background:linear-gradient(90deg,#22d3ee,#f97066);border-radius:10px;transition:width .4s}.vc{background:linear-gradient(135deg,#112030,#1a3048);padding:32px 28px;border-radius:24px;text-align:center;margin-bottom:24px;border:2px solid rgba(34,211,238,.15)}.vc .label{color:#22d3ee;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}.vc .text{font-weight:800;font-size:19px;line-height:1.6}.fb{text-align:center;padding:14px;margin-bottom:16px;border-radius:14px;font-weight:800;font-size:18px}.fb.ok{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:#4ade80}.fb.no{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.25);color:#fb7185}.fb .ex{font-weight:600;font-size:14px;color:#6898b8;margin-top:6px}.btns{display:flex;gap:12px;flex-wrap:wrap}.btns button{flex:1;min-width:120px;padding:16px 16px;border-radius:14px;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit;color:#e0f0ff;transition:all .2s}.b1{background:rgba(34,211,238,.12);border:3px solid #22d3ee}.b2{background:rgba(249,112,102,.12);border:3px solid #f97066}.b3{background:rgba(167,139,250,.12);border:3px solid #a78bfa}.done{text-align:center;background:#112030;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}.done .big{font-size:56px}.done h2{font-weight:800;font-size:28px;margin:12px 0}.done p{color:#6898b8;font-weight:600;font-size:15px;margin-bottom:24px}.btn-r{padding:14px 36px;border:none;border-radius:14px;background:#22d3ee;color:#0a1520;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}</style></head><body>
+<div class="wrap"><div class="header"><div class="icon">🏥</div><h1>In-Person vs Telehealth</h1><p class="sub">Sort each communication tip into the correct visit type</p></div>
+<div id="game"></div><div id="doneBox" class="done" style="display:none"></div></div>
+<script>
+const CATS=["In-Person","Telehealth","Both"];
+const ALL=[
+{text:"Full range of nonverbal cues available — use them intentionally",c:0},
+{text:"Therapeutic touch (with consent) is most effective here",c:0},
+{text:"Position yourself at the patient's level — avoid talking down",c:0},
+{text:"Check audio and video before the visit begins",c:1},
+{text:"Verbal communication must carry more weight since nonverbal cues are reduced",c:1},
+{text:"Demonstrate engagement through eye contact with the camera",c:1},
+{text:"Ask for questions and provide time for the patient to respond",c:2},
+{text:"Appearance, tone, and language must remain professional",c:2},
+{text:"Document the visit including the communication method used",c:2},
+];
+let rem,score,fb;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+function init(){rem=shuffle(ALL);score=0;fb=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';render()}
+function render(){const g=document.getElementById('game');let h='<div class="topbar"><span class="ct">'+(ALL.length-rem.length+1)+' / '+ALL.length+'</span><span class="sc">Score: '+score+'</span></div>';h+='<div class="bar"><div class="bar-fill" style="width:'+((ALL.length-rem.length)/ALL.length*100)+'%"></div></div>';if(rem.length>0){h+='<div class="vc"><div class="label">Which visit type?</div><div class="text">'+rem[0].text+'</div></div>'}if(fb){h+='<div class="fb '+(fb.ok?'ok':'no')+'">'+(fb.ok?'✅ Correct!':'❌ That\'s: '+CATS[fb.right])+'</div>'}if(rem.length>0){h+='<div class="btns"><button class="b1" onclick="pick(0)">🏥 In-Person</button><button class="b2" onclick="pick(1)">💻 Telehealth</button><button class="b3" onclick="pick(2)">🔄 Both</button></div>'}g.innerHTML=h}
+function pick(ci){if(rem.length===0)return;const cur=rem[0];const ok=cur.c===ci;if(ok)score++;fb={ok,right:cur.c};rem=rem.slice(1);render();if(rem.length===0)setTimeout(showDone,900);setTimeout(()=>{fb=null;if(rem.length>0)render()},900)}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=7?'🏆':'💪')+'</div><h2>'+score+'/'+ALL.length+' Correct!</h2><p>Professionalism applies to every visit format. Adapt your communication to match the setting.</p><button class="btn-r" onclick="init()">🔄 Play Again</button>'}
+init();
+</script></body></html>

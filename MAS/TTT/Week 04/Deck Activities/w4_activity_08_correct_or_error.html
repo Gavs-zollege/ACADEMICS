@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Correct or Error?</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#0e0820,#181030,#0a0618);font-family:'Lexend',sans-serif;padding:24px 16px;color:#e8e0ff}
+.wrap{max-width:560px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#8878b0;font-weight:600;font-size:15px}
+.topbar{display:flex;justify-content:space-between;margin-bottom:12px}
+.topbar span{font-weight:700;font-size:14px}
+.topbar .ct{color:#8878b0}
+.topbar .sc{color:#fbbf24}
+.bar{height:6px;background:#201840;border-radius:10px;margin-bottom:24px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#22d3ee,#fb7185);border-radius:10px;transition:width .4s}
+.scenario{background:linear-gradient(135deg,#181030,#201840);padding:32px 28px;border-radius:24px;text-align:center;margin-bottom:24px;border:2px solid rgba(34,211,238,.15)}
+.scenario .label{color:#22d3ee;font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:2px;margin-bottom:10px}
+.scenario .text{font-weight:800;font-size:20px;line-height:1.6}
+.fb{text-align:center;padding:14px;margin-bottom:16px;border-radius:14px;font-weight:800;font-size:18px}
+.fb.ok{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:#4ade80}
+.fb.no{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.25);color:#fb7185}
+.fb .explain{font-weight:600;font-size:14px;color:#8878b0;margin-top:6px}
+.btns{display:flex;gap:16px}
+.btns button{flex:1;padding:18px 20px;border-radius:16px;font-weight:800;font-size:18px;cursor:pointer;font-family:inherit;color:#e8e0ff;transition:all .2s}
+.btn-correct{background:rgba(74,222,128,.12);border:3px solid #4ade80}
+.btn-error{background:rgba(251,113,133,.12);border:3px solid #fb7185}
+.done{text-align:center;background:#181030;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0}
+.done p{color:#8878b0;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn-r{padding:14px 36px;border:none;border-radius:14px;background:#22d3ee;color:#0e0820;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><div class="icon">⚠️</div><h1>Correct or Error?</h1><p class="sub">Is this phlebotomy practice correct or a preanalytical error?</p></div>
+  <div id="game"></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const ITEMS=[
+  {text:"The MA labels the tubes after returning to the workstation, not at the draw chair.",correct:false,why:"Label immediately at the draw site — never move tubes away unlabeled."},
+  {text:"The MA verifies patient identity using full name and date of birth.",correct:true,why:"Two identifiers at every draw — name and DOB. Never skip this step."},
+  {text:"The tourniquet was left on for 2 minutes during a difficult draw.",correct:false,why:"Max 1 minute. Hemoconcentration begins immediately after, falsifying results."},
+  {text:"The MA inverts the lavender (EDTA) tube 8 times after collection.",correct:true,why:"EDTA tubes require 8 gentle inversions to mix the anticoagulant."},
+  {text:"The MA draws the light blue tube first, before the yellow culture bottle.",correct:false,why:"Yellow (cultures) must always be drawn first to prevent contamination."},
+  {text:"The MA wipes away the first drop before collecting a capillary sample.",correct:true,why:"First drop contains tissue fluid — wiping prevents contamination."},
+  {text:"The MA applies pressure to the site BEFORE fully removing the needle.",correct:false,why:"Never apply pressure until the needle is completely out — risk of injury and hematoma."},
+  {text:"The MA asks if the patient has a history of fainting before beginning.",correct:true,why:"Syncope history means positioning supine or semi-Fowler's to prevent falls."},
+  {text:"The MA fills the light blue citrate tube only halfway because the draw was difficult.",correct:false,why:"Citrate tubes MUST be filled to the line — underfill invalidates coag results."},
+  {text:"The MA places the specimen and matching requisition together in one biohazard bag.",correct:true,why:"One bag per patient. Specimen and requisition always paired together."},
+];
+let ci=0,score=0,chosen=null;
+function renderQ(){const g=document.getElementById('game'),it=ITEMS[ci];let h='<div class="topbar"><span class="ct">'+(ci+1)+' / '+ITEMS.length+'</span><span class="sc">Score: '+score+'</span></div>';h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/ITEMS.length*100)+'%"></div></div>';h+='<div class="scenario"><div class="label">Scenario '+(ci+1)+'</div><div class="text">'+it.text+'</div></div>';if(chosen!==null){const ok=chosen===it.correct;h+='<div class="fb '+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ Wrong — it\'s actually '+(it.correct?'CORRECT practice':'an ERROR'))+'<div class="explain">'+it.why+'</div></div>'}h+='<div class="btns"><button class="btn-correct" '+(chosen===null?'onclick="pick(true)"':'')+'>✅ Correct</button><button class="btn-error" '+(chosen===null?'onclick="pick(false)"':'')+'>⚠️ Error</button></div>';g.innerHTML=h}
+function pick(isCorrect){if(chosen!==null)return;chosen=isCorrect;if(isCorrect===ITEMS[ci].correct)score++;renderQ();setTimeout(()=>{if(ci+1<ITEMS.length){ci++;chosen=null;renderQ()}else showDone()},2200)}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=8?'🏆':score>=6?'⭐':'💪')+'</div><h2>'+score+'/'+ITEMS.length+' Correct!</h2><p>Most errors happen BEFORE the specimen is tested. Getting pre-analytical steps right matters most.</p><button class="btn-r" onclick="reset()">🔄 Try Again</button>'}
+function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+renderQ();
+</script>
+</body>
+</html>

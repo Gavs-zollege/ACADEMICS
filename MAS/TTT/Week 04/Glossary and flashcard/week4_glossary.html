@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 4 Glossary — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
+  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
+  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
+  .header{text-align:center;margin-bottom:28px}
+  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
+  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
+  .header p{font-size:13px;color:var(--text-secondary)}
+  .search-wrap{position:relative;margin-bottom:20px}
+  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
+  .search-wrap input:focus{border-color:#C0392B}
+  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
+  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
+  .cat-btn:hover{border-color:#aaa}
+  .cat-btn .emoji{font-size:22px}
+  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
+  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
+  .cat-btn.open .arrow{transform:rotate(180deg)}
+  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
+  .term-card:hover{border-color:var(--border)}
+  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
+  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
+  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
+  .result-card .row{display:flex;align-items:center;gap:10px}
+  .result-card .r-emoji{font-size:20px}
+  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
+  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 4 Glossary</h1>
+    <p id="header-subtitle"></p>
+  </div>
+  <div id="browse-mode"></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "Phlebotomy Basics & Patient Preparation", emoji: "💉", color: "#C0392B",
+    terms: [
+      { term: "Phlebotomy", def: "The clinical procedure of withdrawing blood from a vein for laboratory testing, diagnosis, monitoring of conditions, or medication level assessment. Performed by trained medical assistants, phlebotomists, and other clinical personnel." },
+      { term: "Venipuncture", def: "The process of puncturing a vein with a needle for the purpose of collecting blood. The most common method of blood collection in clinical settings." },
+      { term: "Laboratory Directory (Lab Manual)", def: "A reference guide maintained by the laboratory that lists all orderable tests along with specimen requirements, patient preparation instructions, container type, handling instructions, and transport requirements. Should be consulted for any unfamiliar test." },
+      { term: "Laboratory Requisition", def: "A written or electronic order accompanying a specimen to the laboratory. Contains the ordering provider's information, patient demographics, test codes, diagnosis codes, and any special collection requirements." },
+      { term: "Fasting", def: "A pre-collection instruction requiring the patient to abstain from all food and drink (except water) for a specified period — typically 12 hours — before blood is drawn. Required for tests such as fasting glucose and lipid panels to prevent interference from recently consumed food." },
+      { term: "Patient Identifiers", def: "Specific pieces of information used to confirm a patient's identity before performing any procedure. The two required identifiers for blood draws are the patient's full name and date of birth." },
+      { term: "Semi-Fowler's Position", def: "A partially reclined patient position with the head of the bed elevated approximately 30–45 degrees. Used during phlebotomy for patients with a history of fainting (vasovagal syncope) to reduce the risk of falling." },
+      { term: "Vasovagal Syncope", def: "A sudden, temporary loss of consciousness caused by a drop in blood pressure and heart rate, often triggered by the sight of blood, pain, or anxiety. The most common adverse reaction to phlebotomy. Managed by keeping the patient reclined and calling for provider assessment." },
+    ],
+  },
+  {
+    name: "Needle Systems & Equipment", emoji: "🔧", color: "#2C3E50",
+    terms: [
+      { term: "Evacuated Tube System", def: "The most commonly used venipuncture method. Consists of a double-pointed needle, a plastic needle holder/adapter, and vacuum collection tubes. The pre-existing vacuum inside each tube draws blood directly in when the tube is inserted into the holder." },
+      { term: "Butterfly Needle (Winged Infusion Set)", def: "A needle attached to flexible plastic wings and a length of flexible tubing that connects to the collection device. Used for patients with small, fragile, or difficult-to-access veins. Gauge range: 21–23; length: ½ to ¾ inch. Causes less trauma than the evacuated system for these vein types." },
+      { term: "Needle and Syringe System", def: "A method using a standard needle attached to a syringe to draw blood manually. The amount of suction is controlled by pulling the plunger rather than relying on vacuum. Used when only a small volume of blood is needed and other methods are not suitable. Blood must be transferred to collection tubes immediately after collection." },
+      { term: "Gauge (Lumen)", def: "A measurement of needle diameter. The gauge number and the needle's internal diameter are inversely related — a higher gauge number means a smaller needle opening. For routine venipuncture, 20–22 gauge is standard." },
+      { term: "Bevel", def: "The angled, sharpened tip at the end of a needle that creates a cutting point for smooth skin and vein penetration. The bevel should always face upward during needle insertion to facilitate blood flow." },
+      { term: "Needle Holder/Adapter", def: "The plastic tube-shaped device that screws onto one end of the double-pointed venipuncture needle and holds the collection tube. Part of the evacuated tube system." },
+      { term: "Tourniquet", def: "An elastic band applied 3–4 inches above the draw site to slow venous blood flow, making the vein more visible, palpable, and accessible for puncture. Must not remain in place for more than 1 minute to prevent hemoconcentration." },
+      { term: "Sharps Container", def: "A puncture-resistant, leak-proof container used to safely dispose of needles, lancets, and other sharp instruments immediately after use. Must be placed on the dominant side before beginning the procedure." },
+    ],
+  },
+  {
+    name: "Blood Tubes, Additives & Order of Draw", emoji: "🧪", color: "#7D3C98",
+    terms: [
+      { term: "Order of Draw", def: "The required sequence in which blood collection tubes must be filled during a single venipuncture. Established to prevent additive carryover from one tube to the next, which can contaminate specimens and produce inaccurate results." },
+      { term: "Additive Carryover", def: "The transfer of a small amount of additive from one collection tube into the next during multi-tube draws. Prevented by following the correct order of draw. Even a trace amount of the wrong additive can compromise an entire specimen." },
+      { term: "Yellow Top Tube", def: "Contains sodium polyanethol sulfonate (SPS). Used for blood and body fluid cultures. Drawn first in the order of draw." },
+      { term: "Light Blue Top Tube (Sodium Citrate)", def: "Contains sodium citrate, which removes calcium to prevent clotting. Used for coagulation testing (PT, PTT, INR). Requires 3–4 gentle inversions. Has a minimum fill indicator line that must be met — an underfilled tube produces invalid coagulation results." },
+      { term: "Red Top Tube", def: "Contains no additive. Blood is allowed to clot naturally. Used for serum-based tests including chemistry, blood bank, and immunology. Requires 5 inversions." },
+      { term: "Red/Gray Marble Top (SST — Serum Separator Tube)", def: "Contains no anticoagulant but includes silica particles to accelerate clot formation and a gel barrier for serum separation during centrifugation. Used for serum chemistry and immunology testing. Requires 5 inversions." },
+      { term: "Green Top Tube (Heparin)", def: "Contains heparin, which inhibits thrombin formation to prevent clotting. Used for plasma-based chemistry tests. Requires 8 inversions." },
+      { term: "Green/Gray Marble Top (PST — Plasma Separator Tube)", def: "Contains lithium heparin and a gel separator for plasma separation. Used for plasma chemistry studies. Requires 8 inversions." },
+      { term: "Lavender Top Tube (EDTA)", def: "Contains ethylenediaminetetraacetic acid (EDTA), which removes calcium to prevent clotting. Used for hematology testing, including complete blood counts (CBC). Requires 8 inversions." },
+      { term: "Gray Top Tube", def: "Contains potassium oxalate and sodium fluoride. Fluoride inhibits glycolysis, preserving glucose levels in the specimen. Used primarily for glucose and blood alcohol testing. Requires 8–10 inversions." },
+      { term: "Inversion", def: "The act of gently turning a blood collection tube completely upside down and returning it upright to mix blood with the additive. Each tube type requires a specific number of inversions. Never shake or forcefully invert tubes — this causes hemolysis." },
+      { term: "Fill Level / Fill Ratio", def: "The required amount of blood in a collection tube for the test to be valid. Tubes should be filled to capacity. The light blue tube is the most critical — it has a marked minimum fill line that must be reached to maintain the correct blood-to-anticoagulant ratio." },
+    ],
+  },
+  {
+    name: "Blood Components & Specimen Types", emoji: "🩸", color: "#922B21",
+    terms: [
+      { term: "Plasma", def: "The liquid portion of the blood obtained from a centrifuged specimen that was collected in a tube containing an anticoagulant. Plasma retains clotting factors because the blood was prevented from clotting. Forms the top layer after centrifugation." },
+      { term: "Serum", def: "The liquid portion of the blood obtained after a blood specimen has been allowed to clot and then centrifuged. Serum does not contain clotting factors. Used for many chemistry and immunology tests." },
+      { term: "Whole Blood", def: "Unprocessed blood collected in a tube containing an anticoagulant, which prevents clotting. Used for hematology testing such as complete blood counts." },
+      { term: "Clotted Blood", def: "Blood that has been collected in a tube without an anticoagulant and allowed to naturally form a clot before processing. Used when serum is required for testing." },
+      { term: "Buffy Coat", def: "The thin layer of white blood cells and platelets that forms between the plasma/serum layer and the red blood cell layer after centrifugation. Visible in anticoagulated whole blood specimens." },
+      { term: "Hemolysis", def: "The breakdown of red blood cells, releasing hemoglobin into the surrounding plasma. Causes a red or pink discoloration of the serum or plasma. Results in invalid test results for many analytes. Caused by forceful tube inversion, shaking, or drawing from a site with small or fragile veins using too much suction." },
+      { term: "Hemoconcentration", def: "An increase in the concentration of large molecules (proteins, cells) in the blood caused by leaving the tourniquet on for longer than 1 minute. Alters values for several lab tests and is a preanalytical error." },
+      { term: "Anticoagulant", def: "A substance added to a collection tube that prevents blood from clotting. Examples include EDTA, heparin, sodium citrate, and sodium fluoride. Different anticoagulants are used depending on the type of testing required." },
+    ],
+  },
+  {
+    name: "Vein Selection & Venipuncture Technique", emoji: "💪", color: "#1A5276",
+    terms: [
+      { term: "Antecubital Space", def: "The inner bend of the elbow — the most common and preferred site for venipuncture. Contains the median cubital, cephalic, and basilic veins." },
+      { term: "Median Cubital Vein", def: "The vein located in the center of the antecubital space. The preferred vein for blood draws because it is typically large, well-anchored, and less likely to roll or cause significant discomfort." },
+      { term: "Cephalic Vein", def: "A vein located on the thumb side of the antecubital space. A common alternative when the median cubital is unavailable. Has a higher tendency to roll than the median cubital." },
+      { term: "Basilic Vein", def: "A vein located on the pinky side of the antecubital space. Less preferred due to proximity to the brachial artery and median nerve. Has the highest tendency to roll of the three antecubital veins." },
+      { term: "Palpation", def: "The technique of pressing the skin up and down with the fingertip to locate and assess a vein. A healthy, accessible vein has a bouncy or springy feel. Veins that are visible but do not bounce are unlikely to yield a successful draw." },
+      { term: "Anchoring the Vein", def: "The technique of pulling the skin taut approximately 2–3 inches below the intended puncture site to stabilize the vein during needle insertion, preventing it from rolling." },
+      { term: "Angle of Insertion", def: "The angle at which the needle enters the skin. For arm (antecubital) draws, the recommended angle is 15–30 degrees. For hand or wrist draws, a shallower angle of 10–15 degrees is used because the veins are thinner and closer to the surface." },
+      { term: "Rolling Vein", def: "A vein that shifts or moves sideways when pressure is applied rather than accepting the needle. More common with the basilic vein and hand/wrist veins. Prevented by anchoring the skin firmly before insertion." },
+      { term: "Deep Vein Thrombosis (DVT)", def: "A blood clot that forms in a deep vein, usually in the leg. Phlebotomy from foot veins carries a risk of DVT and should only be performed under direct provider supervision." },
+    ],
+  },
+  {
+    name: "Capillary Puncture", emoji: "🫴", color: "#1E8449",
+    terms: [
+      { term: "Capillary Puncture", def: "A method of blood collection that involves puncturing a capillary bed to obtain a small blood sample. Preferred for infants, young children, or when only a small volume of blood is needed. Also called a fingerstick (adults) or heel stick (infants)." },
+      { term: "Lancet", def: "A small, spring-loaded, retractable device used to puncture the skin during capillary blood collection. Always automatically retracts after use for safety. Disposed of immediately in a sharps container." },
+      { term: "Fingerstick", def: "A capillary puncture performed on the fingertip. The preferred site is the middle or ring finger of the nondominant hand, slightly off-center, avoiding the nail bed. Used for adults and children." },
+      { term: "Heel Stick", def: "A capillary puncture performed on the outer edge of the underside of the heel of an infant. The only acceptable capillary puncture site for infants — finger punctures in infants carry an unacceptably high risk of bone injury." },
+      { term: "Capillary Order of Draw", def: "The recommended sequence for collecting capillary blood specimens: (1) blood gas tubes, (2) EDTA tubes, (3) other additive tubes, (4) serum tubes. Different from venipuncture order of draw." },
+      { term: "First Drop Rule", def: "The practice of wiping away the first drop of blood from a capillary puncture site before collecting the specimen. The first drop contains tissue fluid from the puncture that can dilute or contaminate the sample. Exception: prothrombin time (PT) testing." },
+      { term: "Micropipette", def: "A small, calibrated capillary tube used to collect a precise, very small volume of blood from a capillary puncture site. Used for certain point-of-care tests requiring a specific measured volume." },
+    ],
+  },
+  {
+    name: "Specimen Processing & Storage", emoji: "📦", color: "#D4AC0D",
+    terms: [
+      { term: "Centrifuge", def: "A laboratory instrument that spins specimens at high speed to separate blood components by density. Heavier components (red blood cells) settle to the bottom; lighter components (plasma or serum) rise to the top. Must always be balanced before use." },
+      { term: "Centrifugation", def: "The process of spinning a blood specimen in a centrifuge to separate its components. Serum tubes must be allowed to clot at room temperature for 30–45 minutes before centrifugation. Specimens should not sit for more than 1 hour before being centrifuged." },
+      { term: "Aliquot", def: "A portion of a specimen divided from the original sample into one or more secondary tubes for testing on different instruments or in different departments. Always performed using a disposable pipette — never by pouring." },
+      { term: "Pipette (Single-Use)", def: "A disposable tube used to transfer small, precise volumes of liquid between containers. Required for aliquoting specimens. Prevents splashing, cross-contamination, and aerosol generation." },
+      { term: "Serum Separator Tube (SST)", def: "A tube containing silica particles and a gel barrier. After centrifugation, the gel migrates to form a physical barrier between the clotted red cells at the bottom and the serum at the top, making serum collection easier and more accurate." },
+      { term: "Light-Sensitive Specimen", def: "A blood specimen that must be protected from light during and after processing because light exposure degrades the analyte being measured. Handled by keeping lab lights low, wrapping finished tubes in foil, or using amber transport tubes." },
+      { term: "Calibration", def: "The process of standardizing a laboratory instrument by comparing its measurements to a known reference value. All lab equipment must be calibrated on a regular schedule. Equipment that is overdue for calibration must be taken out of service until it is recalibrated." },
+      { term: "Specimen Integrity", def: "The condition of a specimen that accurately reflects the patient's physiological state at the time of collection. Integrity is maintained through proper labeling, correct tube selection, timely processing, and appropriate storage." },
+    ],
+  },
+  {
+    name: "Specimen Handling, Transport & Errors", emoji: "⚠️", color: "#117A65",
+    terms: [
+      { term: "Biohazard Bag (Specimen Transport Bag)", def: "A leakproof, zip-close plastic bag used to transport laboratory specimens. Each bag contains two pockets — one for the labeled specimen tube and one for the matching requisition. One bag per patient is required." },
+      { term: "Chain of Custody", def: "A legal documentation process that tracks every person who handles a specimen from the time of collection through final reporting. Required for drug and alcohol testing and specimens collected for legal purposes. Every handler must sign." },
+      { term: "Preanalytical Error", def: "An error that occurs before or during specimen collection. The most common category of laboratory error. Examples include mislabeling, patient misidentification, wrong container, incorrect collection technique, insufficient volume, and failure to follow patient prep instructions." },
+      { term: "Postanalytical Error", def: "An error that occurs after the specimen has been tested and processed. Examples include failure to report results, incorrect data entry, excessive turnaround time, and misinterpretation of results." },
+      { term: "Mislabeling", def: "The most common single source of laboratory error. Occurs when a specimen tube is labeled with incorrect or missing information, or when labels from one patient are placed on another patient's tubes. All tubes must be labeled immediately after the draw, before leaving the draw area." },
+      { term: "Critical Value (Critical Lab Result)", def: "A laboratory result that falls so far outside the normal range that it indicates a potentially life-threatening condition requiring immediate clinical intervention. Must be reported to the ordering provider by phone as soon as identified. The MA must read the value back to the lab to confirm accuracy, notify the provider immediately, and document the communication." },
+      { term: "Timed Specimen", def: "A specimen collected at a specific time ordered by the provider — not simply the next available slot. Used for therapeutic drug monitoring and timed metabolic tests such as the glucose tolerance test (GTT). If timing is disrupted, the provider must be contacted before proceeding." },
+      { term: "Blood Culture", def: "A specimen collected to detect bacteria or fungi in the bloodstream. Requires special skin antiseptic preparation using a two-step process to minimize contamination, multiple collection bottles in a specific sequence, and precise labeling. Any break in protocol renders the specimen invalid." },
+      { term: "Therapeutic Drug Monitoring", def: "The measurement of medication levels in the blood at timed intervals to ensure the patient is receiving an effective and safe dose. Results guide dosing adjustments. Timing of collection is critical — early or late collection produces misleading results." },
+      { term: "Oral Glucose Tolerance Test (GTT)", def: "A timed test that measures how efficiently the body processes glucose over time by collecting blood specimens at set intervals after the patient consumes a standardized glucose drink. Used to evaluate for gestational diabetes or impaired glucose regulation." },
+    ],
+  },
+  {
+    name: "Anatomical & Clinical Terms", emoji: "🏥", color: "#6C3483",
+    terms: [
+      { term: "Plasma Separator Tube (PST)", def: "A collection tube containing lithium heparin and a gel barrier that separates plasma from blood cells during centrifugation. The plasma portion can be collected directly from above the gel layer for testing." },
+      { term: "Hemostasis", def: "The process by which the body stops bleeding after a blood vessel is injured. In phlebotomy, hemostasis at the puncture site is achieved by applying direct pressure with gauze after needle removal." },
+      { term: "Thrombosis", def: "The formation of a blood clot inside a blood vessel that partially or completely obstructs blood flow. Phlebotomy from foot veins carries a risk of deep vein thrombosis (DVT) and should only be done under provider supervision." },
+      { term: "Arteriole", def: "A small artery that branches into capillaries. Capillary blood collected during a fingerstick is a mixture of blood from arterioles, venules, and capillaries — which is why not all tests can be performed on capillary specimens." },
+      { term: "Fistula (AV Fistula)", def: "A surgically created connection between an artery and a vein, typically in the arm, used for dialysis access. The arm containing an AV fistula must never be used for venipuncture — draws from that arm can damage the fistula and compromise dialysis access." },
+      { term: "Mastectomy Site Restriction", def: "Blood draws should not be performed on the same side of the body as a mastectomy due to impaired lymphatic drainage, which can increase infection risk and affect test results. If bilateral mastectomy, a leg draw may be required per provider direction." },
+      { term: "Interstitial Fluid", def: "Fluid found between the cells in body tissues. Present in the first drop of blood from a capillary puncture site and must be wiped away before specimen collection because it dilutes the sample and alters results." },
+      { term: "Glycolysis", def: "The metabolic process by which glucose is broken down in red blood cells. If a blood glucose specimen is not collected in a tube with sodium fluoride (gray top), glycolysis will continue and cause the glucose level in the specimen to decrease over time, producing a falsely low result." },
+    ],
+  }
+];
+
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+let browseSearch = '';
+let browseOpenCat = null;
+let browseOpenTerm = null;
+document.getElementById('header-subtitle').textContent =
+  `Phlebotomy: Techniques and Best Practices · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+renderBrowse();
+function renderBrowse() {
+  const el = document.getElementById('browse-mode');
+  const query = browseSearch.trim().toLowerCase();
+  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
+  if (query) {
+    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
+    if (filtered.length === 0) {
+      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
+    } else {
+      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
+      filtered.forEach((t, i) => {
+        const isOpen = browseOpenTerm === `s-${i}`;
+        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
+      });
+      html += `</div>`;
+    }
+  } else {
+    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
+    CATEGORIES.forEach((cat, ci) => {
+      const isOpen = browseOpenCat === ci;
+      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
+      if (isOpen) {
+        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
+        cat.terms.forEach((t, ti) => {
+          const tKey = `${ci}-${ti}`;
+          const tOpen = browseOpenTerm === tKey;
+          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+}
+function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+</script>
+</body>
+</html>

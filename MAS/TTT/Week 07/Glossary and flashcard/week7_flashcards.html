@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 7 Flashcards — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #e4e4f0;
+    --text-secondary: #9898b0;
+    --surface-1: #1c1c2e;
+    --surface-2: #282840;
+    --border: #363650;
+    --bg: #0d0d1a;
+    --card-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C0392B; margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 900;
+    letter-spacing: -1px; margin-bottom: 6px; line-height: 1.1;
+  }
+  .header p { font-size: 13px; color: var(--text-secondary); }
+  .flashcard {
+    width: 100%; max-width: 500px; min-height: 250px; border-radius: 22px;
+    cursor: pointer; padding: 34px; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12); transition: all .35s cubic-bezier(.4,0,.2,1);
+    user-select: none; position: relative; margin: 0 auto;
+  }
+  .flashcard .label {
+    position: absolute; top: 16px; left: 20px; font-size: 11px;
+    font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .7;
+  }
+  .flashcard .hint {
+    position: absolute; top: 16px; right: 20px; font-size: 11px; opacity: .5;
+  }
+  .flashcard h2 {
+    margin: 0; font-family: var(--font-display); font-size: 26px;
+    font-weight: 900; line-height: 1.2; letter-spacing: -.5px;
+  }
+  .flashcard .def-text {
+    margin: 0; font-size: 15px; line-height: 1.65; color: var(--text-secondary);
+  }
+  .progress-bar {
+    height: 6px; border-radius: 6px; background: var(--surface-2); overflow: hidden;
+  }
+  .progress-bar .fill {
+    height: 100%; border-radius: 6px; transition: width .3s;
+  }
+  .pill {
+    padding: 8px 16px; border-radius: 24px; font-weight: 700;
+    cursor: pointer; font-size: 13px; transition: all .2s; font-family: var(--font-body);
+  }
+  .pill-primary {
+    border: none; color: #fff; padding: 13px 34px; font-size: 15px;
+    border-radius: 30px; letter-spacing: .3px;
+  }
+  .pill-outline {
+    background: transparent; border: 2px solid;
+  }
+  .chip {
+    padding: 8px 14px; border-radius: 20px; border: 2px solid;
+    font-weight: 600; cursor: pointer; font-size: 13px; transition: all .2s;
+    font-family: var(--font-body); white-space: nowrap;
+  }
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; }
+  .mb-6 { margin-bottom: 6px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; }
+  .gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 7 Flashcards</h1>
+    <p id="header-subtitle"></p>
+  </div>
+  <div id="flash-mode"></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "Communication Fundamentals", emoji: "💬", color: "#2471A3",
+    terms: [
+      { term: "Communication Cycle", def: "The process by which a message is sent from a sender, transmitted through a channel, and received and interpreted by a receiver. Effective communication occurs only when the intended meaning is accurately received." },
+      { term: "Therapeutic Communication", def: "A structured, purposeful communication approach in healthcare that builds trust and a genuine therapeutic relationship. Techniques include empathy, rephrasing, open-ended questions, pausing, and summarizing." },
+      { term: "Active Listening", def: "Being fully present and engaged during a conversation — focused on what is being said, how it is being said, and the underlying intent. Involves nonjudgmental body language, paraphrasing, and allowing the speaker to finish." },
+      { term: "Paraphrasing", def: "Restating what someone has said in your own words to confirm accurate understanding. Essential when relaying information between patient and provider." },
+      { term: "Empathy", def: "The ability to recognize, understand, and acknowledge another person's feelings and communicate that understanding sincerely. Distinct from sympathy, which involves feeling sorry for someone." },
+      { term: "Probing Question", def: "An open-ended question designed to gather more detailed information or encourage expansion on a topic. Example: 'Can you tell me more about when the pain started?'" },
+      { term: "Open-Ended Question", def: "A question inviting a detailed response rather than yes or no. Used to start conversations and explore concerns. Example: 'How have you been feeling since your last visit?'" },
+      { term: "Closed-Ended Question", def: "A question seeking a brief, specific answer. Used to confirm information or gather precise facts. Example: 'Are you currently taking aspirin?'" },
+    ],
+  },
+  {
+    name: "Communication Styles", emoji: "🗣️", color: "#C0392B",
+    terms: [
+      { term: "Assertive Communication", def: "The ideal healthcare communication style — direct, clear, and respectful. Delivers the message confidently without being aggressive or dismissive." },
+      { term: "Passive Communication", def: "A quiet, hesitant, submissive style where the person may struggle to express needs. Respond by gently drawing them out with open-ended questions and reassurance." },
+      { term: "Aggressive Communication", def: "A loud, abrasive style with minimal personal space and elevated volume. Often stems from fear, pain, or frustration. Respond by remaining calm and never matching the aggression." },
+      { term: "Manipulative Communication", def: "An indirect, one-sided style with a hidden agenda. Can feel flattering or patronizing. Respond by staying grounded, professional, and focused on facts." },
+      { term: "Visual Communicator", def: "A person who prefers to receive information visually — through written materials, diagrams, or demonstrations. Responds well to written instructions and visual aids." },
+      { term: "Auditory Communicator", def: "A person who learns best through listening and verbal explanation. Responds well to clear verbal instructions and benefits from having information repeated aloud." },
+      { term: "Kinesthetic Communicator", def: "A person who learns best through hands-on experience and physical activity. Responds well to demonstrations, role-play, and practice-based learning." },
+    ],
+  },
+  {
+    name: "Nonverbal Communication", emoji: "👋", color: "#7D3C98",
+    terms: [
+      { term: "Nonverbal Communication", def: "Any communication without spoken or written words — body language, facial expressions, eye contact, posture, gestures, personal space, and touch. When verbal and nonverbal contradict, the listener trusts the nonverbal." },
+      { term: "Body Language", def: "Physical gestures, posture, movement, and facial expressions that convey a message. An MA's posture signals engagement or disinterest before a word is spoken." },
+      { term: "Eye Contact", def: "Signals engagement, attentiveness, and trustworthiness when used appropriately. Maintaining appropriate eye contact during patient interactions shows respect and builds rapport." },
+      { term: "Personal Space", def: "The physical distance maintained between individuals during interaction. Invading personal space can cause discomfort and shut down communication. Cultural norms vary widely." },
+      { term: "Therapeutic Touch", def: "A deliberate, caring physical gesture — such as a gentle touch on the shoulder — to convey comfort or support. Always ask for consent before initiating. Not appropriate in all situations." },
+      { term: "Haptics", def: "The study and use of touch as communication. In healthcare, appropriate haptic communication includes handshakes, reassuring touches, and other consensual physical gestures of comfort." },
+    ],
+  },
+  {
+    name: "Diversity, Culture & Bias", emoji: "🌍", color: "#148F77",
+    terms: [
+      { term: "Stereotype", def: "A generalized, oversimplified assumption about a person based on group membership (race, religion, gender, age, culture). Stereotypes interfere with accurate communication and must be eliminated in patient care." },
+      { term: "Bias", def: "A prejudice — conscious or unconscious — for or against a person or group. Biases influence how information is sent and received. Reducing bias requires ongoing self-awareness." },
+      { term: "Generalization", def: "Making a broad assumption about an individual based on limited information about their group. Always verify individual preferences directly with the patient." },
+      { term: "Cultural Competence", def: "The ability to effectively communicate with and care for patients from diverse cultural backgrounds. Involves knowledge, awareness, and sensitivity to differences in health beliefs and communication styles." },
+      { term: "Psychosocial Care", def: "Care addressing the psychological, social, and spiritual needs of the patient — not just the physical. Provided through therapeutic communication with cultural sensitivity." },
+      { term: "Gender Identity", def: "A person's internal sense of their own gender, which may or may not correspond to sex assigned at birth. Always ask patients their preferred name, pronouns, and title — never assume." },
+      { term: "Preferred Pronouns", def: "The pronouns a person uses to refer to themselves (she/her, he/him, they/them). Asking for and using a patient's preferred pronouns is a basic act of respect that builds trust." },
+      { term: "Interpreter", def: "A qualified professional facilitating communication between people who speak different languages. Providing a professional interpreter for patients with limited English proficiency is legally required. Never use children as interpreters." },
+    ],
+  },
+  {
+    name: "Telephone & Written Communication", emoji: "📞", color: "#D68910",
+    terms: [
+      { term: "HIPAA", def: "Health Insurance Portability and Accountability Act — federal law establishing national standards for protecting patient health information. In phone communication, verify the caller's identity before sharing any PHI." },
+      { term: "The Five P's of Telephone Etiquette", def: "Polite (warm tone), Prepared (have info ready), to the Point (be concise), Perceptive (respect caller's time), cooPerative (provide the information needed or connect to someone who can)." },
+      { term: "Full Block Format", def: "A business letter format where every element is aligned flush left. The most commonly used format in healthcare organizations. Formal, clean, and professional." },
+      { term: "Modified Block Format", def: "A business letter format where body and address are left-justified, but date, closing, and signature begin at the center of the page." },
+      { term: "Simplified Format", def: "A business letter format with all text left-justified and no salutation or complimentary closing. Used when a formal greeting is not appropriate." },
+      { term: "Certified Mail", def: "Postal service providing proof of mailing and delivery. Used in healthcare to confirm receipt of critical communications — such as abnormal lab results or formal termination of a patient relationship." },
+      { term: "Letterhead", def: "Official organizational stationery with the facility's name, logo, address, and contact information. All formal business letters must be written on letterhead." },
+      { term: "Business Correspondence", def: "Any formal written communication in a professional context. In healthcare, must be grammatically correct, professional, and HIPAA-compliant. Becomes part of the permanent legal record." },
+    ],
+  },
+  {
+    name: "Conflict Management & Customer Service", emoji: "🤝", color: "#1A5276",
+    terms: [
+      { term: "Conflict Management", def: "A structured process for managing disagreements. Involves active listening, identifying shared goals, exploring solutions, and working toward a win-win outcome — not determining who was right or wrong." },
+      { term: "De-Escalation", def: "Deliberate techniques to reduce the intensity of a tense situation. Includes lowering your voice, maintaining calm, using open body language, giving space to speak, and avoiding defensive responses." },
+      { term: "\\\"I\\\" Statement", def: "Expressing how you feel from your own perspective rather than judging the other person. Example: 'I understand this situation is frustrating' rather than 'You're being difficult.' Reduces defensiveness." },
+      { term: "Cause-and-Effect Analysis", def: "A proactive process of identifying potential causes of problems and their likely effects so preventive measures can be put in place. Applied to patient safety, workplace hazards, and recurring complaints." },
+      { term: "Risk Management", def: "An organizational process for identifying, evaluating, and reducing potential risks to patient safety and employee well-being. Includes safety assessments, policy compliance, and incident documentation." },
+      { term: "Incident / Event Report", def: "Formal written documentation of an unusual occurrence, adverse event, or potential safety concern. Must include date, time, persons involved, detailed description, and immediate actions taken." },
+      { term: "Patient Satisfaction Survey", def: "A tool measuring patients' experiences and perceptions of care received. Results are used to identify patterns, address concerns proactively, and improve the patient experience." },
+      { term: "Win-Win Resolution", def: "A conflict outcome where all parties feel their core concerns have been addressed and the solution is fair. Achieved by shifting focus from opposing positions to shared goals." },
+    ],
+  },
+  {
+    name: "Teamwork, Professionalism & Special Contexts", emoji: "⭐", color: "#CA6F1E",
+    terms: [
+      { term: "Health Care Surrogate", def: "A person legally authorized to make healthcare decisions on behalf of a patient who cannot. Confirm patient authorization and documented legal standing before sharing any PHI." },
+      { term: "Crucial Conversation", def: "A high-stakes conversation involving strong emotions, differing viewpoints, or significant consequences. Requires extra preparation, empathy, active listening, and emotional regulation." },
+      { term: "Release of Information", def: "A signed patient authorization permitting the healthcare organization to share PHI with a specified individual or entity. Must be completed and documented before sharing information." },
+      { term: "Professional Presence", def: "The overall impression created through appearance, communication, behavior, and attitude. Encompasses dress, demeanor, verbal and nonverbal communication, punctuality, and consistent professionalism." },
+      { term: "Professionalism", def: "A broad standard of conduct encompassing behaviors, appearance, communication, work ethic, and relationships. Must be present in every interaction regardless of circumstances." },
+      { term: "Personal Boundaries", def: "Professional limits maintained between healthcare workers and patients/colleagues. Prohibit sharing personal stories, other patients' experiences, or unrelated personal information during patient interactions." },
+      { term: "Closed Captioning (Telehealth)", def: "A telehealth feature displaying live written captions of spoken words. Particularly valuable for patients with hearing loss. The MA should offer closed captioning when available." },
+      { term: "Scope of Practice", def: "The defined set of actions a healthcare professional is legally authorized and trained to perform. In communication, means not offering medical advice, diagnoses, or opinions outside the MA's role." },
+    ],
+  },
+];
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+let flashDeck = [];
+let flashIdx = 0;
+let flashFlipped = false;
+let flashKnown = 0;
+let flashLearning = 0;
+let flashDone = false;
+let flashSelectedCats = new Set(CATEGORIES.map((_, i) => i));
+let flashStarted = false;
+document.getElementById('header-subtitle').textContent =
+  `Communication & Customer Service · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+renderFlash();
+function startFlashDeck() {
+  const terms = CATEGORIES.flatMap((cat, ci) =>
+    flashSelectedCats.has(ci) ? cat.terms.map(t => ({ ...t, color: cat.color, emoji: cat.emoji, category: cat.name })) : []
+  );
+  flashDeck = shuffle([...terms]);
+  flashIdx = 0; flashFlipped = false; flashKnown = 0; flashLearning = 0; flashDone = false; flashStarted = true;
+  renderFlash();
+}
+function flashToggleCat(i) {
+  if (flashSelectedCats.has(i)) {
+    if (flashSelectedCats.size > 1) flashSelectedCats.delete(i);
+  } else { flashSelectedCats.add(i); }
+  renderFlash();
+}
+function flashMark(isKnown) {
+  if (isKnown) flashKnown++; else flashLearning++;
+  if (flashIdx + 1 >= flashDeck.length) { flashDone = true; renderFlash(); return; }
+  flashIdx++; flashFlipped = false; renderFlash();
+}
+function renderFlash() {
+  const el = document.getElementById('flash-mode');
+  if (!flashStarted || flashDeck.length === 0) {
+    let html = `<div class="text-center" style="padding:40px 0">
+      <p style="font-size:18px;margin-bottom:20px;color:var(--text)">Select categories and start studying!</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px">`;
+    CATEGORIES.forEach((c, i) => {
+      const sel = flashSelectedCats.has(i);
+      html += `<button class="chip" onclick="flashToggleCat(${i})"
+        style="border-color:${c.color};background:${sel ? c.color : 'transparent'};color:${sel ? '#fff' : c.color}">
+        ${c.emoji} ${escHtml(c.name)}</button>`;
+    });
+    html += `</div>
+      <button class="pill-primary" style="background:#E74C3C" onclick="startFlashDeck()">Shuffle & Start →</button>
+    </div>`;
+    el.innerHTML = html; return;
+  }
+  if (flashDone) {
+    const total = flashKnown + flashLearning;
+    const pct = Math.round((flashKnown / total) * 100);
+    const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '💪' : '📖';
+    el.innerHTML = `
+      <div class="text-center" style="padding:40px 0">
+        <div style="font-size:48px;margin-bottom:12px">${emoji}</div>
+        <h3 style="margin:0 0 8px">Round Complete!</h3>
+        <p style="color:var(--text-secondary);font-size:15px;margin:0 0 24px">
+          ${flashKnown} knew it · ${flashLearning} still learning · ${pct}% mastery
+        </p>
+        <div style="width:100%;max-width:300px;height:10px;border-radius:10px;background:var(--surface-2);margin:0 auto 24px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;border-radius:10px;background:linear-gradient(90deg,#27AE60,#2ECC71);transition:width .6s"></div>
+        </div>
+        <button class="pill-primary" style="background:#3498DB" onclick="flashDeck=[];flashStarted=false;flashDone=false;renderFlash()">New Round</button>
+      </div>`;
+    return;
+  }
+  const card = flashDeck[flashIdx];
+  const pctProgress = ((flashIdx / flashDeck.length) * 100);
+  el.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;padding:12px 0">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;width:100%">
+        <span style="font-size:13px;color:var(--text-secondary);font-weight:600">${flashIdx + 1}/${flashDeck.length}</span>
+        <div class="progress-bar" style="flex:1"><div class="fill" style="width:${pctProgress}%;background:${card.color}"></div></div>
+        <span style="font-size:12px;color:var(--text-secondary)">✓${flashKnown} ✗${flashLearning}</span>
+      </div>
+      <div class="flashcard" onclick="flashFlipped=!flashFlipped;renderFlash();"
+           style="background:${flashFlipped ? 'var(--surface-1)' : card.color};color:${flashFlipped ? 'var(--text)' : '#fff'}">
+        <span class="label">${flashFlipped ? 'Definition' : card.emoji + ' ' + escHtml(card.category)}</span>
+        <span class="hint">${flashFlipped ? '' : 'tap to flip'}</span>
+        ${!flashFlipped
+          ? `<h2>${escHtml(card.term)}</h2>`
+          : `<p class="def-text">${escHtml(card.def)}</p>`
+        }
+      </div>
+      ${flashFlipped ? `
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <button class="pill pill-outline" style="border-color:#E74C3C;color:#E74C3C;padding:12px 28px;font-size:14px" onclick="flashMark(false)">Still Learning</button>
+          <button class="pill-primary" style="background:#27AE60;padding:12px 28px;font-size:14px" onclick="flashMark(true)">Got It! ✓</button>
+        </div>` : ''}
+    </div>`;
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

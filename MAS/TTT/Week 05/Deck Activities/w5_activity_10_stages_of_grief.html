@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stages of Grief</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{min-height:100vh;background:linear-gradient(160deg,#1a0a14,#28101e,#140818);font-family:'Manrope',sans-serif;padding:24px 16px;color:#ffe8f0}.wrap{max-width:640px;margin:0 auto}.header{text-align:center;margin-bottom:24px}.icon{font-size:44px}h1{font-weight:800;font-size:30px;margin:8px 0 4px}.sub{color:#b87090;font-weight:600;font-size:15px}.badge{display:inline-block;margin-top:12px;background:#26101c;padding:6px 20px;border-radius:20px;border:1px solid rgba(244,114,182,.2);color:#f472b6;font-weight:800;font-size:15px}.fb{text-align:center;padding:12px 18px;margin-bottom:14px;border-radius:14px}.fb.ok{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.2)}.fb.no{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.2)}.fb strong{font-weight:800;font-size:17px}.fb strong.ok{color:#34d399}.fb strong.no{color:#fb7185}.fb .tip{color:#b87090;font-weight:600;font-size:13px;margin-top:6px}.sl{font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}.sl.d{color:#34d399}.sl.p{color:#f472b6}.pi{display:flex;align-items:center;gap:14px;padding:12px 18px;background:rgba(52,211,153,.06);border-radius:12px;margin-bottom:6px;border:1px solid rgba(52,211,153,.13)}.pn{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(52,211,153,.13);color:#34d399;font-weight:800;font-size:18px;flex-shrink:0}.pt{font-weight:700;font-size:15px}.pool{display:grid;gap:8px}.pi2{padding:15px 20px;border-radius:14px;background:#301828;border:2px solid rgba(244,114,182,.15);font-weight:700;font-size:15px;cursor:pointer;transition:all .2s}.pi2:hover{filter:brightness(1.15);border-color:rgba(244,114,182,.35)}.dn{text-align:center;background:#26101c;border-radius:24px;padding:40px;border:2px solid rgba(52,211,153,.25)}.dn .big{font-size:56px}.dn h2{font-weight:800;font-size:28px;margin:12px 0 8px}.dn p{color:#b87090;font-weight:600;font-size:15px;margin-bottom:24px}.btn{padding:14px 36px;border:none;border-radius:14px;background:#f472b6;color:#1a0a14;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><div class="icon">💜</div><h1>Kübler-Ross Stages of Grief</h1><p class="sub">Tap the 5 stages in order with the correct MA response</p><div class="badge" id="counter">0 / 5 placed</div></div>
+  <div id="game"></div>
+  <div id="doneBox" class="dn" style="display:none"><div class="big">💜</div><h2>Perfect Sequence</h2><p>Your role is to offer support — not fix what cannot be fixed. Understanding these stages helps you meet patients where they are.</p><button class="btn" onclick="resetGame()">🔄 Play Again</button></div>
+</div>
+<script>
+const ORDER=["1. Denial — \"No, not me.\" Support without reinforcing the denial.","2. Anger — \"Why me?\" Hostility may target staff. Don't take it personally.","3. Bargaining — \"Yes, me, but...\" Listen and let them express feelings.","4. Depression — \"Yes, it's me.\" Sadness and withdrawal. Sit with the patient; offer referrals.","5. Acceptance — \"Yes, me, and I'm ready.\" Coming to terms. Offer encouragement."];
+const TIPS=["The patient cannot or will not accept the loss yet. Be present and supportive.","Anger is often misdirected at healthcare staff. Stay calm and empathetic.","The patient tries to make deals to avoid the reality. Just listen.","Reality sets in. Don't try to cheer them up — acknowledge their pain.","The patient begins to plan and find peace. Support their decisions."];
+let pool,placed,fbData;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
+function init(){pool=shuffle(ORDER);placed=[];fbData=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';render()}
+function render(){document.getElementById('counter').textContent=placed.length+' / '+ORDER.length+' placed';const g=document.getElementById('game');let h='';if(fbData){h+='<div class="fb '+(fbData.ok?'ok':'no')+'"><strong class="'+(fbData.ok?'ok':'no')+'">'+(fbData.ok?'✅ Correct!':'❌ Not the next stage!')+'</strong>';if(fbData.tip)h+='<div class="tip">'+fbData.tip+'</div>';h+='</div>'}if(placed.length>0){h+='<div style="margin-bottom:20px"><div class="sl d">✅ Stages</div>';placed.forEach((s,i)=>{h+='<div class="pi"><div class="pn">'+(i+1)+'</div><div class="pt">'+s+'</div></div>'});h+='</div>'}if(pool.length>0){h+='<div class="sl p">💜 Tap stage #'+(placed.length+1)+'</div><div class="pool">';pool.forEach((s,i)=>{h+='<div class="pi2" onclick="pick('+i+')">'+s+'</div>'});h+='</div>'}g.innerHTML=h}
+function pick(idx){const step=pool[idx];const ni=placed.length;if(step===ORDER[ni]){placed.push(step);pool=pool.filter((_,i)=>i!==idx);fbData={ok:true,tip:TIPS[ni]};render();if(placed.length===ORDER.length)setTimeout(()=>{document.getElementById('game').style.display='none';document.getElementById('doneBox').style.display='block'},1000);else setTimeout(()=>{fbData=null;render()},1500)}else{fbData={ok:false};render();setTimeout(()=>{fbData=null;render()},1200)}}
+function resetGame(){init()}
+init();
+</script>
+</body>
+</html>

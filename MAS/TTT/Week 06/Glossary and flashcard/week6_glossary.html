@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 6 Glossary — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
+  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
+  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
+  .header{text-align:center;margin-bottom:28px}
+  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
+  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
+  .header p{font-size:13px;color:var(--text-secondary)}
+  .search-wrap{position:relative;margin-bottom:20px}
+  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
+  .search-wrap input:focus{border-color:#C0392B}
+  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
+  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
+  .cat-btn:hover{border-color:#aaa}
+  .cat-btn .emoji{font-size:22px}
+  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
+  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
+  .cat-btn.open .arrow{transform:rotate(180deg)}
+  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
+  .term-card:hover{border-color:var(--border)}
+  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
+  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
+  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
+  .result-card .row{display:flex;align-items:center;gap:10px}
+  .result-card .r-emoji{font-size:20px}
+  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
+  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 6 Glossary</h1>
+    <p id="header-subtitle"></p>
+  </div>
+  <div id="browse-mode"></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "EKG Fundamentals", emoji: "❤️‍🔥", color: "#C0392B",
+    terms: [
+      { term: "Electrocardiogram (EKG / ECG)", def: "The printed or digital visual representation of the heart's electrical activity over time. Waveforms on the tracing correspond to specific events in the cardiac cycle. The EKG is the result produced by the electrocardiograph machine." },
+      { term: "Electrocardiograph", def: "The instrument — the machine — used to detect and record the heart's electrical impulses. It does not send electricity into the patient; it only listens and records." },
+      { term: "Cardiac Cycle", def: "One complete heartbeat, consisting of the contraction of both atria, the contraction of both ventricles, and the full relaxation of the heart in preparation for the next beat." },
+      { term: "Depolarization", def: "The electrical event in which a cardiac muscle cell receives a stimulus and generates an impulse, causing the muscle to contract. Atrial depolarization produces the P wave; ventricular depolarization produces the QRS complex." },
+      { term: "Repolarization", def: "The electrical recovery phase following contraction, during which the cardiac muscle cell resets and prepares for the next depolarization. Ventricular repolarization produces the T wave on the EKG." },
+      { term: "12-Lead EKG", def: "A standard EKG that uses 10 electrodes placed on the body to record cardiac electrical activity from 12 different angles and planes simultaneously. Provides a comprehensive view of the heart's electrical function." },
+      { term: "Multichannel EKG Machine", def: "An EKG machine that monitors all 12 leads at the same time and can print three, four, or six leads simultaneously on a single sheet of paper. The three-channel format is most common in ambulatory care." },
+      { term: "Single-Channel EKG Machine", def: "An older EKG machine that records one lead at a time, producing a continuous running strip. Less efficient than multichannel machines but still used in some settings." },
+      { term: "Standardization Mark", def: "A calibration box automatically inserted at the beginning of every EKG tracing when the AUTO button is pressed. It must measure exactly 10 mm tall × 5 mm wide to confirm the machine is calibrated to standard settings." },
+    ],
+  },
+  {
+    name: "Waveforms, Intervals & Segments", emoji: "📈", color: "#7D3C98",
+    terms: [
+      { term: "P Wave", def: "The first waveform on the EKG tracing. Represents atrial depolarization — the electrical signal that causes the right and left atria to contract and push blood into the ventricles." },
+      { term: "QRS Complex", def: "The large waveform representing ventricular depolarization — the electrical event that causes the ventricles to contract and pump blood into the pulmonary artery and aorta. The largest deflection on a normal EKG. Atrial repolarization occurs during this phase but is hidden within it." },
+      { term: "T Wave", def: "The waveform following the QRS complex, representing ventricular repolarization — the recovery phase in which the ventricles relax and reset electrically in preparation for the next heartbeat." },
+      { term: "U Wave", def: "A small waveform that follows the T wave and is not always visible. When present, it represents repolarization of the Bundle of His and the Purkinje fibers." },
+      { term: "PR Interval", def: "The time measured from the beginning of the P wave to the beginning of the Q wave. Represents the time from the start of atrial depolarization to the start of ventricular depolarization — essentially the conduction time through the AV node." },
+      { term: "QT Interval", def: "The time measured from the beginning of the Q wave to the end of the T wave. Represents the full duration of ventricular depolarization and repolarization. A prolonged QT interval can indicate risk for dangerous arrhythmias." },
+      { term: "ST Segment", def: "The segment between the end of the S wave and the beginning of the T wave. Represents the period between the end of ventricular depolarization and the start of ventricular repolarization. ST segment elevation or depression can indicate myocardial injury, ischemia, or infarction." },
+      { term: "R Wave", def: "The first upward (positive) deflection within the QRS complex. In Lead I, the R wave should always show a positive deflection. A negative deflection in Lead I indicates the limb leads are attached incorrectly and the EKG must be repeated." },
+    ],
+  },
+  {
+    name: "Leads & Electrode Placement", emoji: "📍", color: "#1A5276",
+    terms: [
+      { term: "Electrode", def: "A small adhesive pad containing electrolyte gel that is applied directly to the patient's skin to detect electrical impulses from the heart. Ten electrodes are placed at specific anatomical sites for a standard 12-lead EKG." },
+      { term: "Lead Wire", def: "The cable that connects a specific electrode on the patient's body to the EKG machine. Each lead wire has a universal color code to identify which electrode it belongs to. Crossed or tensioned wires can produce artifacts." },
+      { term: "Bipolar Lead", def: "A lead that records the electrical difference between two electrodes — one positive and one negative. Leads I, II, and III are the three bipolar limb leads. Lead I = right arm to left arm; Lead II = right arm to left leg; Lead III = left arm to left leg." },
+      { term: "Unipolar Lead", def: "A lead that records electrical activity from a single positive electrode, using a calculated reference point as the negative pole. All augmented limb leads (aVR, aVL, aVF) and all six precordial (chest) leads are unipolar." },
+      { term: "Augmented Leads (aVR, aVL, aVF)", def: "Three unipolar limb leads whose signal is electronically amplified (augmented) by combining data from two other electrodes to improve waveform clarity. aVR records from the right arm, aVL from the left arm, and aVF from the left leg (foot)." },
+      { term: "Precordial Leads (V1–V6)", def: "The six chest leads that record electrical activity from the front of the heart (precordium). All are unipolar. Placed systematically across the chest using anatomical landmarks from the sternum to the midaxillary line." },
+      { term: "Intercostal Space (ICS)", def: "The space between two adjacent ribs, used as an anatomical landmark for precise chest electrode placement. For example, V1 is placed at the right side of the sternum at the fourth intercostal space (between the 4th and 5th ribs)." },
+      { term: "Midclavicular Line", def: "An imaginary vertical line drawn straight down from the midpoint of the clavicle (collarbone). Used to position V4: left chest, fifth intercostal space, midclavicular line." },
+      { term: "Anterior Axillary Line", def: "An imaginary vertical line running along the front edge of the armpit. Used to position V5: left chest, fifth intercostal space, anterior axillary line." },
+      { term: "Midaxillary Line", def: "An imaginary vertical line running through the center of the armpit. Used to position V6: left chest, fifth intercostal space, midaxillary line." },
+      { term: "Universal Lead Wire Color Code", def: "The standard color assignments for limb lead wires: White = right arm; Black = left arm; Red = left leg; Green = right leg (ground). Precordial leads are assigned: V1 = red, V2 = yellow, V3 = green, V4 = blue, V5 = orange, V6 = purple." },
+    ],
+  },
+  {
+    name: "Abnormal Rhythms & Arrhythmias", emoji: "⚡", color: "#922B21",
+    terms: [
+      { term: "Arrhythmia / Dysrhythmia", def: "Any deviation from the heart's normal electrical rhythm. The terms are used interchangeably in clinical practice. Arrhythmias range from benign (occasional premature beats) to life-threatening (ventricular fibrillation)." },
+      { term: "Sinus Rhythm", def: "A normal heart rhythm that originates from the sinoatrial (SA) node, characterized by one P wave before each QRS complex and a regular rate between 60–100 beats per minute." },
+      { term: "Sinus Bradycardia", def: "A sinus rhythm with a heart rate below 60 beats per minute. The waveform pattern is normal — one P wave before each QRS. Often benign in athletes; may require treatment if the patient is symptomatic (dizziness, fatigue, syncope)." },
+      { term: "Sinus Tachycardia", def: "A sinus rhythm with a heart rate above 100 beats per minute. One P wave precedes each QRS complex. Common causes include anxiety, fever, pain, dehydration, and medications. May require treatment if persistent." },
+      { term: "Sinus Arrest", def: "A pause in the normal sinus rhythm caused by the SA node failing to fire. Results in a visible gap in the EKG tracing. Not clinically significant unless the patient has symptoms (chest pain, shortness of breath, fainting) or the pause exceeds 6 seconds." },
+      { term: "Atrial Flutter", def: "A rapid, regular atrial arrhythmia in which a single area within the atrial tissue fires repeatedly and very quickly. Produces a sawtooth or picket-fence pattern of flutter waves on the EKG, with multiple flutter waves for each QRS complex. Treated with rate-control medications." },
+      { term: "Atrial Fibrillation (A-Fib)", def: "A chaotic, disorganized firing of multiple atrial sites simultaneously. Produces irregular fibrillatory waves between QRS complexes and an irregularly irregular QRS rhythm (no two R-R intervals are the same). Patients with A-fib have a significantly elevated stroke risk and are often placed on anticoagulant therapy." },
+      { term: "Premature Atrial Contraction (PAC)", def: "An ectopic beat that originates in the atrial tissue outside the SA node, causing the atria to contract earlier than expected. Occasional PACs are common and benign. More than 6 per minute is considered abnormal and should be reported to the provider." },
+      { term: "Premature Ventricular Contraction (PVC)", def: "An ectopic beat originating in the ventricular tissue, causing a premature ventricular contraction. Produces a wide, abnormal-looking QRS complex on the EKG. Occasional PVCs are common. More than 6 per minute is abnormal and warrants provider notification." },
+      { term: "Ectopic Beat", def: "Any heartbeat that originates from a location outside the sinoatrial (SA) node. PACs and PVCs are both ectopic beats." },
+    ],
+  },
+  {
+    name: "Emergent Rhythms", emoji: "🚨", color: "#D4AC0D",
+    terms: [
+      { term: "Ventricular Tachycardia (V-Tach)", def: "A rapid, regular rhythm originating from an ectopic site in the ventricular tissue. Characterized on EKG by large, wide, abnormally shaped QRS complexes occurring at a rate typically above 100–150 bpm. P waves are absent, not visible, or occur randomly. The patient may or may not have a pulse. V-tach is life-threatening and requires immediate provider notification. Treatment includes medication and/or cardioversion." },
+      { term: "Ventricular Fibrillation (V-Fib)", def: "Rapid, completely disorganized electrical activity throughout the ventricular myocardium. The ventricles quiver rather than contract — no blood is pumped. The EKG shows an erratic, chaotic baseline with no organized waveforms. No pulse is present; the patient loses consciousness within seconds. Immediate CPR and defibrillation are required." },
+      { term: "Asystole", def: "The complete absence of any electrical activity in the heart. Appears as a flat, horizontal line on the EKG with no waveforms of any kind. First action: confirm the patient is awake and that all electrodes are connected. If a lead is disconnected, reattach and reassess. If the patient is unresponsive: call 911 and begin CPR immediately." },
+      { term: "Cardioversion", def: "A medical procedure that delivers a controlled electrical shock to the heart in a synchronized manner to restore a normal rhythm. Used to treat V-tach and other shockable rhythms when the patient has a pulse. Distinguished from defibrillation, which is unsynchronized and used for pulseless V-fib." },
+      { term: "Defibrillation", def: "An unsynchronized electrical shock delivered to the heart to terminate ventricular fibrillation or pulseless ventricular tachycardia and allow a normal rhythm to resume. A life-saving intervention that must be performed as quickly as possible." },
+    ],
+  },
+  {
+    name: "Artifacts & Signal Interference", emoji: "📡", color: "#117A65",
+    terms: [
+      { term: "Artifact", def: "Any distortion, interference, or false signal recorded on an EKG tracing that does not represent true cardiac electrical activity. Artifacts can mimic arrhythmias or obscure real waveforms. The MA must identify and eliminate artifacts before the tracing is given to the provider." },
+      { term: "Somatic Tremor", def: "An artifact caused by voluntary or involuntary skeletal muscle movement. Appears as irregular, jagged spikes distributed throughout the EKG tracing. Causes include patient anxiety, shivering from cold, and neurological conditions such as Parkinson's disease. Reduced by warming and calming the patient; have patients with uncontrolled movement place their hands palms-down under their buttocks." },
+      { term: "AC Interference (60-Cycle Interference)", def: "An artifact caused by alternating current (AC) electrical interference from nearby equipment or poor machine grounding. Appears as regular, uniform spiking that creates a fuzzy, thickened appearance on the baseline. Corrected by using a 3-prong grounded plug, avoiding crossed lead wires, moving the bed away from the wall, and turning off nearby electronics." },
+      { term: "Wandering Baseline", def: "An artifact in which the EKG baseline drifts upward or downward from the center of the paper rather than remaining flat. Caused by patient movement from breathing, poor electrode contact, or skin coated with lotion or oil. Corrected by cleaning the skin, ensuring electrode adhesion, and instructing the patient to breathe normally and remain still." },
+      { term: "Interrupted Baseline", def: "A complete break in the EKG tracing — a flat, horizontal line appears where waveforms should be. Caused by a disconnected, broken, or loose lead wire. Corrected by inspecting and reattaching the lead wire. Regular inspection and maintenance of all lead wires prevents this problem." },
+    ],
+  },
+  {
+    name: "Patient Preparation & EKG Procedure", emoji: "🛏️", color: "#2C3E50",
+    terms: [
+      { term: "Supine Position", def: "The standard patient position for a resting EKG — lying flat on the back, face upward, arms at the sides. This position is required for accurate limb lead readings because gravity affects the electrical axis of the heart." },
+      { term: "Semi-Fowler's Position", def: "A partially reclined position with the head of the exam table elevated to approximately 45 degrees. Used for EKG testing when the patient cannot lie flat — for example, patients with COPD, congestive heart failure, or severe anxiety. Document the position when it is used." },
+      { term: "Electrolyte Gel", def: "A conductive substance on the adhesive electrode pad (or applied separately to the skin before electrode attachment) that facilitates transmission of the heart's electrical impulses to the lead wire. Dry, expired, or poor-quality electrodes reduce conductivity and lead to artifacts." },
+      { term: "Gain (Amplitude)", def: "A machine setting that controls the height of EKG waveforms on the printout. Standard gain is 10 mm/mV. Increasing gain makes waveforms taller; decreasing gain makes them shorter. Any change from the default setting alters the appearance and interpretation of the tracing." },
+      { term: "Paper Speed", def: "The rate at which EKG graph paper moves through the machine during recording. The standard speed is 25 mm per second. Each small horizontal square on the graph paper equals 0.04 seconds at this speed. Changing paper speed alters the apparent width of all waveforms." },
+      { term: "EKG Graph Paper", def: "Heat- and pressure-sensitive paper used to print EKG tracings. Waveforms are burned onto the paper by a heated stylus. Vertical axis represents amplitude (gain); horizontal axis represents time. Each small square = 1 mm; large squares = 5 mm × 5 mm. Standard amplitude = 10 mm = 1 mV." },
+      { term: "AUTO Button", def: "The function on most EKG machines that, when pressed, automatically inserts the standardization mark and records the full 12-lead EKG in the correct three-channel format. Used after all electrodes and leads are attached and the patient is ready." },
+    ],
+  },
+  {
+    name: "Ambulatory Cardiac Monitoring", emoji: "🏃", color: "#1E8449",
+    terms: [
+      { term: "Ambulatory Cardiac Monitoring", def: "A category of cardiac testing that records the heart's electrical activity while the patient moves through their normal daily activities. Unlike a resting EKG (which records for 10–20 seconds), ambulatory monitoring captures intermittent arrhythmias that might not occur during a brief office visit." },
+      { term: "Holter Monitor", def: "A small, portable cardiac monitor worn continuously by the patient for 24 to 72 hours. Records every heartbeat throughout the wearing period. Patients maintain an activity diary and press the event button when they feel symptoms. Electrodes must not be repositioned, and the patient should not shower while wearing the device." },
+      { term: "Event Monitor", def: "A portable cardiac recording device worn for a longer period than a Holter monitor — days to weeks. Unlike the Holter, which records continuously, the event monitor is activated by the patient when they experience symptoms such as palpitations or syncope. Useful for infrequent arrhythmias." },
+      { term: "Activity Diary", def: "A written log kept by the patient during Holter or event monitoring. The diary records the time and description of every activity, as well as any symptoms experienced and when the event button was pressed. The diary is essential for correlating the patient's symptoms with what appears on the EKG recording." },
+      { term: "Stress Test (Exercise Stress Test)", def: "A cardiac evaluation in which the patient exercises on a treadmill or stationary bike while connected to cardiac monitoring equipment and having vital signs tracked continuously. Used to assess how the heart responds to physical exertion and to identify exercise-induced arrhythmias or ischemia. Typically performed in a hospital or cardiology specialty setting where emergency equipment is available." },
+      { term: "Non-Exercise Stress Test (Pharmacological Stress Test)", def: "A cardiac stress test in which a medication is administered to mimic the physiological effects of exercise on the heart. Used for patients who cannot safely exercise on a treadmill or stationary bike." },
+      { term: "Thallium", def: "A radioactive tracer (radiopharmaceutical) sometimes injected during a stress test to evaluate blood flow through the heart muscle. Helps identify areas of the heart that are not receiving adequate blood supply during exercise." },
+      { term: "Echocardiogram", def: "An ultrasound-based imaging study performed by a specialist that evaluates the structure and movement of the heart — including valve function, wall motion, and blood flow. Does not use ionizing radiation. Often ordered when structural cardiac disease is suspected." },
+      { term: "Telemetry", def: "Continuous, real-time cardiac monitoring typically performed in a hospital setting. The patient is connected to monitoring equipment that transmits their EKG data wirelessly to a central monitoring station. Emergency equipment and staff are immediately available if an intervention is needed." },
+    ],
+  },
+  {
+    name: "Equipment, Calibration & Documentation", emoji: "🔧", color: "#6C3483",
+    terms: [
+      { term: "Self-Calibration", def: "The automatic calibration process performed by the EKG machine every time it is powered on. The machine's software performs a self-check and resets all settings to their factory defaults. The MA should still verify calibration by checking the standardization mark on each printed tracing." },
+      { term: "Calibration Box", def: "A small square printed at the very beginning of every EKG tracing when the machine is functioning correctly. Should measure 10 mm tall × 5 mm wide at standard settings. Confirms that gain and paper speed are both set correctly before interpreting the recording." },
+      { term: "EHR (Electronic Health Record)", def: "The digital health record system used to store, retrieve, and transmit patient information — including EKG tracings — across a healthcare facility. EKG machines that are integrated with the facility's EHR can transmit tracings directly so the provider can view and sign off electronically." },
+      { term: "Legal Medical Record", def: "The permanent, official record of a patient's health information. Once an EKG tracing has been documented — whether scanned into the EHR or placed in a paper chart — it becomes part of the patient's legal medical record and must be stored, archived, and retained according to facility policy." },
+      { term: "Hard Copy (EKG)", def: "A printed paper version of the EKG tracing. When EKG machines are not integrated with the EHR, the hard copy is handed directly to the ordering provider for interpretation and then scanned into the electronic record or filed in the paper chart after review." },
+    ],
+  }
+];
+
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+let browseSearch = '';
+let browseOpenCat = null;
+let browseOpenTerm = null;
+document.getElementById('header-subtitle').textContent =
+  `EKG & Cardiovascular Testing · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+renderBrowse();
+function renderBrowse() {
+  const el = document.getElementById('browse-mode');
+  const query = browseSearch.trim().toLowerCase();
+  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
+  if (query) {
+    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
+    if (filtered.length === 0) {
+      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
+    } else {
+      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
+      filtered.forEach((t, i) => {
+        const isOpen = browseOpenTerm === `s-${i}`;
+        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
+      });
+      html += `</div>`;
+    }
+  } else {
+    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
+    CATEGORIES.forEach((cat, ci) => {
+      const isOpen = browseOpenCat === ci;
+      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
+      if (isOpen) {
+        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
+        cat.terms.forEach((t, ti) => {
+          const tKey = `${ci}-${ti}`;
+          const tOpen = browseOpenTerm === tKey;
+          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+    html += `</div>`;
+  }
+  el.innerHTML = html;
+}
+function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+</script>
+</body>
+</html>

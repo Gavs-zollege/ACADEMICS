@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 6 Flashcards — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #e4e4f0;
+    --text-secondary: #9898b0;
+    --surface-1: #1c1c2e;
+    --surface-2: #282840;
+    --border: #363650;
+    --bg: #0d0d1a;
+    --card-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C0392B; margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 900;
+    letter-spacing: -1px; margin-bottom: 6px; line-height: 1.1;
+  }
+  .header p { font-size: 13px; color: var(--text-secondary); }
+  .flashcard {
+    width: 100%; max-width: 500px; min-height: 250px; border-radius: 22px;
+    cursor: pointer; padding: 34px; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12); transition: all .35s cubic-bezier(.4,0,.2,1);
+    user-select: none; position: relative; margin: 0 auto;
+  }
+  .flashcard .label {
+    position: absolute; top: 16px; left: 20px; font-size: 11px;
+    font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .7;
+  }
+  .flashcard .hint {
+    position: absolute; top: 16px; right: 20px; font-size: 11px; opacity: .5;
+  }
+  .flashcard h2 {
+    margin: 0; font-family: var(--font-display); font-size: 26px;
+    font-weight: 900; line-height: 1.2; letter-spacing: -.5px;
+  }
+  .flashcard .def-text {
+    margin: 0; font-size: 15px; line-height: 1.65; color: var(--text-secondary);
+  }
+  .progress-bar {
+    height: 6px; border-radius: 6px; background: var(--surface-2); overflow: hidden;
+  }
+  .progress-bar .fill {
+    height: 100%; border-radius: 6px; transition: width .3s;
+  }
+  .pill {
+    padding: 8px 16px; border-radius: 24px; font-weight: 700;
+    cursor: pointer; font-size: 13px; transition: all .2s; font-family: var(--font-body);
+  }
+  .pill-primary {
+    border: none; color: #fff; padding: 13px 34px; font-size: 15px;
+    border-radius: 30px; letter-spacing: .3px;
+  }
+  .pill-outline {
+    background: transparent; border: 2px solid;
+  }
+  .chip {
+    padding: 8px 14px; border-radius: 20px; border: 2px solid;
+    font-weight: 600; cursor: pointer; font-size: 13px; transition: all .2s;
+    font-family: var(--font-body); white-space: nowrap;
+  }
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; }
+  .mb-6 { margin-bottom: 6px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; }
+  .gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 6 Flashcards</h1>
+    <p id="header-subtitle"></p>
+  </div>
+  <div id="flash-mode"></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "EKG Fundamentals", emoji: "❤️", color: "#C0392B",
+    terms: [
+      { term: "Electrocardiogram (EKG / ECG)", def: "The printed or digital visual representation of the heart's electrical activity over time. Waveforms correspond to specific events in the cardiac cycle." },
+      { term: "Electrocardiograph", def: "The instrument — the machine — used to detect and record the heart's electrical impulses. It does not send electricity into the patient; it only listens and records." },
+      { term: "Cardiac Cycle", def: "One complete heartbeat: contraction of both atria, contraction of both ventricles, and full relaxation of the heart in preparation for the next beat." },
+      { term: "Depolarization", def: "The electrical event in which a cardiac muscle cell receives a stimulus and generates an impulse, causing contraction. Atrial depolarization produces the P wave; ventricular depolarization produces the QRS complex." },
+      { term: "Repolarization", def: "The electrical recovery phase following contraction, during which the cardiac muscle cell resets and prepares for the next depolarization. Ventricular repolarization produces the T wave." },
+      { term: "12-Lead EKG", def: "A standard EKG using 10 electrodes to record cardiac electrical activity from 12 different angles and planes simultaneously. Provides a comprehensive view of the heart's electrical function." },
+      { term: "Multichannel EKG Machine", def: "An EKG machine that monitors all 12 leads simultaneously and can print three, four, or six leads at once. The three-channel format is most common in ambulatory care." },
+      { term: "Single-Channel EKG Machine", def: "An older EKG machine that records one lead at a time, producing a continuous running strip. Less efficient than multichannel machines." },
+      { term: "Standardization Mark", def: "A calibration box at the beginning of every EKG tracing. Must measure exactly 10 mm tall × 5 mm wide to confirm standard calibration." },
+    ],
+  },
+  {
+    name: "Waveforms, Intervals & Segments", emoji: "📈", color: "#2471A3",
+    terms: [
+      { term: "P Wave", def: "The first waveform on the EKG. Represents atrial depolarization — the electrical signal causing the atria to contract and push blood into the ventricles." },
+      { term: "QRS Complex", def: "The large waveform representing ventricular depolarization — causing the ventricles to contract and pump blood. The largest deflection on a normal EKG." },
+      { term: "T Wave", def: "The waveform following the QRS complex, representing ventricular repolarization — the recovery phase where ventricles relax and reset electrically." },
+      { term: "U Wave", def: "A small waveform following the T wave, not always visible. Represents repolarization of the Bundle of His and Purkinje fibers." },
+      { term: "PR Interval", def: "Time from the beginning of the P wave to the beginning of the Q wave. Represents conduction time through the AV node — from atrial to ventricular depolarization." },
+      { term: "QT Interval", def: "Time from the beginning of the Q wave to the end of the T wave. Represents full ventricular depolarization and repolarization. A prolonged QT can indicate risk for dangerous arrhythmias." },
+      { term: "ST Segment", def: "The segment between the end of the S wave and the beginning of the T wave. ST elevation or depression can indicate myocardial injury, ischemia, or infarction." },
+      { term: "R Wave", def: "The first upward (positive) deflection within the QRS complex. In Lead I, a negative deflection indicates limb leads are attached incorrectly and the EKG must be repeated." },
+    ],
+  },
+  {
+    name: "Leads & Electrode Placement", emoji: "🔌", color: "#7D3C98",
+    terms: [
+      { term: "Electrode", def: "A small adhesive pad containing electrolyte gel applied to the skin to detect electrical impulses. Ten electrodes are placed at specific sites for a standard 12-lead EKG." },
+      { term: "Lead Wire", def: "The cable connecting a specific electrode to the EKG machine. Each has a universal color code. Crossed or tensioned wires can produce artifacts." },
+      { term: "Bipolar Lead", def: "A lead recording the electrical difference between two electrodes. Leads I, II, and III are bipolar limb leads. Lead I = RA to LA; Lead II = RA to LL; Lead III = LA to LL." },
+      { term: "Unipolar Lead", def: "A lead recording from a single positive electrode using a calculated reference as the negative pole. All augmented leads (aVR, aVL, aVF) and all six precordial leads are unipolar." },
+      { term: "Augmented Leads (aVR, aVL, aVF)", def: "Three unipolar limb leads whose signal is electronically amplified. aVR = right arm, aVL = left arm, aVF = left leg (foot)." },
+      { term: "Precordial Leads (V1–V6)", def: "The six chest leads recording from the front of the heart. Placed systematically across the chest using anatomical landmarks from the sternum to the midaxillary line." },
+      { term: "Intercostal Space (ICS)", def: "The space between two adjacent ribs, used as a landmark for chest electrode placement. V1 is placed at the right side of the sternum at the 4th intercostal space." },
+      { term: "Midclavicular Line", def: "An imaginary vertical line from the midpoint of the clavicle. Used to position V4: left chest, 5th intercostal space, midclavicular line." },
+      { term: "Anterior Axillary Line", def: "An imaginary vertical line along the front edge of the armpit. Used to position V5: left chest, 5th intercostal space, anterior axillary line." },
+      { term: "Midaxillary Line", def: "An imaginary vertical line through the center of the armpit. Used to position V6: left chest, 5th intercostal space, midaxillary line." },
+      { term: "Universal Lead Wire Color Code", def: "Standard colors: White = right arm; Black = left arm; Red = left leg; Green = right leg (ground). Precordial: V1=red, V2=yellow, V3=green, V4=blue, V5=orange, V6=purple." },
+    ],
+  },
+  {
+    name: "Abnormal Rhythms & Arrhythmias", emoji: "⚡", color: "#C2185B",
+    terms: [
+      { term: "Arrhythmia / Dysrhythmia", def: "Any deviation from the heart's normal electrical rhythm. Ranges from benign (occasional premature beats) to life-threatening (ventricular fibrillation)." },
+      { term: "Sinus Rhythm", def: "A normal heart rhythm originating from the SA node. Characterized by one P wave before each QRS complex and a regular rate of 60–100 bpm." },
+      { term: "Sinus Bradycardia", def: "A sinus rhythm with heart rate below 60 bpm. Normal waveform pattern. Often benign in athletes; may require treatment if symptomatic (dizziness, fatigue, syncope)." },
+      { term: "Sinus Tachycardia", def: "A sinus rhythm with heart rate above 100 bpm. Common causes: anxiety, fever, pain, dehydration, and medications." },
+      { term: "Sinus Arrest", def: "A pause in sinus rhythm caused by the SA node failing to fire. Clinically significant if symptomatic or the pause exceeds 6 seconds." },
+      { term: "Atrial Flutter", def: "A rapid, regular atrial arrhythmia producing a sawtooth or picket-fence pattern of flutter waves, with multiple flutter waves per QRS complex. Treated with rate-control medications." },
+      { term: "Atrial Fibrillation (A-Fib)", def: "Chaotic, disorganized atrial firing producing an irregularly irregular QRS rhythm. Patients have significantly elevated stroke risk and often require anticoagulant therapy." },
+      { term: "Premature Atrial Contraction (PAC)", def: "An ectopic beat originating outside the SA node causing early atrial contraction. More than 6 per minute is considered abnormal." },
+      { term: "Premature Ventricular Contraction (PVC)", def: "An ectopic beat originating in ventricular tissue producing a wide, abnormal QRS complex. More than 6 per minute warrants provider notification." },
+      { term: "Ectopic Beat", def: "Any heartbeat originating from a location outside the sinoatrial (SA) node. PACs and PVCs are both ectopic beats." },
+    ],
+  },
+  {
+    name: "Emergent Rhythms", emoji: "🚨", color: "#E74C3C",
+    terms: [
+      { term: "Ventricular Tachycardia (V-Tach)", def: "A rapid rhythm from ventricular tissue. Wide, abnormally shaped QRS complexes at 100–150+ bpm. No visible P waves. Life-threatening — requires immediate provider notification. Treatment: medication and/or cardioversion." },
+      { term: "Ventricular Fibrillation (V-Fib)", def: "Completely disorganized ventricular electrical activity — ventricles quiver, no blood is pumped. Chaotic baseline with no organized waveforms. No pulse present. Requires immediate CPR and defibrillation." },
+      { term: "Asystole", def: "Complete absence of any electrical activity — a flat line on the EKG. First action: confirm patient is conscious and electrodes are connected. If unresponsive: call 911 and begin CPR immediately." },
+      { term: "Cardioversion", def: "A controlled, synchronized electrical shock to restore normal rhythm. Used for V-tach and other shockable rhythms when the patient has a pulse. Distinguished from defibrillation." },
+      { term: "Defibrillation", def: "An unsynchronized electrical shock to terminate V-fib or pulseless V-tach. A life-saving intervention that must be performed as quickly as possible." },
+    ],
+  },
+  {
+    name: "Artifacts & Signal Interference", emoji: "📉", color: "#D68910",
+    terms: [
+      { term: "Artifact", def: "Any distortion or false signal on an EKG that does not represent true cardiac electrical activity. Can mimic arrhythmias or obscure real waveforms. Must be identified and eliminated before the tracing is given to the provider." },
+      { term: "Somatic Tremor", def: "Artifact caused by skeletal muscle movement. Appears as irregular, jagged spikes. Causes: anxiety, shivering, neurological conditions like Parkinson's. Reduced by warming and calming the patient." },
+      { term: "AC Interference (60-Cycle)", def: "Artifact from alternating current electrical interference. Appears as regular, uniform spiking creating a fuzzy baseline. Corrected by using a grounded plug, avoiding crossed wires, and turning off nearby electronics." },
+      { term: "Wandering Baseline", def: "Artifact where the baseline drifts upward or downward. Caused by patient movement, poor electrode contact, or skin coated with lotion. Corrected by cleaning skin and ensuring electrode adhesion." },
+      { term: "Interrupted Baseline", def: "A complete break in the EKG tracing — a flat line where waveforms should be. Caused by a disconnected, broken, or loose lead wire." },
+    ],
+  },
+  {
+    name: "Patient Preparation & EKG Procedure", emoji: "🛏️", color: "#148F77",
+    terms: [
+      { term: "Supine Position", def: "The standard patient position for a resting EKG — lying flat on the back, face upward, arms at the sides. Required for accurate limb lead readings." },
+      { term: "Semi-Fowler's Position", def: "A partially reclined position (head elevated ~45 degrees) used when the patient cannot lie flat — e.g., patients with COPD, heart failure, or severe anxiety. Document the position when used." },
+      { term: "Electrolyte Gel", def: "A conductive substance on electrode pads that facilitates transmission of the heart's electrical impulses. Dry or expired electrodes reduce conductivity and lead to artifacts." },
+      { term: "Gain (Amplitude)", def: "Machine setting controlling the height of EKG waveforms. Standard: 10 mm/mV. Increasing gain makes waveforms taller; decreasing makes them shorter." },
+      { term: "Paper Speed", def: "The rate EKG paper moves through the machine. Standard: 25 mm/second. Each small horizontal square = 0.04 seconds. Changing speed alters the apparent width of all waveforms." },
+      { term: "EKG Graph Paper", def: "Heat- and pressure-sensitive paper for printing EKG tracings. Vertical axis = amplitude (gain); horizontal axis = time. Each small square = 1 mm. Standard amplitude: 10 mm = 1 mV." },
+      { term: "AUTO Button", def: "The function that automatically inserts the standardization mark and records the full 12-lead EKG in the correct format. Used after all electrodes and leads are attached." },
+    ],
+  },
+  {
+    name: "Ambulatory Cardiac Monitoring", emoji: "📱", color: "#1A5276",
+    terms: [
+      { term: "Ambulatory Cardiac Monitoring", def: "Cardiac testing that records heart electrical activity during normal daily activities. Unlike a resting EKG (10–20 seconds), ambulatory monitoring captures intermittent arrhythmias." },
+      { term: "Holter Monitor", def: "A portable cardiac monitor worn continuously for 24–72 hours recording every heartbeat. Patients maintain an activity diary and press the event button when symptomatic. No showering while wearing it." },
+      { term: "Event Monitor", def: "A portable device worn for days to weeks, activated by the patient when they experience symptoms such as palpitations or syncope. Useful for infrequent arrhythmias." },
+      { term: "Activity Diary", def: "A written log kept during Holter or event monitoring recording time and description of activities and symptoms. Essential for correlating symptoms with EKG findings." },
+      { term: "Stress Test (Exercise Stress Test)", def: "A cardiac evaluation where the patient exercises on a treadmill or bike while connected to cardiac monitoring. Assesses heart response to exertion and identifies exercise-induced arrhythmias or ischemia." },
+      { term: "Non-Exercise Stress Test", def: "A pharmacological stress test using medication to mimic the effects of exercise on the heart. Used for patients who cannot safely exercise." },
+      { term: "Thallium", def: "A radioactive tracer injected during a stress test to evaluate blood flow through the heart muscle. Identifies areas not receiving adequate blood supply during exercise." },
+      { term: "Echocardiogram", def: "An ultrasound-based imaging study evaluating heart structure and movement — valve function, wall motion, and blood flow. Does not use ionizing radiation." },
+      { term: "Telemetry", def: "Continuous, real-time cardiac monitoring typically in a hospital setting. EKG data is transmitted wirelessly to a central monitoring station." },
+    ],
+  },
+  {
+    name: "Equipment, Calibration & Documentation", emoji: "📋", color: "#2C3E50",
+    terms: [
+      { term: "Self-Calibration", def: "The automatic calibration the EKG machine performs every time it is powered on. The MA should still verify by checking the standardization mark on each printed tracing." },
+      { term: "Calibration Box", def: "A small square at the beginning of every EKG tracing. Should measure 10 mm tall × 5 mm wide at standard settings. Confirms gain and paper speed are correct." },
+      { term: "EHR (Electronic Health Record)", def: "The digital health record system used to store and transmit patient information including EKG tracings. Integrated EKG machines can transmit tracings directly for provider review." },
+      { term: "Legal Medical Record", def: "The permanent, official record of a patient's health information. Once an EKG tracing is documented, it becomes part of the legal medical record and must be retained per facility policy." },
+      { term: "Hard Copy (EKG)", def: "A printed paper version of the EKG tracing. When not integrated with the EHR, the hard copy is handed to the provider for interpretation and then scanned or filed." },
+    ],
+  },
+];
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+let flashDeck = [];
+let flashIdx = 0;
+let flashFlipped = false;
+let flashKnown = 0;
+let flashLearning = 0;
+let flashDone = false;
+let flashSelectedCats = new Set(CATEGORIES.map((_, i) => i));
+let flashStarted = false;
+document.getElementById('header-subtitle').textContent =
+  `EKG & Cardiovascular Testing · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+renderFlash();
+function startFlashDeck() {
+  const terms = CATEGORIES.flatMap((cat, ci) =>
+    flashSelectedCats.has(ci) ? cat.terms.map(t => ({ ...t, color: cat.color, emoji: cat.emoji, category: cat.name })) : []
+  );
+  flashDeck = shuffle([...terms]);
+  flashIdx = 0; flashFlipped = false; flashKnown = 0; flashLearning = 0; flashDone = false; flashStarted = true;
+  renderFlash();
+}
+function flashToggleCat(i) {
+  if (flashSelectedCats.has(i)) {
+    if (flashSelectedCats.size > 1) flashSelectedCats.delete(i);
+  } else { flashSelectedCats.add(i); }
+  renderFlash();
+}
+function flashMark(isKnown) {
+  if (isKnown) flashKnown++; else flashLearning++;
+  if (flashIdx + 1 >= flashDeck.length) { flashDone = true; renderFlash(); return; }
+  flashIdx++; flashFlipped = false; renderFlash();
+}
+function renderFlash() {
+  const el = document.getElementById('flash-mode');
+  if (!flashStarted || flashDeck.length === 0) {
+    let html = `<div class="text-center" style="padding:40px 0">
+      <p style="font-size:18px;margin-bottom:20px;color:var(--text)">Select categories and start studying!</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px">`;
+    CATEGORIES.forEach((c, i) => {
+      const sel = flashSelectedCats.has(i);
+      html += `<button class="chip" onclick="flashToggleCat(${i})"
+        style="border-color:${c.color};background:${sel ? c.color : 'transparent'};color:${sel ? '#fff' : c.color}">
+        ${c.emoji} ${escHtml(c.name)}</button>`;
+    });
+    html += `</div>
+      <button class="pill-primary" style="background:#E74C3C" onclick="startFlashDeck()">Shuffle & Start →</button>
+    </div>`;
+    el.innerHTML = html; return;
+  }
+  if (flashDone) {
+    const total = flashKnown + flashLearning;
+    const pct = Math.round((flashKnown / total) * 100);
+    const emoji = pct >= 80 ? '🎉' : pct >= 50 ? '💪' : '📖';
+    el.innerHTML = `
+      <div class="text-center" style="padding:40px 0">
+        <div style="font-size:48px;margin-bottom:12px">${emoji}</div>
+        <h3 style="margin:0 0 8px">Round Complete!</h3>
+        <p style="color:var(--text-secondary);font-size:15px;margin:0 0 24px">
+          ${flashKnown} knew it · ${flashLearning} still learning · ${pct}% mastery
+        </p>
+        <div style="width:100%;max-width:300px;height:10px;border-radius:10px;background:var(--surface-2);margin:0 auto 24px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;border-radius:10px;background:linear-gradient(90deg,#27AE60,#2ECC71);transition:width .6s"></div>
+        </div>
+        <button class="pill-primary" style="background:#3498DB" onclick="flashDeck=[];flashStarted=false;flashDone=false;renderFlash()">New Round</button>
+      </div>`;
+    return;
+  }
+  const card = flashDeck[flashIdx];
+  const pctProgress = ((flashIdx / flashDeck.length) * 100);
+  el.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;padding:12px 0">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;width:100%">
+        <span style="font-size:13px;color:var(--text-secondary);font-weight:600">${flashIdx + 1}/${flashDeck.length}</span>
+        <div class="progress-bar" style="flex:1"><div class="fill" style="width:${pctProgress}%;background:${card.color}"></div></div>
+        <span style="font-size:12px;color:var(--text-secondary)">✓${flashKnown} ✗${flashLearning}</span>
+      </div>
+      <div class="flashcard" onclick="flashFlipped=!flashFlipped;renderFlash();"
+           style="background:${flashFlipped ? 'var(--surface-1)' : card.color};color:${flashFlipped ? 'var(--text)' : '#fff'}">
+        <span class="label">${flashFlipped ? 'Definition' : card.emoji + ' ' + escHtml(card.category)}</span>
+        <span class="hint">${flashFlipped ? '' : 'tap to flip'}</span>
+        ${!flashFlipped
+          ? `<h2>${escHtml(card.term)}</h2>`
+          : `<p class="def-text">${escHtml(card.def)}</p>`
+        }
+      </div>
+      ${flashFlipped ? `
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <button class="pill pill-outline" style="border-color:#E74C3C;color:#E74C3C;padding:12px 28px;font-size:14px" onclick="flashMark(false)">Still Learning</button>
+          <button class="pill-primary" style="background:#27AE60;padding:12px 28px;font-size:14px" onclick="flashMark(true)">Got It! ✓</button>
+        </div>` : ''}
+    </div>`;
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

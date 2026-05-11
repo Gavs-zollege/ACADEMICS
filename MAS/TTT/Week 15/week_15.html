@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCMA Exam Readiness & Review</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.07);
+    --text: #c4cedf;
+    --text-bright: #e2e8f4;
+    --text-muted: #6b7a96;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; overflow: hidden;
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+  }
+  .app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .header {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 16px 24px 12px;
+  }
+  .header h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--text-bright); line-height: 1.1; margin-top: 2px;
+  }
+  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .main {
+    flex: 1; overflow: hidden;
+    display: flex; gap: 16px;
+    padding: 0 24px 16px;
+  }
+  .sidebar {
+    width: 250px; flex-shrink: 0;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    padding-right: 6px;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .topic-btn {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 8px 11px;
+    cursor: pointer; transition: all 0.2s ease;
+    width: 100%; text-align: left;
+    font-family: 'DM Sans', sans-serif; color: var(--text);
+  }
+  .topic-btn:hover { transform: translateX(2px); }
+  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .label {
+    font-size: 13px; font-weight: 500; flex: 1;
+    line-height: 1.3; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
+  .sidebar-divider {
+    height: 1px; background: var(--border);
+    margin: 4px 0; flex-shrink: 0;
+  }
+  .content {
+    flex: 1; overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .content-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .content-header .icon { font-size: 30px; }
+  .content-header .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700;
+  }
+  .content-header .title {
+    font-size: 18px; font-weight: 700;
+    color: var(--text-bright); line-height: 1.2;
+  }
+  .content-scroll {
+    flex: 1; overflow-y: auto; padding-right: 6px;
+  }
+  .content-scroll::-webkit-scrollbar { width: 3px; }
+  .content-scroll::-webkit-scrollbar-track { background: transparent; }
+  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .point {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px; border: 1px solid transparent;
+    animation: pointIn 0.3s ease both;
+  }
+  .point .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px;
+    animation: pointIn 0.3s ease both;
+  }
+  .takeaway-item .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #E63946, #FF6B35);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .welcome {
+    height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+  }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
+  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  @keyframes pointIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    html, body { overflow: auto; height: auto; }
+    .app { height: auto; min-height: 100vh; overflow: visible; }
+    .header { padding: 14px 16px 10px; }
+    .header h1 { font-size: 22px; }
+    .main {
+      flex-direction: column;
+      padding: 0 12px 16px;
+      overflow: visible;
+    }
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      gap: 6px;
+      padding-right: 0;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
+    .topic-btn {
+      flex-shrink: 0;
+      min-width: max-content;
+      padding: 7px 12px;
+    }
+    .sidebar-divider {
+      width: 1px; height: auto;
+      min-height: 28px;
+      margin: 0 2px;
+    }
+    .content {
+      overflow: visible;
+      min-height: 60vh;
+      padding: 16px;
+    }
+    .content-scroll { overflow: visible; }
+    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>CCMA Exam Readiness & Review</h1>
+    <p>Comprehensive Clinical Review</p>
+  </div>
+  <div class="main">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content">
+      <div class="welcome">
+        <div class="big-icon">📚</div>
+        <p>Select a topic to explore its key learning points</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var TOPICS = [
+  { id:1, num:"01", icon:"🔍", title:"Recall Normal Ranges for All Adult Vital Signs", color:"#E63946",
+    points:["Heart rate: 60–100 bpm. Bradycardia = below 60; tachycardia = above 100. Use the radial artery for routine pulse assessment; document rate, rhythm, and strength.","Blood pressure: normal is less than 120/80 mmHg. First Korotkoff sound = systolic; last sound = diastolic. Stage 1 HTN: 130–139/80–89. Stage 2 HTN: ≥140/90.","Respiratory rate: 12–20 breaths per minute. Tachypnea = above 20; bradypnea = below 12. Count for one full minute or 30 seconds × 2, without telling the patient — announcing the count changes the breathing pattern.","Temperature: 97.0–99.0°F with an oral average of 98.6°F. Accuracy order: rectal (most accurate) > temporal > tympanic > oral > axillary (least accurate).","Oxygen saturation (SpO2): 95–100% is normal. Below 95% warrants intervention; below 90% is a critical value. Place the sensor on the finger or toe; nail polish and poor perfusion affect readings."] },
+  { id:2, num:"02", icon:"🧰", title:"Identify Correct EKG Lead Placement for All 12 Leads", color:"#457B9D",
+    points:["Precordial (chest) leads — V1: right of sternum, 4th intercostal space. V2: left of sternum, 4th ICS. V3: directly between V2 and V4. V4: left midclavicular line, 5th ICS.","V5: anterior axillary line, 5th ICS (same level as V4). V6: midaxillary line, 5th ICS (same level as V4 and V5). All six precordial leads form a horizontal arc across the left chest.","Limb leads — RA: right arm (or upper right torso). LA: left arm (or upper left torso). RL: right leg (or lower right torso — this is the ground lead). LL: left leg (or lower left torso).","Artifact prevention: ensure all electrodes make full skin contact, clip body hair if needed, clean the skin with an alcohol pad and let it dry, and instruct the patient to lie still and breathe normally during the tracing.","The 12-lead EKG produces 12 different views of the heart\'s electrical activity. Never reuse electrodes — use fresh, unopened electrodes for every patient. Limb lead misplacement is the most common source of artifact."] },
+  { id:3, num:"03", icon:"🌈", title:"Order of Draw, Vein of Choice & Specimen Collection", color:"#2A9D8F",
+    points:["Order of draw (mnemonic: \'Stop Looking Right Now Later\'): Sterile (blood cultures) → Light Blue (coagulation — fill completely) → Red/Gold SST (chemistry) → Green (heparin) → Lavender/Purple (EDTA — CBC) → Gray (fluoride — glucose).","Vein of choice for venipuncture: median cubital vein in the antecubital fossa (elbow crease). Cephalic and basilic veins are acceptable alternatives. Patient should be seated with the arm fully extended and supported on a flat surface.","Capillary draw: use the side of the fingertip in adults. Clean with alcohol — let dry completely. Wipe away the first drop of blood; use the second drop for testing. The first drop may be diluted with tissue fluid.","Clean-catch midstream UA: clean the genital area with a sterile wipe first → void a small amount into the toilet → collect the middle portion of the stream in the sterile container → seal and label immediately.","24-hour urine collection: discard the first morning void entirely → collect ALL urine for the next 24 hours → keep the container refrigerated → return the entire container at the end of the collection period."] },
+  { id:4, num:"04", icon:"🧪", title:"Compare Injection Routes — Site, Gauge, Angle & Volume", color:"#8338EC",
+    points:["Intradermal (ID): inner forearm, 10–15° angle, bevel up, 25–27 gauge, ¼–½ inch needle. Volume: ≤0.1 mL. A wheal (raised bubble under the skin) must form for a valid TB test. Do NOT massage, bandage, or apply pressure after — this would destroy the wheal.","Subcutaneous (SC/SQ): upper outer arm, abdomen, or upper thigh, 45° angle, 23–25 gauge, 5/8 inch needle. Volume: ≤1.5 mL. Pinch at least 1 inch of skin before inserting. Rotate insulin injection sites within the same region.","Intramuscular (IM): 90° angle, 22–25 gauge, 1–1½ inch needle. Volume: up to 3 mL. Deltoid (adults only, ≤1 mL); vastus lateralis (preferred for infants and children under age 3, ≤3 mL); ventrogluteal (adults, ≤3 mL).","Needle gauge: higher gauge = smaller opening. 18 gauge is larger than 25 gauge. Select gauge based on medication viscosity and injection type. Longer needles reach deeper tissue — important for patients with more subcutaneous fat.","Sharps safety: NEVER recap a used needle. Drop it directly into the sharps container immediately after withdrawal from the patient. Ask the patient to wait 20–30 minutes post-injection to monitor for adverse reactions."] },
+  { id:5, num:"05", icon:"📏", title:"Medication Classifications, Controlled Substances & ADME", color:"#FF6B35",
+    points:["Common classifications: analgesics (pain), antihypertensives (blood pressure), antibiotics (bacterial infections), bronchodilators (airway relaxation), diuretics (fluid elimination), oral hypoglycemics (blood glucose), anticoagulants (clotting prevention), antidepressants, antihistamines, antilipemics (cholesterol reduction). Some medications belong to more than one class.","Controlled Substances Act (CSA) schedules: Schedule I — no medical use, highest abuse potential (heroin, LSD). Schedule II — high abuse risk, approved medical use; hand-signed Rx, locked storage, no refills (oxycodone, fentanyl, amphetamine). Schedules III–V: decreasing risk, up to 5 refills in 6 months.","Pharmacokinetics (ADME): Absorption — drug moves from the site of administration into the bloodstream (IV fastest, oral slowest). Distribution — bloodstream carries the drug to tissues. Metabolism — liver converts active drug to metabolites. Excretion — kidneys eliminate metabolites through urine.","The Nine Rights of Medication Administration: right patient (two identifiers) • right medication (three-label checks) • right form • right dose • right route • right time • right technique • right education • right documentation. Always document AFTER administration — never before.","Look-alike/sound-alike medications: clonidine ↔ KlonoPIN; hydroxyzine ↔ hydralazine; hydrocodone ↔ hydromorphone. Use tall-man lettering (hydrOXYzine), triple label checks, and separate storage to prevent errors."] },
+  { id:6, num:"06", icon:"💉", title:"Apply Dosage Calculation Formulas & Unit Conversions", color:"#E63946",
+    points:["Desired-over-have formula: (Desired dose ÷ Dose on hand) × Quantity = Amount to give. Example: ordered 50 mg; on hand is 25 mg/capsule → (50 ÷ 25) × 1 capsule = 2 capsules. Double-check every calculation before preparing the medication.","Proportion (ratio) method: set up as a proportion and cross-multiply. Example: 25 mg = 1 capsule, so 50 mg = x capsules → 25x = 50 → x = 2 capsules. Both methods yield the same answer — use the one you find most reliable.","Metric system: weight units are kg → g → mg → mcg; each step moves the decimal three places. 1 kg = 1,000 g. 1 g = 1,000 mg. 1 mg = 1,000 mcg. Volume: 1 L = 1,000 mL.","Standard conversions to memorize: 1 tsp = 5 mL | 1 tbsp = 15 mL | 1 fluid oz = 30 mL | 1 cup = 240 mL | 2.2 lb = 1 kg.","Pediatric dosing by weight: (1) convert lb to kg by dividing by 2.2; (2) multiply kg by the prescribed mg/kg/day; (3) divide by the number of doses per day; (4) calculate the volume to administer using the available concentration."] },
+  { id:7, num:"07", icon:"🩸", title:"Describe Patient Positioning for Clinical Examinations", color:"#457B9D",
+    points:["Supine: flat on back, arms at sides — used for head, chest, and abdominal exams and anterior x-rays. Prone: face down — used for back exams and certain surgical procedures. Dorsal recumbent: on back with knees bent and feet flat — used for head, neck, chest, vaginal, rectal, and perineal exams.","Lithotomy: on back with legs elevated and feet in stirrups — used for vaginal exams, Pap tests, and pelvic procedures. The most anatomically exposed position; always preserve dignity with thorough draping. Patient slides to the edge of the table before placement of feet in stirrups.","Fowler\'s (90°): sitting upright — used for head, neck, and upper body exams and for patients who have difficulty breathing. Semi-Fowler\'s (45°): head partially elevated — used after surgery, with breathing problems, or for lower back injuries.","Left lateral (Sims): lying on left side — used for rectal exams, enemas, rectal temperatures, and some pelvic exams. Drape diagonally from shoulder to below knees. Knee-chest: kneeling on the table with chest flat against it — used for proctologic exams and sigmoidoscopy.","Draping principles: always use the minimum exposure needed, replace the drape promptly after the exam, and explain the position to the patient in plain language before asking them to move. Never leave a patient alone on the exam table after positioning."] },
+  { id:8, num:"08", icon:"📋", title:"Wound Care, Burn Classification & Emergency Response", color:"#2A9D8F",
+    points:["Wound healing phases: hemostasis (immediate clotting) → inflammation (days 1–4, redness and swelling) → proliferation (new tissue formation) → remodeling (scar maturation). Burns: first degree (epidermis only — redness, no blisters); second degree (epidermis and dermis — blistering, moist, painful); third degree (full thickness — no pain, white or charred appearance); fourth degree (muscle and bone involvement).","Seizure response: move nearby objects to prevent injury — do NOT restrain the patient, do NOT place anything in the mouth, protect the head, position the patient on their side after the episode ends to prevent aspiration, and call for help. Never leave the patient alone.","Anaphylaxis response: signs include hives, facial and throat swelling, and difficulty breathing. Administer epinephrine injection if available per facility protocol AND call 911 immediately. Do not delay — anaphylaxis can be fatal within minutes. Keep the patient supine with legs elevated if tolerated.","Active bleeding from a laceration: first action is applying firm, continuous direct pressure to the wound with a sterile dressing. Do not lift the dressing to check — add more gauze on top if it saturates. Elevate the extremity above heart level if no fracture is suspected. Summon emergency assistance.","Fire response — R.A.C.E.: Rescue (remove people in immediate danger) → Alarm (activate the fire alarm) → Confine (close all doors to contain the fire) → Extinguish (only if trained and safe to do so) or Evacuate. Use P.A.S.S. for the fire extinguisher: Pull pin, Aim low, Squeeze handle, Sweep side to side."] },
+  { id:9, num:"09", icon:"🩹", title:"Identify Common Lab Tests & Diagnostic Imaging Studies", color:"#8338EC",
+    points:["CBC (Complete Blood Count): evaluates red blood cells, white blood cells, hemoglobin, hematocrit, and platelets — screens for anemia, infection, and blood disorders. BMP (Basic Metabolic Panel): kidney function (BUN, creatinine), electrolytes, and blood glucose. CMP adds liver function tests to all BMP components.","HbA1c: monitors average blood glucose control over the preceding 3 months — used to manage diabetes. Does NOT require fasting. Lipid panel: total cholesterol, LDL, HDL, and triglycerides — requires 9–12 hours fasting. Liver function tests (LFTs): ALT, AST, bilirubin — evaluates liver health.","Throat culture: swab the posterior pharynx and tonsillar pillars (avoid teeth, tongue, and cheeks) to detect Group A Streptococcus. Urinalysis (UA): evaluates color, clarity, specific gravity, pH, protein, glucose, blood, and bacteria — screens for UTI, kidney disease, and diabetes.","X-ray: fastest and most common imaging — detects bone fractures, pneumonia, and dense tissue changes. MRI: soft tissue imaging — brain, spinal cord, ligaments; no radiation; contraindicated with metal implants. CT scan: detailed cross-sectional imaging of internal structures. Ultrasound: real-time soft tissue imaging using sound waves — pregnancy and abdominal organs; no radiation.","Fasting blood glucose: patient fasts 8–12 hours before the draw. Water is allowed; caloric beverages are not. HbA1c does not require fasting and is the preferred long-term management tool for diabetes monitoring."] },
+  { id:10, num:"10", icon:"🏷️", title:"Summarize HIPAA Requirements & Breach Reporting Procedures", color:"#FF6B35",
+    points:["HIPAA protects all Protected Health Information (PHI) in any format — electronic, paper, and verbal. PHI includes name, date of birth, address, diagnosis, phone number, and any individually identifiable health data. The HIPAA Privacy Rule governs patient confidentiality; the Security Rule governs electronic PHI (ePHI).","HIPAA violations: discussing patient details in public areas, accessing records without authorization, sharing PHI without consent, and leaving records unsecured. Not violations: filing records in a secure location, sharing PHI for treatment purposes with the care team, or disclosing with a signed patient release form.","Permitted disclosures without patient authorization: treatment, payment, and healthcare operations (TPO); mandatory public health reporting (communicable diseases, abuse); court-ordered subpoenas; and imminent threat to safety. The minimum necessary standard applies — share only what is needed.","Breach reporting: any accidental or intentional disclosure of PHI must be reported to the supervisor immediately, regardless of intent. Complete an incident form. The facility must notify affected individuals within 60 days. Employee health information is confidential; all documentation is retained for the duration of employment plus 30 years.","HITECH Act (2009) strengthened HIPAA by extending privacy requirements to business associates, increasing penalties for breaches, and requiring breach notifications. In the office: never discuss patient information in hallways, waiting areas, or elevators — even if no names are used."] },
+  { id:11, num:"11", icon:"⚙️", title:"Consent, Advance Directives, Patient Rights & Mandatory Reporting", color:"#E63946",
+    points:["Informed consent requires: (1) a competent patient, (2) complete information about risks, benefits, and alternatives, and (3) voluntary agreement without coercion. Verbal consent alone is insufficient for procedures — written documentation is required. Implied consent applies in life-threatening emergencies when the patient cannot respond.","Types of consent: expressed (clearly stated, verbally or in writing), implied (inferred from actions — e.g., rolling up a sleeve for an injection), and informed (full disclosure before a procedure). Minors cannot consent in most situations — parent or guardian is required. Exceptions: STI treatment, birth control, pregnancy care, substance abuse treatment, and emancipated minors.","Advance directives: Living will — patient\'s written treatment preferences if incapacitated. Durable Power of Attorney (DPOA) — names a person to make healthcare decisions. DNR — no CPR or advanced cardiac life support. POLST — actionable medical orders that travel with the patient across care settings. None expire unless officially revoked.","Patient rights include: the right to receive information about their care, the right to privacy and confidentiality, the right to refuse treatment, the right to access their medical records, and the right to make informed decisions. When a patient refuses treatment: document the refusal completely in the medical record and notify the physician immediately.","Mandatory reporting obligations: suspected child or elder abuse or neglect (suspicion alone is sufficient — do not wait for proof), reportable communicable diseases (TB, HIV, STIs, COVID-19), court-ordered subpoenas, and criminal acts such as gunshot wounds or stabbings. Failure to report is a legal violation."] },
+  { id:12, num:"12", icon:"🔬", title:"Apply the Four Principles of Medical Ethics to Clinical Scenarios", color:"#457B9D",
+    points:["Non-maleficence: do no harm. Every clinical action — including withholding harmful or unnecessary treatment — must avoid causing harm to the patient. When a treatment carries significant risk, weigh that risk carefully against the expected benefit before proceeding.","Beneficence: act in the patient\'s best interest. Healthcare providers are obligated to take positive steps to promote the well-being of patients — not simply to avoid harm, but to actively help. This principle supports preventive care and patient education.","Autonomy: respect the patient\'s right to make their own informed healthcare decisions, including the right to refuse treatment. A competent adult may decline any recommended treatment even if the provider disagrees. MAs must respect and document this decision without judgment.","Justice: treat all patients fairly and equitably, regardless of socioeconomic status, race, religion, gender, sexual orientation, age, or disability. Healthcare resources and treatment should be allocated without discrimination. All patients deserve the same quality of care and professional respect.","Scope of practice and ethics intersect: MAs must not perform tasks outside their training or state authorization — doing so violates both ethical and legal standards. When unsure: consult the supervising provider. Never guess, never proceed without guidance, and never ask only a colleague. \'If it isn\'t documented, it didn\'t happen.\'"] },
+  { id:13, num:"13", icon:"⭐", title:"Administrative Functions — Scheduling, Billing & Medical Records", color:"#2A9D8F",
+    points:["Scheduling: before booking any new appointment, verify the patient\'s full name, date of birth, insurance information, and chief complaint. Insurance must be verified before the appointment. Reduce no-shows by sending a reminder call or text 1–2 days in advance. Use clustering and wave scheduling to maximize efficiency.","Insurance billing: the third-party payer is the insurance company (not the patient or physician). Primary insurance is always billed first; secondary insurance covers the remaining balance. Preauthorization confirms coverage before a procedure — it does not guarantee zero cost. All billing requires accurate ICD and CPT codes.","Explanation of Benefits (EOB): a document from the insurer showing the amount billed, the amount paid, and the amount the patient owes. If a partial payment is received, contact the insurance company to verify why — do not write off the balance without investigation.","Medical record documentation rules: use black or dark blue ink. Date and time every entry. Never use correction fluid — draw one line through errors, write \'error,\' initial, and write the correction. Late entries must be labeled as such. Leave no blank lines between entries. \'If it isn\'t documented, it didn\'t happen.\'","EHR, CPOE, and e-prescribing: EMR = record within one organization. EHR = extends across organizations. CPOE allows providers to enter orders electronically, reducing handwriting errors. E-prescribing transmits prescriptions directly to the pharmacy. MAs may enter order information for provider authorization. All entries are part of the legal medical record."] },
+  { id:14, num:"14", icon:"📦", title:"Infection Control — Chain of Infection, Precautions & PPE", color:"#8338EC",
+    points:["Chain of infection — 6 links: infectious agent → reservoir → portal of exit → mode of transmission → portal of entry → susceptible host. Breaking ANY one link stops transmission. Standard precautions apply to every patient, every encounter. Transmission-based: contact (MRSA, C. diff), droplet (influenza, pertussis), airborne (TB, measles, varicella — requires N95 and negative pressure room).","Hand hygiene: soap and water is REQUIRED after blood/body fluid contact, before aseptic procedures, after glove removal, when hands are visibly soiled, after using the restroom, and before/after eating. Alcohol-based sanitizer (≥60% alcohol) is acceptable for routine patient contact when hands are not visibly soiled.","PPE donning order: gown → mask/respirator → goggles/face shield → gloves. Doffing order: gloves first (inside-out technique without touching the contaminated outer surface) → goggles/face shield → gown → mask/respirator. Wash hands immediately after doffing. N95 respirators require individual fit testing.","Disinfection levels: low-level (exam tables, countertops — hydrogen peroxide) | intermediate-level (stethoscopes, BP cuffs — isopropyl alcohol 70%) | high-level (endoscopes — Cidex OPA). Sterilization (autoclave): 250–270°F steam. Unwrapped items: 20 minutes. Wrapped: 30 minutes. Packages sterile for 30 days if dry and intact.","Biohazard disposal: sharps container — needles, lancets, scalpel blades; puncture-proof, seal at two-thirds full. Biohazard bag — contaminated gloves, gauze, dressings; double-bag if the outside is contaminated. Post-exposure: wash the wound immediately with soap and water, report to the supervisor right away, and complete an incident form."] },
+  { id:15, num:"15", icon:"💊", title:"Therapeutic Communication, Patient Education & Professionalism", color:"#FF6B35",
+    points:["Therapeutic communication techniques: active listening (nonjudgmental, fully present), paraphrasing (repeat back in your own words to confirm understanding), open-ended questions (\'How have you been feeling?\'), probing questions (\'Can you tell me more about when that started?\'), and empathy (acknowledge feelings without judgment). These techniques build trust and improve outcomes.","Communication styles: assertive (ideal — direct, clear, respectful); passive (quiet, avoids conflict — use open-ended questions to draw them out); aggressive (loud, intrusive — stay calm, lower your voice, never match the intensity); manipulative (hidden agenda — remain grounded and professional). Nonverbal communication such as nodding is an example of communication itself.","Patient education principles: health literacy — many patients read at a 6th-grade level, so use plain language and simple terms. Teach-back method: ask the patient to demonstrate understanding by explaining it back in their own words — \'Can you show me how you would take this medication at home?\' Never assume a patient has understood based on a nod.","Learning styles: visual learners respond to written instructions and diagrams; auditory learners respond to verbal explanation; kinesthetic learners respond to hands-on demonstration and return demonstration. Adapt teaching to the individual — never use one method for all patients. Always verify comprehension before the patient leaves.","Professional communication standards: always use a professional interpreter for patients with language barriers — never rely on family members to translate clinical content. Remain calm with upset or angry patients — listen actively, acknowledge frustration, and de-escalate without matching their tone. Report unprofessional colleague behavior to the supervisor. Maintain professional boundaries at all times."] },
+  { id:16, num:"16", icon:"🫀", title:"Apply Medical Terminology — Prefixes, Suffixes & Body System Terms", color:"#E63946",
+    points:["Essential prefixes: brady- (slow) | tachy- (fast) | hypo- (below/deficient) | hyper- (above/excessive) | pre- (before) | intra- (within) | peri- (around) | epi- (upon/above) | gastro- (stomach) | neuro- (nerve). Clinical application: bradycardia = slow heart rate; hyperglycemia = high blood sugar; intradermal = within the skin layers.","Essential suffixes: -itis (inflammation) | -ectomy (surgical removal) | -pathy (disease/disorder) | -scope (instrument for viewing) | -ology (study of) | -algia (pain) | -plasty (surgical repair) | -stenosis (narrowing) | -emia (blood condition). Clinical application: appendicitis = inflammation of the appendix; neuropathy = disease of the nervous system.","Cardiovascular terminology: myocardial infarction (heart attack — NOT inflammation, which is myocarditis) | tachycardia/bradycardia | hypertension | atherosclerosis | arrhythmia. The pulmonary VEIN carries oxygenated blood FROM the lungs TO the heart — the pulmonary artery carries deoxygenated blood the other direction.","Body system high-yield terms: dyspnea (difficulty breathing) | dysphagia (difficulty swallowing) | osteoporosis (weakened bones) | neurology (study of the nervous system — not bones or muscles) | gastroenterology (study of the GI tract) | dermatology (study of the skin) | cardiology (study of the heart).","Applying terminology in practice: combine roots, prefixes, and suffixes to decode unfamiliar terms during the exam. Example: \'pericarditis\' = peri- (around) + cardi- (heart) + -itis (inflammation) = inflammation of the tissue surrounding the heart. Breaking any term into its components gives you a working definition, even if you have never seen the word before."] },
+];
+
+var TAKEAWAYS = [
+  "Normal adult HR: 60–100 bpm. Brady- = slow. Tachy- = fast. Rectal temperature is the most accurate. SpO2 below 95% warrants intervention.",
+  "Order of draw: Blue → Red → Green → Lavender → Gray. Fasting glucose requires 8–12 hours. HbA1c does NOT require fasting. Median cubital vein = first venipuncture choice.",
+  "IM injection: 22–25 gauge, 90°, deltoid (adult ≤1 mL) or vastus lateralis (infants and children <3). NEVER recap a used needle — drop directly into the sharps container.",
+  "Nine rights of medication administration — always document AFTER administration, never before. Three label checks every time.",
+  "HIPAA: filing records securely is NOT a violation; discussing patients in public IS. Report any PHI breach to the supervisor immediately.",
+  "Seizure: protect the area and never restrain. Anaphylaxis: epinephrine + 911. Bleeding: direct pressure first. Fire: R.A.C.E. Pulmonary VEIN carries oxygenated blood to the heart."
+];
+
+var activeId = null;
+var sidebar = document.getElementById('sidebar');
+var content = document.getElementById('content');
+
+function buildSidebar() {
+  TOPICS.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'topic-btn';
+    btn.dataset.id = t.id;
+    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+    btn.addEventListener('click', function() { selectTopic(t.id); });
+    btn.addEventListener('mouseenter', function() {
+      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+    });
+    btn.addEventListener('mouseleave', function() {
+      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+    });
+    sidebar.appendChild(btn);
+  });
+  var divider = document.createElement('div');
+  divider.className = 'sidebar-divider';
+  sidebar.appendChild(divider);
+  var tkBtn = document.createElement('button');
+  tkBtn.className = 'topic-btn';
+  tkBtn.dataset.id = 'takeaways';
+  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+  tkBtn.addEventListener('mouseenter', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+  });
+  tkBtn.addEventListener('mouseleave', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+  });
+  sidebar.appendChild(tkBtn);
+}
+
+function updateSidebarActive() {
+  var btns = sidebar.querySelectorAll('.topic-btn');
+  btns.forEach(function(btn) {
+    var id = btn.dataset.id;
+    var topic = TOPICS.find(function(t) { return t.id == id; });
+    var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
+    if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
+    if (isActive && topic) {
+      btn.style.background = topic.color + '20';
+      btn.style.borderColor = topic.color;
+    } else if (isActive && id === 'takeaways') {
+      btn.style.background = 'rgba(255,255,255,0.08)';
+      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    } else {
+      btn.style.background = 'var(--surface)';
+      btn.style.borderColor = 'var(--border)';
+    }
+  });
+}
+
+function renderTopic(t) {
+  var html = '<div class="content-header">' +
+    '<span class="icon">' + t.icon + '</span>' +
+    '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
+    '<div class="title">' + t.title + '</div></div></div>' +
+    '<div class="content-scroll">';
+  t.points.forEach(function(p, i) {
+    html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<p>' + p + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderTakeaways() {
+  var html = '<div class="content-header">' +
+    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<div><div class="title">Key Takeaways</div></div></div>' +
+    '<div class="content-scroll">';
+  TAKEAWAYS.forEach(function(t, i) {
+    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function selectTopic(id) {
+  activeId = id;
+  updateSidebarActive();
+  if (id === 'takeaways') {
+    content.innerHTML = renderTakeaways();
+  } else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) content.innerHTML = renderTopic(topic);
+  }
+  content.style.animation = 'none';
+  void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
+}
+
+buildSidebar();
+</script>
+</body>
+</html>

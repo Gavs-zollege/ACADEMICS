@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 11 Flashcards — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #e4e4f0;
+    --text-secondary: #9898b0;
+    --surface-1: #1c1c2e;
+    --surface-2: #282840;
+    --border: #363650;
+    --bg: #0d0d1a;
+    --card-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C0392B; margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 900;
+    letter-spacing: -1px; margin-bottom: 6px; line-height: 1.1;
+  }
+  .header p { font-size: 13px; color: var(--text-secondary); }
+  .flashcard {
+    width: 100%; max-width: 500px; min-height: 250px; border-radius: 22px;
+    cursor: pointer; padding: 34px; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12); transition: all .35s cubic-bezier(.4,0,.2,1);
+    user-select: none; position: relative; margin: 0 auto;
+  }
+  .flashcard .label {
+    position: absolute; top: 16px; left: 20px; font-size: 11px;
+    font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .7;
+  }
+  .flashcard .hint {
+    position: absolute; top: 16px; right: 20px; font-size: 11px; opacity: .5;
+  }
+  .flashcard h2 {
+    margin: 0; font-family: var(--font-display); font-size: 26px;
+    font-weight: 900; line-height: 1.2; letter-spacing: -.5px;
+  }
+  .flashcard .def-text {
+    margin: 0; font-size: 15px; line-height: 1.65; color: var(--text-secondary);
+  }
+  .progress-bar {
+    height: 6px; border-radius: 6px; background: var(--surface-2); overflow: hidden;
+  }
+  .progress-bar .fill {
+    height: 100%; border-radius: 6px; transition: width .3s;
+  }
+  .pill {
+    padding: 8px 16px; border-radius: 24px; font-weight: 700;
+    cursor: pointer; font-size: 13px; transition: all .2s; font-family: var(--font-body);
+  }
+  .pill-primary {
+    border: none; color: #fff; padding: 13px 34px; font-size: 15px;
+    border-radius: 30px; letter-spacing: .3px;
+  }
+  .pill-outline {
+    background: transparent; border: 2px solid;
+  }
+  .chip {
+    padding: 8px 14px; border-radius: 20px; border: 2px solid;
+    font-weight: 600; cursor: pointer; font-size: 13px; transition: all .2s;
+    font-family: var(--font-body); white-space: nowrap;
+  }
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; }
+  .mb-6 { margin-bottom: 6px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; }
+  .gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 11 Flashcards</h1>
+    <p id="header-subtitle"></p>
+  </div>
+  <div id="flash-mode"></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "Team-Based Care Models", emoji: "👥", color: "#C0392B",
+    terms: [
+      { term: "Team-Based Health Care", def: "A care delivery approach in which a group of healthcare professionals — each working at the top of their credential — collaborate with shared accountability to provide coordinated, high-quality care for a patient. Every team member is responsible for the patient's health, and communication among team members is continuous and structured." },
+      { term: "Patient-Centered Medical Home (PCMH)", def: "A primary care delivery model in which the PCP leads an interprofessional team to coordinate all aspects of a patient's care — from preventive wellness through chronic disease management, specialty referrals, and end-of-life care. The five core functions are: comprehensive care, patient-centered care, coordinated care, accessible services, and commitment to quality and safety." },
+      { term: "Accountable Care Organization (ACO)", def: "A network of healthcare providers — including multiple physician practices, hospitals, and specialty clinics — that are jointly accountable for the quality and cost of care delivered to a defined patient population. ACOs operate at the delivery system level and often include community outreach programs to promote population health and prevent illness before it develops." },
+      { term: "Pay for Performance", def: "A healthcare payment model that ties provider reimbursement to the quality and outcomes of care rather than the volume of services delivered. Providers and organizations are financially rewarded for keeping patients healthy, meeting quality benchmarks, and reducing unnecessary hospitalizations — rather than for the number of visits and procedures performed." },
+      { term: "Comprehensive Care", def: "A PCMH core function in which the entire healthcare team — not just the physician — addresses all of the patient's medical, behavioral, and preventive needs. Comprehensive care considers the whole person, not just an isolated complaint or diagnosis." },
+      { term: "Coordinated Care", def: "A PCMH core function in which the provider-led team manages and communicates across all care settings the patient uses — specialty clinics, hospitals, home health, and community services. Enabled by EHR technology to keep all team members informed in real time." },
+      { term: "Accessible Services", def: "A PCMH core function that ensures patients can reach their care team when needed, through tools such as open scheduling, extended office hours, patient portal messaging, and after-hours phone access." },
+    ],
+  },
+  {
+    name: "The Healthcare Team", emoji: "👥", color: "#2471A3",
+    terms: [
+      { term: "Primary Care Provider (PCP)", def: "The first provider a patient typically sees for care — responsible for coordinating preventive services, managing chronic conditions, treating common illnesses, and referring to specialists when needed. PCPs include family practitioners, internists, pediatricians, MDs, DOs, NPs, and PAs." },
+      { term: "Specialist", def: "A provider who diagnoses and treats conditions requiring a specific area of expertise — such as a cardiologist (heart), dermatologist (skin), oncologist (cancer), or endocrinologist (hormones). Patients are referred to specialists by their PCP when a condition falls outside the PCP's scope of expertise." },
+      { term: "Advanced Practice Nurse (APN)", def: "A nurse with graduate-level education and clinical training beyond the RN credential. Includes nurse practitioners (NPs), certified nurse midwives (CNMs), clinical nurse specialists (CNSs), and certified registered nurse anesthetists (CRNAs). APNs can diagnose, prescribe, and manage patient care — independently in some states." },
+      { term: "Case Manager", def: "A registered nurse or social worker assigned to patients with complex chronic conditions to oversee their care plan, track progress, coordinate services across multiple providers, and ensure transitions between care settings are safe and complete." },
+      { term: "Registered Dietitian Nutritionist (RDN)", def: "A credentialed nutrition expert who educates patients on the relationship between food and health, assists with meal planning for specific conditions (diabetes, kidney disease, heart disease), and helps low-income patients identify affordable, healthy food options." },
+      { term: "Social Worker", def: "A healthcare team member who assists patients and families navigating emotional, financial, and logistical challenges related to illness or injury. Coordinates non-clinical services including transportation, housing, financial assistance, long-term care placement, and hospice enrollment." },
+      { term: "Speech-Language Pathologist", def: "A therapist who evaluates and treats disorders of speech, language, voice, fluency, and swallowing. Works with patients who have experienced stroke, traumatic brain injury, head and neck cancer, or developmental delays affecting their ability to communicate or eat safely." },
+      { term: "Occupational Therapist (OT)", def: "A therapist who helps patients regain the ability to perform daily living activities after a physical, cognitive, developmental, or emotional disability or injury. Focuses on practical function — dressing, bathing, cooking, and work-related tasks." },
+      { term: "Physical Therapist (PT)", def: "A therapist who assesses pain, strength, and mobility and develops individualized treatment plans to restore movement, reduce pain, and prevent further injury. Uses hands-on therapy, therapeutic exercise, electrical stimulation, ultrasound, and other techniques." },
+    ],
+  },
+  {
+    name: "Preventive Screenings & Pre-Visit Planning", emoji: "🛡️", color: "#7D3C98",
+    terms: [
+      { term: "Preventive Care", def: "Healthcare services focused on preventing illness, detecting disease early, and maintaining health — rather than treating conditions after they develop. Includes routine physical exams, screenings, immunizations, health coaching, and counseling on lifestyle risk factors. Early detection leads to better prognoses and lower overall cost of care." },
+      { term: "Pre-Visit Planning", def: "The practice of reviewing a patient's medical record before their appointment — typically beginning days in advance — to identify overdue screenings, upcoming immunizations, expired prescriptions, pending lab results, and chronic disease management items. Allows the MA to prepare orders and ensure nothing is missed during the visit." },
+      { term: "Fecal Occult Blood Test (FOBT)", def: "A non-invasive colorectal cancer screening test that detects blood hidden in the stool — a potential early indicator of cancer or precancerous polyps. Recommended starting at age 45 for average-risk adults. A positive FOBT result requires follow-up colonoscopy." },
+      { term: "Colonoscopy", def: "A colorectal cancer screening procedure in which a physician uses a flexible, lighted scope to directly visualize the inner lining of the entire colon. Can both detect and remove precancerous polyps during the same procedure. Recommended starting at age 45 for average-risk adults." },
+      { term: "Mammogram", def: "An x-ray examination of the breast tissue used to detect breast cancer — including tumors too small to feel during a clinical exam. The American Cancer Society recommends annual mammography beginning at age 40." },
+      { term: "Pap Test (Pap Smear)", def: "A cervical cancer screening procedure that collects cells from the cervix for laboratory examination. Recommended every 3 years for patients ages 21–29; every 3 to 5 years for patients ages 30–65 when combined with HPV co-testing. Abnormal results may trigger colposcopy for further evaluation." },
+      { term: "Low-Dose Computed Tomography (LDCT)", def: "An annual lung cancer screening scan recommended for adults ages 50–80 who have a 20-pack-year or greater smoking history and currently smoke or have quit within the past 15 years. Uses lower radiation than standard CT scans to detect early lung cancer." },
+      { term: "Bone Density Test (DEXA Scan)", def: "A screening test that measures bone mineral density to assess osteoporosis risk. Recommended for postmenopausal patients under age 65 who are at increased risk as determined by a formal clinical risk assessment tool. Helps predict fracture risk before a fracture occurs." },
+      { term: "Abdominal Aortic Aneurysm (AAA) Screening", def: "A one-time ultrasound screening for abnormal enlargement of the aorta in the abdomen. Recommended for male patients ages 65–75 who have ever smoked. An undetected AAA can rupture suddenly and is often fatal." },
+      { term: "Clinical Quality Measures (CQMs)", def: "Electronic tools used to track, measure, and report the quality of healthcare services — including screenings completed, treatments delivered, patient outcomes, and care coordination activities. Many providers are required to report CQMs to federal and state agencies. MAs support CQM compliance through accurate, complete EHR documentation." },
+    ],
+  },
+  {
+    name: "Community Resources & Care Coordination", emoji: "🏘️", color: "#C2185B",
+    terms: [
+      { term: "Community Resource Library", def: "An organized, regularly updated collection of local resources — clinical and non-clinical — that the MA maintains for quick patient referral. Each entry should include the resource's full name, address, phone number, email, website, and contact person. Updated at least every 6 months to ensure accuracy." },
+      { term: "Continuity of Care", def: "The consistent, coordinated delivery of healthcare services across time and across different providers or settings — so that patient history, preferences, medications, and treatment plans are carried forward seamlessly without gaps or duplication." },
+      { term: "Care Coordination", def: "The deliberate organization of patient care activities and the sharing of information among all participants in a patient's care — including the patient and family — so that services are delivered safely, efficiently, and according to the patient's preferences and needs." },
+      { term: "Referral", def: "A provider's formal direction for a patient to see a specialist or receive a specific service. The MA typically facilitates referrals by verifying insurance coverage, contacting the specialist's office, providing the patient with contact details, and following up to confirm the appointment was made." },
+      { term: "Transitional Care", def: "Healthcare services and coordination activities specifically designed to ensure safe, effective movement of patients between care settings — such as from hospital to home, primary care to specialist, or medical office to long-term care. Poor transitions are a leading cause of preventable rehospitalization and adverse events." },
+      { term: "Social Determinants of Health (SDOH)", def: "The non-medical factors that influence a person's health outcomes — including employment, housing, food security, education, transportation, income, and exposure to crime or environmental hazards. MAs who understand SDOH can better identify barriers to care and connect patients with appropriate community resources." },
+      { term: "Barrier to Care", def: "Any obstacle — behavioral, biological, financial, cultural, physical, or environmental — that prevents a patient from following their treatment plan or accessing recommended healthcare services. Identifying and addressing barriers is a key MA responsibility in team-based care settings." },
+      { term: "Women, Infants, and Children (WIC)", def: "A federally funded program that provides nutrition education, breastfeeding support, healthcare referrals, and supplemental food to income-eligible pregnant and postpartum women, infants, and children up to age 5. A commonly referenced community resource for MA referral." },
+    ],
+  },
+  {
+    name: "Patient Adherence & Education", emoji: "📋", color: "#D68910",
+    terms: [
+      { term: "Patient Adherence (Compliance)", def: "The degree to which a patient follows their provider's treatment recommendations — taking medications as prescribed, attending follow-up appointments, making lifestyle changes, and completing ordered tests or procedures. Improved adherence directly correlates with better health outcomes and fewer hospitalizations." },
+      { term: "Medication Reconciliation", def: "The process of comparing a patient's current medication list against all medications ordered or being considered — to identify and resolve discrepancies such as duplications, omissions, incorrect doses, or potentially dangerous interactions. Performed at every patient encounter." },
+      { term: "Patient Education", def: "The structured process of providing patients with the knowledge, skills, and motivation needed to manage their own health. Effective patient education is tailored to the patient's learning style, delivered in plain language, reinforced with written materials, and evaluated through return demonstration or verbal teach-back." },
+      { term: "Return Demonstration", def: "A patient education technique in which the patient physically performs a skill — such as checking blood glucose, drawing up insulin, or using an inhaler — after the MA demonstrates it. Confirms that the patient has correctly learned a hands-on skill and can safely perform it at home." },
+      { term: "Teach-Back Method", def: "A patient education technique in which the provider or MA asks the patient to restate or explain the information they just received in their own words — not to test them, but to confirm understanding and identify any gaps that need to be re-explained." },
+      { term: "Auditory Learning Style", def: "A learning preference in which information is best absorbed through listening. For auditory learners, the MA should speak clearly and at an even pace, read instructions aloud, use verbal explanations, and allow time for the patient to ask questions and receive spoken answers." },
+      { term: "Visual Learning Style", def: "A learning preference in which information is best absorbed through reading and seeing. For visual learners, the MA should provide diagrams, charts, written take-home instructions, and provider-approved videos or illustrated educational materials." },
+      { term: "Kinesthetic Learning Style", def: "A learning preference in which information is best absorbed through physical involvement and hands-on practice. For kinesthetic learners, the MA should demonstrate the skill, then have the patient perform it (return demonstration). Repetition and active participation drive retention." },
+      { term: "Health Literacy", def: "A patient's ability to obtain, process, and understand basic health information and services in order to make appropriate health decisions. Low health literacy is a major barrier to adherence. Written materials should be provided at an appropriate reading level and in the patient's preferred language whenever possible." },
+    ],
+  },
+  {
+    name: "Telehealth & Virtual Care", emoji: "📱", color: "#148F77",
+    terms: [
+      { term: "Telehealth", def: "The use of digital technologies — most commonly live video calls, electronic data exchange, and remote monitoring devices — to deliver healthcare services, education, and administrative support without requiring the patient to be physically present at a healthcare facility. Expands access to care for rural patients, homebound individuals, and those with transportation or financial barriers." },
+      { term: "Telemedicine", def: "A subset of telehealth specifically referring to remote clinical services — live video visits between a patient and a provider for diagnosis, treatment, and prescription. Distinguished from telehealth in that telemedicine is strictly clinical, while telehealth also encompasses education, remote monitoring, administrative meetings, and provider training." },
+      { term: "Live Video Visit (Synchronous Telehealth)", def: "A real-time, two-way video interaction between a patient and a provider — the most common form of telehealth. Enables the provider to assess the patient, review medications, provide education, and manage care from a remote location. The MA may assist before, during, and after the encounter." },
+      { term: "Remote Patient Monitoring (RPM)", def: "A form of telehealth in which patients use devices at home — such as blood pressure cuffs, continuous glucose monitors, or cardiac monitors — that transmit real-time health data to the care team. Allows providers to monitor chronic conditions between appointments without requiring office visits." },
+      { term: "Asynchronous Telehealth (Store-and-Forward)", def: "A telehealth method in which patient data — such as diagnostic images, lab results, or health records — is collected and sent electronically to a provider for review at a later time, without a live interaction. Used by specialists who review information and provide feedback remotely." },
+      { term: "Patient Portal", def: "A secure, web-based component of the EHR that allows patients to access their health records, view lab results and visit notes, request prescription refills, send messages to the care team, and schedule appointments — at any time and from any location. Supports patient engagement, transparency, and communication outside of office visits." },
+      { term: "HIPAA (Telehealth Context)", def: "The Health Insurance Portability and Accountability Act governs the privacy and security of patient health information in all settings — including telehealth. All digital communications involving patient data must use HIPAA-compliant platforms. MAs must verify who is authorized to receive information before sharing anything by phone, email, or portal message." },
+    ],
+  },
+  {
+    name: "Communicable Disease Prevention & Reporting", emoji: "🦠", color: "#1A5276",
+    terms: [
+      { term: "Communicable Disease", def: "An infectious illness that can be transmitted from one person to another — directly (through contact, respiratory droplets, or bodily fluids) or indirectly (through contaminated surfaces, food, water, or vectors). Healthcare settings must take active steps to prevent transmission and report certain communicable diseases to public health authorities." },
+      { term: "Mandatory Reporting (Communicable Disease)", def: "The legal obligation for healthcare facilities to report certain communicable diseases to local and state public health agencies — and, through them, to the CDC. Reportable diseases include tuberculosis, HIV, hepatitis B/C/D/E, E. coli, gonococcal infections, Lyme disease, foodborne illness, and COVID-19. Timely reporting is essential for identifying outbreaks and protecting the public." },
+      { term: "Standard Precautions (Infection Control)", def: "A minimum set of infection prevention practices applied to every patient encounter regardless of known or suspected infection status. Includes hand hygiene, use of appropriate PPE, safe handling of sharps, proper disposal of contaminated materials, and respiratory hygiene (covering coughs and sneezes)." },
+      { term: "Hand Hygiene", def: "The single most effective method for preventing the spread of infectious diseases in healthcare settings. Includes both handwashing with soap and water (for at least 20 seconds) and the use of alcohol-based hand sanitizer. The MA should educate patients on proper technique and perform hand hygiene before and after every patient interaction." },
+      { term: "Immunization (Vaccination)", def: "The administration of a vaccine to stimulate the immune system to produce protection against a specific infectious disease. Immunization schedules are maintained and updated by the CDC. MAs review immunization status at every visit and provide education on the importance of staying current with recommended vaccines." },
+      { term: "Breast Cancer (Mammogram)", def: "Annually starting at age 40" },
+      { term: "Cervical Cancer (Pap Test)", def: "Every 3 yrs (21–29); 3–5 yrs (30–65)" },
+      { term: "Bone Density (DEXA)", def: "When clinically indicated" },
+      { term: "HIV Screening", def: "At least once (ages 15–65)" },
+      { term: "Visual", def: "Learns by reading and seeing" },
+      { term: "Kinesthetic", def: "Learns by doing and practicing" },
+      { term: "Scope", def: "Within one practice or clinic; focused on individual patients" },
+      { term: "Primary Goal", def: "Improve individual patient experience, outcomes, and access while reducing cost" },
+      { term: "Community Role", def: "Refers patients to community resources; addresses individual SDOH barriers" },
+      { term: "Payment Model", def: "Often includes per-member-per-month coordination fees plus fee-for-service" },
+      { term: "MA Role", def: "Pre-visit planning, patient education, screening tracking, referral coordination, documentation" },
+    ],
+  },
+];
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+let flashDeck = [];
+let flashIdx = 0;
+let flashFlipped = false;
+let flashKnown = 0;
+let flashLearning = 0;
+let flashDone = false;
+let flashSelectedCats = new Set(CATEGORIES.map((_, i) => i));
+let flashStarted = false;
+document.getElementById('header-subtitle').textContent =
+  `Communicating & Educating Patients for Better Outcomes \u00b7 ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+renderFlash();
+function startFlashDeck() {
+  const terms = CATEGORIES.flatMap((cat, ci) =>
+    flashSelectedCats.has(ci) ? cat.terms.map(t => ({ ...t, color: cat.color, emoji: cat.emoji, category: cat.name })) : []
+  );
+  flashDeck = shuffle([...terms]);
+  flashIdx = 0; flashFlipped = false; flashKnown = 0; flashLearning = 0; flashDone = false; flashStarted = true;
+  renderFlash();
+}
+function flashToggleCat(i) {
+  if (flashSelectedCats.has(i)) {
+    if (flashSelectedCats.size > 1) flashSelectedCats.delete(i);
+  } else { flashSelectedCats.add(i); }
+  renderFlash();
+}
+function flashMark(isKnown) {
+  if (isKnown) flashKnown++; else flashLearning++;
+  if (flashIdx + 1 >= flashDeck.length) { flashDone = true; renderFlash(); return; }
+  flashIdx++; flashFlipped = false; renderFlash();
+}
+function renderFlash() {
+  const el = document.getElementById('flash-mode');
+  if (!flashStarted || flashDeck.length === 0) {
+    let html = `<div class="text-center" style="padding:40px 0">
+      <p style="font-size:18px;margin-bottom:20px;color:var(--text)">Select categories and start studying!</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px">`;
+    CATEGORIES.forEach((c, i) => {
+      const sel = flashSelectedCats.has(i);
+      html += `<button class="chip" onclick="flashToggleCat(${i})"
+        style="border-color:${c.color};background:${sel ? c.color : 'transparent'};color:${sel ? '#fff' : c.color}">
+        ${c.emoji} ${escHtml(c.name)}</button>`;
+    });
+    html += `</div>
+      <button class="pill-primary" style="background:#E74C3C" onclick="startFlashDeck()">Shuffle & Start \u2192</button>
+    </div>`;
+    el.innerHTML = html; return;
+  }
+  if (flashDone) {
+    const total = flashKnown + flashLearning;
+    const pct = Math.round((flashKnown / total) * 100);
+    const emoji = pct >= 80 ? '\ud83c\udf89' : pct >= 50 ? '\ud83d\udcaa' : '\ud83d\udcd6';
+    el.innerHTML = `
+      <div class="text-center" style="padding:40px 0">
+        <div style="font-size:48px;margin-bottom:12px">${emoji}</div>
+        <h3 style="margin:0 0 8px">Round Complete!</h3>
+        <p style="color:var(--text-secondary);font-size:15px;margin:0 0 24px">
+          ${flashKnown} knew it \u00b7 ${flashLearning} still learning \u00b7 ${pct}% mastery
+        </p>
+        <div style="width:100%;max-width:300px;height:10px;border-radius:10px;background:var(--surface-2);margin:0 auto 24px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;border-radius:10px;background:linear-gradient(90deg,#27AE60,#2ECC71);transition:width .6s"></div>
+        </div>
+        <button class="pill-primary" style="background:#3498DB" onclick="flashDeck=[];flashStarted=false;flashDone=false;renderFlash()">New Round</button>
+      </div>`;
+    return;
+  }
+  const card = flashDeck[flashIdx];
+  const pctProgress = ((flashIdx / flashDeck.length) * 100);
+  el.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;padding:12px 0">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;width:100%">
+        <span style="font-size:13px;color:var(--text-secondary);font-weight:600">${flashIdx + 1}/${flashDeck.length}</span>
+        <div class="progress-bar" style="flex:1"><div class="fill" style="width:${pctProgress}%;background:${card.color}"></div></div>
+        <span style="font-size:12px;color:var(--text-secondary)">\u2713${flashKnown} \u2717${flashLearning}</span>
+      </div>
+      <div class="flashcard" onclick="flashFlipped=!flashFlipped;renderFlash();"
+           style="background:${flashFlipped ? 'var(--surface-1)' : card.color};color:${flashFlipped ? 'var(--text)' : '#fff'}">
+        <span class="label">${flashFlipped ? 'Definition' : card.emoji + ' ' + escHtml(card.category)}</span>
+        <span class="hint">${flashFlipped ? '' : 'tap to flip'}</span>
+        ${!flashFlipped
+          ? `<h2>${escHtml(card.term)}</h2>`
+          : `<p class="def-text">${escHtml(card.def)}</p>`
+        }
+      </div>
+      ${flashFlipped ? `
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <button class="pill pill-outline" style="border-color:#E74C3C;color:#E74C3C;padding:12px 28px;font-size:14px" onclick="flashMark(false)">Still Learning</button>
+          <button class="pill-primary" style="background:#27AE60;padding:12px 28px;font-size:14px" onclick="flashMark(true)">Got It! \u2713</button>
+        </div>` : ''}
+    </div>`;
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

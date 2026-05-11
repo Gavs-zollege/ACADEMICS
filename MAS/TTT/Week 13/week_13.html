@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surgical Skills & Career Readiness</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.07);
+    --text: #c4cedf;
+    --text-bright: #e2e8f4;
+    --text-muted: #6b7a96;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; overflow: hidden;
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+  }
+  .app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .header {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 16px 24px 12px;
+  }
+  .header h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--text-bright); line-height: 1.1; margin-top: 2px;
+  }
+  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .main {
+    flex: 1; overflow: hidden;
+    display: flex; gap: 16px;
+    padding: 0 24px 16px;
+  }
+  .sidebar {
+    width: 250px; flex-shrink: 0;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    padding-right: 6px;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .topic-btn {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 8px 11px;
+    cursor: pointer; transition: all 0.2s ease;
+    width: 100%; text-align: left;
+    font-family: 'DM Sans', sans-serif; color: var(--text);
+  }
+  .topic-btn:hover { transform: translateX(2px); }
+  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .label {
+    font-size: 13px; font-weight: 500; flex: 1;
+    line-height: 1.3; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
+  .sidebar-divider {
+    height: 1px; background: var(--border);
+    margin: 4px 0; flex-shrink: 0;
+  }
+  .content {
+    flex: 1; overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .content-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .content-header .icon { font-size: 30px; }
+  .content-header .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700;
+  }
+  .content-header .title {
+    font-size: 18px; font-weight: 700;
+    color: var(--text-bright); line-height: 1.2;
+  }
+  .content-scroll {
+    flex: 1; overflow-y: auto; padding-right: 6px;
+  }
+  .content-scroll::-webkit-scrollbar { width: 3px; }
+  .content-scroll::-webkit-scrollbar-track { background: transparent; }
+  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .point {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px; border: 1px solid transparent;
+    animation: pointIn 0.3s ease both;
+  }
+  .point .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px;
+    animation: pointIn 0.3s ease both;
+  }
+  .takeaway-item .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #E63946, #FF6B35);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .welcome {
+    height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+  }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
+  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  @keyframes pointIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    html, body { overflow: auto; height: auto; }
+    .app { height: auto; min-height: 100vh; overflow: visible; }
+    .header { padding: 14px 16px 10px; }
+    .header h1 { font-size: 22px; }
+    .main {
+      flex-direction: column;
+      padding: 0 12px 16px;
+      overflow: visible;
+    }
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      gap: 6px;
+      padding-right: 0;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
+    .topic-btn {
+      flex-shrink: 0;
+      min-width: max-content;
+      padding: 7px 12px;
+    }
+    .sidebar-divider {
+      width: 1px; height: auto;
+      min-height: 28px;
+      margin: 0 2px;
+    }
+    .content {
+      overflow: visible;
+      min-height: 60vh;
+      padding: 16px;
+    }
+    .content-scroll { overflow: visible; }
+    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Surgical Skills & Career Readiness</h1>
+    <p>Clinical Competency & Professional Preparation</p>
+  </div>
+  <div class="main">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content">
+      <div class="welcome">
+        <div class="big-icon">📚</div>
+        <p>Select a topic to explore its key learning points</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var TOPICS = [
+  { id:1, num:"01", icon:"🔍", title:"Set Up & Maintain a Sterile Field", color:"#E63946",
+    points:["A sterile field is created on a disinfected, dry Mayo stand — positioned slightly above waist height and at least 12 inches from the body before any sterile item is opened","Open packaging in the correct sequence: farthest flap first, then sides, then the flap closest to you last — never reach over the open field at any point during setup","Check every sterile packet for the autoclave indicator color change and confirm the sterilization date before use — if either condition is not met, the item is non-sterile and must be replaced","The 1-inch border around the sterile drape is considered contaminated — no items may be placed in this zone, and the field must never be left unattended or out of direct line of sight","If sterility is ever in question — for any reason — treat the item as non-sterile, remove it from the field, and replace it before proceeding; there is no \'probably fine\' in surgical asepsis"] },
+  { id:2, num:"02", icon:"🧰", title:"Identify & Handle Common Surgical Instruments", color:"#457B9D",
+    points:["Know your instruments by name and function before the procedure begins — the provider will call for them by name, and handing the wrong instrument wastes time and breaks sterile technique","Cutting instruments: scalpel (makes the incision), iris scissors (delicate tissue), and operating scissors — always handle blades with forceps, never bare hands","Grasping and clamping instruments: tissue forceps (hold tissue), hemostatic forceps (Kelly, mosquito clamp — control bleeding), and needle holders (secure suture needles during closure)","Exposure instruments: retractors hold back tissue so the provider can see the operative site; wound probes explore tissue depth and foreign body location","Pass instruments with a deliberate, firm transfer to the provider\'s palm — only those who have completed a surgical hand scrub and are wearing sterile gloves may handle instruments within the sterile field"] },
+  { id:3, num:"03", icon:"🌈", title:"Perform or Assist with Suture & Staple Removal", color:"#2A9D8F",
+    points:["Before touching anything, assess the wound carefully — look for proper approximation of edges, signs of healing, and any drainage; alert the provider if anything appears abnormal before beginning","Suture removal technique: cut the suture below the knot and as close to the skin surface as possible; remove every other suture first while watching the wound line, then return to remove the rest","Critical rule for sutures: never pull outside suture material back through the skin — this drags surface contaminants into the tissue and significantly increases infection risk","Staple removal technique: place the lower jaw of the staple remover under the staple and squeeze the handles fully closed without lifting — this bends the staple and pulls the legs free cleanly","After all sutures or staples are removed: count and document the total; clean and dress the wound as ordered; staples go in the sharps container, sutures go in the biohazard waste container"] },
+  { id:4, num:"04", icon:"🧪", title:"Obtain Accurate Pediatric Measurements & Plot on Growth Chart", color:"#8338EC",
+    points:["Weight: infants are weighed undressed on an infant scale; toddlers and older children use a standing scale — always zero the scale first, and document in kilograms for clinical use","Recumbent length (birth to 24 months): measured lying flat on a firm surface with the head held against the headboard and legs fully extended — requires two people for accuracy","Standing height (age 2 and older): use a stadiometer; child stands without shoes, heels together, back straight, eyes looking forward — read at the crown of the head","Head circumference: measured with a flexible tape at the widest point — just above the eyebrows and around the back of the skull at the occipital prominence; routine through age 2 to 3","Growth chart documentation: plot each measurement on the age- and sex-specific CDC growth chart, calculate the percentile, and document the trend — a significant drop in percentile over time is more meaningful than any single number"] },
+  { id:5, num:"05", icon:"📏", title:"Select the Right Site, Needle & Dose for Pediatric Injections", color:"#FF6B35",
+    points:["Infants and children under 3 years: vastus lateralis (outer thigh) is the preferred IM injection site — the deltoid is too underdeveloped and risks injury to the axillary nerve in this age group","Children over 3 years and adolescents: the deltoid becomes appropriate once adequate muscle mass is present — always visually and manually assess the muscle before choosing the site","Needle length for pediatric IM: shorter for infants (5/8 to 1 inch); longer as the child grows; the needle must reliably reach muscle tissue — not just subcutaneous fat — to deliver the medication correctly","Pediatric dose calculation: convert weight from lb to kg (÷ 2.2), apply the prescribed mg/kg dose, divide by number of doses per day if applicable, then calculate volume using the available concentration","Managing the young patient: use calm, age-appropriate language; involve the parent or caregiver; never forcibly restrain a child alone — follow facility policy; have the sharps container within arm\'s reach before uncapping the needle"] },
+  { id:6, num:"06", icon:"💉", title:"Assemble Supplies & Position the Patient for a Pap Test", color:"#E63946",
+    points:["Required supplies: exam table with locked stirrups, correctly sized vaginal speculum, cervical collection device (brush/spatula or ThinPrep kit), labeled specimen container or glass slide, lubricant, gown, drape, and a working light source","Label the specimen container before collection begins — include the patient\'s full name, date of birth, date of collection, and the provider\'s name; never label after the specimen is collected","Lithotomy positioning: lock the stirrups before the patient places her feet; assist her in placing both feet simultaneously; instruct her to slide her buttocks to the edge of the table after her feet are in place","Maintain privacy throughout: drape from under the arms to the ankles, explain every step before moving or touching the patient, and knock before entering the room at any point during the setup","Pap test screening intervals: begin at age 21 regardless of sexual history; every 3 years ages 21–29; every 3–5 years ages 30–65 with HPV co-testing; not routinely recommended under 21 or over 65"] },
+  { id:7, num:"07", icon:"🩸", title:"Build a Professional, Employer-Ready Resume", color:"#457B9D",
+    points:["A healthcare resume signals clinical competence before you walk in the door — formatting errors, vague language, or missing credentials tell employers you do not pay attention to detail","Essential sections: contact information (professional email), certifications (CMA/RMA/NHA with expiration date), education, two separate skill columns (clinical and administrative), and work/practicum experience","Your externship or clinical practicum counts as professional experience — list it under experience with a facility name, dates, and two to three bullet points using action verbs: performed, administered, documented, assisted, coordinated","Professional summary (3 sentences max at the top): who you are, what you bring, and what you are looking for — lead with your value, not \'I am looking for a position\'; do not use first person","Format rules: one page, consistent font (Calibri or Arial, 10–12pt), no photos or graphics, clean margins, saved as a PDF unless otherwise requested — and proofread at least twice before submitting"] },
+  { id:8, num:"08", icon:"📋", title:"Demonstrate Confident, Professional Interview Responses", color:"#2A9D8F",
+    points:["Professional presentation matters: arrive 10 to 15 minutes early, wear clean professional attire or scrubs, minimal fragrance, and bring extra copies of your resume — first impressions in healthcare are clinical and immediate","Use the STAR method for behavioral questions (\'Tell me about a time...\'): Situation → Task → Action → Result; answers without clear structure come across as vague and unconvincing","Common questions to practice: \'Tell me about yourself,\' \'Why healthcare?\', \'What is your strongest clinical skill?\', \'How do you handle a difficult patient?\', \'What do you do when you are unsure what to do?\'","That last question matters — employers want to hear that you ask a supervisor or provider rather than guessing; showing you know your limits is a sign of competence, not weakness","Always have two genuine questions prepared for the interviewer, send a brief thank-you email within 24 hours of the interview, and research the practice or clinic before you go — showing up without knowing what they do signals you are not genuinely interested"] },
+];
+
+var TAKEAWAYS = [
+  "A sterile field is either sterile or it isn\'t — when in doubt, replace the item and start over; there is no gray area in surgical asepsis",
+  "Vastus lateralis is the only appropriate IM injection site for infants and children under 3 — the deltoid is not safe until adequate muscle mass is confirmed after age 3",
+  "Label the Pap specimen container before collection begins, not after — include name, date of birth, collection date, and provider name every single time",
+  "Pediatric dosing is weight-based — always convert lb to kg (÷ 2.2) before calculating; weight-based errors are among the most preventable and serious medication mistakes",
+  "Your resume is a clinical document — one typo or a vague skill claim signals poor attention to detail to a healthcare employer; proofread it at least twice",
+  "In an interview, knowing when to ask for help is a sign of professional competence — employers want MAs who escalate uncertainty rather than guess"
+];
+
+var activeId = null;
+var sidebar = document.getElementById('sidebar');
+var content = document.getElementById('content');
+
+function buildSidebar() {
+  TOPICS.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'topic-btn';
+    btn.dataset.id = t.id;
+    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+    btn.addEventListener('click', function() { selectTopic(t.id); });
+    btn.addEventListener('mouseenter', function() {
+      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+    });
+    btn.addEventListener('mouseleave', function() {
+      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+    });
+    sidebar.appendChild(btn);
+  });
+  var divider = document.createElement('div');
+  divider.className = 'sidebar-divider';
+  sidebar.appendChild(divider);
+  var tkBtn = document.createElement('button');
+  tkBtn.className = 'topic-btn';
+  tkBtn.dataset.id = 'takeaways';
+  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+  tkBtn.addEventListener('mouseenter', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+  });
+  tkBtn.addEventListener('mouseleave', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+  });
+  sidebar.appendChild(tkBtn);
+}
+
+function updateSidebarActive() {
+  var btns = sidebar.querySelectorAll('.topic-btn');
+  btns.forEach(function(btn) {
+    var id = btn.dataset.id;
+    var topic = TOPICS.find(function(t) { return t.id == id; });
+    var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
+    if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
+    if (isActive && topic) {
+      btn.style.background = topic.color + '20';
+      btn.style.borderColor = topic.color;
+    } else if (isActive && id === 'takeaways') {
+      btn.style.background = 'rgba(255,255,255,0.08)';
+      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    } else {
+      btn.style.background = 'var(--surface)';
+      btn.style.borderColor = 'var(--border)';
+    }
+  });
+}
+
+function renderTopic(t) {
+  var html = '<div class="content-header">' +
+    '<span class="icon">' + t.icon + '</span>' +
+    '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
+    '<div class="title">' + t.title + '</div></div></div>' +
+    '<div class="content-scroll">';
+  t.points.forEach(function(p, i) {
+    html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<p>' + p + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderTakeaways() {
+  var html = '<div class="content-header">' +
+    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<div><div class="title">Key Takeaways</div></div></div>' +
+    '<div class="content-scroll">';
+  TAKEAWAYS.forEach(function(t, i) {
+    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function selectTopic(id) {
+  activeId = id;
+  updateSidebarActive();
+  if (id === 'takeaways') {
+    content.innerHTML = renderTakeaways();
+  } else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) content.innerHTML = renderTopic(topic);
+  }
+  content.style.animation = 'none';
+  void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
+}
+
+buildSidebar();
+</script>
+</body>
+</html>

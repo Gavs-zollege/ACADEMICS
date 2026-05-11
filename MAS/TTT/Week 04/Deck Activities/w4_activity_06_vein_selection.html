@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vein Selection & Site Rules</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(155deg,#081a1a,#0e2828,#061518);font-family:'Sora',sans-serif;padding:24px 16px;color:#e0fff5}
+.wrap{max-width:640px;margin:0 auto}
+.header{text-align:center;margin-bottom:24px}
+.icon{font-size:44px}
+h1{font-weight:800;font-size:30px;margin:8px 0 4px}
+.sub{color:#60aa98;font-weight:600;font-size:15px}
+.topbar{display:flex;justify-content:space-between;margin-bottom:12px}
+.topbar .qn{color:#60aa98;font-weight:700;font-size:14px}
+.topbar .sc{color:#fb7185;font-weight:800;font-size:14px}
+.bar{height:6px;background:#123838;border-radius:10px;margin-bottom:20px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#2dd4bf,#fb7185);border-radius:10px;transition:width .4s}
+.question{background:#0e2424;padding:22px 24px;border-radius:18px;margin-bottom:20px;border-left:4px solid #2dd4bf}
+.question p{font-weight:800;font-size:18px;line-height:1.6}
+.opts{display:grid;gap:10px}
+.opt{padding:15px 20px;border-radius:14px;background:#123838;border:2px solid #123838;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;text-align:left}
+.opt:hover{filter:brightness(1.15)}
+.opt .letter{color:#2dd4bf;font-weight:800;margin-right:12px}
+.opt.correct{background:rgba(52,211,153,.15);border-color:#34d399}
+.opt.wrong{background:rgba(251,113,133,.15);border-color:#fb7185}
+.tip{margin-top:16px;padding:14px 20px;border-radius:14px;background:#0e2424}
+.tip strong{font-size:16px;display:block;margin-bottom:6px}
+.tip strong.ok{color:#34d399}
+.tip strong.no{color:#fb7185}
+.tip span{color:#60aa98;font-weight:600;font-size:14px}
+.done{text-align:center;background:#0e2424;border-radius:24px;padding:40px;border:2px solid rgba(52,211,153,.25)}
+.done .big{font-size:56px}
+.done h2{font-weight:800;font-size:28px;margin:12px 0}
+.done p{color:#60aa98;font-weight:600;font-size:15px;margin-bottom:24px}
+.btn{padding:14px 36px;border:none;border-radius:14px;background:#2dd4bf;color:#081a1a;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><div class="icon">💪</div><h1>Vein Selection & Site Rules</h1><p class="sub">Test your knowledge of vein choice, tourniquets & restrictions</p></div>
+  <div id="game"></div>
+  <div id="doneBox" class="done" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"The first-choice vein for venipuncture is:",opts:["Cephalic vein","Basilic vein","Median cubital vein","Dorsal hand vein"],a:2,tip:"Median cubital: antecubital space, least painful, least likely to roll. Always check both arms."},
+  {q:"How long can a tourniquet remain in place before hemoconcentration begins?",opts:["30 seconds","1 minute maximum","3 minutes","5 minutes"],a:1,tip:"Never more than 1 minute. Hemoconcentration begins immediately after — falsifying results."},
+  {q:"Where should the tourniquet be applied?",opts:["Directly over the draw site","1 inch above","3–4 inches above the draw site","On the wrist"],a:2,tip:"3–4 inches above. Snug but not tight — blood must still flow."},
+  {q:"Foot draws may only be performed:",opts:["By any MA","Under direct provider supervision due to DVT risk","When the patient requests it","On pediatric patients only"],a:1,tip:"Foot draws carry deep vein thrombosis risk — provider supervision required."},
+  {q:"Which is NOT a site restriction for venipuncture?",opts:["Same side as a mastectomy","Arm with a dialysis fistula","Patient's dominant arm","Scar tissue, burns, or bruises"],a:2,tip:"Dominant arm is fine. Avoid mastectomy side, fistulas, ports, scars, burns, and wounds."},
+  {q:"After cleansing the site with antiseptic, you should:",opts:["Blow on it to dry faster","Fan it with your hand","Touch it to check if it's dry","Allow it to fully air-dry without touching"],a:3,tip:"Never touch, blow on, or fan after cleansing. Air-dry completely for proper antisepsis."},
+  {q:"For older adults with fragile veins, you should consider:",opts:["Using a larger needle","Using the butterfly method with a lighter touch","Applying the tourniquet tighter","Drawing from the foot"],a:1,tip:"Butterfly with gentle technique causes less trauma on fragile veins."},
+  {q:"The needle insertion angle for ARM draws is:",opts:["5–10°","10–15°","15–30° with bevel up","45° or greater"],a:2,tip:"15–30° for arm, 10–15° for hand draws. Always bevel up."},
+];
+let ci=0,score=0,chosen=null;
+function renderQ(){const g=document.getElementById('game'),q=QS[ci];let h='<div class="topbar"><span class="qn">Q '+(ci+1)+'/'+QS.length+'</span><span class="sc">Score: '+score+'</span></div>';h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/QS.length*100)+'%"></div></div>';h+='<div class="question"><p>'+q.q+'</p></div><div class="opts">';q.opts.forEach((o,i)=>{let cls='opt';if(chosen!==null&&i===q.a)cls+=' correct';else if(chosen===i&&i!==q.a)cls+=' wrong';h+='<div class="'+cls+'" '+(chosen===null?'onclick="answer('+i+')"':'')+'><span class="letter">'+String.fromCharCode(65+i)+'</span>'+o+'</div>'});h+='</div>';if(chosen!==null){const ok=chosen===q.a;h+='<div class="tip"><strong class="'+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ Not quite!')+'</strong><span>'+q.tip+'</span></div>'}g.innerHTML=h}
+function answer(i){if(chosen!==null)return;chosen=i;if(i===QS[ci].a)score++;renderQ();setTimeout(()=>{if(ci+1<QS.length){ci++;chosen=null;renderQ()}else showDone()},2000)}
+function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=7?'🏆':'💪')+'</div><h2>'+score+'/'+QS.length+' Correct!</h2><p>Proper vein selection and site prep are critical for successful, safe draws.</p><button class="btn" onclick="reset()">🔄 Try Again</button>'}
+function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+renderQ();
+</script>
+</body>
+</html>

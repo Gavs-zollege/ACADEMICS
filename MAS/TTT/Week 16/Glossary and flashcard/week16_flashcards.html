@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 16 Flashcards — Medical Assistant Program</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text: #e4e4f0;
+    --text-secondary: #9898b0;
+    --surface-1: #1c1c2e;
+    --surface-2: #282840;
+    --border: #363650;
+    --bg: #0d0d1a;
+    --card-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+  .header { text-align: center; margin-bottom: 28px; }
+  .header-tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: #C0392B; margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: var(--font-display); font-size: 32px; font-weight: 900;
+    letter-spacing: -1px; margin-bottom: 6px; line-height: 1.1;
+  }
+  .header p { font-size: 13px; color: var(--text-secondary); }
+  .flashcard {
+    width: 100%; max-width: 500px; min-height: 250px; border-radius: 22px;
+    cursor: pointer; padding: 34px; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12); transition: all .35s cubic-bezier(.4,0,.2,1);
+    user-select: none; position: relative; margin: 0 auto;
+  }
+  .flashcard .label {
+    position: absolute; top: 16px; left: 20px; font-size: 11px;
+    font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; opacity: .7;
+  }
+  .flashcard .hint {
+    position: absolute; top: 16px; right: 20px; font-size: 11px; opacity: .5;
+  }
+  .flashcard h2 {
+    margin: 0; font-family: var(--font-display); font-size: 26px;
+    font-weight: 900; line-height: 1.2; letter-spacing: -.5px;
+  }
+  .flashcard .def-text {
+    margin: 0; font-size: 15px; line-height: 1.65; color: var(--text-secondary);
+  }
+  .progress-bar {
+    height: 6px; border-radius: 6px; background: var(--surface-2); overflow: hidden;
+  }
+  .progress-bar .fill {
+    height: 100%; border-radius: 6px; transition: width .3s;
+  }
+  .pill {
+    padding: 8px 16px; border-radius: 24px; font-weight: 700;
+    cursor: pointer; font-size: 13px; transition: all .2s; font-family: var(--font-body);
+  }
+  .pill-primary {
+    border: none; color: #fff; padding: 13px 34px; font-size: 15px;
+    border-radius: 30px; letter-spacing: .3px;
+  }
+  .pill-outline {
+    background: transparent; border: 2px solid;
+  }
+  .chip {
+    padding: 8px 14px; border-radius: 20px; border: 2px solid;
+    font-weight: 600; cursor: pointer; font-size: 13px; transition: all .2s;
+    font-family: var(--font-body); white-space: nowrap;
+  }
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; }
+  .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; }
+  .mb-6 { margin-bottom: 6px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; }
+  .mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; }
+  .gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-tag">Medical Assistant Program</div>
+    <h1>Week 16 Flashcards</h1>
+    <p id="header-subtitle"></p>
+  </div>
+  <div id="flash-mode"></div>
+</div>
+<script>
+const CATEGORIES = [
+  {
+    name: "Vital Signs Measurement & Documentation", emoji: "❤️", color: "#C0392B",
+    terms: [
+      { term: "Radial Pulse Assessment", def: "The routine method for measuring heart rate in adults using the radial artery located on the thumb side of the wrist. Place two or three fingertips (never the thumb — it has its own pulse) over the artery and count beats for one full minute, or 30 seconds multiplied by two. Document the rate, rhythm (regular or irregular), and strength (strong, weak, or thready). If the radial pulse is irregular, switch to the apical site and count for a full 60 seconds." },
+      { term: "Apical Pulse", def: "A pulse measurement taken by placing a stethoscope directly over the apex of the heart (left lower chest, 5th intercostal space, midclavicular line). Used when the radial pulse is irregular, difficult to palpate, or when assessing infants and young children. Always count the apical pulse for a full 60 seconds. Compare the apical rate to the radial rate to identify a pulse deficit." },
+      { term: "Pulse Deficit", def: "The difference between the apical pulse rate and the radial pulse rate, measured simultaneously by two providers. A pulse deficit indicates that some heartbeats are not generating enough force to produce a palpable peripheral pulse. A deficit of more than a few beats may indicate atrial fibrillation or another cardiac condition requiring provider notification." },
+      { term: "Korotkoff Sounds", def: "The five phases of sound heard through a stethoscope while measuring blood pressure by auscultation. Phase I (first sound heard — sharp tapping) = systolic pressure. Phases II–IV = changing sounds as the cuff deflates. Phase V (sound disappears completely) = diastolic pressure. Produced by turbulent blood flow as the inflated BP cuff is slowly released. The entire cuff should be deflated at 2–3 mmHg per second." },
+      { term: "Sphygmomanometer", def: "The instrument used to measure blood pressure, consisting of an inflatable cuff, a pressure gauge (either aneroid or mercury), and a release valve. The cuff must be the correct size for the patient — it should cover 80% of the upper arm circumference. An undersized cuff produces a falsely elevated reading; an oversized cuff produces a falsely low reading." },
+      { term: "Tachypnea", def: "An abnormally fast respiratory rate, defined in adults as more than 20 breaths per minute. Common causes include fever, pain, anxiety, pulmonary embolism, asthma, COPD exacerbation, and metabolic acidosis. Document the finding and notify the provider. The prefix tachy- means fast." },
+      { term: "Bradypnea", def: "An abnormally slow respiratory rate, defined in adults as fewer than 12 breaths per minute. May be caused by opioid or sedative medications, head trauma, neurologic conditions, or severe hypothyroidism. Always report bradypnea to the provider immediately. The prefix brady- means slow." },
+      { term: "Auscultation (Respiratory Count)", def: "The practice of counting the respiratory rate without informing the patient — done immediately after measuring the pulse while the patient still believes the pulse assessment is ongoing. This prevents the patient from consciously controlling their breathing, which would produce an inaccurate count. Note the rate, depth (shallow, normal, or deep), and rhythm (regular or irregular)." },
+      { term: "Pulse Oximetry (SpO2)", def: "A noninvasive measurement of arterial oxygen saturation using a light-emitting sensor, typically placed on the finger or toe. Normal adult range: 95–100%. Below 95% warrants intervention; below 90% is a critical value requiring immediate action. Accuracy is reduced by nail polish, artificial nails, poor peripheral perfusion, cold extremities, carbon monoxide exposure, and excessive motion. Allow the reading to stabilize before documenting." },
+      { term: "Numeric Pain Rating Scale", def: "A standardized tool in which the patient rates their current pain on a scale from 0 (no pain) to 10 (worst possible pain). The pain rating is entirely subjective — always document the number exactly as the patient states it. Never estimate, assume, or adjust the patient's rating based on their appearance or demeanor. Pain is considered the fifth vital sign." },
+      { term: "Pyrexia (Fever)", def: "An elevated body temperature above 100.4°F (38°C). Indicates an immune system response, most commonly to infection, but also associated with inflammatory conditions, heat stroke, and some medications. The MA should document the temperature accurately, report it to the provider, and ensure the patient is comfortable and hydrated. Hyperthermia refers to fever caused by external heat exposure rather than infection." },
+      { term: "Temperature Measurement Routes", def: "Oral: most common in cooperative adults — wait 15 minutes after hot or cold intake. Tympanic: pull the pinna up and back for adults and down and back for children to straighten the ear canal. Temporal artery: swipe the thermometer across the forehead. Axillary: placed under the arm — least accurate; add approximately 1°F to estimate a core temperature. Rectal: most accurate; used for infants, unconscious patients, and when other routes are not reliable." },
+    ],
+  },
+  {
+    name: "Injection Technique & Parenteral Medications", emoji: "💉", color: "#2471A3",
+    terms: [
+      { term: "Intradermal (ID) Injection — Technique", def: "The most superficial injection route, delivering medication into the dermis (middle layer of skin). Technique: stretch the skin taut with the nondominant hand, insert bevel-up at a 10–15° angle nearly parallel to the skin, advance only ¼–½ inch, and inject ≤0.1 mL. A raised bleb (wheal) must form immediately — if no wheal forms, the injection was placed too deep and must be repeated at a different site. Do NOT massage, bandage, or apply pressure after." },
+      { term: "Wheal (Bleb)", def: "The small, raised, pale bump that forms beneath the skin surface during a correctly performed intradermal injection. The wheal confirms that the medication was deposited within the dermis rather than into the subcutaneous tissue below it. A TB skin test result is measured by the diameter of the induration (firm raised area) at 48–72 hours — not by the diameter of the initial wheal." },
+      { term: "Subcutaneous (SC/SQ) Injection — Technique", def: "An injection into the fatty tissue layer beneath the dermis. Technique: pinch at least one full inch of skin between the thumb and forefinger, insert at a 45° angle using a 23–25 gauge, 5/8-inch needle, release the pinch after the needle is seated (before injecting), inject slowly and steadily, withdraw cleanly, and apply gentle pressure with dry gauze. Maximum volume: ≤1.5 mL. Common medications: insulin, low-molecular-weight heparins (enoxaparin), some vaccines." },
+      { term: "Lipodystrophy", def: "An abnormal change in subcutaneous fat tissue at a frequently injected site — may appear as localized thickening (hypertrophy) or loss of fat (lipoatrophy). Prevents consistent medication absorption and can lead to unpredictable drug levels. Prevented by systematically rotating injection sites within the same anatomical region at each visit. Particularly important for patients who self-administer insulin daily." },
+      { term: "Intramuscular (IM) Injection — Deltoid", def: "An injection into the deltoid muscle of the upper arm, located 2–3 finger-widths below the acromion process of the shoulder. Technique: spread the skin taut (do not pinch), insert at 90° in a smooth dart-like motion using a 22–25 gauge, 1–1½ inch needle, inject steadily, withdraw, and apply firm pressure with dry gauze. Maximum volume: ≤1 mL. For adults only — avoid in patients with inadequate deltoid muscle mass." },
+      { term: "Intramuscular (IM) Injection — Vastus Lateralis", def: "An injection into the anterolateral aspect of the thigh, using the middle third of the muscle between the knee and hip as the landmark. The preferred IM injection site for infants and children under 3 years old because it is the most accessible and well-developed muscle in this age group. Volume capacity: up to 3 mL. Also used in adults when the deltoid is unavailable. Insert at 90°." },
+      { term: "Ventrogluteal IM Site", def: "An intramuscular injection site located in the gluteus medius muscle at the hip, identified by placing the palm on the greater trochanter and directing the index finger toward the anterior superior iliac spine. Considered the safest IM site for adults because it is free of major blood vessels and nerves and has a thick muscle layer. Volume capacity: up to 3 mL. Requires correct anatomical landmark identification before every use." },
+      { term: "Bevel-Up Technique", def: "The standard needle orientation during injection and venipuncture — the slanted, angled tip of the needle faces upward. In intradermal injections, bevel-up placement ensures the medication is deposited just under the skin surface to form the required wheal. In venipuncture, bevel-up orientation facilitates smooth entry into the vein and reduces the risk of piercing the posterior wall of the vessel." },
+      { term: "Z-Track Technique", def: "An IM injection technique used for irritating or staining medications (such as iron dextran) to prevent medication from leaking back into the subcutaneous tissue. Technique: pull the skin 1–1½ inches to the side before inserting the needle, inject the medication at 90°, wait 10 seconds, then withdraw the needle while releasing the skin. The displaced skin seals the injection tract when it returns to its normal position." },
+      { term: "Medication Reconstitution", def: "The process of dissolving a powdered medication in a liquid diluent to create an injectable solution. Requires careful technique: inject the correct volume of diluent into the vial, rotate gently to dissolve (never shake), verify that the solution is clear and free of particles, and use immediately or store per manufacturer instructions. Always verify the concentration after reconstitution before drawing up the dose." },
+    ],
+  },
+  {
+    name: "EKG Setup, Leads & Interpretation", emoji: "📈", color: "#7D3C98",
+    terms: [
+      { term: "12-Lead EKG (Electrocardiogram)", def: "A noninvasive diagnostic test that records the heart's electrical activity from 12 different viewpoints using 10 electrodes — 4 limb electrodes and 6 chest (precordial) electrodes. The 10 electrodes generate 12 distinct leads, each offering a unique perspective of the cardiac electrical cycle. Used to diagnose arrhythmias, myocardial infarction, conduction abnormalities, and electrolyte imbalances." },
+      { term: "Precordial (Chest) Leads — V1–V6", def: "The six chest electrodes that record the heart's electrical activity in the horizontal plane. V1: right of sternum, 4th intercostal space. V2: left of sternum, 4th ICS. V3: diagonal midpoint between V2 and V4. V4: left midclavicular line, 5th ICS. V5: anterior axillary line, same level as V4. V6: midaxillary line, same level as V4 and V5. V5 and V6 are always at the same horizontal level as V4." },
+      { term: "Limb Leads", def: "The four electrodes applied to the extremities (or torso if mobility is limited): RA (right arm/upper right torso), LA (left arm/upper left torso), RL (right leg/lower right torso — the ground electrode, does not produce a lead independently), and LL (left leg/lower left torso). These four electrodes generate 6 of the 12 leads: I, II, III (bipolar) and aVR, aVL, aVF (augmented unipolar)." },
+      { term: "Intercostal Space (ICS)", def: "The anatomical space between two adjacent ribs, numbered by the rib directly above. Used as the primary landmarks for placing V1–V6 precordial electrodes. The 4th intercostal space (at the level of the angle of Louis/sternal angle) is the starting reference point for V1 and V2. The 5th intercostal space along the left chest is the reference for V4, V5, and V6." },
+      { term: "Acromion Process", def: "The bony prominence at the top of the shoulder where the scapula meets the clavicle, forming the highest point of the shoulder. Used as the primary anatomical landmark for locating the deltoid muscle IM injection site — the injection is placed 2–3 finger-widths below the acromion process in the belly of the muscle." },
+      { term: "EKG Artifact", def: "Unwanted interference or distortion in the EKG tracing that makes accurate interpretation difficult or impossible. Common causes: patient movement or shivering, loose or poorly adhered electrodes, excessive body hair preventing contact, dry electrode gel, nearby electrical equipment, and incorrect lead placement. Prevention: thorough skin preparation, correct placement, fresh electrodes for each patient, and ensuring the patient is still and relaxed during the tracing." },
+      { term: "Lead Misplacement", def: "An EKG error caused by attaching an electrode to the incorrect anatomical position. Unlike artifact (which produces a visually distorted tracing), lead misplacement produces a clean-looking but clinically incorrect waveform that can lead to misdiagnosis — including a false appearance of myocardial infarction or conduction abnormality. Confirming all 10 electrode positions before running the tracing is the only way to prevent this error." },
+      { term: "Sinus Rhythm", def: "The normal cardiac rhythm originating from the sinoatrial (SA) node — the heart's natural pacemaker located in the right atrium. In normal sinus rhythm, the rate is 60–100 bpm, the P wave precedes every QRS complex, and the rhythm is regular. Deviations from sinus rhythm (sinus bradycardia, sinus tachycardia, atrial fibrillation, etc.) are reported to the provider after the EKG is completed and documented." },
+      { term: "P Wave", def: "The first waveform on an EKG tracing, representing atrial depolarization — the electrical impulse spreading through the atria before they contract to push blood into the ventricles. In normal sinus rhythm, a P wave precedes every QRS complex. Absent or abnormal P waves may indicate atrial arrhythmias such as atrial fibrillation (irregular, no distinct P waves) or atrial flutter (sawtooth pattern)." },
+      { term: "QRS Complex", def: "The waveform on an EKG tracing that represents ventricular depolarization — the electrical impulse spreading through the ventricles as they contract to pump blood out to the lungs and body. The QRS complex follows the P wave and is typically the tallest and most prominent waveform on the tracing. A widened QRS may indicate a bundle branch block or ventricular origin rhythm." },
+    ],
+  },
+  {
+    name: "Phlebotomy & Venipuncture", emoji: "🩸", color: "#C2185B",
+    terms: [
+      { term: "Median Cubital Vein", def: "The vein of first choice for routine venipuncture in adults, located in the antecubital fossa (elbow crease). It is preferred because it is typically large, well-anchored, and close to the surface, making it easier to access and less likely to roll. The cephalic vein (lateral) and basilic vein (medial) are acceptable alternatives if the median cubital is not accessible." },
+      { term: "Antecubital Fossa", def: "The triangular hollow on the anterior (front) surface of the arm at the bend of the elbow. Contains the three primary veins used for adult venipuncture: the median cubital (center, preferred), cephalic (lateral/thumb side), and basilic (medial/pinky side). The patient should sit with the arm fully extended and supported on a flat surface for best vein access." },
+      { term: "Tourniquet Application", def: "A constricting band applied 3–4 inches above the antecubital fossa to slow venous return, causing veins to engorge and become more visible and palpable for venipuncture. Maximum tourniquet time: 1 minute — prolonged application causes hemoconcentration and hemolysis, which alter laboratory results. Release the tourniquet as soon as blood flow begins into the first collection tube." },
+      { term: "Order of Draw", def: "The required sequence for filling blood collection tubes during venipuncture to prevent additive cross-contamination between tubes. Correct sequence: sterile/blood cultures (yellow) → light blue (sodium citrate, coagulation — must fill completely to maintain correct blood-to-anticoagulant ratio) → red/gold SST → green (heparin) → lavender/purple (EDTA) → gray (fluoride). Mnemonic: Stop Looking Right Now Later." },
+      { term: "Hemolysis", def: "The breakdown of red blood cells with release of their contents (including potassium, hemoglobin, and enzymes) into the serum or plasma. In phlebotomy, hemolysis is most commonly caused by shaking blood collection tubes, drawing blood too forcefully through a small-gauge needle, contaminating the specimen with alcohol (wet site), or prolonged tourniquet time. A hemolyzed specimen produces falsely elevated potassium, LDH, AST, and other values — it must be recollected." },
+      { term: "Hematoma", def: "A collection of blood that leaks from a punctured vein into the surrounding tissue, causing a painful bruise or swelling at the venipuncture site. Common causes: needle penetrating through the vein's posterior wall, inadequate pressure applied after needle removal, patient bending the arm before the bleeding stops, and removing the needle while the tourniquet is still applied. Prevention: apply firm, continuous pressure for at least 2 minutes after withdrawal." },
+      { term: "Specimen Labeling Protocol", def: "The required process for labeling blood collection tubes immediately at the bedside after the draw — never before collection or away from the patient. Each label must include: patient's full name, date of birth, collection date and time, and the collector's initials. Pre-labeled tubes must never be used — the label must be applied with the patient present, to the correct tube, immediately after the blood is drawn. Mislabeled specimens are a critical patient safety error." },
+      { term: "Capillary Blood Collection", def: "The collection of a small blood sample from capillaries near the skin surface using a lancet to puncture the fingertip (adults) or heel (neonates/infants). Site: side of the fingertip in adults — not the center pad, which is more painful and has less blood flow. Wipe away the first drop (contaminated with tissue fluid and interstitial fluid); collect from the second drop. Do not squeeze or 'milk' the finger — this dilutes the specimen." },
+      { term: "Hemolytic Specimen (Rejection)", def: "A blood specimen in which red blood cell breakdown has occurred, causing the serum or plasma to appear pink or red. Most commonly caused by incorrect technique: shaking tubes, drawing through a very small gauge needle at high suction, or injecting blood forcefully through a needle into a tube. A rejected hemolytic specimen must be recollected — results from a hemolyzed specimen cannot be reliably reported for most analytes." },
+      { term: "Blood Culture Collection", def: "The collection of blood specimens for microbiological culture to identify the presence and type of bacteria or fungi causing a bloodstream infection. Always collected first in the order of draw (before any other tubes) to prevent contamination. Requires strict aseptic technique — the venipuncture site and bottle tops are disinfected with chlorhexidine or iodine before collection. Volume and number of bottles drawn are specified by the provider order." },
+    ],
+  },
+  {
+    name: "Clinical Safety Standards", emoji: "🛡️", color: "#D68910",
+    terms: [
+      { term: "Hand Hygiene Protocol", def: "The most evidence-based practice for preventing the spread of healthcare-associated infections. Soap and water is required after contact with blood or body fluids, before and after aseptic procedures, after removing gloves, when hands are visibly soiled, and after using the restroom. Alcohol-based hand sanitizer (≥60% alcohol) is acceptable for routine patient contact when hands are not visibly soiled. Artificial nails are prohibited in clinical settings." },
+      { term: "Two-Identifier Patient Verification", def: "The required process of confirming a patient's identity using two independent identifiers before performing any procedure, administering any medication, or collecting any specimen. Standard identifiers: full legal name and date of birth. Never rely on appearance, room number, wristband alone, or verbal confirmation from a third party. This verification must be performed before each individual procedure — not just once at the beginning of an encounter." },
+      { term: "Sharps Safety Protocol", def: "The required sequence of actions when handling sharp instruments used in patient care. The single most important rule: NEVER recap a used needle — drop it directly into the sharps container immediately and automatically after withdrawal from the patient. The sharps container must be puncture-resistant, leak-proof, labeled with the biohazard symbol, and positioned within arm's reach before any procedure begins. Seal and replace at two-thirds full." },
+      { term: "PPE Donning and Doffing", def: "Personal protective equipment must be put on (donned) and removed (doffed) in a specific sequence to prevent self-contamination. Donning order: gown → mask or respirator → goggles or face shield → gloves. Doffing order: gloves first (peel off inside-out without touching the contaminated outer surface) → goggles/face shield → gown → mask/respirator. Perform hand hygiene immediately after completing the doffing sequence." },
+      { term: "Aseptic Technique", def: "A collection of practices designed to prevent the introduction of pathogens into sterile or clean tissue during clinical procedures. In MA skills practice, aseptic technique includes: performing hand hygiene before every procedure, cleaning injection and venipuncture sites with alcohol in an outward circular motion and allowing them to dry completely, avoiding contact with the needle shaft or tip after preparation, and maintaining a clean/dirty separation on the work surface at all times." },
+      { term: "Sterile Technique vs. Medical Asepsis", def: "Sterile technique (surgical asepsis) eliminates all microorganisms from instruments and the immediate environment — required for invasive procedures, wound care, and minor surgery. Medical asepsis (clean technique) reduces the number of microorganisms and prevents their spread — used in daily clinical practice for injections, venipuncture, and routine patient care. MAs use both depending on the procedure and the patient's clinical condition." },
+      { term: "Post-Exposure Protocol", def: "The immediate actions required after occupational exposure to blood, body fluids, or a needlestick injury: (1) wash the wound thoroughly with soap and water (or flush eyes and mucous membranes with water) for at least 15 minutes; (2) report to the supervisor immediately; (3) complete an incident/exposure report; (4) proceed to the occupational health department or emergency room for a confidential medical evaluation at no cost to the employee; (5) document all actions taken." },
+      { term: "Site Disinfection for Injection/Venipuncture", def: "The process of cleaning the skin at an injection or venipuncture site before needle insertion. Use an alcohol swab (70% isopropyl alcohol) with an outward circular motion starting at the center of the target site. Allow the site to dry completely — at least 30 seconds. Do not blow on the site or fan it to speed drying. Injecting through a wet alcohol site causes stinging, may introduce alcohol into the tissue, and compromises disinfection." },
+    ],
+  },
+  {
+    name: "Professional Communication During Clinical Skills", emoji: "💬", color: "#148F77",
+    terms: [
+      { term: "Patient Preparation for Procedures", def: "The process of preparing a patient physically and psychologically before performing any clinical skill. Includes: greeting the patient and introducing yourself by name and role, verifying identity with two identifiers, explaining the procedure in plain language without medical jargon, answering any questions, obtaining verbal consent, warning the patient immediately before any touch or needle insertion, and positioning the patient correctly for the procedure." },
+      { term: "Procedural Explanation (Informed Verbal Consent)", def: "The brief, clear explanation provided to a patient before a clinical procedure — describing what you are going to do, why it is being done, what the patient will feel, and approximately how long it will take. Example: 'I'm going to draw some blood from your arm today to check your kidney function. You'll feel a brief pinch when the needle goes in. It should only take about a minute.' This explanation is a professional and ethical obligation before every procedure." },
+      { term: "Active Listening During Procedures", def: "The practice of remaining fully attentive to a patient's verbal and nonverbal communication throughout a clinical skill — not just during the conversation before it begins. Watch for: grimacing, tensing muscles, holding breath, tears, or attempts to pull away. Pause, acknowledge what you observe, and respond appropriately before continuing. A patient who feels heard during a procedure is safer and more cooperative than one who feels ignored." },
+      { term: "Post-Procedure Communication", def: "The standardized set of communications completed after every clinical skill: tell the patient what you found or observed (within your scope of practice — never interpret diagnostic findings); explain what happens next in the clinical process; ask whether they have any questions; provide aftercare instructions (e.g., 'Keep the bandage on for 15 minutes and avoid heavy lifting with that arm'); assist them if needed; and thank them before leaving the room." },
+      { term: "De-escalation Techniques", def: "Communication strategies used to reduce tension, anxiety, or agitation in a patient or family member. Core principles: remain calm and maintain a steady, quiet tone; lower your own voice rather than raising it; give the person physical space; make and maintain appropriate eye contact; use validating language ('I understand this is frustrating'); avoid defensive responses or dismissive language. Never match a patient's agitation level — your calm is the de-escalation tool." },
+      { term: "Teach-Back Verification", def: "A communication technique used to confirm that a patient has understood the instructions they received, by asking them to explain or demonstrate the information back in their own words. Example: 'Before you go, can you walk me through how you'll care for this site at home?' Effective for post-procedure aftercare instructions, medication education, and discharge teaching. Prevents assumptions about understanding that can lead to complications." },
+      { term: "Professional Boundaries in Clinical Practice", def: "The defined limits that maintain a therapeutic, professional relationship between a healthcare worker and the patient. In clinical skills practice: share only what is relevant to the patient's care; do not offer personal medical opinions or reassurances about diagnostic results (this is outside the MA's scope of practice); do not share other patients' experiences; and maintain objectivity and professionalism regardless of the patient's behavior, diagnosis, or personal characteristics." },
+    ],
+  },
+  {
+    name: "Externship & Program Completion", emoji: "🎓", color: "#1A5276",
+    terms: [
+      { term: "Clinical Externship", def: "A supervised, unpaid clinical experience in a real healthcare setting that is required for completion of the Medical Assistant program. Provides students with hands-on application of the clinical and administrative skills learned in the classroom and lab — including patient care, EHR documentation, scheduling, phlebotomy, injections, EKG performance, and working as part of an interprofessional healthcare team under the supervision of licensed providers." },
+      { term: "Externship Hours Requirement", def: "The minimum number of supervised clinical hours that must be completed and documented at an approved externship site to fulfill program completion requirements and CCMA certification eligibility. All hours must be logged accurately and submitted by the program deadline. Incomplete hours prevent program completion. Contact the program coordinator immediately if you have any questions about your remaining hour count or submission process." },
+      { term: "CCMA (Certified Clinical Medical Assistant)", def: "A nationally recognized professional credential awarded by the National Healthcareer Association (NHA) upon successful completion of a CCMA certification examination. Requires completion of an accredited MA program and documented clinical hours. Demonstrates competency in both clinical and administrative MA skills to employers. Renewal is required every two years through continuing education or re-examination." },
+      { term: "Certification Examination Eligibility", def: "The set of requirements that must be met before a student may sit for the CCMA certification exam, including: completion of an accredited Medical Assistant program, documentation of required externship hours, and submission of a program completion verification. Failure to submit all required externship hours before the program deadline may delay or prevent eligibility to take the examination." },
+      { term: "Scope of Practice (Externship)", def: "The specific tasks and procedures a Medical Assistant student is authorized to perform during the clinical externship, as determined by state law, the externship facility's policies, and the supervising provider's direction. Students must never perform any task they have not been specifically trained for and authorized to do by their clinical supervisor — even if they have observed the procedure or feel confident. Always ask before attempting anything new." },
+      { term: "Clinical Supervision", def: "The direct or indirect oversight of a student's clinical activities by a licensed provider or credentialed healthcare professional at the externship site. MAs always work under physician supervision and cannot perform independently. During externship, the supervising provider is the student's clinical authority — follow their instructions, ask questions when uncertain, and report any concerns to both the clinical supervisor and the program coordinator." },
+      { term: "Professional Reference (Externship)", def: "A professional who can speak to a job applicant's clinical skills, work ethic, reliability, communication, and behavior — based on direct observation. An externship supervisor is often the most valuable reference a new MA graduate can provide, because they have observed the student in an actual clinical setting with real patients. How a student performs during externship directly shapes this reference." },
+      { term: "Continuing Education (CE)", def: "Educational activities completed after initial certification to maintain current knowledge and fulfill recertification requirements. NHA-certified MAs must complete 10 hours of continuing education or retake the certification exam every two years to maintain the CCMA credential. CE activities may include online courses, webinars, in-person workshops, and professional conferences relevant to medical assisting." },
+    ],
+  },
+  {
+    name: "Skills Assessment & Competency Evaluation", emoji: "📋", color: "#CA6F1E",
+    terms: [
+      { term: "Competency Evaluation", def: "A structured assessment in which a student or employee demonstrates their ability to perform a specific clinical skill accurately, safely, and professionally under observation. Evaluated components typically include: correct sequence of steps, patient communication, safety protocol adherence (hand hygiene, PPE, sharps disposal), accuracy of technique, and documentation. A competency evaluation differs from a written exam — it assesses performance, not knowledge alone." },
+      { term: "Skills Checkoff", def: "A formalized performance evaluation in which a student demonstrates a specific clinical skill to an evaluator who documents whether each step was performed correctly. The evaluator observes and scores the student's performance against a predefined checklist. Skills checkoffs are used throughout the MA program and may be repeated until the student demonstrates proficiency. A passed checkoff confirms readiness for the clinical externship." },
+      { term: "Return Demonstration", def: "A patient education technique in which a patient is asked to perform a skill or procedure back to the MA after being taught — confirming that the patient can correctly execute the technique independently. Example: asking a diabetic patient to demonstrate how to draw up and administer their own insulin after being taught the technique. Also used in clinical education when instructors ask students to demonstrate a skill after instruction." },
+      { term: "Self-Correction in Clinical Skills", def: "The ability of a student or clinician to recognize an error mid-procedure, stop, acknowledge it, and correct the approach before continuing or restarting. Demonstrated self-correction is viewed positively by evaluators — it indicates clinical judgment and a commitment to patient safety. The appropriate response to an error is to pause, state what happened calmly, implement the correct action, and continue. Do not attempt to hide or minimize errors." },
+      { term: "Deliberate Practice", def: "A focused, intentional approach to skills practice in which a learner specifically targets weak areas, seeks feedback after each repetition, and makes incremental adjustments to improve performance. Differs from casual repetition — deliberate practice requires concentration, honest self-assessment, and willingness to slow down and correct technique. Clinical skills become reliable only through deliberate, repeated practice with feedback, not simply through high volume of repetitions." },
+      { term: "Clinical Documentation Accuracy", def: "The standard requiring that all entries in the patient's medical record are complete, truthful, timely, and properly formatted. In skills practice: document vital signs with the exact values measured — never round or estimate. Document immediately after the procedure — never hours later from memory. Include the date, time, and your initials or signature. If an error is made in documentation, draw a single line through it, write 'error,' initial, and enter the correct information." },
+      { term: "Certification Exam Strategy", def: "The approach a student takes to preparing for and performing on a national certification examination. Key principles: read every answer choice before selecting — the first answer that sounds correct is not always the best answer. In safety and ethics scenarios, the answer that prioritizes patient safety and reporting to the supervisor is almost always correct. Ignore answers that involve ignoring a problem, guessing at a procedure, or bypassing chain of command." },
+      { term: "Before every patient", def: "Hand hygiene (wash or sanitize)" },
+      { term: "Before every procedure", def: "Two-identifier verification" },
+      { term: "Site preparation", def: "Alcohol swab — circular motion, fully dry" },
+      { term: "During any needle use", def: "Sharps container within arm's reach" },
+      { term: "After any needle use", def: "Immediate sharps disposal" },
+      { term: "After glove removal", def: "Hand hygiene (again)" },
+      { term: "Between every patient", def: "Disinfect all contact surfaces" },
+      { term: "After every procedure", def: "Document immediately and completely" },
+      { term: "If a needlestick occurs", def: "Wash, report, complete incident form" },
+    ],
+  },
+];
+const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
+  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
+);
+let flashDeck = [];
+let flashIdx = 0;
+let flashFlipped = false;
+let flashKnown = 0;
+let flashLearning = 0;
+let flashDone = false;
+let flashSelectedCats = new Set(CATEGORIES.map((_, i) => i));
+let flashStarted = false;
+document.getElementById('header-subtitle').textContent =
+  `Building Competency Through Skills Practice \u00b7 ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
+renderFlash();
+function startFlashDeck() {
+  const terms = CATEGORIES.flatMap((cat, ci) =>
+    flashSelectedCats.has(ci) ? cat.terms.map(t => ({ ...t, color: cat.color, emoji: cat.emoji, category: cat.name })) : []
+  );
+  flashDeck = shuffle([...terms]);
+  flashIdx = 0; flashFlipped = false; flashKnown = 0; flashLearning = 0; flashDone = false; flashStarted = true;
+  renderFlash();
+}
+function flashToggleCat(i) {
+  if (flashSelectedCats.has(i)) {
+    if (flashSelectedCats.size > 1) flashSelectedCats.delete(i);
+  } else { flashSelectedCats.add(i); }
+  renderFlash();
+}
+function flashMark(isKnown) {
+  if (isKnown) flashKnown++; else flashLearning++;
+  if (flashIdx + 1 >= flashDeck.length) { flashDone = true; renderFlash(); return; }
+  flashIdx++; flashFlipped = false; renderFlash();
+}
+function renderFlash() {
+  const el = document.getElementById('flash-mode');
+  if (!flashStarted || flashDeck.length === 0) {
+    let html = `<div class="text-center" style="padding:40px 0">
+      <p style="font-size:18px;margin-bottom:20px;color:var(--text)">Select categories and start studying!</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:24px">`;
+    CATEGORIES.forEach((c, i) => {
+      const sel = flashSelectedCats.has(i);
+      html += `<button class="chip" onclick="flashToggleCat(${i})"
+        style="border-color:${c.color};background:${sel ? c.color : 'transparent'};color:${sel ? '#fff' : c.color}">
+        ${c.emoji} ${escHtml(c.name)}</button>`;
+    });
+    html += `</div>
+      <button class="pill-primary" style="background:#E74C3C" onclick="startFlashDeck()">Shuffle & Start \u2192</button>
+    </div>`;
+    el.innerHTML = html; return;
+  }
+  if (flashDone) {
+    const total = flashKnown + flashLearning;
+    const pct = Math.round((flashKnown / total) * 100);
+    const emoji = pct >= 80 ? '\ud83c\udf89' : pct >= 50 ? '\ud83d\udcaa' : '\ud83d\udcd6';
+    el.innerHTML = `
+      <div class="text-center" style="padding:40px 0">
+        <div style="font-size:48px;margin-bottom:12px">${emoji}</div>
+        <h3 style="margin:0 0 8px">Round Complete!</h3>
+        <p style="color:var(--text-secondary);font-size:15px;margin:0 0 24px">
+          ${flashKnown} knew it \u00b7 ${flashLearning} still learning \u00b7 ${pct}% mastery
+        </p>
+        <div style="width:100%;max-width:300px;height:10px;border-radius:10px;background:var(--surface-2);margin:0 auto 24px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;border-radius:10px;background:linear-gradient(90deg,#27AE60,#2ECC71);transition:width .6s"></div>
+        </div>
+        <button class="pill-primary" style="background:#3498DB" onclick="flashDeck=[];flashStarted=false;flashDone=false;renderFlash()">New Round</button>
+      </div>`;
+    return;
+  }
+  const card = flashDeck[flashIdx];
+  const pctProgress = ((flashIdx / flashDeck.length) * 100);
+  el.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;padding:12px 0">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;width:100%">
+        <span style="font-size:13px;color:var(--text-secondary);font-weight:600">${flashIdx + 1}/${flashDeck.length}</span>
+        <div class="progress-bar" style="flex:1"><div class="fill" style="width:${pctProgress}%;background:${card.color}"></div></div>
+        <span style="font-size:12px;color:var(--text-secondary)">\u2713${flashKnown} \u2717${flashLearning}</span>
+      </div>
+      <div class="flashcard" onclick="flashFlipped=!flashFlipped;renderFlash();"
+           style="background:${flashFlipped ? 'var(--surface-1)' : card.color};color:${flashFlipped ? 'var(--text)' : '#fff'}">
+        <span class="label">${flashFlipped ? 'Definition' : card.emoji + ' ' + escHtml(card.category)}</span>
+        <span class="hint">${flashFlipped ? '' : 'tap to flip'}</span>
+        ${!flashFlipped
+          ? `<h2>${escHtml(card.term)}</h2>`
+          : `<p class="def-text">${escHtml(card.def)}</p>`
+        }
+      </div>
+      ${flashFlipped ? `
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <button class="pill pill-outline" style="border-color:#E74C3C;color:#E74C3C;padding:12px 28px;font-size:14px" onclick="flashMark(false)">Still Learning</button>
+          <button class="pill-primary" style="background:#27AE60;padding:12px 28px;font-size:14px" onclick="flashMark(true)">Got It! \u2713</button>
+        </div>` : ''}
+    </div>`;
+}
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+function escHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

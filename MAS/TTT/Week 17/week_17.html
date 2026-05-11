@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demonstrating Your Clinical Skills</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.07);
+    --text: #c4cedf;
+    --text-bright: #e2e8f4;
+    --text-muted: #6b7a96;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; overflow: hidden;
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+  }
+  .app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .header {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 16px 24px 12px;
+  }
+  .header h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--text-bright); line-height: 1.1; margin-top: 2px;
+  }
+  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .main {
+    flex: 1; overflow: hidden;
+    display: flex; gap: 16px;
+    padding: 0 24px 16px;
+  }
+  .sidebar {
+    width: 250px; flex-shrink: 0;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    padding-right: 6px;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .topic-btn {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 8px 11px;
+    cursor: pointer; transition: all 0.2s ease;
+    width: 100%; text-align: left;
+    font-family: 'DM Sans', sans-serif; color: var(--text);
+  }
+  .topic-btn:hover { transform: translateX(2px); }
+  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .label {
+    font-size: 13px; font-weight: 500; flex: 1;
+    line-height: 1.3; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
+  .sidebar-divider {
+    height: 1px; background: var(--border);
+    margin: 4px 0; flex-shrink: 0;
+  }
+  .content {
+    flex: 1; overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .content-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .content-header .icon { font-size: 30px; }
+  .content-header .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700;
+  }
+  .content-header .title {
+    font-size: 18px; font-weight: 700;
+    color: var(--text-bright); line-height: 1.2;
+  }
+  .content-scroll {
+    flex: 1; overflow-y: auto; padding-right: 6px;
+  }
+  .content-scroll::-webkit-scrollbar { width: 3px; }
+  .content-scroll::-webkit-scrollbar-track { background: transparent; }
+  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .point {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px; border: 1px solid transparent;
+    animation: pointIn 0.3s ease both;
+  }
+  .point .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px;
+    animation: pointIn 0.3s ease both;
+  }
+  .takeaway-item .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #E63946, #FF6B35);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .welcome {
+    height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+  }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
+  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  @keyframes pointIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    html, body { overflow: auto; height: auto; }
+    .app { height: auto; min-height: 100vh; overflow: visible; }
+    .header { padding: 14px 16px 10px; }
+    .header h1 { font-size: 22px; }
+    .main {
+      flex-direction: column;
+      padding: 0 12px 16px;
+      overflow: visible;
+    }
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      gap: 6px;
+      padding-right: 0;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
+    .topic-btn {
+      flex-shrink: 0;
+      min-width: max-content;
+      padding: 7px 12px;
+    }
+    .sidebar-divider {
+      width: 1px; height: auto;
+      min-height: 28px;
+      margin: 0 2px;
+    }
+    .content {
+      overflow: visible;
+      min-height: 60vh;
+      padding: 16px;
+    }
+    .content-scroll { overflow: visible; }
+    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Demonstrating Your Clinical Skills</h1>
+    <p>Final Assessment & Preparation</p>
+  </div>
+  <div class="main">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content">
+      <div class="welcome">
+        <div class="big-icon">📚</div>
+        <p>Select a topic to explore its key learning points</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var TOPICS = [
+  { id:1, num:"01", icon:"🔍", title:"Demonstrate Mastery of Core Clinical Skills in a Formal Assessment", color:"#E63946",
+    points:["The Labs Final is a formal, observed assessment — meaning every step you take, every safety habit you demonstrate, and every interaction you have with your patient is being evaluated in real time. Approach it exactly as you would approach a real patient encounter: with the same preparation, the same professionalism, and the same attention to detail.","Vital signs: measure and document all six — heart rate (rate, rhythm, and strength), blood pressure (correct cuff selection, deflation rate, and Korotkoff sound identification), respiratory rate (unannounced), temperature (appropriate method for the patient), SpO2 (stabilized reading), and pain (patient\'s exact number). Identify any abnormal value and respond as you would clinically.","Injections: demonstrate at least one injection route — intradermal (10–15°, bevel up, wheal must form, no massage or bandage), subcutaneous (45°, skin pinch, rotate sites), or intramuscular (90°, deltoid ≤1 mL or vastus lateralis ≤3 mL) — with the correct gauge, site, patient prep, and immediate sharps disposal.","EKG: apply all 10 electrodes correctly — V1 through V6 in their precise intercostal positions, RA, LA, RL, and LL in their correct limb placements. Prepare the skin, press all electrode edges firmly, use fresh electrodes, and be ready to identify and correct any artifact before submitting the tracing.","Phlebotomy: verify the patient\'s identity, apply the tourniquet, palpate the median cubital vein, clean the site and allow it to dry, insert bevel-up at 15–30°, fill tubes in the correct order of draw, invert gently (never shake), withdraw and apply pressure, drop the needle directly into the sharps container, and label every tube at the bedside immediately after collection."] },
+  { id:2, num:"02", icon:"🧰", title:"Perform Each Skill with Accuracy, Correct Sequencing & Communication", color:"#457B9D",
+    points:["Accuracy in clinical skills is not about performing quickly — it is about performing each step in the right order, at the right level of precision, without skipping the steps that exist for a reason. Correct sequencing matters as much as correct technique: cleaning a venipuncture site is not useful if you touch it again before inserting the needle, and a three-label check is not useful if it happens only once.","Before every procedure: knock, introduce yourself by name and role, verify the patient\'s identity with two identifiers, explain what you are about to do in plain language, and warn the patient before any touch or needle insertion. This sequence is not optional — it is the foundation of every clinical encounter.","During every procedure: stay attentive to the patient\'s verbal and nonverbal cues. A grimace, a tense arm, or a held breath are all communications that require acknowledgment. Pause, respond, and continue. Never proceed silently through a procedure as if the patient is not present.","After every procedure: tell the patient what you found and what happens next (within your scope of practice — never interpret diagnostic results). Give clear aftercare instructions: \'Keep the bandage on for 15 minutes and avoid heavy lifting with that arm.\' Ask whether they have questions. Thank them. Assist with any physical needs before leaving.","Document all findings and procedures immediately after completion — with the exact values, time, and your initials. Never document before a procedure is complete and never reconstruct documentation from memory later in the day. If a documentation error occurs: draw a single line through it, write \'error,\' initial it, and enter the correction."] },
+  { id:3, num:"03", icon:"🌈", title:"Apply Clinical Safety Standards Throughout the Final Assessment", color:"#2A9D8F",
+    points:["Hand hygiene is performed before entering the assessment space, before donning gloves, after removing gloves, and between every station — without exception. Gloves do not replace hand hygiene: wash or sanitize after every glove removal regardless of what the gloves were used for. This is the most consistently observed behavior in any clinical skills evaluation.","Two-identifier patient verification must happen before every individual procedure — not once at the beginning of the encounter and never again. Ask the patient to state their full name and date of birth. Do not rely on a wristband alone, do not confirm based on appearance, and do not accept a \'yes\' to a leading question. Two identifiers, confirmed verbally, every time.","PPE selection and use: gloves are required for all contact with blood, body fluids, or potentially contaminated surfaces. When splash risk is present, add a gown, mask, and eye protection. Gloves must be donned after hand hygiene — and doffed in the correct sequence (gloves first, using the inside-out technique) to prevent self-contamination.","Sharps disposal is immediate and automatic: the used needle enters the sharps container at the point of care, directly after withdrawal from the patient, without any intermediate steps. The container must be within arm\'s reach before any injection or venipuncture begins. NEVER recap a used needle — not for convenience, not for a moment, not ever.","Site disinfection: clean every injection and venipuncture site with an alcohol swab using an outward circular motion and allow it to dry completely — at least 30 seconds — before needle insertion. Injecting through a wet alcohol site stings, may introduce alcohol into the tissue, and does not meet the standard for proper aseptic technique. Drying is not optional."] },
+  { id:4, num:"04", icon:"🧪", title:"Complete the Final CCMA Practice Examination", color:"#8338EC",
+    points:["This full-length practice examination is your final diagnostic tool before the certification exam. Its purpose is not to produce a score to feel good or bad about — it is to reveal exactly where your knowledge is solid and exactly where a gap still exists, so you can close it before the real assessment. Treat every question seriously.","The practice exam mirrors the five domains of the CCMA certification exam: Patient Care & Clinical Procedures (~40%), Administrative & Practice Management (~20%), Medical Terminology & Anatomy (~15%), Law, Ethics & Patient Rights (~15%), and Infection Control & Safety (~10%). Note which domains you score lowest on — those are your final review priorities.","Review every incorrect answer in full: do not just note which questions you missed — read the explanation for each one and understand why the correct answer is correct. A pattern of missed questions in the same domain tells you more than the overall score. Identify the pattern first, then address it.","Use strong areas to build confidence, not complacency: review the domains where you performed well and confirm that you can explain those answers — not just recognize them. On a multiple-choice exam, understanding why an answer is correct is what allows you to apply the same reasoning to questions you have never seen before.","Use the results honestly: if the practice test reveals areas that still need work, that is exactly the information you need — and exactly when you need it. A gap identified now is a gap that can be closed. Approach your final review with the same focus and deliberateness you have brought to your skills practice throughout this program."] },
+  { id:5, num:"05", icon:"📏", title:"Reflect on Your Growth Across the Full Medical Assistant Program", color:"#FF6B35",
+    points:["When you arrived at week one, vital signs were a procedure you were learning to perform. At week seventeen, they are a clinical habit — something you perform with confidence, document accurately, and interpret in context. That shift represents genuine professional growth, and it did not happen by accident. It happened because you showed up and put in the work.","The clinical skills you have built — injections, EKG setup, phlebotomy, infection control, sterile technique, wound care, patient positioning — each required repetition, feedback, and honest self-assessment to develop. None of these skills are simple. The fact that they feel more natural now is not luck. It is the result of deliberate practice over seventeen weeks.","The professional habits you have formed are equally important: washing your hands before every patient contact, verifying identity before every procedure, never recapping a used needle, documenting accurately and promptly, communicating with patients before and after every clinical action. These habits protect real patients. They define what a professional medical assistant does and who one is.","Nervousness before an assessment is not evidence of unpreparedness. It is evidence that you care about doing it well — which is exactly the mindset that makes clinicians safe and effective. The students who perform best in observed assessments are not the most confident ones going in. They are the ones who have prepared most thoroughly. You have prepared.","Take a genuine moment to recognize how far you have come. The distance from week one to week seventeen is the distance from student to clinician. That is not a small thing. Acknowledge it — and carry the confidence it earns you into everything that comes next."] },
+  { id:6, num:"06", icon:"💉", title:"Identify Next Steps Toward Certification, Career & Professional Growth", color:"#E63946",
+    points:["Program completion is the first checkpoint: confirm that all coursework, lab requirements, and externship hours have been submitted and verified. If anything is outstanding, contact your program coordinator immediately — do not assume it has been taken care of. Incomplete requirements block certification eligibility, and that is too important a step to leave to assumption.","CCMA certification eligibility: once program completion is confirmed, you are eligible to sit for the CCMA certification exam. This is the credential that employers recognize as evidence that you have completed an accredited program and passed a national competency standard. It opens doors — to better starting wages, broader career options, and immediate credibility in the clinical setting.","Final exam preparation: use your practice test results to direct a targeted final review. Focus on the domains where you scored lowest. Revisit the question types you missed most often. Run through high-yield clinical facts — normal vital sign ranges, order of draw, injection angles, EKG lead positions, HIPAA violation scenarios, and CCMA exam strategy. Sleep the night before.","Your externship supervisor is your first and most powerful professional reference: the clinical supervisor who observed your work with real patients has seen your skills, your reliability, your communication, and your professionalism firsthand. That reference is irreplaceable on a job application — treat every externship shift as the professional audition it is.","Long-term professional development begins the day you pass your exam: CCMA certification requires renewal every two years through continuing education or re-examination. Use those CE requirements as genuine learning opportunities — stay current on clinical guidelines, expand your skills, and approach every patient encounter throughout your career with the same curiosity and care you brought to week one."] },
+];
+
+var TAKEAWAYS = [
+  "The Labs Final evaluates technique, safety, communication, and documentation together — not technique alone. Every component carries equal weight at every station",
+  "Begin every station with hand hygiene and two-identifier verification. These two actions come before anything else — without exception — at every station and in every clinical encounter for the rest of your career",
+  "If you make a mistake: stop, acknowledge it calmly, correct it, and continue. Self-correction is a demonstration of clinical judgment — it works in your favor with every evaluator",
+  "Use your practice test results as a diagnostic — not a verdict. Review every incorrect answer, identify the pattern, and close the gaps before the certification exam",
+  "You came into this program learning how to take a blood pressure. You are leaving it as a clinical professional — trained, credentialed, and ready. Go demonstrate it"
+];
+
+var activeId = null;
+var sidebar = document.getElementById('sidebar');
+var content = document.getElementById('content');
+
+function buildSidebar() {
+  TOPICS.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'topic-btn';
+    btn.dataset.id = t.id;
+    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+    btn.addEventListener('click', function() { selectTopic(t.id); });
+    btn.addEventListener('mouseenter', function() {
+      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+    });
+    btn.addEventListener('mouseleave', function() {
+      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+    });
+    sidebar.appendChild(btn);
+  });
+  var divider = document.createElement('div');
+  divider.className = 'sidebar-divider';
+  sidebar.appendChild(divider);
+  var tkBtn = document.createElement('button');
+  tkBtn.className = 'topic-btn';
+  tkBtn.dataset.id = 'takeaways';
+  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+  tkBtn.addEventListener('mouseenter', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+  });
+  tkBtn.addEventListener('mouseleave', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+  });
+  sidebar.appendChild(tkBtn);
+}
+
+function updateSidebarActive() {
+  var btns = sidebar.querySelectorAll('.topic-btn');
+  btns.forEach(function(btn) {
+    var id = btn.dataset.id;
+    var topic = TOPICS.find(function(t) { return t.id == id; });
+    var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
+    if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
+    if (isActive && topic) {
+      btn.style.background = topic.color + '20';
+      btn.style.borderColor = topic.color;
+    } else if (isActive && id === 'takeaways') {
+      btn.style.background = 'rgba(255,255,255,0.08)';
+      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    } else {
+      btn.style.background = 'var(--surface)';
+      btn.style.borderColor = 'var(--border)';
+    }
+  });
+}
+
+function renderTopic(t) {
+  var html = '<div class="content-header">' +
+    '<span class="icon">' + t.icon + '</span>' +
+    '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
+    '<div class="title">' + t.title + '</div></div></div>' +
+    '<div class="content-scroll">';
+  t.points.forEach(function(p, i) {
+    html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<p>' + p + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderTakeaways() {
+  var html = '<div class="content-header">' +
+    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<div><div class="title">Key Takeaways</div></div></div>' +
+    '<div class="content-scroll">';
+  TAKEAWAYS.forEach(function(t, i) {
+    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function selectTopic(id) {
+  activeId = id;
+  updateSidebarActive();
+  if (id === 'takeaways') {
+    content.innerHTML = renderTakeaways();
+  } else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) content.innerHTML = renderTopic(topic);
+  }
+  content.style.animation = 'none';
+  void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
+}
+
+buildSidebar();
+</script>
+</body>
+</html>

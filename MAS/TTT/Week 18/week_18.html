@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Review & CCMA Exam Success</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&family=IBM+Plex+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: rgba(255,255,255,0.025);
+    --border: rgba(255,255,255,0.07);
+    --text: #c4cedf;
+    --text-bright: #e2e8f4;
+    --text-muted: #6b7a96;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; overflow: hidden;
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+  }
+  .app {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .header {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 16px 24px 12px;
+  }
+  .header h1 {
+    font-size: 26px; font-weight: 800;
+    color: var(--text-bright); line-height: 1.1; margin-top: 2px;
+  }
+  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .main {
+    flex: 1; overflow: hidden;
+    display: flex; gap: 16px;
+    padding: 0 24px 16px;
+  }
+  .sidebar {
+    width: 250px; flex-shrink: 0;
+    overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+    padding-right: 6px;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .topic-btn {
+    display: flex; align-items: center; gap: 9px;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 10px; padding: 8px 11px;
+    cursor: pointer; transition: all 0.2s ease;
+    width: 100%; text-align: left;
+    font-family: 'DM Sans', sans-serif; color: var(--text);
+  }
+  .topic-btn:hover { transform: translateX(2px); }
+  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .label {
+    font-size: 13px; font-weight: 500; flex: 1;
+    line-height: 1.3; overflow: hidden;
+    text-overflow: ellipsis; white-space: nowrap;
+  }
+  .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
+  .sidebar-divider {
+    height: 1px; background: var(--border);
+    margin: 4px 0; flex-shrink: 0;
+  }
+  .content {
+    flex: 1; overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px;
+    display: flex; flex-direction: column;
+  }
+  .content-header {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .content-header .icon { font-size: 30px; }
+  .content-header .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700;
+  }
+  .content-header .title {
+    font-size: 18px; font-weight: 700;
+    color: var(--text-bright); line-height: 1.2;
+  }
+  .content-scroll {
+    flex: 1; overflow-y: auto; padding-right: 6px;
+  }
+  .content-scroll::-webkit-scrollbar { width: 3px; }
+  .content-scroll::-webkit-scrollbar-track { background: transparent; }
+  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .point {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px; border: 1px solid transparent;
+    animation: pointIn 0.3s ease both;
+  }
+  .point .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 13px;
+    margin-bottom: 7px;
+    animation: pointIn 0.3s ease both;
+  }
+  .takeaway-item .num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #E63946, #FF6B35);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .welcome {
+    height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+  }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
+  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  @keyframes pointIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ===== MOBILE RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    html, body { overflow: auto; height: auto; }
+    .app { height: auto; min-height: 100vh; overflow: visible; }
+    .header { padding: 14px 16px 10px; }
+    .header h1 { font-size: 22px; }
+    .main {
+      flex-direction: column;
+      padding: 0 12px 16px;
+      overflow: visible;
+    }
+    .sidebar {
+      width: 100%;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      gap: 6px;
+      padding-right: 0;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
+    .topic-btn {
+      flex-shrink: 0;
+      min-width: max-content;
+      padding: 7px 12px;
+    }
+    .sidebar-divider {
+      width: 1px; height: auto;
+      min-height: 28px;
+      margin: 0 2px;
+    }
+    .content {
+      overflow: visible;
+      min-height: 60vh;
+      padding: 16px;
+    }
+    .content-scroll { overflow: visible; }
+    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
+  }
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Final Review & CCMA Exam Success</h1>
+    <p>Certification Readiness</p>
+  </div>
+  <div class="main">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="content" id="content">
+      <div class="welcome">
+        <div class="big-icon">📚</div>
+        <p>Select a topic to explore its key learning points</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+var TOPICS = [
+  { id:1, num:"01", icon:"🔍", title:"Apply Knowledge from All Program Domains to Pass the CCMA Exam", color:"#E63946",
+    points:["The CCMA certification exam draws from five content domains — each one representing a major area of your training. Domain 1: Patient Care & Clinical Procedures (~40%) — vital signs, injections (ID, SC, IM), 12-lead EKG, venipuncture, capillary draw, order of draw, medication administration, wound care, positioning, sterile technique. This is the largest domain and reflects the core of what a medical assistant does every day.","Domain 2: Administrative & Practice Management (~20%) — scheduling, insurance billing (primary/secondary, EOB, preauthorization), medical records documentation rules, HIPAA compliance, phone etiquette (Five P\'s), EHR, CPOE, and e-prescribing. Domain 3: Medical Terminology & Anatomy (~15%) — high-yield prefixes and suffixes, cardiovascular and respiratory anatomy, EKG waveform terms, and body system structures.","Domain 4: Law, Ethics & Patient Rights (~15%) — HIPAA violations and permitted disclosures, informed consent, advance directives (living will, DPOA, DNR, POLST), mandatory reporting obligations, medical ethics principles (non-maleficence, beneficence, autonomy, justice), and scope of practice. Domain 5: Infection Control & Safety (~10%) — chain of infection, standard and transmission-based precautions, PPE sequence, hand hygiene, disinfection levels, autoclave sterilization, and post-exposure protocol.","Every one of these domains was covered in your training. Nothing on this exam is outside the scope of what you have studied, practiced, or both. The exam does not introduce new material — it tests how well you have internalized what was already taught. Approach each question as a clinical professional applying knowledge, not a student guessing at answers.","Final high-yield facts to carry in: pulmonary VEIN carries oxygenated blood from lungs to heart. Small intestine = nutrient absorption. Pancreas = insulin. Myocardial infarction = tissue death (NOT myocarditis = inflammation). Rectal temperature = most accurate. SpO2 below 90% = critical, report immediately. NEVER shake a blood tube. NEVER recap a used needle."] },
+  { id:2, num:"02", icon:"🧰", title:"Demonstrate Exam-Taking Strategy Under Real Testing Conditions", color:"#457B9D",
+    points:["The most important exam strategy — and the one most consistently ignored under pressure — is this: read every answer choice before selecting one. Exam writers deliberately include distractors: answer options that sound correct but are not the best or most complete response. The first answer that seems right may be good, but a better answer often appears below it. Read all four. Compare. Then choose.","Watch for qualifying words in the question stem — these words fundamentally change the correct answer and are easy to miss when reading quickly. Words to look for: FIRST (what is the immediate priority?), BEST (which answer is most complete?), NOT (which answer is the exception?), EXCEPT (which one does not belong?), and ALWAYS or NEVER (absolute terms that narrow the field significantly). Misreading one word can turn a question you know into a question you miss.","Time management across the full exam: work at a steady, deliberate pace — not rushed, not slow. If a question is genuinely uncertain, flag it and move forward. Do not allow a single difficult question to consume time you need for the rest of the exam. After completing all questions, return to flagged items with fresh eyes. Answer every question — there is no penalty for an incorrect guess, and a blank answer is always wrong.","Applying critical thinking to unfamiliar question formats: when a question uses clinical language or a scenario you do not immediately recognize, break it into components. Identify: what is the patient situation? What action is being requested? What domain does it fall under? Apply what you know about that domain to the options. Most \'unfamiliar\' questions are familiar knowledge in an unfamiliar presentation — the underlying principle is something you have studied.","Change your answer only when you have a specific, concrete reason — not because you feel uncertain. Research consistently shows that initial instincts on multiple-choice exams are correct more often than changed answers. If you realize you misread a key word (FIRST, NOT, EXCEPT), that is a valid reason to reconsider. Vague anxiety is not."] },
+  { id:3, num:"03", icon:"🌈", title:"Approach the Exam with Confidence, Calm & Trust in Your Training", color:"#2A9D8F",
+    points:["Feeling nervous before this exam is not evidence that you are unprepared. It is evidence that you care about performing well — which is exactly the mindset that characterizes careful, high-quality clinicians. Nervousness and unpreparedness are not the same thing. You have completed 18 weeks of structured clinical and administrative training. Your nervousness reflects the stakes; your preparation reflects the work.","Trust your clinical instincts when you feel uncertain. Your training has embedded reliable patterns: in safety questions, the answer that protects the patient and involves the supervising provider is almost always correct. In scope of practice questions, the answer is always to consult the supervising provider before proceeding — never to guess, never to act on a colleague\'s word alone. In HIPAA questions, reporting securely is never a violation; discussing patients in public always is.","The 18 weeks behind you were not accidental preparation. You measured vital signs until they were second nature. You practiced injections until the angles and sites were automatic. You reviewed EKG lead positions until you could place them from memory. You worked through HIPAA and ethics scenarios until the patterns were clear. That repetition lives in you — not on a review sheet you are leaving behind when the exam begins.","When you encounter a question that makes you pause, do not conclude that you do not know the answer. Slow down. Re-read the question. Identify the domain it belongs to. Apply what you know about how that domain works. Most moments of uncertainty on a certification exam are not the result of missing knowledge — they are the result of rushing past the question before the knowledge has a chance to surface.","You are walking into this exam as a trained, practiced, externship-completing clinical professional — not as a student who only read about these things. The exam is asking you to demonstrate what you can do. You can do this."] },
+  { id:4, num:"04", icon:"🧪", title:"Complete the Exam with Full Compliance and Academic Integrity", color:"#8338EC",
+    points:["The CCMA certification examination will be administered under standardized testing procedures — either at a proctored testing center or through a remote proctoring platform. In either format, you will receive specific instructions from the testing provider before your exam begins. Read every instruction fully and follow it exactly. Testing procedures exist to ensure that every CCMA credential represents a genuine, earned achievement — including yours.","Academic integrity during a certification exam means: completing the exam using only your own knowledge and training, without assistance from any external source, person, or unauthorized material. This standard is not a formality — it is the professional foundation on which a nationally recognized credential is built. A CCMA certification carries meaning in every clinical setting precisely because it represents demonstrated, independently verified competency.","If you encounter any technical issue during a remote-proctored exam — a dropped connection, a software malfunction, or an unclear instruction — follow the prescribed protocol provided by the testing platform. Do not attempt to resolve technical issues by improvising. Contact the proctor or testing support as directed. Document the issue and the steps you took. Your program coordinator is also available to help navigate any testing logistics that arise.","Maintain your professional composure throughout the entire exam session. The testing environment, whether in person or remote, is a professional context — approach it the same way you approached your externship: with discipline, attention, and respect for the process. The habits of professionalism you have built across 18 weeks apply here as much as they do at the patient bedside.","Everything about the way you have trained — the accuracy, the thoroughness, the following of protocols — is exactly what academic integrity in a certification exam reflects. You have prepared to take this exam by doing the work. Trust that preparation. The credential you earn will be fully yours."] },
+  { id:5, num:"05", icon:"📏", title:"Reflect on Your Growth Across the Full Medical Assistant Program", color:"#FF6B35",
+    points:["Week one: you were learning what a medical prefix meant, what a sphygmomanometer was, and why hand hygiene was the most important thing in any clinical encounter. Week eighteen: you can measure and document a full set of six vital signs, perform injections across three routes, set up a 12-lead EKG from memory, perform venipuncture in the correct order of draw, and navigate a HIPAA breach scenario without hesitation. That is not a small distance to have traveled.","The clinical skills are the visible part of your growth — but the professional habits are the part that matters most. The automatic hand hygiene. The instinct to verify patient identity before every procedure. The immediate, unhesitating sharps disposal. The accurate, prompt documentation. These behaviors are not test skills. They are the daily professional practice of every competent medical assistant in every clinical setting. You built them here. They are yours permanently.","You came into this program as a student learning what medical assisting was. You are leaving it as someone who has performed clinical procedures on real patients under supervision, documented care in a real EHR, navigated a real healthcare team, and demonstrated readiness for independent professional practice. That transition from student to clinician does not happen by reading — it happens by doing. You did it.","Take a moment to recognize the specific things that were hard — the terminology you had to memorize, the injection technique that took multiple practice sessions to feel right, the EKG lead position you kept misremembering, the HIPAA scenarios that seemed to blur together at first. Those were the actual work of becoming a clinician. And you did all of it.","The reflection this week is not just about celebrating completion. It is about recognizing the version of you that is walking into the CCMA exam — trained, practiced, externship-verified, and ready — and understanding that this person was built deliberately, over 18 weeks, one skill and one habit at a time."] },
+  { id:6, num:"06", icon:"💉", title:"Celebrate Program Completion & Begin Your Career as a Certified MA", color:"#E63946",
+    points:["You have completed a rigorous, 18-week Medical Assistant training program that covered clinical procedures, administrative practice, medical science, patient law and ethics, and infection control — all at a level of depth that qualifies you to sit for a nationally recognized professional certification. That is an accomplishment worth marking. Acknowledge it, share it with the people who supported you through it, and let yourself feel the pride it has earned.","Passing the CCMA exam is the first official step into your career — not the last step of your training. From the moment you receive your certification, you are a practicing medical assistant with a nationally recognized credential. That credential opens doors: to clinical roles, to higher starting wages, to advancement pathways, and to the professional community of certified healthcare workers you are now a part of.","Your externship supervisor is your first and most important professional reference — the person who has seen your clinical skills, your reliability, your communication, and your patient care firsthand. Maintain that professional relationship. Thank them. Stay in touch. A strong clinical reference from someone who has observed your actual practice is irreplaceable at every point in your career.","The CCMA credential requires renewal every two years through continuing education or re-examination. Use those CE hours as genuine learning opportunities — not credential maintenance. The medical field evolves constantly: new guidelines replace old ones, new technologies change clinical workflows, and new research reshapes best practices. The best medical assistants stay current for the entirety of their careers, not just at certification.","You came in as a student. You are leaving as a clinical professional. The patients you will care for — the ones who will feel the cuff on their arm, watch you prepare an injection, see you place EKG electrodes, and trust you with a needle in their arm — they will benefit from every hour you put into this program. Go earn your CCMA. Then go take excellent care of people."] },
+];
+
+var TAKEAWAYS = [
+  "Read every answer before choosing. Watch for FIRST, BEST, NOT, and EXCEPT. The right answer is often not the first one that sounds correct — it is the most complete one",
+  "Safety and ethics scenarios: the answer that protects the patient and involves the supervising provider is almost always correct. Trust this pattern every time it appears",
+  "Vital signs, injections, EKG, phlebotomy, HIPAA, scope of practice — the domains are clear, the training is behind you, and everything on this exam is something you have studied",
+  "Academic integrity throughout: follow all testing procedures completely, use only your own knowledge, and approach the exam the same way you approached every other professional moment in this program",
+  "When this exam is behind you: you will be a Certified Clinical Medical Assistant — trained, credentialed, and ready to enter the workforce and care for real patients. Go earn it"
+];
+
+var activeId = null;
+var sidebar = document.getElementById('sidebar');
+var content = document.getElementById('content');
+
+function buildSidebar() {
+  TOPICS.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'topic-btn';
+    btn.dataset.id = t.id;
+    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+    btn.addEventListener('click', function() { selectTopic(t.id); });
+    btn.addEventListener('mouseenter', function() {
+      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+    });
+    btn.addEventListener('mouseleave', function() {
+      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+    });
+    sidebar.appendChild(btn);
+  });
+  var divider = document.createElement('div');
+  divider.className = 'sidebar-divider';
+  sidebar.appendChild(divider);
+  var tkBtn = document.createElement('button');
+  tkBtn.className = 'topic-btn';
+  tkBtn.dataset.id = 'takeaways';
+  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+  tkBtn.addEventListener('mouseenter', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+  });
+  tkBtn.addEventListener('mouseleave', function() {
+    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+  });
+  sidebar.appendChild(tkBtn);
+}
+
+function updateSidebarActive() {
+  var btns = sidebar.querySelectorAll('.topic-btn');
+  btns.forEach(function(btn) {
+    var id = btn.dataset.id;
+    var topic = TOPICS.find(function(t) { return t.id == id; });
+    var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
+    if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
+    if (isActive && topic) {
+      btn.style.background = topic.color + '20';
+      btn.style.borderColor = topic.color;
+    } else if (isActive && id === 'takeaways') {
+      btn.style.background = 'rgba(255,255,255,0.08)';
+      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+    } else {
+      btn.style.background = 'var(--surface)';
+      btn.style.borderColor = 'var(--border)';
+    }
+  });
+}
+
+function renderTopic(t) {
+  var html = '<div class="content-header">' +
+    '<span class="icon">' + t.icon + '</span>' +
+    '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
+    '<div class="title">' + t.title + '</div></div></div>' +
+    '<div class="content-scroll">';
+  t.points.forEach(function(p, i) {
+    html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<p>' + p + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function renderTakeaways() {
+  var html = '<div class="content-header">' +
+    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<div><div class="title">Key Takeaways</div></div></div>' +
+    '<div class="content-scroll">';
+  TAKEAWAYS.forEach(function(t, i) {
+    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function selectTopic(id) {
+  activeId = id;
+  updateSidebarActive();
+  if (id === 'takeaways') {
+    content.innerHTML = renderTakeaways();
+  } else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) content.innerHTML = renderTopic(topic);
+  }
+  content.style.animation = 'none';
+  void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
+}
+
+buildSidebar();
+</script>
+</body>
+</html>

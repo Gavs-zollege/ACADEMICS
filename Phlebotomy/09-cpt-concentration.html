@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPT Exam Review Memory Match</title>
+<link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Nunito+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#08081a,#0c1028);font-family:'Nunito Sans',sans-serif;color:#e0e4f0}
+.wrap{max-width:560px;margin:0 auto;padding:36px 16px}
+.header{text-align:center;margin-bottom:28px}
+.tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#f0c040;font-weight:700;margin-bottom:8px}
+h1{font-family:'Yeseva One',serif;font-size:34px;font-weight:400}
+.sub{font-size:13px;color:#4a5070;margin-top:6px}
+.stats{display:flex;justify-content:center;gap:20px;margin-bottom:24px}
+.stats div{text-align:center}
+.stats .val{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.stats .lbl{font-size:10px;color:#3a4060;letter-spacing:1.5px;text-transform:uppercase;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.card{height:110px;perspective:800px;cursor:pointer}
+.inner{position:relative;width:100%;height:100%;transition:transform .45s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.inner.show{transform:rotateY(180deg)}
+.face{backface-visibility:hidden;position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px}
+.front{background:linear-gradient(145deg,#0e1228,#121838);border:1.5px solid #1a2240;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.front span{font-size:26px;color:#1a2240;font-weight:900}
+.back{transform:rotateY(180deg);gap:6px}
+.back.term{background:linear-gradient(145deg,#1a1828,#201e30);border:1.5px solid #f0c04055}
+.back.def{background:linear-gradient(145deg,#0e1228,#121838);border:1.5px solid #3b82f644}
+.back.wrong-card{border-color:#e74c3c !important}
+.back .type{font-size:8px;letter-spacing:2px;text-transform:uppercase;font-weight:700}
+.back.term .type{color:#f0c040}
+.back.def .type{color:#3b82f6}
+.back .txt{font-size:11px;font-weight:600;text-align:center;line-height:1.4}
+.back.term .txt{color:#f0e0b0}
+.back.def .txt{color:#a0b8e0}
+.card.matched{opacity:.5}
+.complete{text-align:center;padding:36px;border-radius:20px;margin-bottom:24px;background:linear-gradient(145deg,#0e1228,#1a1828);border:1px solid #f0c04044}
+.complete .icon{font-size:48px;margin-bottom:8px}
+.complete h2{font-family:'Yeseva One',serif;font-size:30px;color:#f0c040}
+.complete .det{font-size:14px;color:#4a5070;margin-top:8px}
+.play-btn{margin-top:24px;padding:14px 44px;border-radius:12px;border:none;background:linear-gradient(135deg,#f0c040,#d0a020);color:#1a1828;font-weight:800;font-size:15px;cursor:pointer}
+.reset-btn{display:block;margin:24px auto 0;padding:10px 28px;border-radius:8px;border:1px solid #1a2240;background:transparent;color:#4a5070;font-size:12px;font-weight:600;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const pairData=[
+{term:"Order of Draw",def:"Cultures first, gray last"},
+{term:"Tourniquet",def:"Less than 1 minute"},
+{term:"Exposure Response",def:"Wash first, report second"},
+{term:"Specimen Rejection",def:"Mislabeled, hemolyzed, clotted"},
+{term:"Chain of Custody",def:"Drug & alcohol legal specimens"},
+{term:"Centrifugation",def:"Balance tubes, correct speed"},
+{term:"Blood Culture",def:"Chlorhexidine, aseptic technique"},
+{term:"Pre-Analytical",def:"Where most errors occur"}
+];
+let cards=[],flipped=[],matched=new Set(),moves=0,lockBoard=false,timer=0,started=false,complete=false,wrongPair=null,timerInterval=null;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function buildDeck(){const c=[];pairData.forEach((p,i)=>{c.push({id:'t'+i,pairId:i,text:p.term,type:'term'});c.push({id:'d'+i,pairId:i,text:p.def,type:'def'});});return shuffle(c);}
+function fmtTime(s){return Math.floor(s/60)+':'+(s%60).toString().padStart(2,'0');}
+function init(){cards=buildDeck();flipped=[];matched=new Set();moves=0;lockBoard=false;timer=0;started=false;complete=false;wrongPair=null;if(timerInterval)clearInterval(timerInterval);render();}
+function flipCard(idx){
+  if(lockBoard||flipped.includes(idx)||matched.has(cards[idx].pairId))return;
+  if(!started){started=true;timerInterval=setInterval(()=>{timer++;const el=document.getElementById('tv');if(el)el.textContent=fmtTime(timer);},1000);}
+  flipped.push(idx);render();
+  if(flipped.length===2){moves++;lockBoard=true;const[a,b]=flipped;
+    if(cards[a].pairId===cards[b].pairId){matched.add(cards[a].pairId);flipped=[];lockBoard=false;if(matched.size===pairData.length){complete=true;clearInterval(timerInterval);}render();}
+    else{wrongPair=[a,b];render();setTimeout(()=>{wrongPair=null;flipped=[];lockBoard=false;render();},900);}
+  }
+}
+function render(){
+  const app=document.getElementById('app');
+  let html=`<div class="header"><div class="tag">CPT Exam Preparation</div><h1>Memory Match</h1><p class="sub">Match terms with definitions</p></div>`;
+  html+=`<div class="stats"><div><div class="val" style="color:#f0c040">${moves}</div><div class="lbl">Moves</div></div><div><div class="val" id="tv" style="color:#5dade2">${fmtTime(timer)}</div><div class="lbl">Time</div></div><div><div class="val" style="color:#27ae60">${matched.size}/${pairData.length}</div><div class="lbl">Pairs</div></div></div>`;
+  if(complete){html+=`<div class="complete"><div class="icon">🎉</div><h2>Complete!</h2><div class="det">${moves} moves in ${fmtTime(timer)}</div><button class="play-btn" onclick="init()">Play Again</button></div>`;}
+  html+=`<div class="grid">`;
+  cards.forEach((c,i)=>{const isF=flipped.includes(i);const isM=matched.has(c.pairId);const isW=wrongPair&&wrongPair.includes(i);const show=isF||isM;
+    html+=`<div class="card ${isM?'matched':''}" onclick="flipCard(${i})"><div class="inner ${show?'show':''}"><div class="face front"><span>?</span></div><div class="face back ${c.type} ${isW?'wrong-card':''}"><div class="type">${c.type==='term'?'Term':'Definition'}</div><div class="txt">${c.text}</div></div></div></div>`;
+  });html+=`</div>`;
+  if(started&&!complete)html+=`<button class="reset-btn" onclick="init()">Restart</button>`;
+  app.innerHTML=html;
+}
+init();
+</script>
+</body>
+</html>

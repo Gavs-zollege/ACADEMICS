@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPT Exam Review Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Domine:wght@400;500;600;700&family=Cabin:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#f8f4ee;font-family:'Domine',Georgia,serif;color:#2a1820}
+.wrap{max-width:580px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Cabin',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#8b2252;font-weight:700;margin-bottom:8px}
+h1{font-size:36px;font-weight:700;line-height:1.1;margin-bottom:4px}
+.sub{font-family:'Cabin',sans-serif;font-size:14px;color:#9a8080;margin-bottom:24px}
+.search-wrap{position:relative;margin-bottom:16px}
+.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:#c0a0a0}
+.search-wrap input{width:100%;padding:14px 16px 14px 44px;border-radius:14px;font-size:15px;border:2px solid #e0d4d4;background:#fff;color:#2a1820;outline:none;font-family:'Cabin',sans-serif}
+.search-wrap input:focus{border-color:#8b2252}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.cat-btn{padding:6px 14px;border-radius:20px;border:1.5px solid #d8c8c8;background:transparent;color:#9a7878;font-family:'Cabin',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.count{font-family:'Cabin',sans-serif;font-size:12px;color:#b0a0a0;margin-bottom:12px}
+.item{padding:18px 20px;border-radius:14px;cursor:pointer;margin-bottom:6px;border:1.5px solid transparent;transition:all .25s}
+.item:hover{background:#f0e8e4}
+.item.open{background:#fff;border-color:var(--item-bdr);box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.item-head{display:flex;justify-content:space-between;align-items:center}
+.item-left{display:flex;align-items:center;gap:12px}
+.item-bar{width:4px;height:28px;border-radius:2px;opacity:.3;transition:opacity .2s}
+.item.open .item-bar{opacity:1}
+.item-term{font-size:18px;font-weight:700}
+.item-cat{font-family:'Cabin',sans-serif;font-size:10px;padding:3px 10px;border-radius:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.item-def{margin-top:14px;margin-left:16px;padding-top:14px;border-top:1px solid #e8e0d8;font-size:15px;color:#5a4040;line-height:1.75;font-style:italic;display:none}
+.item.open .item-def{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">CPT Exam Preparation</div>
+  <h1>Glossary</h1>
+  <p class="sub">25 key terms — search, filter, and explore</p>
+  <div class="search-wrap"><span>⌕</span><input type="text" id="search" placeholder="Search terms or definitions..."></div>
+  <div class="filters" id="filters"></div>
+  <div class="count" id="count"></div>
+  <div id="list"></div>
+</div>
+<script>
+const glossary=[
+{term:"Standard Precautions",definition:"Infection control practices applied to ALL patients regardless of diagnosis — includes hand hygiene, PPE, and safe sharps handling.",category:"Safety"},
+{term:"OSHA BBP Standard",definition:"Occupational Safety and Health Administration's Bloodborne Pathogens Standard — requires employer exposure control plans and employee protections.",category:"Safety"},
+{term:"Transmission-Based Precautions",definition:"Additional precautions (contact, droplet, airborne) used for patients with known or suspected infectious diseases beyond standard precautions.",category:"Safety"},
+{term:"Exposure Incident",definition:"Contact with blood or infectious material through needlestick, splash, or mucous membrane. Requires immediate washing, reporting, and medical evaluation.",category:"Safety"},
+{term:"PPE",definition:"Personal Protective Equipment — gloves, gowns, masks, eye protection selected based on anticipated exposure risk during procedures.",category:"Safety"},
+{term:"Two Patient Identifiers",definition:"Full name and date of birth — required before every collection. Verified against requisition, ID band, and verbal confirmation.",category:"Patient Prep"},
+{term:"Informed Consent",definition:"Patient agreement after being told what a procedure involves. Must be obtained before every blood draw. If refused, stop immediately.",category:"Patient Prep"},
+{term:"Implied Consent",definition:"Non-verbal agreement indicated by patient actions such as extending their arm for a blood draw.",category:"Patient Prep"},
+{term:"Fasting Specimen",definition:"Blood drawn after patient has abstained from food/drink (except water) for 8–12 hours. Required for glucose and lipid panel accuracy.",category:"Patient Prep"},
+{term:"Order of Draw",definition:"Blood cultures → Light blue → Red → Gold/SST → Green → Lavender → Gray. Prevents cross-contamination of additives between tubes.",category:"Collections"},
+{term:"Venipuncture",definition:"Puncture of a vein for blood collection using needle at 15–30° angle, bevel up, tourniquet on less than 1 minute.",category:"Collections"},
+{term:"Capillary Collection",definition:"Blood collection from skin puncture (finger or heel). Wipe first drop, follow capillary order of draw, avoid excessive squeezing.",category:"Collections"},
+{term:"Hemolysis",definition:"Rupture of red blood cells releasing hemoglobin into serum/plasma. Caused by improper technique and is a common reason for specimen rejection.",category:"Collections"},
+{term:"Hematoma",definition:"Blood pooling under skin at puncture site. Caused by needle going through vein, insufficient pressure, or tourniquet removal issues.",category:"Collections"},
+{term:"Syncope",definition:"Fainting during or after blood draw. Response: stop draw, remove needle, position patient safely, call for help, document.",category:"Collections"},
+{term:"Blood Culture",definition:"Specimen collected using aseptic technique with chlorhexidine prep and correct bottle order. Contamination invalidates results.",category:"Special"},
+{term:"Chain of Custody",definition:"Documentation process for legal specimens (drug screens, blood alcohol). Requires continuous tracking, secure handling, and verified transfers.",category:"Special"},
+{term:"GTT",definition:"Glucose Tolerance Test — timed specimen collection at specific intervals after glucose load. Tests body's ability to metabolize glucose.",category:"Special"},
+{term:"STAT Specimen",definition:"Specimen requiring immediate collection and processing due to urgent clinical need. Prioritized over routine collections.",category:"Special"},
+{term:"Centrifugation",definition:"Spinning blood specimens to separate components. Requires balanced tubes, correct speed/time, complete separation, and PPE use.",category:"Processing"},
+{term:"Aliquoting",definition:"Transferring a portion of specimen to a secondary container for additional testing. Must maintain proper labeling and conditions.",category:"Processing"},
+{term:"Specimen Rejection",definition:"Refusal to process a specimen due to mislabeling, hemolysis, insufficient volume, incorrect tube, or improper storage.",category:"Processing"},
+{term:"Pre-Analytical Error",definition:"Errors occurring before laboratory testing — includes collection, labeling, and handling mistakes. Most common source of lab errors.",category:"Processing"},
+{term:"CLIA-Waived Test",definition:"Simple lab tests with low risk of error approved for point-of-care testing. QC must be performed before patient testing.",category:"POCT"},
+{term:"Critical Value",definition:"A lab result so abnormal it requires immediate reporting to the ordering provider. Delay could be life-threatening.",category:"POCT"}
+];
+const catColors={Safety:"#c0392b",
+"Patient Prep":"#2980b9",Collections:"#27ae60",Special:"#8e44ad",Processing:"#e67e22",POCT:"#16a085"};
+const cats=["All",...new Set(glossary.map(g=>g.category))];
+let filter="All",search="",openIdx=null;
+function renderFilters(){
+  document.getElementById('filters').innerHTML=cats.map(c=>{
+    const col=c==="All"?"#666":(catColors[c]||"#888");const active=filter===c;
+    return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}15;${active?`border-color:${col};color:${col};background:${col}15`:''}" onclick="setFilter('${c}')">${c}</button>`;
+  }).join('');
+}
+function renderList(){
+  const s=search.toLowerCase();
+  const filtered=glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));
+  document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' found';
+  if(!filtered.length){document.getElementById('list').innerHTML='<div style="text-align:center;padding:48px;color:#b0a0a0;font-family:Cabin,sans-serif">No terms match your search.</div>';return;}
+  document.getElementById('list').innerHTML=filtered.map(g=>{
+    const col=catColors[g.category]||"#888";const origIdx=glossary.indexOf(g);const isOpen=openIdx===origIdx;
+    return `<div class="item ${isOpen?'open':''}" style="--item-bdr:${col}30" onclick="toggle(${origIdx})"><div class="item-head"><div class="item-left"><div class="item-bar" style="background:${col}"></div><span class="item-term">${g.term}</span></div><span class="item-cat" style="background:${col}15;color:${col}">${g.category}</span></div><div class="item-def">${g.definition}</div></div>`;
+  }).join('');
+}
+function setFilter(c){filter=c;renderFilters();renderList()}
+function toggle(i){openIdx=openIdx===i?null:i;renderList()}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;renderList()});
+renderFilters();renderList();
+</script>
+</body>
+</html>

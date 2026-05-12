@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPT Exam Review Scenarios</title>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Fira+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#0a0c10,#0e1218);font-family:'Marcellus',serif;color:#d0dce8}
+.wrap{max-width:580px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Fira Sans',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#00bfa5;font-weight:700;margin-bottom:8px}
+h1{font-size:30px;color:#e8f0f8;margin-bottom:4px}
+.sub{font-family:'Fira Sans',sans-serif;font-size:14px;color:#4a6878;margin-bottom:28px}
+.stats{display:flex;gap:16px;margin-bottom:28px;font-family:'Fira Sans',sans-serif}
+.stat{padding:8px 18px;border-radius:10px;background:#0e1418;border:1px solid #1a2830;font-size:12px;color:#4a6878}
+.stat b{font-size:14px;font-weight:700;margin-left:4px}
+.scenario-card{padding:28px;border-radius:20px;margin-bottom:20px;background:linear-gradient(145deg,#101820,#141e28);border:1px solid #1a2830;box-shadow:0 12px 48px rgba(0,191,165,.04)}
+.sc-title{font-family:'Fira Sans',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#00bfa5;font-weight:700;margin-bottom:6px}
+.sc-domain{font-family:'Fira Sans',sans-serif;font-size:10px;display:inline-block;padding:3px 10px;border-radius:8px;background:#00bfa510;color:#00bfa5;margin-bottom:14px}
+.sc-text{font-size:17px;line-height:1.7}
+.opt{padding:16px 20px;border-radius:14px;border:1.5px solid #1a2830;background:#0a1018;margin-bottom:10px;font-size:15px;cursor:pointer;font-family:'Fira Sans',sans-serif;line-height:1.5;transition:all .25s;color:#90a8b8}
+.opt:hover{background:#101820;border-color:#00bfa5}
+.opt.correct{background:#0d1f1a;border-color:#00bfa5;color:#00e5c4;font-weight:600}
+.opt.wrong{background:#1f0d10;border-color:#e74c3c;color:#e74c3c}
+.opt.dim{color:#2a3840}
+.opt .letter{font-weight:700;margin-right:10px;opacity:.5}
+.rationale{margin-top:16px;padding:24px;border-radius:16px}
+.rationale.ok{background:#081a16;border:1px solid #00bfa533}
+.rationale.bad{background:#1a0c10;border:1px solid #e74c3c33}
+.rationale h3{font-family:'Fira Sans',sans-serif;font-weight:700;font-size:15px;margin-bottom:10px}
+.rationale p{font-family:'Fira Sans',sans-serif;font-size:14px;color:#7a9aa8;line-height:1.7}
+.rationale p b{color:#a0c0d0}
+.next-btn{margin-top:18px;width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#00bfa5,#009688);color:#fff;font-family:'Fira Sans',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const scenarios=[
+{title:"The Mislabeled Specimen",domain:"Processing",scenario:"You just finished a draw and notice the label on the tube has the wrong patient name. Another phlebotomist says, 'Just cross it out and relabel it.' What is the correct action?",options:["Cross out the wrong name and relabel","Peel off the label and reapply a correct one","Do NOT relabel — notify supervisor and recollect","Send it to the lab with a note explaining the error"],correct:2,rationale:"Mislabeled specimens must NEVER be relabeled. The correct action is to notify your supervisor, discard the specimen, and recollect. Patient safety and legal compliance require a fresh, correctly labeled specimen."},
+{title:"Exposure Protocol",domain:"Safety",scenario:"While transferring blood from a syringe using a transfer device, blood splashes into your eye. What is your immediate first action?",options:["Report to your supervisor first","Flush your eye with water immediately","Document the incident in the log","Continue working and report at end of shift"],correct:1,rationale:"For any exposure incident, the first step is always to wash/flush the affected area immediately. After flushing your eye, then report to your supervisor, document the incident, seek medical evaluation, and follow up with testing."},
+{title:"Order of Draw Dilemma",domain:"Collections",scenario:"A requisition calls for a CBC (lavender), basic metabolic panel (green), PT/INR (light blue), and blood cultures. Which tube do you fill FIRST?",options:["Lavender — it's the most common test","Light blue — coagulation is time-sensitive","Blood culture bottles — always drawn first","Green — chemistry tubes need more volume"],correct:2,rationale:"Blood cultures ALWAYS come first in the order of draw regardless of which tests are ordered. The correct sequence would be: Blood cultures → Light blue → Green → Lavender."},
+{title:"The Refusing Patient",domain:"Patient Prep",scenario:"You've identified yourself and explained the procedure. The patient says, 'I don't want my blood drawn today.' What should you do?",options:["Explain that the doctor ordered it so it must be done","Stop immediately and document the patient's refusal","Call security to assist with the procedure","Proceed quickly while the patient is distracted"],correct:1,rationale:"If a patient refuses, you must stop immediately. Patients have the right to withdraw consent at any time. Never force a procedure. Document the refusal and notify the ordering provider."},
+{title:"The STAT Order",domain:"Special",scenario:"You receive a STAT order for a patient while you're in the middle of a routine draw on another patient. What is the appropriate action?",options:["Abandon the current draw to rush to the STAT","Complete your current draw safely, then prioritize the STAT","Tell the nurse the STAT will have to wait until your rounds are done","Have an unlicensed aide perform the STAT draw"],correct:1,rationale:"While STAT orders are urgent, you should never abandon a procedure in progress. Complete your current draw safely (don't rush and risk errors), then immediately prioritize the STAT specimen over remaining routine collections."},
+{title:"Quality Control Check",domain:"POCT",scenario:"You're about to perform a glucose test on a point-of-care device. The QC was last run yesterday. A patient is waiting. What must you do?",options:["Run the test — yesterday's QC is close enough","Perform QC first, then test the patient's specimen","Skip QC since the patient is in a hurry","Ask a coworker if QC was already done today"],correct:1,rationale:"QC must be performed BEFORE patient testing for CLIA-waived POCT. Yesterday's QC does not count for today. Never skip QC regardless of time pressure — invalid QC means invalid patient results."}
+];
+let idx=0,selected=null,locked=false,score=0,completed=0;
+function render(){
+  const app=document.getElementById('app');const s=scenarios[idx];
+  let html=`<div class="tag">CPT Exam Preparation</div><h1>Clinical Scenarios</h1><p class="sub">Exam-style case studies across all 5 domains</p>`;
+  html+=`<div class="stats"><div class="stat">Scenario <b style="color:#a0c0d0">${idx+1}/${scenarios.length}</b></div>`;
+  if(completed>0)html+=`<div class="stat">Score <b style="color:#00bfa5">${score}/${completed}</b></div>`;
+  html+=`</div><div class="scenario-card"><div class="sc-title">${s.title}</div><div class="sc-domain">${s.domain}</div><div class="sc-text">${s.scenario}</div></div>`;
+  s.options.forEach((o,i)=>{let cls='opt';if(locked){if(i===s.correct)cls+=' correct';else if(i===selected)cls+=' wrong';else cls+=' dim';}html+=`<div class="${cls}" onclick="pick(${i})"><span class="letter">${String.fromCharCode(65+i)}.</span>${o}</div>`;});
+  if(locked){const c=selected===s.correct;html+=`<div class="rationale ${c?'ok':'bad'}"><h3 style="color:${c?'#00bfa5':'#e74c3c'}">${c?'✓ Correct':'✗ Incorrect'}</h3><p><b>Rationale: </b>${s.rationale}</p><button class="next-btn" onclick="next()">${idx+1>=scenarios.length?'Start Over':'Next Scenario →'}</button></div>`;}
+  app.innerHTML=html;
+}
+function pick(i){if(locked)return;selected=i;locked=true;completed++;if(i===scenarios[idx].correct)score++;render();}
+function next(){idx=(idx+1)%scenarios.length;selected=null;locked=false;render();}
+render();
+</script>
+</body>
+</html>

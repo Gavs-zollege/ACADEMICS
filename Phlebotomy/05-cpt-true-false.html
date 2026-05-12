@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPT Exam Review True or False</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,700&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#f5f0e8;font-family:'Lora',Georgia,serif;color:#1e1814}
+.wrap{max-width:520px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Public Sans',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#b87333;font-weight:700;margin-bottom:8px}
+h1{font-size:32px;font-weight:700;margin-bottom:24px}
+.info{display:flex;justify-content:space-between;margin-bottom:8px;font-family:'Public Sans',sans-serif;font-size:13px;color:#8a7868}
+.bar{height:5px;background:#e0d8c8;border-radius:3px;margin-bottom:36px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#b87333,#d4955a);border-radius:3px;transition:width .5s}
+.statement-card{padding:36px 32px;border-radius:20px;background:#fff;margin-bottom:24px;border:1px solid #e0d8cc;box-shadow:0 8px 40px rgba(184,115,51,.06)}
+.statement-card p{font-size:20px;line-height:1.6;font-weight:600;text-align:center;font-style:italic}
+.btn-row{display:flex;gap:16px;margin-bottom:20px}
+.tf-btn{flex:1;padding:22px 0;border-radius:16px;border:2px solid #e0d8cc;background:#fff;font-family:'Public Sans',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;cursor:pointer;transition:all .2s;color:#1e1814}
+.tf-btn:hover{transform:scale(1.03)}
+.tf-btn.correct-pick{background:#ecfdf5;border-color:#27ae60;color:#1a7a3a}
+.tf-btn.wrong-pick{background:#fef2f2;border-color:#dc3545;color:#c0392b}
+.tf-btn.faded{background:#f0ece4;border-color:#e0d8cc;color:#b8a898}
+.tf-btn:disabled{cursor:default}
+.feedback{padding:24px;border-radius:16px;margin-bottom:20px}
+.feedback.ok{background:#f0faf3;border:1px solid #27ae6030}
+.feedback.bad{background:#fef5f2;border:1px solid #dc354530}
+.feedback h3{font-family:'Public Sans',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px}
+.feedback p{font-family:'Public Sans',sans-serif;font-size:14px;color:#5a4838;line-height:1.6}
+.next-btn{width:100%;padding:14px;border-radius:12px;border:none;background:#b87333;color:#fff;font-family:'Public Sans',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-top:16px}
+.result{text-align:center;padding:40px 0}
+.result .pct{font-size:80px;font-weight:700;line-height:1}
+.result .det{font-family:'Public Sans',sans-serif;font-size:16px;color:#8a7868;margin-top:8px}
+.result .streak{margin-top:16px;padding:10px 20px;border-radius:12px;background:#e8e0d4;display:inline-block;font-family:'Public Sans',sans-serif;font-size:13px;color:#8a7868}
+.result .streak b{color:#b87333}
+.retry-btn{margin-top:32px;padding:16px 48px;border-radius:50px;border:none;background:#b87333;color:#fff;font-family:'Public Sans',sans-serif;font-weight:700;font-size:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const items=[
+{statement:"The NHA CPT exam has 120 scored questions.",answer:false,explanation:"The exam has 100 scored questions plus 20 unscored pretest questions, for 120 total — but only 100 count toward your score."},
+{statement:"Safety & Compliance is the largest domain on the CPT exam at 26%.",answer:false,explanation:"Routine Blood Collections is actually the largest at 28%. Safety & Compliance is 26%, making it the second-largest domain."},
+{statement:"The first step after a needlestick is to wash the site immediately.",answer:true,explanation:"The exposure incident protocol is: Wash → Report → Document → Medical evaluation → Follow-up testing. Washing is always first."},
+{statement:"Standard Precautions are only for patients with known infections.",answer:false,explanation:"Standard Precautions apply to ALL patients regardless of known or suspected infection status. This is a fundamental safety principle."},
+{statement:"The correct venipuncture angle is 15–30 degrees with bevel up.",answer:true,explanation:"Insert the needle at 15–30° with the bevel facing up. The tourniquet should be on less than 1 minute and released before removing the needle."},
+{statement:"Light blue tubes come BEFORE blood culture bottles in the order of draw.",answer:false,explanation:"Blood cultures always come FIRST, followed by light blue. The full order: Cultures → Blue → Red → Gold → Green → Lavender → Gray."},
+{statement:"The first drop of blood in capillary collection should be wiped away.",answer:true,explanation:"The first drop may contain tissue fluid that dilutes the sample. Wipe it away and collect subsequent drops without excessive squeezing."},
+{statement:"Chain of custody is required for all routine blood draws.",answer:false,explanation:"Chain of custody is only required for legal specimens such as drug screens and blood alcohol testing — not routine collections."},
+{statement:"Specimen mislabeling is a valid reason for specimen rejection.",answer:true,explanation:"Mislabeled specimens must be rejected. Other rejection reasons include hemolysis, insufficient volume, incorrect tube, and improper storage."},
+{statement:"Chlorhexidine is the antiseptic used for blood culture preparation.",answer:true,explanation:"Blood culture sites require chlorhexidine prep with aseptic technique. Contamination from improper prep invalidates results."},
+{statement:"Quality control for CLIA-waived tests only needs to be done monthly.",answer:false,explanation:"QC for CLIA-waived POCT must be performed before patient testing — not on a monthly schedule. Follow manufacturer instructions."},
+{statement:"Most laboratory errors occur in the pre-analytical phase.",answer:true,explanation:"Pre-analytical errors (collection, labeling, handling, transport) are the most common source of lab errors in the workflow."}
+];
+let idx=0,choice=null,score=0,streak=0,bestStreak=0,done=false;
+function render(){
+  const app=document.getElementById('app');
+  if(done){const pct=Math.round(score/items.length*100);const col=pct>=80?'#1a7a3a':pct>=60?'#b87333':'#c0392b';app.innerHTML=`<div class="result"><div class="pct" style="color:${col}">${pct}%</div><div class="det">${score} of ${items.length} correct</div><div class="streak">Best streak: <b>${bestStreak}</b></div><div><button class="retry-btn" onclick="restart()">Try Again</button></div></div>`;return;}
+  const it=items[idx];const answered=choice!==null;const correct=answered&&choice===it.answer;
+  let html=`<div class="tag">CPT Exam Preparation</div><h1>True or False</h1><div class="info"><span>${idx+1} of ${items.length}</span><div><span>Score: <b style="color:#1a7a3a">${score}</b></span>${streak>1?` &nbsp;🔥 <b style="color:#b87333">${streak}</b>`:''}</div></div><div class="bar"><div class="bar-fill" style="width:${((idx+(answered?1:0))/items.length)*100}%"></div></div><div class="statement-card"><p>"${it.statement}"</p></div><div class="btn-row">`;
+  [true,false].forEach(val=>{let cls='tf-btn';if(answered){if(val===it.answer)cls+=' correct-pick';else if(val===choice)cls+=' wrong-pick';else cls+=' faded';}html+=`<button class="${cls}" ${answered?'disabled':''} onclick="pick(${val})">${val?'TRUE':'FALSE'}</button>`;});
+  html+=`</div>`;if(answered)html+=`<div class="feedback ${correct?'ok':'bad'}"><h3 style="color:${correct?'#1a7a3a':'#c0392b'}">${correct?'Correct!':'Incorrect'}</h3><p>${it.explanation}</p><button class="next-btn" onclick="next()">${idx+1>=items.length?'See Results':'Next Statement →'}</button></div>`;
+  app.innerHTML=html;
+}
+function pick(val){if(choice!==null)return;choice=val;if(val===items[idx].answer){score++;streak++;if(streak>bestStreak)bestStreak=streak;}else streak=0;render();}
+function next(){if(idx+1>=items.length){done=true;render();return;}idx++;choice=null;render();}
+function restart(){idx=0;choice=null;score=0;streak=0;bestStreak=0;done=false;render();}
+render();
+</script>
+</body>
+</html>

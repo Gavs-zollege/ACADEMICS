@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPT Exam Review Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Corben:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#0e0a0c,#12080e,#100a0c);font-family:'Corben',Georgia,serif;color:#f0e8ec}
+.wrap{max-width:520px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Inter',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c9917a;font-weight:700;margin-bottom:10px;text-align:center}
+h1{font-size:26px;font-weight:700;text-align:center;margin-bottom:4px;letter-spacing:.5px}
+.sub{font-family:'Inter',sans-serif;font-size:13px;color:#6a5060;text-align:center;margin-bottom:24px}
+.stats{display:flex;justify-content:center;gap:24px;margin-bottom:24px;font-family:'Inter',sans-serif}
+.stats div{text-align:center}
+.stats .num{font-size:22px;font-weight:800}
+.stats .lbl{font-size:10px;color:#6a5060;letter-spacing:1px;text-transform:uppercase}
+.bar{height:4px;background:#1a1018;border-radius:2px;margin-bottom:28px;overflow:hidden;display:flex}
+.bar-known{background:#c9917a;transition:width .4s}
+.bar-review{background:#e67e22;transition:width .4s}
+.counter{font-family:'Inter',sans-serif;font-size:12px;color:#6a5060;text-align:center;margin-bottom:14px;letter-spacing:1px}
+.counter .badge{margin-left:10px;font-weight:700}
+.card-wrap{perspective:1000px;cursor:pointer;margin-bottom:20px}
+.card-inner{position:relative;width:100%;min-height:280px;border-radius:20px;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card-inner.flipped{transform:rotateY(180deg)}
+.card-face{backface-visibility:hidden;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;border-radius:20px}
+.card-front{background:linear-gradient(145deg,#16101a,#1a1220);border:1px solid #2a1a28;box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(201,145,122,.04)}
+.card-back{transform:rotateY(180deg);background:linear-gradient(145deg,#1a1220,#1e1428);border:1px solid #3a2a38;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.card-label{position:absolute;top:16px;left:20px;font-family:'Inter',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase}
+.card-front .card-label{color:#4a3a48}
+.card-back .card-label{color:#c9917a}
+.card-front .card-text{font-size:18px;text-align:center;line-height:1.6;font-weight:700}
+.card-back .card-text{font-size:14px;color:#c0b0b8;text-align:center;line-height:1.8;font-family:'Inter',sans-serif;font-weight:500}
+.card-hint{position:absolute;bottom:16px;font-family:'Inter',sans-serif;font-size:11px;color:#4a3a48}
+.rate-row{display:flex;gap:10px;margin-bottom:16px}
+.rate-row button{flex:1;padding:14px 0;border-radius:12px;font-family:'Inter',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s}
+.btn-learn{border:1px solid #5a3800;background:#2a1800;color:#e67e22}
+.btn-learn:hover{background:#3a2800}
+.btn-got{border:1px solid #5a3a48;background:#2a1820;color:#c9917a}
+.btn-got:hover{background:#3a2830}
+.nav-row{display:flex;gap:10px}
+.nav-row button{flex:1;padding:12px 0;border-radius:10px;border:1px solid #2a1a28;background:transparent;color:#6a5060;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer}
+.nav-row button:hover{background:#1a1018}
+.reset-btn{display:block;margin:20px auto 0;padding:8px 24px;border-radius:8px;border:none;background:transparent;color:#4a3a48;font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">CPT Exam Preparation</div>
+  <h1>Flashcards</h1>
+  <p class="sub">Tap the card to reveal the answer</p>
+  <div class="stats">
+    <div><div class="num" style="color:#c9917a" id="knownCount">0</div><div class="lbl">Mastered</div></div>
+    <div><div class="num" style="color:#e67e22" id="reviewCount">0</div><div class="lbl">Review</div></div>
+    <div><div class="num" style="color:#6a5060" id="remainCount">15</div><div class="lbl">Remaining</div></div>
+  </div>
+  <div class="bar"><div class="bar-known" id="barKnown"></div><div class="bar-review" id="barReview"></div></div>
+  <div class="counter" id="counter">1 / 15</div>
+  <div class="card-wrap" id="cardWrap">
+    <div class="card-inner" id="cardInner">
+      <div class="card-face card-front"><div class="card-label">Question</div><div class="card-text" id="frontText"></div><div class="card-hint">tap to flip</div></div>
+      <div class="card-face card-back"><div class="card-label">Answer</div><div class="card-text" id="backText"></div></div>
+    </div>
+  </div>
+  <div class="rate-row">
+    <button class="btn-learn" onclick="markReview()">Still Learning</button>
+    <button class="btn-got" onclick="markKnown()">Got It ✓</button>
+  </div>
+  <div class="nav-row"><button onclick="go(-1)">← Previous</button><button onclick="go(1)">Next →</button></div>
+  <button class="reset-btn" id="resetBtn" style="display:none" onclick="reset()">Reset Progress</button>
+</div>
+<script>
+const cards=[
+{front:"What is the NHA CPT exam format?",back:"100 scored questions + 20 unscored pretest questions, with a 2-hour time limit. Covers 5 domains: Safety, Patient Prep, Routine Collections, Special Collections, Processing & Transport."},
+{front:"What percentage of the CPT exam covers Safety & Compliance?",back:"26% — the largest domain. Focuses on OSHA BBP Standard, Standard Precautions, PPE, hand hygiene, sharps safety, HIPAA, and ethical responsibilities."},
+{front:"What is the correct order of draw for venipuncture?",back:"Blood cultures → Light blue → Red → Gold/SST → Green → Lavender → Gray. Incorrect order causes additive contamination between tubes."},
+{front:"What are the 5 steps for an exposure incident?",back:"1) Wash immediately 2) Report to supervisor 3) Document the incident 4) Seek medical evaluation 5) Follow-up testing. This sequence is highly testable."},
+{front:"What are the two required patient identifiers?",back:"Full name and date of birth. Always verify against the requisition, ID band (if applicable), and verbal confirmation from the patient."},
+{front:"What are the three types of consent?",back:"Implied (patient extends arm), Informed (patient told what to expect and agrees), and Expressed (verbal or written agreement). Consent must be obtained before collection."},
+{front:"What angle should the needle enter during venipuncture?",back:"15–30 degrees with bevel up. The tourniquet should be on less than 1 minute, released before needle removal, and the safety device activated immediately."},
+{front:"What are common reasons for specimen rejection?",back:"Mislabeling, hemolysis, insufficient volume, incorrect tube, and improper storage conditions. These are pre-analytical errors."},
+{front:"What is the capillary collection order of draw?",back:"EDTA (lavender) → other additives → serum. Always wipe away the first drop of blood and avoid excessive squeezing."},
+{front:"When is chain of custody required?",back:"For drug screens and blood alcohol testing. Requires continuous documentation, secure handling, and verified transfers at every step."},
+{front:"What is the correct site for capillary collection?",back:"Finger (middle or ring finger, medial/lateral side) for adults; heel (medial/lateral plantar surface) for infants. Avoid previous puncture sites."},
+{front:"What is the purpose of centrifugation?",back:"To separate blood components (serum/plasma from cells). Tubes must be balanced, spun at correct speed/time, and allowed complete separation. PPE required."},
+{front:"What makes blood culture collection critical?",back:"Must use aseptic technique, chlorhexidine prep, correct bottle order, and proper volume. Contamination invalidates results and can lead to misdiagnosis."},
+{front:"What is the most common pre-analytical error?",back:"Specimen labeling errors. The laboratory workflow (Order → Collect → Label → Process → Transport → Test → Report) has most errors occurring pre-analytically."},
+{front:"What are CLIA-waived POCT requirements?",back:"Only CLIA-waived tests may be performed, QC must be done before patient testing, follow manufacturer instructions exactly, and report critical values immediately."}
+];
+let idx=0,known=new Set(),review=new Set();
+function render(){
+  document.getElementById('frontText').textContent=cards[idx].front;
+  document.getElementById('backText').textContent=cards[idx].back;
+  document.getElementById('cardInner').classList.remove('flipped');
+  const t=cards.length,k=known.size,r=review.size;
+  document.getElementById('knownCount').textContent=k;
+  document.getElementById('reviewCount').textContent=r;
+  document.getElementById('remainCount').textContent=t-k-r;
+  document.getElementById('barKnown').style.width=(k/t*100)+'%';
+  document.getElementById('barReview').style.width=(r/t*100)+'%';
+  let extra='';
+  if(known.has(idx))extra=' <span class="badge" style="color:#c9917a">✓ Mastered</span>';
+  if(review.has(idx))extra=' <span class="badge" style="color:#e67e22">↻ Review</span>';
+  document.getElementById('counter').innerHTML=(idx+1)+' / '+t+extra;
+  document.getElementById('resetBtn').style.display=(k>0||r>0)?'block':'none';
+}
+document.getElementById('cardWrap').onclick=()=>document.getElementById('cardInner').classList.toggle('flipped');
+function go(d){idx=(idx+d+cards.length)%cards.length;render()}
+function markKnown(){known.add(idx);review.delete(idx);go(1)}
+function markReview(){review.add(idx);known.delete(idx);go(1)}
+function reset(){known.clear();review.clear();idx=0;render()}
+render();
+</script>
+</body>
+</html>

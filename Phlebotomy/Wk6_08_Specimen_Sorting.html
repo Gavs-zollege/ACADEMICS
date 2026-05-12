@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wk6 Activity 8 — Specimen Sorting</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--green:#27ae60;--green-light:#2ecc71;--blue:#3498db;--cyan:#1abc9c;--yellow:#f39c12;--purple:#9b59b6;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;--radius:16px;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 20px 60px;}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:700px;margin:0 auto;}
+header{text-align:center;padding:48px 0 20px;}
+header .week{font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);font-weight:700;margin-bottom:4px;}
+header .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+header h1{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
+.instructions{text-align:center;color:var(--dim);font-size:.82rem;margin-bottom:20px;}
+.bins{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.bin{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:14px 10px;text-align:center;min-height:120px;transition:all .2s;cursor:pointer;}
+.bin.active{border-style:dashed;box-shadow:0 0 20px rgba(255,255,255,.05);}
+.bin-title{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.bin[data-cat="chill"] .bin-title{color:var(--blue);}
+.bin[data-cat="warm"] .bin-title{color:var(--yellow);}
+.bin[data-cat="light"] .bin-title{color:var(--purple);}
+.bin[data-cat="room"] .bin-title{color:var(--cyan);}
+.bin-items{min-height:50px;}
+.sorted-chip{font-size:.72rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;margin:3px 2px;display:inline-block;}
+.bank-label{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin-bottom:10px;}
+.specimens{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.spec-chip{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:10px 18px;font-size:.82rem;cursor:pointer;transition:all .2s;font-weight:600;}
+.spec-chip:hover{border-color:var(--red);transform:translateY(-1px);}
+.spec-chip.selected{border-color:var(--blue);background:rgba(52,152,219,.1);}
+.spec-chip.placed{opacity:.35;pointer-events:none;}
+.btns{display:flex;gap:10px;flex-wrap:wrap;}
+.btn{padding:12px 28px;border-radius:10px;cursor:pointer;font-size:.88rem;font-weight:600;font-family:inherit;transition:all .2s;border:none;}
+.btn-primary{background:var(--red);color:#fff;}.btn-primary:hover{background:var(--red-light);}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text);}.btn-secondary:hover{border-color:var(--red);}
+.feedback{text-align:center;margin-top:16px;font-size:1rem;font-weight:600;min-height:28px;}
+@media(max-width:600px){.bins{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<header>
+  <div class="week">Week 6 — Processing Specimens</div>
+  <div class="tag">Activity 8 of 10</div>
+  <h1>Specimen Sorting</h1>
+  <p>Sort each specimen into the correct transport category.</p>
+</header>
+<div class="instructions">Select a specimen chip, then click the correct bin to place it.</div>
+<div class="bins">
+  <div class="bin" data-cat="chill" onclick="placeTo('chill')"><div class="bin-title">❄️ Chill on Ice</div><div class="bin-items" id="bin-chill"></div></div>
+  <div class="bin" data-cat="warm" onclick="placeTo('warm')"><div class="bin-title">🔥 Keep Warm</div><div class="bin-items" id="bin-warm"></div></div>
+  <div class="bin" data-cat="light" onclick="placeTo('light')"><div class="bin-title">🔆 Light-Protect</div><div class="bin-items" id="bin-light"></div></div>
+  <div class="bin" data-cat="room" onclick="placeTo('room')"><div class="bin-title">🏠 Room Temp</div><div class="bin-items" id="bin-room"></div></div>
+</div>
+<div class="bank-label">Specimen Bank</div>
+<div class="specimens" id="bank"></div>
+<div class="btns">
+  <button class="btn btn-primary" onclick="check()">Check Sorting</button>
+  <button class="btn btn-secondary" onclick="init()">Reset</button>
+</div>
+<div class="feedback" id="feedback"></div>
+</div>
+<script>
+const specimens=[
+  {name:"Lactic acid",cat:"chill"},
+  {name:"Ammonia",cat:"chill"},
+  {name:"ABGs",cat:"chill"},
+  {name:"Cold agglutinin",cat:"warm"},
+  {name:"Bilirubin",cat:"light"},
+  {name:"Vitamin B6",cat:"light"},
+  {name:"Glucose (gray top)",cat:"room"},
+  {name:"CBC (lavender top)",cat:"room"},
+];
+let selected=null,placements={};
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function init(){
+  selected=null;placements={};
+  ['chill','warm','light','room'].forEach(c=>document.getElementById(`bin-${c}`).innerHTML='');
+  document.getElementById('feedback').textContent='';
+  const shuffled=shuffle(specimens);
+  document.getElementById('bank').innerHTML=shuffled.map((s,i)=>`<div class="spec-chip" id="sc-${i}" data-idx="${i}" data-name="${s.name}" onclick="selectSpec(${i})">${s.name}</div>`).join('');
+}
+function selectSpec(i){
+  if(document.getElementById(`sc-${i}`).classList.contains('placed'))return;
+  document.querySelectorAll('.spec-chip').forEach(c=>c.classList.remove('selected'));
+  document.getElementById(`sc-${i}`).classList.add('selected');
+  selected=i;
+}
+function placeTo(cat){
+  if(selected===null)return;
+  const chip=document.getElementById(`sc-${selected}`);
+  const name=chip.dataset.name;
+  chip.classList.remove('selected');chip.classList.add('placed');
+  placements[name]=cat;
+  document.getElementById(`bin-${cat}`).innerHTML+=`<div class="sorted-chip">${name}</div>`;
+  selected=null;
+}
+function check(){
+  let score=0;
+  specimens.forEach(s=>{
+    if(placements[s.name]===s.cat)score++;
+  });
+  const total=specimens.length;
+  const placed=Object.keys(placements).length;
+  const fb=document.getElementById('feedback');
+  if(placed<total){fb.textContent=`Place all ${total} specimens first! (${placed}/${total} placed)`;fb.style.color='var(--yellow)';}
+  else if(score===total){fb.textContent='All specimens sorted correctly!';fb.style.color='var(--green-light)';}
+  else{fb.textContent=`${score}/${total} correct. Try resetting and re-sorting!`;fb.style.color='var(--red-light)';}
+}
+init();
+</script>
+</body>
+</html>

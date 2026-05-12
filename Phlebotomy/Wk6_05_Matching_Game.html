@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wk6 Activity 5 — Matching Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--green:#27ae60;--green-light:#2ecc71;--blue:#3498db;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;--radius:16px;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 20px 60px;}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:700px;margin:0 auto;}
+header{text-align:center;padding:48px 0 28px;}
+header .week{font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);font-weight:700;margin-bottom:4px;}
+header .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px;}
+.col-label{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin-bottom:10px;padding-left:4px;}
+.item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;cursor:pointer;font-size:.85rem;transition:all .25s;margin-bottom:8px;line-height:1.4;}
+.item:hover{border-color:var(--red);transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.item.selected{border-color:var(--blue);background:rgba(52,152,219,.1);box-shadow:0 0 16px rgba(52,152,219,.15);}
+.item.matched{border-color:var(--green);background:rgba(39,174,96,.1);color:var(--green-light);pointer-events:none;transform:scale(.97);opacity:.85;}
+.item.wrong-flash{border-color:var(--red);background:rgba(192,57,43,.1);animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+.feedback{text-align:center;margin-top:24px;font-size:1rem;font-weight:600;min-height:28px;}
+.feedback.win{color:var(--green-light);font-family:'Playfair Display',serif;font-size:1.3rem;}
+.attempts{text-align:center;color:var(--muted);font-size:.8rem;margin-top:8px;}
+.reset{display:block;margin:20px auto 0;background:var(--red);border:none;color:#fff;padding:12px 32px;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600;font-family:inherit;transition:all .2s;}
+.reset:hover{background:var(--red-light);}
+@media(max-width:500px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<header>
+  <div class="week">Week 6 — Processing Specimens</div>
+  <div class="tag">Activity 5 of 10</div>
+  <h1>Matching Game</h1>
+  <p>Match each specimen or concept to its handling requirement.</p>
+</header>
+<div class="grid">
+  <div><div class="col-label">Specimen / Concept</div><div id="terms"></div></div>
+  <div><div class="col-label">Handling Requirement</div><div id="defs"></div></div>
+</div>
+<div class="feedback" id="feedback"></div>
+<div class="attempts" id="attempts"></div>
+<button class="reset" onclick="init()">Reset Game</button>
+</div>
+<script>
+const pairs=[
+  {term:"Lactic acid",def:"Chill on crushed ice immediately"},
+  {term:"Cold agglutinin",def:"Keep warm at 37 °C"},
+  {term:"Bilirubin",def:"Wrap in foil — light-sensitive"},
+  {term:"ABGs",def:"Test within 15–30 minutes"},
+  {term:"Drug screen",def:"Chain of custody required"},
+  {term:"Critical POCT result",def:"Report immediately to provider"},
+  {term:"STAT specimen",def:"Flag and communicate to lab"},
+];
+let selTerm=null,selDef=null,matched=0,attempts=0;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function init(){
+  selTerm=null;selDef=null;matched=0;attempts=0;
+  document.getElementById('feedback').textContent='';document.getElementById('feedback').className='feedback';
+  document.getElementById('attempts').textContent='';
+  const shuffDefs=shuffle(pairs);
+  document.getElementById('terms').innerHTML=pairs.map((p,i)=>`<div class="item" data-idx="${i}" data-type="term" onclick="pick(this)">${p.term}</div>`).join('');
+  document.getElementById('defs').innerHTML=shuffDefs.map((p)=>`<div class="item" data-orig="${pairs.indexOf(p)}" data-type="def" onclick="pick(this)">${p.def}</div>`).join('');
+}
+function pick(el){
+  if(el.classList.contains('matched'))return;
+  if(el.dataset.type==='term'){
+    document.querySelectorAll('#terms .item').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');selTerm=el;
+  }else{
+    document.querySelectorAll('#defs .item').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');selDef=el;
+  }
+  if(selTerm&&selDef){
+    attempts++;
+    if(selTerm.dataset.idx===selDef.dataset.orig){
+      selTerm.classList.remove('selected');selTerm.classList.add('matched');
+      selDef.classList.remove('selected');selDef.classList.add('matched');
+      matched++;
+      if(matched===pairs.length){document.getElementById('feedback').textContent='All matched! Great work!';document.getElementById('feedback').className='feedback win';}
+      else{document.getElementById('feedback').textContent=`✓ Correct! ${matched}/${pairs.length}`;document.getElementById('feedback').style.color='var(--green-light)';}
+    }else{
+      selTerm.classList.add('wrong-flash');selDef.classList.add('wrong-flash');
+      document.getElementById('feedback').textContent='✗ Not a match — try again.';document.getElementById('feedback').style.color='var(--red-light)';
+      const t=selTerm,d=selDef;
+      setTimeout(()=>{t.classList.remove('wrong-flash','selected');d.classList.remove('wrong-flash','selected');},500);
+    }
+    document.getElementById('attempts').textContent=`Attempts: ${attempts}`;
+    selTerm=null;selDef=null;
+  }
+}
+init();
+</script>
+</body>
+</html>

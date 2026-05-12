@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wk6 Activity 9 — Clinical Scenarios</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--green:#27ae60;--green-light:#2ecc71;--yellow:#f39c12;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;--radius:16px;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 20px 60px;}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:640px;margin:0 auto;}
+header{text-align:center;padding:48px 0 28px;}
+header .week{font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);font-weight:700;margin-bottom:4px;}
+header .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
+.progress{width:100%;height:4px;background:var(--border);border-radius:2px;margin-bottom:28px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--red);transition:width .5s;border-radius:2px;}
+.scenario{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.sc-label{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--yellow);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.sc-label::before{content:'🏥';}
+.sc-text{font-size:.95rem;line-height:1.65;margin-bottom:16px;color:var(--text);font-weight:500;padding:16px;background:linear-gradient(135deg,var(--surface2),rgba(243,156,18,.03));border-radius:10px;border-left:3px solid var(--yellow);}
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;cursor:pointer;font-size:.86rem;transition:all .2s;line-height:1.4;}
+.opt:hover{border-color:var(--red);background:rgba(192,57,43,.06);}
+.opt.correct{border-color:var(--green);background:rgba(39,174,96,.12);color:var(--green-light);}
+.opt.wrong{border-color:var(--red);background:rgba(192,57,43,.12);color:var(--red-light);opacity:.6;}
+.opt.disabled{pointer-events:none;}
+.explain{margin-top:12px;font-size:.82rem;color:var(--dim);padding:14px;background:rgba(255,255,255,.02);border-radius:8px;border-left:3px solid var(--green);line-height:1.5;animation:fadeIn .3s ease;}
+.score-card{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;margin-top:20px;animation:fadeIn .5s ease;}
+.score-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:var(--green-light);}
+.score-label{color:var(--dim);font-size:.9rem;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<header>
+  <div class="week">Week 6 — Processing Specimens</div>
+  <div class="tag">Activity 9 of 10</div>
+  <h1>Clinical Scenarios</h1>
+  <p>Read each post-collection situation and choose the best action.</p>
+</header>
+<div class="progress"><div class="progress-fill" id="prog"></div></div>
+<div id="list"></div>
+<div id="score"></div>
+</div>
+<script>
+const scenarios=[
+  {scenario:"You've just collected a lactic acid specimen. The pneumatic tube system is down and the lab is a 10-minute walk away. What should you do?",
+   opts:["Leave the specimen at the nurse's station until the system is fixed","Place the tube on crushed ice and hand-deliver it to the lab","Transport it at room temperature since the walk is short","Wait for the pneumatic system to come back online"],correct:1,
+   explain:"Lactic acid must be chilled immediately on crushed ice. Delays or room-temperature transport will falsely elevate results."},
+  {scenario:"A POCT glucose reading shows 42 mg/dL on a hospitalized patient. What is your immediate next step?",
+   opts:["Document the result and move to the next patient","Repeat the test to confirm before telling anyone","Report the critical value immediately to the licensed provider","Call the patient's family to inform them"],correct:2,
+   explain:"A glucose of 42 mg/dL is critically low. It must be reported immediately to a provider, then documented with time, result, person notified, and your credentials."},
+  {scenario:"You receive a lavender-top tube back from the lab marked 'rejected — clotted.' The nurse asks why. What is the most likely cause?",
+   opts:["The tube was expired","The tube was underfilled or not mixed properly after collection","The patient has a clotting disorder","Lavender tubes always clot"],correct:1,
+   explain:"Underfilling disrupts the blood-to-EDTA ratio, and insufficient mixing allows clots to form. Both are preventable collection errors."},
+  {scenario:"A physician orders a bilirubin level on a jaundiced newborn. You draw the specimen and set it on the counter while you label it. Is this acceptable?",
+   opts:["Yes — brief light exposure is fine","No — bilirubin is light-sensitive and should be wrapped in foil or placed in an amber tube immediately","Yes — only UV light affects bilirubin","No — bilirubin must be frozen"],correct:1,
+   explain:"Bilirubin degrades rapidly when exposed to light, causing falsely low results. Protect it from light immediately after collection."},
+  {scenario:"You're collecting a urine sample for a pre-employment drug screen. The patient goes to the restroom alone and hands you a warm cup. What's the issue?",
+   opts:["No issue — the temperature proves it's fresh","The collection was not witnessed, violating chain of custody protocol","The cup wasn't labeled at bedside","You should have used a blood test instead"],correct:1,
+   explain:"Chain of custody for drug screens typically requires witnessed or monitored collection, tamper-evident sealing, and complete documentation of handling."},
+  {scenario:"A nurse calls you at 2:00 PM asking when the patient's morning trough level was drawn. You don't remember the exact time. Where should you look?",
+   opts:["Ask the patient","Check the LIS or EMR for the documented draw time","Estimate based on your usual schedule","Check the nurse's notes"],correct:1,
+   explain:"The LIS/EMR records draw time, phlebotomist ID, and specimen status. This is the authoritative record for verifying collection timing."},
+  {scenario:"You've just drawn an ABG specimen. Another phlebotomist asks if you can help with a difficult draw before you transport the ABG. What should you do?",
+   opts:["Help with the draw first — teamwork matters","Transport the ABG to the lab first — it must be tested within 15–30 minutes","Place the ABG on the counter and help — it can wait an hour","Ask the nurse to transport the ABG for you"],correct:1,
+   explain:"ABGs are extremely time-sensitive and must reach the analyzer within 15–30 minutes. Delayed transport compromises the results."},
+];
+let score=0,answered=0;
+document.getElementById('list').innerHTML=scenarios.map((s,si)=>`
+  <div class="scenario" id="sc-${si}"><div class="sc-label">Scenario ${si+1} of ${scenarios.length}</div>
+  <div class="sc-text">${s.scenario}</div>
+  <div class="opts" id="opts-${si}">${s.opts.map((o,oi)=>`<div class="opt" onclick="pick(${si},${oi})">${o}</div>`).join('')}</div></div>
+`).join('');
+function pick(si,oi){
+  const opts=document.querySelectorAll(`#opts-${si} .opt`);
+  if(opts[0].classList.contains('disabled'))return;
+  opts.forEach((o,i)=>{o.classList.add('disabled');if(i===scenarios[si].correct)o.classList.add('correct');else if(i===oi)o.classList.add('wrong');});
+  if(oi===scenarios[si].correct)score++;answered++;
+  const exp=document.createElement('div');exp.className='explain';exp.textContent=scenarios[si].explain;
+  document.getElementById(`sc-${si}`).appendChild(exp);
+  document.getElementById('prog').style.width=`${(answered/scenarios.length)*100}%`;
+  if(answered===scenarios.length){document.getElementById('score').innerHTML=`<div class="score-card"><div class="score-num">${score}/${scenarios.length}</div><div class="score-label">Scenarios handled correctly</div></div>`;}
+}
+</script>
+</body>
+</html>

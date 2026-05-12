@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 8 — Heel Stick Zone Labeling</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--green:#27ae60;--green-light:#2ecc71;--blue:#3498db;--yellow:#f39c12;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;--radius:16px;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 20px 60px;}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:640px;margin:0 auto;}
+header{text-align:center;padding:48px 0 20px;}
+header .week{font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);font-weight:700;margin-bottom:4px;}
+header .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+header h1{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
+.instructions{color:var(--dim);font-size:.82rem;text-align:center;margin-bottom:20px;line-height:1.5;}
+.diagram{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;display:flex;justify-content:center;}
+.diagram svg{max-width:100%;height:auto;}
+.drop-zone{position:absolute;border:2px dashed var(--muted);border-radius:8px;padding:6px 12px;font-size:.72rem;color:var(--muted);text-align:center;cursor:pointer;transition:all .2s;min-width:70px;background:rgba(11,14,20,.8);backdrop-filter:blur(4px);}
+.drop-zone:hover{border-color:var(--blue);}
+.drop-zone.filled{border-style:solid;border-color:var(--blue);color:var(--text);background:rgba(52,152,219,.08);}
+.drop-zone.correct{border-color:var(--green);background:rgba(39,174,96,.1);color:var(--green-light);}
+.drop-zone.wrong{border-color:var(--red);background:rgba(192,57,43,.1);color:var(--red-light);}
+.bank-label{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin-bottom:10px;}
+.bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:10px 18px;font-size:.82rem;cursor:pointer;transition:all .2s;font-weight:600;}
+.chip:hover{border-color:var(--red);transform:translateY(-1px);}
+.chip.selected{border-color:var(--blue);background:rgba(52,152,219,.1);}
+.chip.used{opacity:.35;pointer-events:none;}
+.btns{display:flex;gap:10px;}
+.btn{padding:12px 28px;border-radius:10px;cursor:pointer;font-size:.88rem;font-weight:600;font-family:inherit;transition:all .2s;border:none;}
+.btn-primary{background:var(--red);color:#fff;}.btn-primary:hover{background:var(--red-light);}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text);}.btn-secondary:hover{border-color:var(--red);}
+.feedback{text-align:center;margin-top:16px;font-size:1rem;font-weight:600;min-height:28px;}
+.note{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:16px;font-size:.82rem;color:var(--dim);line-height:1.5;display:none;}
+.note.show{display:block;}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<header>
+  <div class="week">Week 5 — Special Blood Collections</div>
+  <div class="tag">Activity 8 of 10</div>
+  <h1>Heel Stick Zones</h1>
+  <p>Label the safe and unsafe zones on the newborn heel.</p>
+</header>
+<div class="instructions">Select a label from the bank, then click a zone on the diagram to place it.</div>
+<div class="diagram" id="diagram">
+  <svg viewBox="0 0 380 420" xmlns="http://www.w3.org/2000/svg" width="340">
+    <!-- Foot outline (bottom view) -->
+    <path d="M110,50 Q80,70 65,120 Q50,180 55,250 Q58,310 80,350 Q100,390 140,400 Q170,408 200,408 Q230,408 260,400 Q300,390 320,350 Q342,310 345,250 Q350,180 335,120 Q320,70 290,50 Q250,30 200,28 Q150,30 110,50Z" fill="#1a1f2e" stroke="#2e3650" stroke-width="2.5"/>
+    <!-- Toes -->
+    <ellipse cx="140" cy="42" rx="18" ry="14" fill="#1a1f2e" stroke="#2e3650" stroke-width="2"/>
+    <ellipse cx="170" cy="32" rx="16" ry="13" fill="#1a1f2e" stroke="#2e3650" stroke-width="2"/>
+    <ellipse cx="200" cy="28" rx="16" ry="13" fill="#1a1f2e" stroke="#2e3650" stroke-width="2"/>
+    <ellipse cx="230" cy="32" rx="16" ry="13" fill="#1a1f2e" stroke="#2e3650" stroke-width="2"/>
+    <ellipse cx="257" cy="42" rx="16" ry="13" fill="#1a1f2e" stroke="#2e3650" stroke-width="2"/>
+    <!-- Arch line -->
+    <path d="M120,200 Q200,250 280,200" fill="none" stroke="#2e3650" stroke-width="1.5" stroke-dasharray="5,5" opacity=".5"/>
+    <text x="200" y="240" text-anchor="middle" font-size="11" fill="#484d5e" font-family="Source Sans 3">arch</text>
+    <!-- Heel area highlight zones -->
+    <!-- Left (medial) safe zone -->
+    <path d="M85,300 Q80,340 100,370 Q120,390 145,395 L145,300Z" fill="rgba(39,174,96,.12)" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="4,4" opacity=".7"/>
+    <!-- Right (lateral) safe zone -->
+    <path d="M255,300 Q260,340 280,370 Q300,390 315,360 Q330,330 315,300Z" fill="rgba(39,174,96,.12)" stroke="#27ae60" stroke-width="1.5" stroke-dasharray="4,4" opacity=".7"/>
+    <!-- Center danger zone -->
+    <path d="M155,310 Q175,350 200,360 Q225,350 245,310 L155,310Z" fill="rgba(231,76,60,.1)" stroke="#e74c3c" stroke-width="1.5" stroke-dasharray="4,4" opacity=".7"/>
+    <!-- Dots -->
+    <circle cx="115" cy="345" r="6" fill="#27ae60" opacity=".6"/>
+    <circle cx="285" cy="340" r="6" fill="#27ae60" opacity=".6"/>
+    <circle cx="200" cy="335" r="6" fill="#e74c3c" opacity=".6"/>
+    <circle cx="200" cy="140" r="6" fill="#e74c3c" opacity=".5"/>
+  </svg>
+  <div class="drop-zone" style="left:2%;top:75%;" id="dz-0" onclick="place(0)">?</div>
+  <div class="drop-zone" style="right:2%;top:73%;" id="dz-1" onclick="place(1)">?</div>
+  <div class="drop-zone" style="left:50%;transform:translateX(-50%);top:80%;" id="dz-2" onclick="place(2)">?</div>
+  <div class="drop-zone" style="left:50%;transform:translateX(-50%);top:28%;" id="dz-3" onclick="place(3)">?</div>
+</div>
+<div class="bank-label">Label Bank</div>
+<div class="bank" id="bank"></div>
+<div class="btns">
+  <button class="btn btn-primary" onclick="check()">Check Labels</button>
+  <button class="btn btn-secondary" onclick="reset()">Reset</button>
+  <button class="btn btn-secondary" onclick="document.getElementById('note').classList.toggle('show')">Hint</button>
+</div>
+<div class="feedback" id="feedback"></div>
+<div class="note" id="note"><strong>Remember:</strong> Only the medial and lateral plantar surfaces of the heel are safe for puncture. Never puncture the center of the heel (calcaneus bone) or the arch of the foot.</div>
+</div>
+<script>
+const zones=[
+  {name:"Safe — Medial",zone:0},
+  {name:"Safe — Lateral",zone:1},
+  {name:"AVOID — Center",zone:2},
+  {name:"AVOID — Arch",zone:3},
+];
+let selectedChip=null,placed={};
+const shuffled=[...zones].sort(()=>Math.random()-.5);
+function renderBank(){
+  document.getElementById('bank').innerHTML=shuffled.map((v,i)=>`<div class="chip" id="chip-${i}" data-name="${v.name}" onclick="selectChip(${i})">${v.name}</div>`).join('');
+}
+function selectChip(i){
+  if(document.getElementById(`chip-${i}`).classList.contains('used'))return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  document.getElementById(`chip-${i}`).classList.add('selected');
+  selectedChip={idx:i,name:shuffled[i].name};
+}
+function place(zone){
+  if(!selectedChip)return;
+  if(placed[zone]!==undefined){
+    const oldIdx=shuffled.findIndex(v=>v.name===placed[zone]);
+    if(oldIdx>=0)document.getElementById(`chip-${oldIdx}`).classList.remove('used');
+  }
+  placed[zone]=selectedChip.name;
+  document.getElementById(`dz-${zone}`).textContent=selectedChip.name;
+  document.getElementById(`dz-${zone}`).classList.add('filled');
+  document.getElementById(`dz-${zone}`).classList.remove('correct','wrong');
+  document.getElementById(`chip-${selectedChip.idx}`).classList.remove('selected');
+  document.getElementById(`chip-${selectedChip.idx}`).classList.add('used');
+  selectedChip=null;
+}
+function check(){
+  let score=0;
+  zones.forEach(v=>{
+    const dz=document.getElementById(`dz-${v.zone}`);
+    if(placed[v.zone]===v.name){dz.classList.add('correct');dz.classList.remove('wrong');score++;}
+    else{dz.classList.add('wrong');dz.classList.remove('correct');if(!placed[v.zone])dz.textContent=v.name;}
+  });
+  const fb=document.getElementById('feedback');
+  fb.textContent=score===zones.length?'All zones labeled correctly!':'Some labels are incorrect.';
+  fb.style.color=score===zones.length?'var(--green-light)':'var(--red-light)';
+}
+function reset(){
+  placed={};selectedChip=null;
+  zones.forEach(v=>{const dz=document.getElementById(`dz-${v.zone}`);dz.textContent='?';dz.classList.remove('filled','correct','wrong');});
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('used','selected'));
+  document.getElementById('feedback').textContent='';
+}
+renderBank();
+</script>
+</body>
+</html>

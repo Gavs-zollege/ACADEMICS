@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 2 — Interactive Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;--radius:16px;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 20px 60px;}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:640px;margin:0 auto;}
+header{text-align:center;padding:48px 0 28px;}
+header .week{font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);font-weight:700;margin-bottom:4px;}
+header .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
+.search{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;color:var(--text);font-size:.95rem;outline:none;font-family:inherit;margin-bottom:20px;transition:border-color .2s;}
+.search:focus{border-color:var(--red);}
+.search::placeholder{color:var(--muted);}
+.letter-heading{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--red-light);padding:12px 0 6px;border-bottom:1px solid var(--border);margin-bottom:4px;font-weight:700;}
+.item{padding:14px 0;border-bottom:1px solid rgba(37,43,59,.5);cursor:pointer;transition:background .2s;}
+.item:last-child{border-bottom:none;}
+.term{font-weight:700;font-size:.95rem;color:#fff;display:flex;align-items:center;gap:8px;}
+.term .arrow{color:var(--muted);font-size:.7rem;transition:transform .25s;}
+.item.open .arrow{transform:rotate(90deg);color:var(--red-light);}
+.def{color:var(--dim);font-size:.85rem;line-height:1.6;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0;}
+.item.open .def{max-height:150px;padding-top:6px;}
+.empty{text-align:center;color:var(--muted);padding:40px;font-size:.9rem;}
+.count{text-align:center;color:var(--muted);font-size:.75rem;margin-top:16px;letter-spacing:.5px;}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<header>
+  <div class="week">Week 5 — Special Blood Collections</div>
+  <div class="tag">Activity 2 of 10</div>
+  <h1>Interactive Glossary</h1>
+  <p>Search and tap any term to expand its definition.</p>
+</header>
+<input class="search" id="search" placeholder="Search terms..." />
+<div id="list"></div>
+<div class="count" id="count"></div>
+</div>
+<script>
+const glossary=[
+  {term:"Aerobic bottle",def:"A blood culture bottle that detects bacteria requiring oxygen to grow; filled first during collection."},
+  {term:"Anaerobic bottle",def:"A blood culture bottle that detects bacteria that grow without oxygen; filled after the aerobic bottle."},
+  {term:"Aseptic technique",def:"Practices used to prevent contamination by pathogens during specimen collection procedures."},
+  {term:"Bacteremia",def:"The presence of bacteria in the bloodstream; diagnosed through blood culture testing."},
+  {term:"Chain of custody",def:"A documented process tracking a specimen from collection to analysis, required for drug screens and legal testing."},
+  {term:"Chlorhexidine",def:"An antiseptic used for blood culture site disinfection, applied with a 30-second scrub."},
+  {term:"Crossmatching",def:"Blood bank procedure to verify compatibility between donor blood and the recipient before transfusion."},
+  {term:"Galactosemia",def:"An inborn error of metabolism in which the body cannot process the sugar galactose; screened in newborns."},
+  {term:"Glucose tolerance test (GTT)",def:"A timed collection where blood is drawn at intervals after glucose ingestion to diagnose diabetes."},
+  {term:"Guthrie card",def:"Special filter paper with printed circles used to collect heel stick blood samples from newborns for IEM screening."},
+  {term:"Iatrogenic anemia",def:"Anemia caused by excessive blood draws, especially in NICU/ICU patients; prevented by using microtainers and draw logs."},
+  {term:"Inborn errors of metabolism (IEM)",def:"Genetic conditions (e.g., PKU, hypothyroidism, cystic fibrosis) detected through newborn blood screening."},
+  {term:"Methanol fixation",def:"Chemical step applied to a peripheral blood smear slide immediately after air drying to preserve cell morphology."},
+  {term:"Microtainer",def:"A small collection tube (0.5–1 mL) used for pediatric and geriatric patients to minimize blood volume drawn."},
+  {term:"Peripheral blood smear",def:"A glass slide preparation of blood used to examine cell morphology under a microscope for conditions like leukemia or malaria."},
+  {term:"PKU (Phenylketonuria)",def:"A genetic disorder of amino acid metabolism; one of the primary conditions screened on the Guthrie card."},
+  {term:"Septicemia",def:"A serious bloodstream infection (sepsis); diagnosed with blood cultures ideally collected before antibiotic therapy."},
+  {term:"Sputum specimen",def:"A mucus sample coughed up from the lungs, used to diagnose respiratory infections like tuberculosis."},
+].sort((a,b)=>a.term.localeCompare(b.term));
+
+function render(filter=''){
+  const f=filter.toLowerCase();
+  const filtered=glossary.filter(g=>!f||g.term.toLowerCase().includes(f)||g.def.toLowerCase().includes(f));
+  if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No matching terms found.</div>';document.getElementById('count').textContent='';return;}
+  let letters={};
+  filtered.forEach(g=>{const l=g.term[0].toUpperCase();if(!letters[l])letters[l]=[];letters[l].push(g);});
+  let html='';
+  Object.keys(letters).sort().forEach(l=>{
+    html+=`<div><div class="letter-heading">${l}</div>`;
+    letters[l].forEach(g=>{
+      html+=`<div class="item" onclick="this.classList.toggle('open')"><div class="term"><span class="arrow">▶</span>${g.term}</div><div class="def">${g.def}</div></div>`;
+    });
+    html+=`</div>`;
+  });
+  document.getElementById('list').innerHTML=html;
+  document.getElementById('count').textContent=`${filtered.length} of ${glossary.length} terms`;
+}
+document.getElementById('search').addEventListener('input',e=>render(e.target.value));
+render();
+</script>
+</body>
+</html>

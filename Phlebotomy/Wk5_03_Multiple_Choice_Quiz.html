@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 3 — Multiple Choice Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--green:#27ae60;--green-light:#2ecc71;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;--radius:16px;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 20px 60px;}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:640px;margin:0 auto;}
+header{text-align:center;padding:48px 0 28px;}
+header .week{font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);font-weight:700;margin-bottom:4px;}
+header .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
+.progress{width:100%;height:4px;background:var(--border);border-radius:2px;margin-bottom:28px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--red);transition:width .5s;border-radius:2px;}
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.q-num{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+.q-text{font-size:1.05rem;font-weight:600;line-height:1.5;margin-bottom:16px;}
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;cursor:pointer;font-size:.9rem;transition:all .2s;line-height:1.4;}
+.opt:hover{border-color:var(--red);background:rgba(192,57,43,.06);}
+.opt.correct{border-color:var(--green);background:rgba(39,174,96,.12);color:var(--green-light);}
+.opt.wrong{border-color:var(--red);background:rgba(192,57,43,.12);color:var(--red-light);opacity:.6;}
+.opt.disabled{pointer-events:none;}
+.score-card{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;margin-top:20px;animation:fadeIn .5s ease;}
+.score-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:var(--green-light);}
+.score-label{color:var(--dim);font-size:.9rem;margin-top:4px;}
+.score-bar{width:80%;max-width:300px;height:8px;background:var(--border);border-radius:4px;margin:20px auto 0;overflow:hidden;}
+.score-bar-fill{height:100%;background:var(--green);border-radius:4px;transition:width 1s ease;}
+.retry{margin-top:20px;background:var(--red);border:none;color:#fff;padding:12px 32px;border-radius:10px;cursor:pointer;font-size:.9rem;font-weight:600;font-family:inherit;transition:all .2s;}
+.retry:hover{background:var(--red-light);}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<header>
+  <div class="week">Week 5 — Special Blood Collections</div>
+  <div class="tag">Activity 3 of 10</div>
+  <h1>Multiple Choice Quiz</h1>
+  <p>10 questions — instant feedback on each answer.</p>
+</header>
+<div class="progress"><div class="progress-fill" id="prog"></div></div>
+<div id="questions"></div>
+<div id="score"></div>
+</div>
+<script>
+const questions=[
+  {q:"What is the purpose of a peripheral blood smear?",opts:["Measure blood glucose levels","Detect abnormal blood cells","Test clotting time","Screen for drug use"],correct:1},
+  {q:"Blood cultures are ordered primarily to diagnose:",opts:["Diabetes","Anemia","Septicemia or bacteremia","Kidney disease"],correct:2},
+  {q:"What antiseptic is used for blood culture site preparation?",opts:["70% isopropyl alcohol","Hydrogen peroxide","Chlorhexidine","Betadine only"],correct:2},
+  {q:"In blood culture collection, the aerobic bottle is filled:",opts:["Last","At the same time as anaerobic","First","Only if infection is confirmed"],correct:2},
+  {q:"Newborn IEM screening is performed via:",opts:["Venipuncture from the arm","Heel stick onto a Guthrie card","Finger stick into a microtainer","Arterial blood gas collection"],correct:1},
+  {q:"Where should you puncture for a newborn heel stick?",opts:["Center of the heel","Arch of the foot","Lateral or medial plantar surface","Between the toes"],correct:2},
+  {q:"What gauge needle is used for blood donation?",opts:["21–23 gauge","16–18 gauge","25–27 gauge","14 gauge"],correct:1},
+  {q:"To prevent iatrogenic anemia in children, draw volumes must not exceed ___ of total blood volume in 24 hours.",opts:["1%","3%","5%","10%"],correct:1},
+  {q:"Which of these is a nonblood specimen type?",opts:["EDTA tube","Lavender top tube","Sputum","SST tube"],correct:2},
+  {q:"Chain of custody documentation is required for:",opts:["All blood draws","Drug screens and legal testing","Pediatric draws only","Blood donations"],correct:1},
+];
+let score=0,answered=0;
+function init(){
+  score=0;answered=0;
+  document.getElementById('prog').style.width='0%';
+  document.getElementById('score').innerHTML='';
+  document.getElementById('questions').innerHTML=questions.map((q,qi)=>`
+    <div class="q-card"><div class="q-num">Question ${qi+1} of ${questions.length}</div>
+    <div class="q-text">${q.q}</div>
+    <div class="opts" id="opts-${qi}">${q.opts.map((o,oi)=>`<div class="opt" onclick="pick(${qi},${oi})">${o}</div>`).join('')}</div></div>
+  `).join('');
+}
+function pick(qi,oi){
+  const opts=document.querySelectorAll(`#opts-${qi} .opt`);
+  if(opts[0].classList.contains('disabled'))return;
+  opts.forEach((o,i)=>{o.classList.add('disabled');if(i===questions[qi].correct)o.classList.add('correct');else if(i===oi)o.classList.add('wrong');});
+  if(oi===questions[qi].correct)score++;
+  answered++;
+  document.getElementById('prog').style.width=`${(answered/questions.length)*100}%`;
+  if(answered===questions.length){
+    const pct=Math.round((score/questions.length)*100);
+    document.getElementById('score').innerHTML=`<div class="score-card"><div class="score-num">${score}/${questions.length}</div><div class="score-label">${pct}% correct</div><div class="score-bar"><div class="score-bar-fill" id="sbar"></div></div><button class="retry" onclick="init()">Try Again</button></div>`;
+    setTimeout(()=>document.getElementById('sbar').style.width=`${pct}%`,100);
+  }
+}
+init();
+</script>
+</body>
+</html>

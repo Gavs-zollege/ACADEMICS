@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 8 — Conduction Pathway</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0B0E1B;--card:#121830;--surface:#1A2244;--crimson:#9B2335;--gold:#D4A843;--text:#EDE9DF;--dim:#6870A0;--success:#43B581;--error:#E74C3C;--border:#262E55;--accent:#5B8CDB;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:radial-gradient(ellipse at 40% 10%,#141830,var(--bg));font-family:'Fraunces',serif;color:var(--text);}
+  .wrap{max-width:560px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:32px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:34px;color:var(--gold);}
+  .sub{font-family:'Plus Jakarta Sans',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .seq-box{background:var(--card);border-radius:14px;padding:20px;border:1px solid var(--border);margin-bottom:20px;min-height:60px;}
+  .seq-label{font-size:11px;letter-spacing:2px;color:var(--accent);text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;margin-bottom:12px;}
+  .seq-empty{color:var(--dim);font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;}
+  .seq-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:10px;margin-bottom:6px;cursor:pointer;transition:all .25s;border:1.5px solid var(--border);background:var(--surface);}
+  .seq-item:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+  .seq-item .num{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;}
+  .seq-item .info{flex:1;}
+  .seq-item .info .name{font-weight:600;font-size:16px;}
+  .seq-item .info .desc{font-size:12px;color:var(--dim);font-family:'Plus Jakarta Sans',sans-serif;margin-top:2px;}
+  .seq-item .icon{font-size:20px;}
+  .seq-item .x{color:var(--dim);font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;}
+  .seq-item.correct{background:rgba(67,181,129,.07);border-color:rgba(67,181,129,.34);}
+  .seq-item.correct .num{background:rgba(67,181,129,.13);color:var(--success);}
+  .seq-item.wrong{background:rgba(231,76,60,.07);border-color:rgba(231,76,60,.34);}
+  .seq-item.wrong .num{background:rgba(231,76,60,.13);color:var(--error);}
+  .pool-label{font-size:11px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;margin-bottom:10px;}
+  .pool-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;margin-bottom:6px;border:1px dashed var(--border);cursor:pointer;transition:all .25s;}
+  .pool-item:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+  .pool-item .icon{font-size:18px;}
+  .pool-item .name{font-weight:600;font-size:15px;}
+  .pool-item .desc{font-size:12px;color:var(--dim);font-family:'Plus Jakarta Sans',sans-serif;}
+  .ctrls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
+  .btn{padding:14px 36px;border-radius:10px;border:none;font-size:15px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;}
+  .btn-gold{background:var(--gold);color:var(--bg);}
+  .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);font-size:14px;padding:14px 28px;}
+  .msg{text-align:center;margin-top:16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;padding:12px;border-radius:10px;}
+  .clinical{margin-top:32px;padding:20px;border-radius:12px;background:var(--card);border:1px solid var(--border);}
+  .clinical .cl-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:8px;}
+  .clinical .cl-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--dim);line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 8 of 10</div>
+    <h1>Conduction Pathway</h1>
+    <p class="sub">Order the 5 components of the cardiac conduction system from first to last.</p>
+  </div>
+  <div class="seq-box"><div class="seq-label">Conduction Order</div><div id="seqList"></div></div>
+  <div id="poolArea"></div>
+  <div class="ctrls" id="ctrls"></div>
+  <div id="msgArea"></div>
+  <div class="clinical">
+    <div class="cl-title">Clinical Link</div>
+    <div class="cl-text">Abnormalities in any part of this conduction pathway appear on an EKG. For example, a block at the AV node delays ventricular contraction, visible as a prolonged PR interval.</div>
+  </div>
+</div>
+<script>
+const STEPS=[
+  {id:"sa",l:"SA Node",d:"Initiates the electrical impulse in the right atrium",ic:"⚡"},
+  {id:"av",l:"AV Node",d:"Delays impulse briefly to allow ventricular filling",ic:"⏳"},
+  {id:"bh",l:"Bundle of His",d:"Conducts impulse down the interventricular septum",ic:"↓"},
+  {id:"bb",l:"Bundle Branches",d:"Left and right branches carry impulses to each ventricle",ic:"⑂"},
+  {id:"pf",l:"Purkinje Fibers",d:"Distribute impulse throughout ventricular walls for contraction",ic:"🔄"},
+];
+let userOrder=[],pool=[],checked=false,correct=false,attempts=0;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function init(){userOrder=[];pool=shuffle([...STEPS]);checked=false;correct=false;attempts=0;render();}
+function render(){
+  let sl='';
+  if(!userOrder.length)sl='<div class="seq-empty">Tap components below to arrange them...</div>';
+  else userOrder.forEach((item,i)=>{
+    let cls='seq-item';
+    if(checked)cls+=item.id===STEPS[i]?.id?' correct':' wrong';
+    const numBg=checked?(item.id===STEPS[i]?.id?'rgba(67,181,129,.13)':'rgba(231,76,60,.13)'):'rgba(91,140,219,.13)';
+    const numCol=checked?(item.id===STEPS[i]?.id?'var(--success)':'var(--error)'):'var(--accent)';
+    sl+=`<div class="${cls}" onclick="remove(${i})">
+      <div class="num" style="background:${numBg};color:${numCol}">${i+1}</div>
+      <div class="info"><div class="name">${item.l}</div><div class="desc">${item.d}</div></div>
+      <span class="icon">${item.ic}</span>
+      ${!correct?'<span class="x">✕</span>':''}
+    </div>`;
+  });
+  if(userOrder.length>1&&correct){sl+=`<div style="text-align:center;margin-top:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:var(--success)">SA → AV → Bundle of His → Bundle Branches → Purkinje Fibers</div>`;}
+  document.getElementById('seqList').innerHTML=sl;
+  let ph='';
+  if(pool.length){
+    ph='<div class="pool-label">Available Components</div>';
+    pool.forEach((item,i)=>{
+      ph+=`<div class="pool-item" onclick="add(${i})"><span class="icon">${item.ic}</span><div><div class="name">${item.l}</div><div class="desc">${item.d}</div></div></div>`;
+    });
+  }
+  document.getElementById('poolArea').innerHTML=ph;
+  let ch='';
+  if(!correct&&userOrder.length===STEPS.length)ch+=`<button class="btn btn-gold" onclick="check()">Check Order</button>`;
+  ch+=`<button class="btn btn-outline" onclick="init()">Reset</button>`;
+  document.getElementById('ctrls').innerHTML=ch;
+  let mh='';
+  if(checked&&!correct)mh=`<div class="msg" style="background:rgba(231,76,60,.06);border:1px solid rgba(231,76,60,.13);color:var(--error)">Not quite — rearrange the items marked with ✕</div>`;
+  if(correct)mh=`<div class="msg" style="background:rgba(67,181,129,.06);border:1px solid rgba(67,181,129,.2)"><div style="font-size:24px;font-weight:700;color:var(--success)">Perfect!</div><div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:var(--dim);margin-top:8px">The conduction pathway: SA Node → AV Node → Bundle of His → Bundle Branches → Purkinje Fibers.${attempts===1?' First try!':` Completed in ${attempts} attempts.`}</div></div>`;
+  document.getElementById('msgArea').innerHTML=mh;
+}
+function add(i){userOrder.push(pool[i]);pool.splice(i,1);checked=false;render();}
+function remove(i){if(correct)return;pool.push(userOrder[i]);userOrder.splice(i,1);checked=false;render();}
+function check(){checked=true;attempts++;correct=userOrder.every((item,i)=>item.id===STEPS[i].id);render();}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 9 — Clinical Case Studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0B0F1A;--card:#121828;--surface:#1A2040;--crimson:#9B2335;--gold:#D4A843;--text:#EDE9DF;--dim:#6B7098;--success:#43B581;--error:#E74C3C;--border:#232A48;--info:#5B8CDB;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(170deg,var(--bg),#0E1428);font-family:'Crimson Pro',serif;color:var(--text);}
+  .wrap{max-width:600px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Sora',sans-serif;font-weight:600;margin-bottom:8px;}
+  h1{font-size:34px;color:var(--gold);margin:0;}
+  .sub{font-family:'Sora',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
+  .tab{padding:8px 18px;border-radius:20px;font-family:'Sora',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);transition:all .2s;}
+  .tab.active{background:rgba(155,35,53,.2);border-color:var(--crimson);color:var(--gold);}
+  .scenario-card{background:var(--card);border-radius:14px;padding:24px;border:1px solid var(--border);border-left:4px solid var(--info);margin-bottom:20px;}
+  .sc-badge{display:inline-block;background:rgba(91,140,219,.13);color:var(--info);padding:4px 12px;border-radius:8px;font-size:11px;font-family:'Sora',sans-serif;font-weight:600;margin-bottom:10px;}
+  .sc-title{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+  .sc-text{font-size:16px;line-height:1.7;font-style:italic;color:var(--text);}
+  .q-card{background:var(--card);border-radius:14px;padding:24px;border:1px solid var(--border);}
+  .q-progress{font-family:'Sora',sans-serif;font-size:12px;color:var(--dim);margin-bottom:10px;}
+  .q-text{font-size:18px;font-weight:600;margin-bottom:20px;line-height:1.5;}
+  .opt{padding:14px 18px;margin-bottom:8px;border-radius:10px;border:1.5px solid var(--border);font-family:'Sora',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;}
+  .opt:hover{transform:translateX(4px);}
+  .opt .letter{font-weight:600;color:var(--dim);width:20px;}
+  .opt.correct{background:rgba(67,181,129,.1);border-color:var(--success);color:var(--success);}
+  .opt.wrong{background:rgba(231,76,60,.1);border-color:var(--error);color:var(--error);}
+  .opt.disabled{cursor:default;}
+  .opt.disabled:hover{transform:none;}
+  .explanation{margin-top:16px;padding:16px 20px;border-radius:12px;font-family:'Sora',sans-serif;font-size:14px;line-height:1.6;}
+  .exp-title{font-weight:600;margin-bottom:4px;}
+  .next-wrap{text-align:center;margin-top:20px;}
+  .btn{padding:14px 40px;border-radius:10px;border:none;background:var(--gold);color:var(--bg);font-size:15px;font-weight:600;font-family:'Sora',sans-serif;cursor:pointer;}
+  .btn:hover{filter:brightness(1.1);}
+  .results{text-align:center;padding:40px 20px;}
+  .res-label{font-size:14px;letter-spacing:3px;color:var(--crimson);text-transform:uppercase;font-family:'Sora',sans-serif;font-weight:600;}
+  .res-score{font-size:60px;font-weight:700;color:var(--gold);margin:16px 0;}
+  .res-msg{font-family:'Sora',sans-serif;font-size:15px;color:var(--dim);line-height:1.6;margin-bottom:24px;}
+  .res-case{text-align:left;padding:10px 14px;margin-bottom:8px;border-radius:10px;background:var(--card);border:1px solid var(--border);font-family:'Sora',sans-serif;font-size:13px;}
+  .btn-retry{margin-top:20px;padding:14px 40px;border-radius:10px;border:none;background:var(--crimson);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 9 of 10</div>
+    <h1>Clinical Case Studies</h1>
+    <p class="sub">Apply your anatomy knowledge to real-world phlebotomy scenarios.</p>
+  </div>
+  <div id="game">
+    <div class="tabs" id="tabs"></div>
+    <div class="scenario-card" id="scenarioCard"></div>
+    <div class="q-card" id="qCard"></div>
+    <div id="expArea"></div>
+    <div class="next-wrap" id="nextWrap" style="display:none"></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const CASES=[
+  {
+    title:"Congestive Heart Failure Patient",
+    scenario:"A 72-year-old patient with congestive heart failure presents for routine blood work. You notice the veins in the antecubital area appear flat and difficult to palpate.",
+    questions:[
+      {q:"What is the most likely cause of the poor venous access?",o:["Dehydration only","Reduced cardiac output decreasing venous return","Patient is too cold","Veins are too deep"],a:1,why:"In CHF, the heart's reduced pumping ability means less blood reaches peripheral veins, making them harder to access."},
+      {q:"Which adjustment would best improve your chances?",o:["Use a smaller needle immediately","Apply a warm compress and lower the arm","Draw from the neck","Skip the blood draw"],a:1,why:"Warmth causes vasodilation, and gravity helps pool blood in the arm — both improve vein visibility and palpability."},
+      {q:"Why does reduced cardiac output affect vein fullness?",o:["Heart pumps less blood, so less returns to peripheral veins","Valves stop working","Blood clots in veins","Arteries steal the blood"],a:0,why:"Cardiac output directly determines how much blood reaches the extremities. Less output means less venous return and flatter veins."},
+    ]
+  },
+  {
+    title:"Anxious Patient with Elevated Heart Rate",
+    scenario:"A 28-year-old patient is visibly anxious before a blood draw. Their heart rate is elevated at 110 bpm and their veins appear to be constricting.",
+    questions:[
+      {q:"Why might anxiety cause veins to constrict?",o:["Sympathetic nervous system causes vasoconstriction","Blood pressure drops","Heart stops working properly","Patient is dehydrated"],a:0,why:"The fight-or-flight response activates the sympathetic nervous system, releasing adrenaline which constricts peripheral blood vessels."},
+      {q:"What's the best communication approach?",o:["Tell them to stop being nervous","Use complex medical terms to show expertise","Explain the procedure in simple, calming language","Ignore their anxiety"],a:2,why:"Clear, empathetic communication helps reduce the patient's stress response, which can improve venous access and the overall experience."},
+      {q:"Which vital sign finding is most directly related to their anxiety?",o:["Blood pressure only","Temperature","Elevated heart rate (tachycardia)","Respiratory rate only"],a:2,why:"The SA node responds to sympathetic stimulation by increasing the heart rate. A rate of 110 bpm (tachycardia) is a direct effect of anxiety-driven sympathetic activation."},
+    ]
+  },
+];
+let caseIdx=0,qIdx=0,sel=null,answered=false,scores=[0,0],allDone=false;
+function totalQ(){return CASES.reduce((a,c)=>a+c.questions.length,0);}
+function totalScore(){return scores.reduce((a,b)=>a+b,0);}
+function render(){
+  // tabs
+  let th='';CASES.forEach((c,i)=>{th+=`<div class="tab ${caseIdx===i?'active':''}" onclick="switchCase(${i})">Case ${i+1}</div>`;});
+  document.getElementById('tabs').innerHTML=th;
+  const cs=CASES[caseIdx],q=cs.questions[qIdx];
+  // scenario
+  document.getElementById('scenarioCard').innerHTML=`<div class="sc-badge">SCENARIO</div><div class="sc-title">${cs.title}</div><div class="sc-text">${cs.scenario}</div>`;
+  // question
+  let oh='';
+  q.o.forEach((o,i)=>{
+    let cls='opt';
+    if(answered){
+      cls+=' disabled';
+      if(i===q.a)cls+=' correct';
+      else if(i===sel)cls+=' wrong';
+    }
+    oh+=`<div class="${cls}" onclick="pick(${i})"><span class="letter">${String.fromCharCode(65+i)}.</span><span>${o}</span></div>`;
+  });
+  document.getElementById('qCard').innerHTML=`<div class="q-progress">Question ${qIdx+1} of ${cs.questions.length}</div><div class="q-text">${q.q}</div>${oh}`;
+  // explanation
+  if(answered){
+    const correct=sel===q.a;
+    const bgc=correct?'rgba(67,181,129,.07)':'rgba(231,76,60,.07)';
+    const bdc=correct?'rgba(67,181,129,.2)':'rgba(231,76,60,.2)';
+    const col=correct?'var(--success)':'var(--error)';
+    document.getElementById('expArea').innerHTML=`<div class="explanation" style="background:${bgc};border:1px solid ${bdc}"><div class="exp-title" style="color:${col}">${correct?'Correct!':'Incorrect'}</div><div style="color:var(--dim)">${q.why}</div></div>`;
+    let btnLabel='Next Question →';
+    if(qIdx+1>=cs.questions.length&&caseIdx+1>=CASES.length)btnLabel='See Results';
+    else if(qIdx+1>=cs.questions.length)btnLabel='Next Case Study →';
+    document.getElementById('nextWrap').style.display='block';
+    document.getElementById('nextWrap').innerHTML=`<button class="btn" onclick="next()">${btnLabel}</button>`;
+  }else{
+    document.getElementById('expArea').innerHTML='';
+    document.getElementById('nextWrap').style.display='none';
+  }
+}
+function pick(i){
+  if(answered)return;
+  sel=i;answered=true;
+  if(i===CASES[caseIdx].questions[qIdx].a)scores[caseIdx]++;
+  render();
+}
+function next(){
+  const cs=CASES[caseIdx];
+  if(qIdx+1<cs.questions.length){qIdx++;sel=null;answered=false;render();}
+  else if(caseIdx+1<CASES.length){caseIdx++;qIdx=0;sel=null;answered=false;render();}
+  else showResults();
+}
+function switchCase(i){
+  if(i===caseIdx)return;
+  caseIdx=i;qIdx=0;sel=null;answered=false;render();
+}
+function showResults(){
+  document.getElementById('game').style.display='none';
+  const r=document.getElementById('results');r.style.display='block';
+  const ts=totalScore(),tq=totalQ();
+  const msg=ts===tq?"Perfect clinical reasoning!":ts>=4?"Strong clinical thinking — review any missed questions.":"Review cardiac output and phlebotomy connections, then try again.";
+  let ch='';CASES.forEach((c,i)=>{
+    const col=scores[i]===c.questions.length?'var(--success)':'var(--error)';
+    ch+=`<div class="res-case"><span style="color:var(--gold)">${c.title}:</span> <span style="color:${col}">${scores[i]}/${c.questions.length}</span></div>`;
+  });
+  r.innerHTML=`<div class="res-label">Cases Complete</div><div class="res-score">${ts}/${tq}</div><div class="res-msg">${msg}</div>${ch}<button class="btn-retry" onclick="reset()">Try Again</button>`;
+}
+function reset(){
+  caseIdx=0;qIdx=0;sel=null;answered=false;scores=[0,0];allDone=false;
+  document.getElementById('game').style.display='block';
+  document.getElementById('results').style.display='none';
+  render();
+}
+render();
+</script>
+</body>
+</html>

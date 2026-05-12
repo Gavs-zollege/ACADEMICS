@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 10 — Final Review Checklist</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0A0E1A;--card:#111828;--surface:#1A2040;--crimson:#9B2335;--gold:#D4A843;--text:#EDE9DF;--dim:#6B7090;--success:#43B581;--border:#232A48;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg),#0D1224);font-family:'Spectral',serif;color:var(--text);}
+  .wrap{max-width:620px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:34px;color:var(--gold);margin:0;}
+  .sub{font-family:'Inter',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .prog-section{margin-bottom:28px;}
+  .prog-row{display:flex;justify-content:space-between;font-family:'Inter',sans-serif;font-size:13px;margin-bottom:6px;}
+  .prog-bar{height:8px;border-radius:4px;background:var(--border);overflow:hidden;}
+  .prog-fill{height:100%;border-radius:4px;transition:width .5s ease,background .5s;}
+  .topic{background:var(--card);border-radius:14px;padding:18px 20px;margin-bottom:10px;border:1px solid var(--border);transition:all .3s;cursor:pointer;}
+  .topic:hover{transform:translateY(-1px);}
+  .topic.checked{opacity:.5;}
+  .topic.checked .topic-border{border-color:rgba(67,181,129,.44);}
+  .topic-head{display:flex;align-items:center;gap:14px;}
+  .check-box{width:28px;height:28px;border-radius:8px;border:2px solid;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;font-weight:700;color:#fff;transition:all .2s;cursor:pointer;}
+  .check-box:hover{transform:scale(1.1);}
+  .topic-info{flex:1;}
+  .topic-title-row{display:flex;align-items:center;gap:10px;}
+  .color-bar{width:4px;height:20px;border-radius:2px;flex-shrink:0;}
+  .topic-title{font-size:17px;font-weight:600;}
+  .topic-meta{font-family:'Inter',sans-serif;font-size:12px;color:var(--dim);margin-top:4px;padding-left:14px;}
+  .arrow{color:var(--dim);font-size:16px;transition:transform .2s;user-select:none;}
+  .topic.open .arrow{transform:rotate(180deg);}
+  .points{margin-top:14px;padding-left:42px;}
+  .point{font-family:'Inter',sans-serif;font-size:14px;color:var(--dim);line-height:1.7;padding-left:12px;margin-bottom:6px;}
+  .done-box{text-align:center;margin-top:24px;padding:28px 24px;border-radius:16px;}
+  .done-emoji{font-size:32px;}
+  .done-title{font-size:24px;font-weight:700;color:var(--success);margin-top:8px;}
+  .done-text{font-family:'Inter',sans-serif;font-size:14px;color:var(--dim);margin-top:8px;line-height:1.6;}
+  .reset-wrap{text-align:center;margin-top:20px;}
+  .btn-reset{padding:10px 24px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;}
+  .btn-reset:hover{border-color:var(--dim);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 10 of 10</div>
+    <h1>Final Review Checklist</h1>
+    <p class="sub">Check off each topic as you feel confident. Aim for 100% before your exam!</p>
+  </div>
+  <div class="prog-section">
+    <div class="prog-row">
+      <span style="color:var(--dim)">Mastery Progress</span>
+      <span id="progText" style="font-weight:600"></span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+  <div id="topicList"></div>
+  <div id="doneBox" style="display:none"></div>
+  <div class="reset-wrap"><button class="btn-reset" onclick="resetAll()">Reset Checklist</button></div>
+</div>
+<script>
+const TOPICS=[
+  {title:"Heart Location & Structure",color:"#5B9BD5",points:["Located in the mediastinum between the lungs","Slightly left of the midline","Approximately the size of a fist","Apex points downward and to the left"]},
+  {title:"Heart Wall Layers",color:"#E8976A",points:["Epicardium → outer protective layer (visceral pericardium)","Myocardium → thick muscular layer responsible for pumping","Endocardium → smooth inner lining that reduces friction"]},
+  {title:"Four Chambers",color:"#8B6AAE",points:["Right atrium: receives deoxygenated blood from venae cavae","Right ventricle: pumps deoxygenated blood to lungs","Left atrium: receives oxygenated blood from pulmonary veins","Left ventricle: pumps oxygenated blood to body (thickest wall)"]},
+  {title:"Four Valves",color:"#D4A843",points:["Tricuspid: between RA → RV (3 leaflets)","Pulmonary (semilunar): between RV → pulmonary arteries","Mitral / Bicuspid: between LA → LV (2 leaflets)","Aortic (semilunar): between LV → aorta"]},
+  {title:"Major Vessels",color:"#E74C6F",points:["Superior & inferior vena cava → return deoxygenated blood to RA","Pulmonary arteries → carry deoxygenated blood to lungs","Pulmonary veins → carry oxygenated blood to LA","Aorta → largest artery, carries oxygenated blood to body"]},
+  {title:"Conduction System",color:"#4CAF90",points:["SA Node → natural pacemaker in the right atrium","AV Node → delays impulse for ventricular filling","Bundle of His → conducts to bundle branches","Bundle Branches → left & right pathways down septum","Purkinje Fibers → distribute impulse through ventricles"]},
+  {title:"Cardiac Cycle",color:"#5B8CDB",points:["Systole = contraction phase (heart pumps blood out)","Diastole = relaxation phase (heart fills with blood)","Blood pressure reflects systole/diastole (e.g., 120/80)","Cardiac output = heart rate × stroke volume"]},
+  {title:"Phlebotomy Connections",color:"#C4A84D",points:["Cardiac output affects venous return and vein accessibility","Poor circulation → collapsed or fragile veins","Warmth & gravity improve venous access","Adjust technique based on patient's cardiovascular status","Understanding anatomy helps locate veins and anticipate issues"]},
+];
+let checked=new Set(),openIdx=-1;
+function render(){
+  const pct=checked.size/TOPICS.length*100;
+  const allDone=checked.size===TOPICS.length;
+  const progEl=document.getElementById('progText');
+  progEl.textContent=`${checked.size}/${TOPICS.length} topics (${Math.round(pct)}%)`;
+  progEl.style.color=allDone?'var(--success)':'var(--gold)';
+  const fill=document.getElementById('progFill');
+  fill.style.width=pct+'%';
+  fill.style.background=allDone?'var(--success)':'linear-gradient(90deg,var(--crimson),var(--gold))';
+  let h='';
+  TOPICS.forEach((t,i)=>{
+    const isDone=checked.has(i);
+    const isOpen=openIdx===i;
+    h+=`<div class="topic ${isDone?'checked':''} ${isOpen?'open':''}" id="topic${i}">
+      <div class="topic-head">
+        <div class="check-box" style="border-color:${isDone?'var(--success)':t.color};background:${isDone?'var(--success)':'transparent'}" onclick="event.stopPropagation();toggleCheck(${i})">${isDone?'✓':''}</div>
+        <div class="topic-info" onclick="toggleOpen(${i})">
+          <div class="topic-title-row">
+            <div class="color-bar" style="background:${t.color}"></div>
+            <span class="topic-title" style="color:${isDone?'var(--success)':'var(--gold)'}">${t.title}</span>
+          </div>
+          ${!isOpen?`<div class="topic-meta">${t.points.length} key points · tap to expand</div>`:''}
+        </div>
+        <span class="arrow" onclick="toggleOpen(${i})">▾</span>
+      </div>
+      ${isOpen?`<div class="points">${t.points.map(p=>`<div class="point" style="border-left:2px solid ${t.color}33">${p}</div>`).join('')}</div>`:''}
+    </div>`;
+  });
+  document.getElementById('topicList').innerHTML=h;
+  const db=document.getElementById('doneBox');
+  if(allDone){
+    db.style.display='block';
+    db.innerHTML=`<div class="done-box" style="background:linear-gradient(135deg,rgba(67,181,129,.08),rgba(67,181,129,.03));border:1px solid rgba(67,181,129,.3)">
+      <div class="done-emoji">🎓</div>
+      <div class="done-title">Review Complete!</div>
+      <div class="done-text">You've reviewed all 8 topic areas covering heart anatomy, the vascular system, and phlebotomy connections. You're well-prepared!</div>
+    </div>`;
+  }else{db.style.display='none';}
+}
+function toggleCheck(i){checked.has(i)?checked.delete(i):checked.add(i);render();}
+function toggleOpen(i){openIdx=openIdx===i?-1:i;render();}
+function resetAll(){checked=new Set();openIdx=-1;render();}
+render();
+</script>
+</body>
+</html>

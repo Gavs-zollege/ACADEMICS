@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 5 — Term Matching</title>
+<link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@400;600;700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0C0F1A;--card:#13172B;--surface:#1B2040;--crimson:#9B2335;--gold:#D4A843;--text:#EDE9DF;--dim:#6B6F88;--success:#43B581;--error:#E74C3C;--border:#252A45;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(170deg,var(--bg),#101428);font-family:'Vollkorn',serif;color:var(--text);}
+  .wrap{max-width:700px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:32px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Work Sans',sans-serif;font-weight:600;margin-bottom:8px;}
+  h1{font-size:36px;color:var(--gold);}
+  .sub{font-family:'Work Sans',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .stats{display:flex;justify-content:center;gap:24px;margin-bottom:24px;font-family:'Work Sans',sans-serif;font-size:13px;}
+  .prog-bar{height:4px;border-radius:2px;background:var(--border);margin-bottom:28px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--crimson),var(--gold));transition:width .4s;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .col-label{font-size:11px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;font-family:'Work Sans',sans-serif;font-weight:600;margin-bottom:10px;padding-left:4px;}
+  .item{padding:12px 14px;margin-bottom:8px;border-radius:10px;border:1.5px solid var(--border);font-family:'Work Sans',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;user-select:none;}
+  .item:hover{transform:translateY(-1px);}
+  .item.selected{border-color:var(--gold);background:rgba(212,168,67,.09);color:var(--gold);}
+  .item.matched{border-color:rgba(67,181,129,.33);background:rgba(67,181,129,.05);color:var(--success);opacity:.45;cursor:default;}
+  .item.wrong{border-color:var(--error);background:rgba(231,76,60,.09);color:var(--error);}
+  .item.def-item{font-size:13px;color:var(--dim);}
+  .sel-hint{text-align:center;margin-top:20px;font-family:'Work Sans',sans-serif;font-size:13px;color:var(--gold);}
+  .done-box{text-align:center;padding:40px;}
+  .done-box h2{font-size:28px;font-weight:700;color:var(--success);}
+  .done-box p{font-family:'Work Sans',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .btn{margin-top:24px;padding:14px 36px;border-radius:10px;border:none;background:var(--crimson);color:var(--text);font-size:15px;font-family:inherit;cursor:pointer;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .shake{animation:shake .4s ease;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 5 of 10</div>
+    <h1>Term Matching</h1>
+    <p class="sub">Select a term on the left, then tap its matching definition on the right.</p>
+  </div>
+  <div class="stats"><span style="color:var(--success)" id="matchCount">Matched: 0/10</span><span style="color:var(--dim)" id="attempts">Attempts: 0</span></div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+  <div id="gameArea"></div>
+  <div id="selHint" class="sel-hint" style="display:none"></div>
+</div>
+<script>
+const PAIRS=[
+  {t:"SA Node",m:"Natural pacemaker"},
+  {t:"Tricuspid Valve",m:"Right atrium → Right ventricle"},
+  {t:"Myocardium",m:"Muscular pumping layer"},
+  {t:"Left Ventricle",m:"Thickest wall, pumps to body"},
+  {t:"Pulmonary Veins",m:"Carry oxygenated blood to LA"},
+  {t:"Diastole",m:"Heart relaxes and fills"},
+  {t:"Aorta",m:"Largest artery in the body"},
+  {t:"AV Node",m:"Delays impulse for filling"},
+  {t:"Endocardium",m:"Smooth inner heart lining"},
+  {t:"Superior Vena Cava",m:"Returns blood from upper body"},
+];
+let shuffledDefs,selectedTerm=null,matched=new Set(),wrongDef=null,attempts=0;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function init(){shuffledDefs=shuffle(PAIRS.map(p=>p.m));matched=new Set();selectedTerm=null;wrongDef=null;attempts=0;render();}
+function render(){
+  const done=matched.size>=PAIRS.length*2;
+  document.getElementById('matchCount').textContent=`Matched: ${matched.size/2}/${PAIRS.length}`;
+  document.getElementById('attempts').textContent=`Attempts: ${attempts}`;
+  document.getElementById('progFill').style.width=`${matched.size/2/PAIRS.length*100}%`;
+  if(done){
+    const msg=attempts<=PAIRS.length?" — Perfect score!":attempts<=PAIRS.length+3?" — Great job!":"";
+    document.getElementById('gameArea').innerHTML=`<div class="done-box"><div style="font-size:48px;margin-bottom:12px">🎉</div><h2>All Matched!</h2><p>Completed in ${attempts} attempt${attempts!==1?'s':''}${msg}</p><button class="btn" onclick="init()">Play Again</button></div>`;
+    document.getElementById('selHint').style.display='none';
+    return;
+  }
+  let h='<div class="grid"><div><div class="col-label">Terms</div>';
+  PAIRS.forEach((p,i)=>{
+    const isMtch=matched.has(p.t);const isSel=selectedTerm===p.t;
+    let cls='item';if(isMtch)cls+=' matched';else if(isSel)cls+=' selected';
+    h+=`<div class="${cls}" onclick="pickTerm('${p.t.replace(/'/g,"\\'")}')">${isMtch?'✓ ':''}${p.t}</div>`;
+  });
+  h+='</div><div><div class="col-label">Definitions</div>';
+  shuffledDefs.forEach((d,i)=>{
+    const isMtch=matched.has(d);const isWrong=wrongDef===d;
+    let cls='item def-item';if(isMtch)cls+=' matched';if(isWrong)cls+=' wrong shake';
+    h+=`<div class="${cls}" id="def${i}" onclick="pickDef(${i})">${isMtch?'✓ ':''}${d}</div>`;
+  });
+  h+='</div></div>';
+  document.getElementById('gameArea').innerHTML=h;
+  const hint=document.getElementById('selHint');
+  if(selectedTerm&&!done){hint.style.display='block';hint.innerHTML=`Selected: <strong>${selectedTerm}</strong> — now tap its definition →`;}
+  else{hint.style.display='none';}
+}
+function pickTerm(t){if(matched.has(t))return;selectedTerm=t;wrongDef=null;render();}
+function pickDef(i){
+  const d=shuffledDefs[i];
+  if(!selectedTerm||matched.has(d))return;
+  attempts++;
+  const pair=PAIRS.find(p=>p.t===selectedTerm);
+  if(pair&&pair.m===d){matched.add(selectedTerm);matched.add(d);selectedTerm=null;render();}
+  else{wrongDef=d;render();setTimeout(()=>{wrongDef=null;render();},700);}
+}
+init();
+</script>
+</body>
+</html>

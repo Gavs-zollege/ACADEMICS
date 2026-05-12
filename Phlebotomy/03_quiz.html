@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 3 — Knowledge Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0D0D1B;--card:#151528;--surface:#1C1C35;--crimson:#9B2335;--gold:#D4A843;--text:#F0EDE6;--dim:#7A7690;--success:#43B581;--error:#ED4245;--border:#252540;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(160deg,var(--bg),#0F0F24);font-family:'DM Serif Display',serif;color:var(--text);}
+  .wrap{max-width:580px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:24px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Outfit',sans-serif;font-weight:600;margin-bottom:8px;}
+  h1{font-size:36px;color:var(--gold);}
+  .prog-row{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+  .prog-text{font-family:'Outfit',sans-serif;font-size:13px;color:var(--dim);white-space:nowrap;}
+  .prog-bar{flex:1;height:5px;border-radius:3px;background:var(--border);overflow:hidden;}
+  .prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--crimson),var(--gold));transition:width .4s ease;}
+  .score-text{color:var(--success);}
+  .q-card{background:var(--card);border-radius:14px;padding:28px 24px;border:1px solid var(--border);}
+  .q-text{font-size:20px;line-height:1.5;margin-bottom:24px;}
+  .opt{padding:14px 18px;margin-bottom:8px;border-radius:10px;border:1px solid var(--border);font-family:'Outfit',sans-serif;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;}
+  .opt:hover{transform:translateX(4px);}
+  .opt .letter{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--dim);flex-shrink:0;}
+  .opt.correct{background:rgba(67,181,129,.1);border-color:var(--success);color:var(--success);}
+  .opt.correct .letter{border-color:var(--success);color:var(--success);}
+  .opt.wrong{background:rgba(237,66,69,.1);border-color:var(--error);color:var(--error);}
+  .opt.wrong .letter{border-color:var(--error);color:var(--error);}
+  .next-wrap{text-align:center;margin-top:20px;}
+  .btn{padding:14px 40px;border-radius:10px;border:none;background:var(--gold);color:var(--bg);font-size:15px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;}
+  .btn:hover{filter:brightness(1.1);}
+  .results{text-align:center;padding:40px 20px;}
+  .grade{font-size:72px;margin-bottom:8px;}
+  .results-score{font-size:32px;color:var(--gold);}
+  .results-msg{font-family:'Outfit',sans-serif;font-size:16px;color:var(--dim);margin:12px 0 32px;}
+  .missed-title{font-size:14px;color:var(--error);font-family:'Outfit',sans-serif;font-weight:600;margin-bottom:8px;text-align:left;}
+  .missed-item{padding:10px 14px;margin-bottom:6px;border-radius:8px;background:var(--card);border:1px solid var(--border);font-size:13px;font-family:'Outfit',sans-serif;text-align:left;}
+  .missed-item .mq{color:var(--text);margin-bottom:4px;}
+  .missed-item .ma{color:var(--success);font-size:12px;}
+  .btn-retry{padding:14px 36px;border-radius:10px;border:none;background:var(--crimson);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;margin-top:20px;}
+  #results{display:none;}
+  #quiz{display:block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 3 of 10</div>
+    <h1>Knowledge Quiz</h1>
+  </div>
+  <div id="quiz">
+    <div class="prog-row">
+      <span class="prog-text" id="progPos">1/15</span>
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+      <span class="prog-text score-text" id="scoreText">0✓</span>
+    </div>
+    <div class="q-card">
+      <div class="q-text" id="qText"></div>
+      <div id="opts"></div>
+    </div>
+    <div class="next-wrap" id="nextWrap" style="display:none">
+      <button class="btn" id="nextBtn" onclick="next()">Next Question →</button>
+    </div>
+  </div>
+  <div id="results" class="results"></div>
+</div>
+<script>
+const QS=[
+  {q:"Where is the heart located?",o:["Mediastinum","Peritoneum","Pleural cavity","Cranial cavity"],a:0},
+  {q:"Which layer of the heart wall is responsible for pumping?",o:["Epicardium","Endocardium","Myocardium","Pericardium"],a:2},
+  {q:"Which chamber has the thickest wall?",o:["Right atrium","Right ventricle","Left atrium","Left ventricle"],a:3},
+  {q:"What is the heart's natural pacemaker?",o:["AV node","SA node","Bundle of His","Purkinje fibers"],a:1},
+  {q:"The tricuspid valve is located between:",o:["Left atrium & left ventricle","Right atrium & right ventricle","Right ventricle & lungs","Left ventricle & aorta"],a:1},
+  {q:"During diastole, the heart:",o:["Contracts forcefully","Relaxes and fills with blood","Stops briefly","Pumps blood out"],a:1},
+  {q:"The aorta carries blood from the:",o:["Right ventricle","Left atrium","Left ventricle","Right atrium"],a:2},
+  {q:"Pulmonary veins carry what type of blood?",o:["Deoxygenated","Oxygenated","Mixed","Plasma only"],a:1},
+  {q:"What does the AV node do?",o:["Initiates heartbeat","Delays impulse for ventricular filling","Pumps blood","Opens valves"],a:1},
+  {q:"Blood pressure readings reflect which cardiac phases?",o:["Systole and diastole","Systole only","Diastole only","Heart rate"],a:0},
+  {q:"The mitral valve is also called:",o:["Tricuspid","Semilunar","Bicuspid","Aortic"],a:2},
+  {q:"Which vessels return deoxygenated blood to the right atrium?",o:["Pulmonary veins","Aorta","Superior & inferior vena cava","Pulmonary arteries"],a:2},
+  {q:"Purkinje fibers distribute impulses through the:",o:["Atria","AV node","Ventricles","SA node"],a:2},
+  {q:"In pulmonary circulation, blood travels from:",o:["Left ventricle to body","Right ventricle to lungs","Lungs to right atrium","Body to left atrium"],a:1},
+  {q:"Poor cardiac output may cause:",o:["Collapsed or fragile veins","Increased vein visibility","Higher blood pressure","Faster heart rate only"],a:0},
+];
+let cur=0,score=0,answered=false,answers=[];
+function renderQ(){
+  const q=QS[cur];
+  document.getElementById('qText').textContent=q.q;
+  document.getElementById('progPos').textContent=`${cur+1}/${QS.length}`;
+  document.getElementById('progFill').style.width=`${(cur+1)/QS.length*100}%`;
+  document.getElementById('scoreText').textContent=`${score}✓`;
+  let h='';
+  q.o.forEach((o,i)=>{
+    h+=`<div class="opt" id="opt${i}" onclick="pick(${i})"><div class="letter">${String.fromCharCode(65+i)}</div><span>${o}</span></div>`;
+  });
+  document.getElementById('opts').innerHTML=h;
+  document.getElementById('nextWrap').style.display='none';
+  answered=false;
+}
+function pick(i){
+  if(answered)return;answered=true;
+  const q=QS[cur];const correct=i===q.a;
+  if(correct)score++;
+  answers.push({idx:cur,picked:i,correct});
+  q.o.forEach((_,j)=>{
+    const el=document.getElementById('opt'+j);
+    el.style.cursor='default';
+    if(j===q.a){el.classList.add('correct');el.querySelector('.letter').textContent='✓';}
+    else if(j===i&&!correct){el.classList.add('wrong');el.querySelector('.letter').textContent='✗';}
+  });
+  document.getElementById('scoreText').textContent=`${score}✓`;
+  document.getElementById('nextWrap').style.display='block';
+  document.getElementById('nextBtn').textContent=cur+1>=QS.length?'See Results':'Next Question →';
+}
+function next(){
+  if(cur+1>=QS.length){showResults();return;}
+  cur++;renderQ();
+}
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  const r=document.getElementById('results');r.style.display='block';
+  const pct=score/QS.length*100;
+  const grade=pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':'F';
+  const col=pct>=70?'var(--success)':'var(--error)';
+  const msg=pct>=90?"Outstanding mastery!":pct>=70?"Solid understanding. Review missed items.":"Keep studying and try again!";
+  const missed=answers.filter(a=>!a.correct);
+  let mh='';
+  if(missed.length){
+    mh+='<div style="max-width:400px;margin:0 auto 24px;text-align:left"><div class="missed-title">Missed Questions:</div>';
+    missed.forEach(a=>{
+      mh+=`<div class="missed-item"><div class="mq">${QS[a.idx].q}</div><div class="ma">Answer: ${QS[a.idx].o[QS[a.idx].a]}</div></div>`;
+    });
+    mh+='</div>';
+  }
+  r.innerHTML=`<div class="grade" style="color:${col}">${grade}</div><div class="results-score">${score} / ${QS.length}</div><div class="results-msg">${msg}</div>${mh}<button class="btn-retry" onclick="reset()">Retake Quiz</button>`;
+}
+function reset(){
+  cur=0;score=0;answers=[];
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('results').style.display='none';
+  renderQ();
+}
+renderQ();
+</script>
+</body>
+</html>

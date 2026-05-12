@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 6 — Blood Flow Pathway</title>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#090D18;--card:#111729;--surface:#1A2040;--crimson:#9B2335;--gold:#D4A843;--text:#EDE9DF;--dim:#6B7088;--success:#43B581;--error:#E74C3C;--border:#222844;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg),#0E1222);font-family:'Bitter',serif;color:var(--text);}
+  .wrap{max-width:620px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:34px;color:var(--gold);}
+  .sub{font-family:'Manrope',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .seq-box{background:var(--card);border-radius:14px;padding:20px;border:1px solid var(--border);margin-bottom:16px;min-height:80px;}
+  .seq-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .seq-label{font-size:11px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;font-family:'Manrope',sans-serif;font-weight:700;}
+  .seq-count{font-size:12px;color:var(--dim);font-family:'Manrope',sans-serif;}
+  .seq-empty{color:var(--dim);font-size:14px;font-family:'Manrope',sans-serif;padding:12px 0;}
+  .seq-item{display:flex;align-items:center;gap:10px;padding:8px 14px;border-radius:8px;margin-bottom:4px;cursor:pointer;transition:all .2s;border:1px solid var(--border);background:var(--surface);}
+  .seq-item:hover{transform:translateX(2px);}
+  .seq-item .num{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:'Manrope',sans-serif;flex-shrink:0;}
+  .seq-item .lbl{font-family:'Manrope',sans-serif;font-size:13px;flex:1;}
+  .seq-item .x{color:var(--dim);font-size:11px;}
+  .seq-item.correct{background:rgba(67,181,129,.06);border-color:rgba(67,181,129,.27);}
+  .seq-item.correct .num{background:rgba(67,181,129,.13);color:var(--success);}
+  .seq-item.correct .x{color:var(--success);}
+  .seq-item.wrong{background:rgba(231,76,60,.06);border-color:rgba(231,76,60,.27);}
+  .seq-item.wrong .num{background:rgba(231,76,60,.13);color:var(--error);}
+  .seq-item.wrong .x{color:var(--error);}
+  .pool-label{font-size:11px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;font-family:'Manrope',sans-serif;font-weight:600;margin-bottom:10px;padding-left:4px;}
+  .pool{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;}
+  .chip{padding:8px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);font-family:'Manrope',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;user-select:none;}
+  .chip:hover{transform:translateY(-2px);filter:brightness(1.1);}
+  .hint-btn{background:transparent;border:1px solid var(--border);color:var(--dim);padding:6px 16px;border-radius:8px;font-family:'Manrope',sans-serif;font-size:12px;cursor:pointer;}
+  .hint-text{margin-top:8px;font-family:'Manrope',sans-serif;font-size:13px;color:var(--gold);line-height:1.6;}
+  .ctrls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .btn{padding:14px 36px;border-radius:10px;border:none;font-size:15px;font-weight:600;font-family:'Manrope',sans-serif;cursor:pointer;}
+  .btn-gold{background:var(--gold);color:var(--bg);}
+  .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);font-size:14px;padding:14px 28px;}
+  .btn-dim{background:transparent;border:1px solid var(--border);color:var(--dim);font-size:14px;padding:14px 28px;}
+  .msg{text-align:center;margin-top:16px;font-family:'Manrope',sans-serif;font-size:14px;}
+  .done-box{text-align:center;margin-top:20px;padding:20px;background:rgba(67,181,129,.07);border-radius:12px;border:1px solid rgba(67,181,129,.2);}
+  .done-box h2{font-size:22px;font-weight:700;color:var(--success);}
+  .done-box p{font-family:'Manrope',sans-serif;font-size:13px;color:var(--dim);margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 6 of 10</div>
+    <h1>Blood Flow Pathway</h1>
+    <p class="sub">Arrange all 14 steps in the correct order of blood flow through the heart.</p>
+  </div>
+  <div class="seq-box"><div class="seq-title"><span class="seq-label">Your Sequence</span><span class="seq-count" id="seqCount">0/14</span></div><div id="seqList"></div></div>
+  <div id="poolArea"></div>
+  <div style="text-align:center;margin-bottom:16px">
+    <button class="hint-btn" id="hintBtn" onclick="toggleHint()">Show Hint</button>
+    <div class="hint-text" id="hintText" style="display:none">Think: Body → Vena Cava → Right side → Lungs → Left side → Aorta → Body</div>
+  </div>
+  <div class="ctrls" id="ctrls"></div>
+  <div class="msg" id="msg"></div>
+  <div class="done-box" id="doneBox" style="display:none"></div>
+</div>
+<script>
+const STEPS=[
+  {l:"Body (deoxygenated blood)",s:"Body",c:"#5B7FB5"},
+  {l:"Superior / Inferior Vena Cava",s:"Vena Cava",c:"#5B7FB5"},
+  {l:"Right Atrium",s:"R. Atrium",c:"#6B5BAF"},
+  {l:"Tricuspid Valve",s:"Tricuspid V.",c:"#8B6AAE"},
+  {l:"Right Ventricle",s:"R. Ventricle",c:"#6B5BAF"},
+  {l:"Pulmonary Valve",s:"Pulmonary V.",c:"#8B6AAE"},
+  {l:"Pulmonary Arteries → Lungs",s:"Pulm. Arteries",c:"#4A90A4"},
+  {l:"Lungs (gas exchange: CO₂ out, O₂ in)",s:"Lungs",c:"#4CAF90"},
+  {l:"Pulmonary Veins",s:"Pulm. Veins",c:"#E86B6B"},
+  {l:"Left Atrium",s:"L. Atrium",c:"#D45555"},
+  {l:"Mitral (Bicuspid) Valve",s:"Mitral V.",c:"#C44A4A"},
+  {l:"Left Ventricle",s:"L. Ventricle",c:"#D45555"},
+  {l:"Aortic Valve",s:"Aortic V.",c:"#C44A4A"},
+  {l:"Aorta → Systemic Circulation",s:"Aorta",c:"#E86B6B"},
+];
+let userOrder=[],pool=[],checked=false,correct=false,showHint=false;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function init(){userOrder=[];pool=shuffle([...STEPS]);checked=false;correct=false;render();}
+function render(){
+  document.getElementById('seqCount').textContent=`${userOrder.length}/${STEPS.length}`;
+  let sl='';
+  if(!userOrder.length)sl='<div class="seq-empty">Tap steps below to build the pathway...</div>';
+  else userOrder.forEach((s,i)=>{
+    let cls='seq-item';
+    if(checked){cls+=s.s===STEPS[i].s?' correct':' wrong';}
+    const status=checked?(s.s===STEPS[i].s?'✓':'✗'):'✕';
+    sl+=`<div class="${cls}" onclick="remove(${i})">
+      <div class="num" style="${!checked?'background:'+s.c+'33;color:'+s.c:''}">${i+1}</div>
+      <span class="lbl">${s.l}</span>
+      ${!correct?`<span class="x">${status}</span>`:(checked?'<span class="x" style="color:var(--success)">✓</span>':'')}
+    </div>`;
+  });
+  document.getElementById('seqList').innerHTML=sl;
+  let ph='';
+  if(pool.length){
+    ph='<div class="pool-label">Available Steps</div><div class="pool">';
+    pool.forEach((s,i)=>ph+=`<div class="chip" onclick="add(${i})">${s.s}</div>`);
+    ph+='</div>';
+  }
+  document.getElementById('poolArea').innerHTML=ph;
+  let ch='';
+  if(!correct&&userOrder.length===STEPS.length)ch+=`<button class="btn btn-gold" onclick="check()">Check Order</button>`;
+  ch+=`<button class="btn btn-outline" onclick="init()">Reset</button>`;
+  if(!correct)ch+=`<button class="btn btn-dim" onclick="reveal()">Show Answer</button>`;
+  document.getElementById('ctrls').innerHTML=ch;
+  const msg=document.getElementById('msg');
+  if(checked&&!correct)msg.innerHTML='<span style="color:var(--error)">Some steps are out of order — check the ones marked ✗ and rearrange.</span>';
+  else msg.innerHTML='';
+  const db=document.getElementById('doneBox');
+  if(correct){db.style.display='block';db.innerHTML='<h2>Correct Pathway!</h2><p>You\'ve traced the complete circuit of blood flow through the heart.</p>';}
+  else db.style.display='none';
+}
+function add(i){userOrder.push(pool[i]);pool.splice(i,1);checked=false;render();}
+function remove(i){if(checked&&correct)return;pool.push(userOrder[i]);userOrder.splice(i,1);checked=false;render();}
+function check(){checked=true;correct=userOrder.length===STEPS.length&&userOrder.every((s,i)=>s.s===STEPS[i].s);render();}
+function reveal(){userOrder=[...STEPS];pool=[];checked=true;correct=true;render();}
+function toggleHint(){showHint=!showHint;document.getElementById('hintText').style.display=showHint?'block':'none';document.getElementById('hintBtn').textContent=showHint?'Hide Hint':'Show Hint';}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 4 — True or False</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Karla:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0B0E17;--card:#12162A;--surface:#1A1F38;--crimson:#A02040;--gold:#D4A843;--text:#EDE9DF;--dim:#6E7088;--success:#2ECC71;--error:#E74C3C;--border:#222844;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#161B30,var(--bg));font-family:'Libre Baskerville',serif;color:var(--text);}
+  .wrap{max-width:560px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:32px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Karla',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:36px;color:var(--gold);}
+  .sub{font-family:'Karla',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .steps{display:flex;gap:4px;justify-content:center;margin-bottom:24px;}
+  .step{height:10px;border-radius:5px;transition:all .3s;}
+  .stmt-card{background:var(--card);border-radius:14px;padding:32px 24px;border:1px solid var(--border);margin-bottom:24px;position:relative;}
+  .stmt-card .num{position:absolute;top:14px;right:18px;font-size:12px;color:var(--dim);font-family:'Karla',sans-serif;}
+  .stmt-text{font-size:20px;line-height:1.6;}
+  .btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+  .tf-btn{border:2px solid;cursor:pointer;font-family:'Karla',sans-serif;font-weight:700;font-size:18px;border-radius:12px;padding:20px;color:var(--text);transition:all .2s;}
+  .tf-btn:hover{transform:scale(1.03);filter:brightness(1.1);}
+  .feedback{padding:16px 20px;border-radius:12px;margin-bottom:16px;}
+  .fb-title{font-family:'Karla',sans-serif;font-size:14px;font-weight:600;margin-bottom:4px;}
+  .fb-text{font-family:'Karla',sans-serif;font-size:14px;color:var(--dim);line-height:1.5;}
+  .next-wrap{text-align:center;}
+  .btn-next{padding:14px 40px;border-radius:10px;border:none;background:var(--gold);color:var(--bg);font-size:15px;font-weight:600;font-family:'Karla',sans-serif;cursor:pointer;}
+  .results{text-align:center;padding:40px 20px;}
+  .res-score{font-size:64px;font-weight:700;color:var(--gold);margin:16px 0 8px;}
+  .res-msg{font-size:16px;font-family:'Karla',sans-serif;margin-bottom:32px;}
+  .btn-retry{padding:14px 40px;border-radius:10px;border:none;background:var(--crimson);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 4 of 10</div>
+    <h1>True or False</h1>
+    <p class="sub">Read each statement carefully. Is it true or false?</p>
+  </div>
+  <div id="game">
+    <div class="steps" id="steps"></div>
+    <div class="stmt-card" id="stmtCard"></div>
+    <div class="btns" id="btns"></div>
+    <div id="feedback" style="display:none"></div>
+    <div class="next-wrap" id="nextWrap" style="display:none">
+      <button class="btn-next" id="nextBtn" onclick="next()">Next →</button>
+    </div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {s:"The heart is located slightly to the right of the midline.",a:false,e:"The heart is slightly LEFT of the midline in the mediastinum."},
+  {s:"The left ventricle has the thickest wall of all four chambers.",a:true,e:"Correct — it must generate enough pressure to pump blood throughout the entire body."},
+  {s:"Pulmonary arteries carry oxygenated blood.",a:false,e:"Pulmonary arteries carry DEOXYGENATED blood from the right ventricle to the lungs."},
+  {s:"The SA node is located in the left atrium.",a:false,e:"The SA node is in the RIGHT atrium. It's the heart's natural pacemaker."},
+  {s:"Systole refers to the contraction phase of the cardiac cycle.",a:true,e:"Correct — during systole, the heart contracts and pumps blood to the lungs and body."},
+  {s:"The endocardium is the outermost layer of the heart.",a:false,e:"The endocardium is the INNERMOST layer. The epicardium is the outermost."},
+  {s:"The mitral valve is also known as the bicuspid valve.",a:true,e:"Correct — it has two cusps/leaflets and sits between the left atrium and left ventricle."},
+  {s:"Warmth and gravity can improve venous access for phlebotomy.",a:true,e:"Correct — these techniques help dilate veins and increase blood pooling in extremities."},
+  {s:"The cardiovascular system plays no role in thermoregulation.",a:false,e:"The cardiovascular system DOES support thermoregulation by distributing heat via blood flow."},
+  {s:"The Bundle of His transmits impulses from the AV node to the bundle branches.",a:true,e:"Correct — it's an essential link in the cardiac conduction pathway."},
+];
+let idx=0,answer=null,score=0;
+function render(){
+  const q=QS[idx];
+  let sh='';QS.forEach((_,i)=>{
+    const w=i===idx?24:10;const bg=i<idx?'var(--success)':i===idx?'var(--gold)':'var(--border)';
+    sh+=`<div class="step" style="width:${w}px;background:${bg}"></div>`;
+  });
+  document.getElementById('steps').innerHTML=sh;
+  document.getElementById('stmtCard').innerHTML=`<div class="num">Q${idx+1}</div><div class="stmt-text">"${q.s}"</div>`;
+  if(answer===null){
+    document.getElementById('btns').innerHTML=`
+      <button class="tf-btn" onclick="pick(true)" style="background:rgba(46,204,113,.13);border-color:rgba(46,204,113,.33)">✓ TRUE</button>
+      <button class="tf-btn" onclick="pick(false)" style="background:rgba(231,76,60,.13);border-color:rgba(231,76,60,.33)">✗ FALSE</button>`;
+    document.getElementById('btns').style.display='grid';
+    document.getElementById('feedback').style.display='none';
+    document.getElementById('nextWrap').style.display='none';
+  }
+}
+function pick(val){
+  if(answer!==null)return;answer=val;
+  const q=QS[idx];const correct=val===q.a;
+  if(correct)score++;
+  // update buttons
+  const tBg=q.a===true?'var(--success)':answer===true?'var(--error)':'var(--surface)';
+  const fBg=q.a===false?'var(--success)':answer===false?'var(--error)':'var(--surface)';
+  const tOp=answer!==true&&q.a!==true?'0.4':'1';
+  const fOp=answer!==false&&q.a!==false?'0.4':'1';
+  document.getElementById('btns').innerHTML=`
+    <button class="tf-btn" style="background:${tBg};border-color:${tBg};opacity:${tOp};cursor:default">✓ TRUE</button>
+    <button class="tf-btn" style="background:${fBg};border-color:${fBg};opacity:${fOp};cursor:default">✗ FALSE</button>`;
+  const fb=document.getElementById('feedback');fb.style.display='block';
+  const col=correct?'var(--success)':'var(--error)';
+  fb.innerHTML=`<div class="feedback" style="background:${correct?'rgba(46,204,113,.07)':'rgba(231,76,60,.07)'};border:1px solid ${correct?'rgba(46,204,113,.2)':'rgba(231,76,60,.2)'}">
+    <div class="fb-title" style="color:${col}">${correct?'Correct!':'Incorrect'}</div>
+    <div class="fb-text">${q.e}</div></div>`;
+  document.getElementById('nextWrap').style.display='block';
+  document.getElementById('nextBtn').textContent=idx+1>=QS.length?'See Results':'Next →';
+}
+function next(){
+  if(idx+1>=QS.length){showResults();return;}
+  idx++;answer=null;render();
+}
+function showResults(){
+  document.getElementById('game').style.display='none';
+  const r=document.getElementById('results');r.style.display='block';
+  const pct=score/QS.length*100;
+  const col=pct>=80?'var(--success)':pct>=60?'var(--gold)':'var(--error)';
+  const msg=pct>=80?"Excellent understanding!":pct>=60?"Good effort — review the tricky ones.":"Keep studying and retry!";
+  r.innerHTML=`<div class="label" style="margin-bottom:16px">Complete</div><div class="res-score">${score}/${QS.length}</div><div class="res-msg" style="color:${col}">${msg}</div><button class="btn-retry" onclick="reset()">Try Again</button>`;
+}
+function reset(){idx=0;answer=null;score=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

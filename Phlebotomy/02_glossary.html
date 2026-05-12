@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 2 — Interactive Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0A0F1C;--card:#111827;--surface:#1A2236;--crimson:#8B1A1A;--gold:#D4A843;--text:#EDE9E0;--dim:#6B7280;--border:#1E293B;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg) 0%,#0E1525 100%);font-family:'Cormorant Garamond','Georgia',serif;color:var(--text);}
+  .wrap{max-width:620px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:32px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Nunito Sans',sans-serif;font-weight:600;margin-bottom:8px;}
+  h1{font-size:36px;font-weight:700;color:var(--gold);}
+  .sub{font-family:'Nunito Sans',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  #search{width:100%;padding:14px 20px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:15px;font-family:'Nunito Sans',sans-serif;margin-bottom:16px;outline:none;}
+  #search:focus{border-color:var(--gold);}
+  .cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;}
+  .cat-btn{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Nunito Sans',sans-serif;transition:all .2s;}
+  .cat-btn:hover{transform:translateY(-1px);}
+  .cat-btn.active{border-color:var(--gold);background:rgba(212,168,67,.13);color:var(--gold);}
+  .count{font-size:12px;font-family:'Nunito Sans',sans-serif;color:var(--dim);margin-bottom:12px;}
+  .list{border-radius:12px;border:1px solid var(--border);overflow:hidden;}
+  .item{padding:14px 20px;cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border);}
+  .item:last-child{border-bottom:none;}
+  .item:hover{background:var(--surface);}
+  .item-head{display:flex;justify-content:space-between;align-items:center;}
+  .item-left{display:flex;align-items:center;gap:12px;}
+  .bar{width:3px;height:24px;border-radius:2px;flex-shrink:0;}
+  .term-name{font-size:17px;font-weight:600;}
+  .item-right{display:flex;align-items:center;gap:8px;}
+  .cat-tag{font-size:10px;padding:2px 8px;border-radius:6px;font-family:'Nunito Sans',sans-serif;font-weight:600;}
+  .arrow{color:var(--dim);font-size:16px;transition:transform .2s;}
+  .def{margin-top:12px;padding-left:15px;font-size:15px;line-height:1.7;color:var(--dim);font-family:'Nunito Sans',sans-serif;display:none;}
+  .item.open .def{display:block;}
+  .item.open .arrow{transform:rotate(180deg);}
+  .item.open .term-name{color:var(--gold);}
+  .empty{padding:40px;text-align:center;color:var(--dim);font-family:'Nunito Sans',sans-serif;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 2 of 10</div>
+    <h1>Interactive Glossary</h1>
+    <p class="sub">30 terms · Search or filter by category</p>
+  </div>
+  <input type="text" id="search" placeholder="Search terms or definitions..." oninput="render()">
+  <div class="cats" id="cats"></div>
+  <div class="count" id="count"></div>
+  <div class="list" id="list"></div>
+</div>
+<script>
+const G=[
+  {t:"Apex",d:"The pointed bottom tip of the heart, directed downward and to the left.",c:"Structure"},
+  {t:"Aorta",d:"Largest artery in the body; exits the left ventricle and delivers oxygenated blood systemically.",c:"Vessels"},
+  {t:"Aortic Valve",d:"Semilunar valve between the left ventricle and the aorta; prevents backflow into the ventricle.",c:"Valves"},
+  {t:"AV Node",d:"Atrioventricular node; delays impulse briefly to allow ventricular filling before contraction.",c:"Conduction"},
+  {t:"Bundle Branches",d:"Left and right pathways carrying impulses from the Bundle of His down the interventricular septum.",c:"Conduction"},
+  {t:"Bundle of His",d:"Fiber bundle transmitting electrical impulses from the AV node to the bundle branches.",c:"Conduction"},
+  {t:"Cardiac Cycle",d:"One complete heartbeat consisting of systole (contraction) and diastole (relaxation).",c:"Function"},
+  {t:"Cardiac Output",d:"Volume of blood pumped by the heart per minute; product of heart rate × stroke volume.",c:"Function"},
+  {t:"Diastole",d:"Relaxation phase of the cardiac cycle when chambers fill with blood.",c:"Function"},
+  {t:"Endocardium",d:"Innermost smooth lining of the heart chambers; reduces friction during blood flow.",c:"Layers"},
+  {t:"Epicardium",d:"Outermost layer (visceral pericardium) of the heart wall; protective covering.",c:"Layers"},
+  {t:"Homeostasis",d:"The body's ability to maintain stable internal conditions through physiological processes.",c:"Function"},
+  {t:"Inferior Vena Cava",d:"Large vein returning deoxygenated blood from the lower body to the right atrium.",c:"Vessels"},
+  {t:"Left Atrium",d:"Upper left chamber receiving oxygenated blood from pulmonary veins.",c:"Chambers"},
+  {t:"Left Ventricle",d:"Lower left chamber pumping blood into the aorta. Has the thickest myocardial wall.",c:"Chambers"},
+  {t:"Mediastinum",d:"Central thoracic cavity compartment between the lungs housing the heart and great vessels.",c:"Structure"},
+  {t:"Mitral Valve",d:"Also called bicuspid valve; located between left atrium and left ventricle with two leaflets.",c:"Valves"},
+  {t:"Myocardium",d:"Middle muscular layer of the heart wall; responsible for cardiac contraction and pumping.",c:"Layers"},
+  {t:"Pulmonary Arteries",d:"Carry deoxygenated blood from the right ventricle to the lungs for gas exchange.",c:"Vessels"},
+  {t:"Pulmonary Circulation",d:"Blood flow route: right ventricle → lungs → left atrium. Where gas exchange occurs.",c:"Function"},
+  {t:"Pulmonary Valve",d:"Semilunar valve between right ventricle and pulmonary arteries.",c:"Valves"},
+  {t:"Pulmonary Veins",d:"Four veins carrying oxygenated blood from lungs to the left atrium.",c:"Vessels"},
+  {t:"Purkinje Fibers",d:"Terminal network distributing electrical impulses throughout the ventricular walls.",c:"Conduction"},
+  {t:"Right Atrium",d:"Upper right chamber receiving deoxygenated blood from the superior and inferior venae cavae.",c:"Chambers"},
+  {t:"Right Ventricle",d:"Lower right chamber pumping blood to lungs via pulmonary arteries.",c:"Chambers"},
+  {t:"SA Node",d:"Sinoatrial node; the heart's natural pacemaker in the right atrium wall. Sets heart rhythm.",c:"Conduction"},
+  {t:"Superior Vena Cava",d:"Large vein returning deoxygenated blood from the upper body to the right atrium.",c:"Vessels"},
+  {t:"Systemic Circulation",d:"Blood flow from the left ventricle through the body and back to the right atrium.",c:"Function"},
+  {t:"Systole",d:"Contraction phase of the cardiac cycle when the heart pumps blood out.",c:"Function"},
+  {t:"Thermoregulation",d:"Process by which the cardiovascular system helps distribute and maintain body temperature.",c:"Function"},
+  {t:"Tricuspid Valve",d:"Valve with three leaflets between right atrium and right ventricle.",c:"Valves"},
+];
+const CATS=["All","Structure","Layers","Chambers","Valves","Vessels","Conduction","Function"];
+const CC={Structure:"#5B9BD5",Layers:"#E8976A",Chambers:"#8B6AAE",Valves:"#D4A843",Vessels:"#E74C6F",Conduction:"#4CAF90",Function:"#8BAFD5"};
+let activeCat="All",openIdx=-1;
+function render(){
+  const s=document.getElementById('search').value.toLowerCase();
+  const filtered=G.filter(g=>{
+    const ms=g.t.toLowerCase().includes(s)||g.d.toLowerCase().includes(s);
+    const mc=activeCat==="All"||g.c===activeCat;
+    return ms&&mc;
+  });
+  // cats
+  let ch='';
+  CATS.forEach(cat=>{
+    const cnt=cat==="All"?G.length:G.filter(g=>g.c===cat).length;
+    ch+=`<button class="cat-btn ${activeCat===cat?'active':''}" onclick="setCat('${cat}')">${cat} (${cnt})</button>`;
+  });
+  document.getElementById('cats').innerHTML=ch;
+  document.getElementById('count').textContent=`Showing ${filtered.length} term${filtered.length!==1?'s':''}`;
+  if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms found. Try a different search.</div>';return;}
+  let h='';
+  filtered.forEach((g,i)=>{
+    const col=CC[g.c]||'var(--gold)';
+    const isOpen=openIdx===i;
+    h+=`<div class="item ${isOpen?'open':''}" onclick="toggle(${i})">
+      <div class="item-head">
+        <div class="item-left">
+          <div class="bar" style="background:${col}"></div>
+          <span class="term-name">${g.t}</span>
+        </div>
+        <div class="item-right">
+          <span class="cat-tag" style="color:${col};background:${col}18">${g.c}</span>
+          <span class="arrow">▾</span>
+        </div>
+      </div>
+      <div class="def" style="border-left:2px solid ${col}33;${isOpen?'display:block':''}">${g.d}</div>
+    </div>`;
+  });
+  document.getElementById('list').innerHTML=h;
+}
+function setCat(c){activeCat=c;openIdx=-1;render();}
+function toggle(i){openIdx=openIdx===i?-1:i;render();}
+render();
+</script>
+</body>
+</html>

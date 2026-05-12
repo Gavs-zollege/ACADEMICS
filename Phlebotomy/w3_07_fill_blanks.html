@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Draw Procedures — Fill in the Blanks</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#090D18;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7088;--success:#38C97A;--error:#E05555;--border:#1E2848;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:radial-gradient(ellipse at 60% 20%,#131A30,var(--bg));font-family:'Spectral',serif;color:var(--text);}
+  .wrap{max-width:560px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:32px;}
+  h1{font-size:34px;color:var(--gold);}
+  .sub{font-family:'Sora',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .prog-row{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+  .prog-text{font-family:'Sora',sans-serif;font-size:13px;color:var(--dim);}
+  .prog-bar{flex:1;height:4px;border-radius:2px;background:var(--border);overflow:hidden;}
+  .prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .4s;}
+  .s-card{background:var(--card);border-radius:14px;padding:32px 24px;border:1px solid var(--border);margin-bottom:20px;}
+  .sentence{font-size:20px;line-height:1.7;}
+  .blank{display:inline-block;min-width:120px;border-bottom:2px dashed var(--gold);font-weight:700;padding:0 4px;margin:0 4px;}
+  .input-row{display:flex;gap:10px;margin-bottom:16px;}
+  #ai{flex:1;padding:14px 18px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);font-size:16px;font-family:'Sora',sans-serif;outline:none;}
+  #ai:focus{border-color:var(--teal);}
+  .btn{padding:14px 24px;border-radius:10px;border:none;background:var(--gold);color:var(--bg);font-size:15px;font-weight:600;font-family:'Sora',sans-serif;cursor:pointer;white-space:nowrap;}
+  .hl{background:transparent;border:none;color:var(--dim);font-size:13px;font-family:'Sora',sans-serif;cursor:pointer;text-decoration:underline;}
+  .ht{color:var(--teal);font-size:13px;font-family:'Sora',sans-serif;margin-top:6px;}
+  .fb{text-align:center;padding:12px 16px;border-radius:10px;font-family:'Sora',sans-serif;font-size:15px;font-weight:600;}
+  .results{text-align:center;padding:40px;}
+  .rs{font-size:56px;font-weight:700;color:var(--gold);}
+  .rm{font-size:16px;font-family:'Sora',sans-serif;margin:8px 0 32px;}
+  .br{padding:14px 40px;border-radius:10px;border:none;background:var(--teal);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>Fill in the Blanks</h1><p class="sub">Type the missing term for each statement.</p></div>
+  <div id="game">
+    <div class="prog-row"><span class="prog-text" id="pp">1/12</span><div class="prog-bar"><div class="prog-fill" id="pf"></div></div><span class="prog-text" style="color:var(--success)" id="st">0✓</span></div>
+    <div class="s-card" id="sc"></div>
+    <div class="input-row"><input type="text" id="ai" placeholder="Type your answer..." autocomplete="off"><button class="btn" id="ab" onclick="doAction()">Check</button></div>
+    <div style="text-align:center" id="ha"></div>
+    <div id="fa" style="margin-top:12px"></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {s:"Patient identification requires ___ identifiers: full name and date of birth.",a:"two",h:"A number (3 letters)"},
+  {s:"The tourniquet is placed ___–4 inches above the venipuncture site.",a:"3",h:"A single digit"},
+  {s:"The tourniquet must not remain on the arm longer than ___ minute(s).",a:"1",h:"A single digit"},
+  {s:"The venipuncture site is cleaned with 70% isopropyl ___.",a:"alcohol",h:"Starts with 'A'"},
+  {s:"The cleaning technique uses concentric ___ moving outward.",a:"circles",h:"A round shape (plural)"},
+  {s:"After cleaning, the site must ___ dry completely before puncture.",a:"air",h:"3 letters — natural drying"},
+  {s:"___ is more reliable than visual inspection for finding veins.",a:"palpation",h:"Using your fingertips to feel"},
+  {s:"Gloves must be ___ between every patient.",a:"changed",h:"Swapped out / replaced"},
+  {s:"The ___ container must be within arm's reach before starting a draw.",a:"sharps",h:"Where needles go after use"},
+  {s:"A patient should NEVER be identified by their room ___.",a:"number",h:"A digit assigned to rooms"},
+  {s:"Most laboratory errors occur in the ___-analytical phase.",a:"pre",h:"Before testing begins (3 letters)"},
+  {s:"The ___ of draw is the specific sequence for filling collection tubes.",a:"order",h:"5 letters — a sequence"},
+];
+let idx=0,result=null,score=0,showHint=false;
+function render(){
+  const q=QS[idx];document.getElementById('pp').textContent=`${idx+1}/${QS.length}`;
+  document.getElementById('pf').style.width=`${(idx+1)/QS.length*100}%`;
+  document.getElementById('st').textContent=`${score}✓`;
+  const parts=q.s.split('___');let blankCol=result===null?'var(--gold)':result?'var(--success)':'var(--error)';
+  let blankText=result!==null?(result?document.getElementById('ai').value:q.a):'___';
+  document.getElementById('sc').innerHTML=`<div class="sentence">${parts[0]}<span class="blank" style="border-color:${blankCol};color:${blankCol}">${blankText}</span>${parts[1]||''}</div>`;
+  const inp=document.getElementById('ai'),btn=document.getElementById('ab');
+  if(result!==null){inp.disabled=true;inp.style.borderColor=result?'var(--success)':'var(--error)';btn.textContent=idx+1>=QS.length?'Results':'Next →';}
+  else{inp.disabled=false;inp.style.borderColor='var(--border)';btn.textContent='Check';}
+  if(result===null){document.getElementById('ha').innerHTML=showHint?`<button class="hl" onclick="toggleH()">Hide hint</button><div class="ht">${q.h}</div>`:`<button class="hl" onclick="toggleH()">Need a hint?</button>`;}
+  else{document.getElementById('ha').innerHTML='';}
+  if(result!==null){const col=result?'var(--success)':'var(--error)';const bg=result?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)';const bc=result?'rgba(56,201,122,.2)':'rgba(224,85,85,.2)';
+    document.getElementById('fa').innerHTML=`<div class="fb" style="background:${bg};border:1px solid ${bc};color:${col}">${result?'Correct!':'Answer: '+q.a}</div>`;}
+  else{document.getElementById('fa').innerHTML='';}
+}
+function doAction(){
+  if(result!==null){if(idx+1>=QS.length){showResults();return;}idx++;result=null;showHint=false;document.getElementById('ai').value='';render();document.getElementById('ai').focus();return;}
+  const v=document.getElementById('ai').value.trim();if(!v)return;
+  result=v.toLowerCase()===QS[idx].a.toLowerCase();if(result)score++;render();
+}
+function toggleH(){showHint=!showHint;render();}
+function showResults(){document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='block';
+  const pct=score/QS.length*100;const col=pct>=80?'var(--success)':pct>=60?'var(--gold)':'var(--error)';
+  const msg=pct>=80?"Excellent recall!":pct>=60?"Good — practice the missed ones.":"Review and try again.";
+  r.innerHTML=`<div class="rs">${score}/${QS.length}</div><div class="rm" style="color:${col}">${msg}</div><button class="br" onclick="reset()">Try Again</button>`;}
+function reset(){idx=0;result=null;score=0;showHint=false;document.getElementById('ai').value='';document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';render();document.getElementById('ai').focus();}
+document.getElementById('ai').addEventListener('keydown',e=>{if(e.key==='Enter')doAction();});
+render();
+</script>
+</body>
+</html>

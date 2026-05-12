@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Draw Procedures — Knowledge Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0A0D18;--card:#111828;--surface:#1A2040;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7090;--success:#38C97A;--error:#E05555;--border:#1E2848;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(160deg,var(--bg),#0E1424);font-family:'DM Serif Display',serif;color:var(--text);}
+  .wrap{max-width:580px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:24px;}
+  h1{font-size:34px;color:var(--gold);}
+  .prog-row{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+  .prog-text{font-family:'Outfit',sans-serif;font-size:13px;color:var(--dim);white-space:nowrap;}
+  .prog-bar{flex:1;height:5px;border-radius:3px;background:var(--border);overflow:hidden;}
+  .prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .4s;}
+  .q-card{background:var(--card);border-radius:14px;padding:28px 24px;border:1px solid var(--border);}
+  .q-text{font-size:20px;line-height:1.5;margin-bottom:24px;}
+  .opt{padding:14px 18px;margin-bottom:8px;border-radius:10px;border:1px solid var(--border);font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;}
+  .opt:hover{transform:translateX(4px);}
+  .opt .ltr{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--dim);flex-shrink:0;}
+  .opt.correct{background:rgba(56,201,122,.1);border-color:var(--success);color:var(--success);}
+  .opt.correct .ltr{border-color:var(--success);color:var(--success);}
+  .opt.wrong{background:rgba(224,85,85,.1);border-color:var(--error);color:var(--error);}
+  .opt.wrong .ltr{border-color:var(--error);color:var(--error);}
+  .nw{text-align:center;margin-top:20px;}
+  .btn{padding:14px 40px;border-radius:10px;border:none;background:var(--gold);color:var(--bg);font-size:15px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;}
+  .results{text-align:center;padding:40px 20px;}
+  .grade{font-size:72px;}
+  .res-score{font-size:32px;color:var(--gold);}
+  .res-msg{font-family:'Outfit',sans-serif;font-size:16px;color:var(--dim);margin:12px 0 32px;}
+  .missed-t{font-size:14px;color:var(--error);font-family:'Outfit',sans-serif;font-weight:600;margin-bottom:8px;text-align:left;}
+  .missed-i{padding:10px 14px;margin-bottom:6px;border-radius:8px;background:var(--card);border:1px solid var(--border);font-size:13px;font-family:'Outfit',sans-serif;text-align:left;}
+  .missed-i .mq{color:var(--text);margin-bottom:4px;}
+  .missed-i .ma{color:var(--success);font-size:12px;}
+  .btn-retry{padding:14px 36px;border-radius:10px;border:none;background:var(--teal);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;margin-top:20px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>Knowledge Quiz</h1></div>
+  <div id="quiz">
+    <div class="prog-row"><span class="prog-text" id="pPos">1/15</span><div class="prog-bar"><div class="prog-fill" id="pFill"></div></div><span class="prog-text" style="color:var(--success)" id="sText">0✓</span></div>
+    <div class="q-card"><div class="q-text" id="qText"></div><div id="opts"></div></div>
+    <div class="nw" id="nw" style="display:none"><button class="btn" id="nBtn" onclick="next()">Next →</button></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"How many identifiers are required before drawing blood?",o:["One","Two","Three","Room number only"],a:1},
+  {q:"The tourniquet should be placed how far above the venipuncture site?",o:["1–2 inches","3–4 inches","6–8 inches","Directly at the site"],a:1},
+  {q:"How long can a tourniquet remain on the arm?",o:["30 seconds","1 minute maximum","5 minutes","Until the draw is complete"],a:1},
+  {q:"What antiseptic is used to cleanse the venipuncture site?",o:["Hydrogen peroxide","Betadine","70% isopropyl alcohol","Soap and water"],a:2},
+  {q:"The correct cleaning motion for site preparation is:",o:["Back and forth scrubbing","Concentric circles moving outward","Wiping in one direction","Dabbing the site"],a:1},
+  {q:"After cleaning, you should:",o:["Blow on the site to dry it","Fan the site dry","Allow it to air dry completely","Wipe with gauze"],a:2},
+  {q:"Which is MORE reliable for finding a vein?",o:["Visual inspection","Palpation","Asking the patient","Using a ruler"],a:1},
+  {q:"Which site should be AVOIDED for venipuncture?",o:["Antecubital fossa","Arm on the same side as a mastectomy","Dorsal hand veins","Median cubital vein"],a:1},
+  {q:"The sharps container should be positioned:",o:["Across the room","In the hallway","Within arm's reach","In the patient's lap"],a:2},
+  {q:"When should hand hygiene be performed?",o:["Only before patient contact","Only after patient contact","Before AND after patient contact","Only if hands are visibly dirty"],a:2},
+  {q:"What should a phlebotomist check on collection tubes before use?",o:["Color only","Expiration dates","Brand name","Weight"],a:1},
+  {q:"Most laboratory errors occur in which phase?",o:["Analytical","Post-analytical","Pre-analytical","Transport"],a:2},
+  {q:"The patient should verify their identity by:",o:["Nodding yes","Stating their name and DOB","Showing their room number","Pointing to their wristband"],a:1},
+  {q:"Fasting typically requires the patient to avoid food for:",o:["2–4 hours","8–12 hours","24 hours","No specific time"],a:1},
+  {q:"Why should a patient NOT pump their fist excessively?",o:["It makes veins harder to find","It can falsely elevate potassium levels","It causes bruising","It has no effect"],a:1},
+];
+let cur=0,score=0,answered=false,answers=[];
+function renderQ(){
+  const q=QS[cur];document.getElementById('qText').textContent=q.q;
+  document.getElementById('pPos').textContent=`${cur+1}/${QS.length}`;
+  document.getElementById('pFill').style.width=`${(cur+1)/QS.length*100}%`;
+  document.getElementById('sText').textContent=`${score}✓`;
+  let h='';q.o.forEach((o,i)=>{h+=`<div class="opt" id="o${i}" onclick="pick(${i})"><div class="ltr">${String.fromCharCode(65+i)}</div><span>${o}</span></div>`;});
+  document.getElementById('opts').innerHTML=h;document.getElementById('nw').style.display='none';answered=false;
+}
+function pick(i){if(answered)return;answered=true;const q=QS[cur];const c=i===q.a;if(c)score++;answers.push({idx:cur,picked:i,correct:c});
+  q.o.forEach((_,j)=>{const el=document.getElementById('o'+j);el.style.cursor='default';if(j===q.a){el.classList.add('correct');el.querySelector('.ltr').textContent='✓';}else if(j===i&&!c){el.classList.add('wrong');el.querySelector('.ltr').textContent='✗';}});
+  document.getElementById('sText').textContent=`${score}✓`;document.getElementById('nw').style.display='block';
+  document.getElementById('nBtn').textContent=cur+1>=QS.length?'See Results':'Next →';
+}
+function next(){if(cur+1>=QS.length){showRes();return;}cur++;renderQ();}
+function showRes(){
+  document.getElementById('quiz').style.display='none';const r=document.getElementById('results');r.style.display='block';
+  const pct=score/QS.length*100;const g=pct>=90?'A':pct>=80?'B':pct>=70?'C':pct>=60?'D':'F';
+  const col=pct>=70?'var(--success)':'var(--error)';const msg=pct>=90?"Outstanding!":pct>=70?"Solid — review missed items.":"Keep studying!";
+  const missed=answers.filter(a=>!a.correct);let mh='';
+  if(missed.length){mh+='<div style="max-width:400px;margin:0 auto 24px;text-align:left"><div class="missed-t">Missed:</div>';
+    missed.forEach(a=>{mh+=`<div class="missed-i"><div class="mq">${QS[a.idx].q}</div><div class="ma">Answer: ${QS[a.idx].o[QS[a.idx].a]}</div></div>`;});mh+='</div>';}
+  r.innerHTML=`<div class="grade" style="color:${col}">${g}</div><div class="res-score">${score}/${QS.length}</div><div class="res-msg">${msg}</div>${mh}<button class="btn-retry" onclick="reset()">Retake</button>`;
+}
+function reset(){cur=0;score=0;answers=[];document.getElementById('quiz').style.display='block';document.getElementById('results').style.display='none';renderQ();}
+renderQ();
+</script>
+</body>
+</html>

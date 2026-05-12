@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Draw Procedures — Term Matching</title>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#090C18;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#68708A;--success:#38C97A;--error:#E05555;--border:#1E2848;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(170deg,var(--bg),#0D1124);font-family:'Bitter',serif;color:var(--text);}
+  .wrap{max-width:700px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:32px;}
+  h1{font-size:34px;color:var(--gold);}
+  .sub{font-family:'Manrope',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .stats{display:flex;justify-content:center;gap:24px;margin-bottom:20px;font-family:'Manrope',sans-serif;font-size:13px;}
+  .prog-bar{height:4px;border-radius:2px;background:var(--border);margin-bottom:28px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .4s;}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .col-lbl{font-size:11px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;font-family:'Manrope',sans-serif;font-weight:600;margin-bottom:10px;padding-left:4px;}
+  .item{padding:12px 14px;margin-bottom:8px;border-radius:10px;border:1.5px solid var(--border);font-family:'Manrope',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;user-select:none;}
+  .item:hover{transform:translateY(-1px);}
+  .item.selected{border-color:var(--gold);background:rgba(226,185,76,.08);color:var(--gold);}
+  .item.matched{border-color:rgba(56,201,122,.3);background:rgba(56,201,122,.04);color:var(--success);opacity:.45;cursor:default;}
+  .item.wrong{border-color:var(--error);background:rgba(224,85,85,.08);color:var(--error);}
+  .item.def{font-size:13px;color:var(--dim);}
+  .hint{text-align:center;margin-top:20px;font-family:'Manrope',sans-serif;font-size:13px;color:var(--gold);}
+  .done{text-align:center;padding:40px;}
+  .done h2{font-size:28px;color:var(--success);}
+  .done p{font-family:'Manrope',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .btn{margin-top:24px;padding:14px 36px;border-radius:10px;border:none;background:var(--teal);color:var(--text);font-size:15px;font-family:inherit;cursor:pointer;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .shake{animation:shake .4s ease;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>Term Matching</h1><p class="sub">Select a term, then tap its matching definition.</p></div>
+  <div class="stats"><span style="color:var(--success)" id="mc">Matched: 0/10</span><span style="color:var(--dim)" id="att">Attempts: 0</span></div>
+  <div class="prog-bar"><div class="prog-fill" id="pf" style="width:0%"></div></div>
+  <div id="ga"></div>
+  <div id="ht" class="hint" style="display:none"></div>
+</div>
+<script>
+const P=[
+  {t:"Two Identifiers",m:"Full name + date of birth"},
+  {t:"Tourniquet",m:"Placed 3–4 inches above site, max 1 minute"},
+  {t:"Palpation",m:"Feeling for a vein with fingertips"},
+  {t:"70% Isopropyl Alcohol",m:"Standard antiseptic for site cleaning"},
+  {t:"Air Dry",m:"Site must dry on its own after cleaning"},
+  {t:"Compromised Site",m:"Area to avoid: IV, mastectomy, burns"},
+  {t:"Order of Draw",m:"Specific tube filling sequence"},
+  {t:"PPE",m:"Gloves required for all draws"},
+  {t:"Requisition",m:"Lab order form with tests and tube info"},
+  {t:"Sharps Container",m:"Within arm's reach before starting"},
+];
+let shuffled,selTerm=null,matched=new Set(),wrongDef=null,attempts=0;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function init(){shuffled=shuffle(P.map(p=>p.m));matched=new Set();selTerm=null;wrongDef=null;attempts=0;render();}
+function render(){
+  const done=matched.size>=P.length*2;
+  document.getElementById('mc').textContent=`Matched: ${matched.size/2}/${P.length}`;
+  document.getElementById('att').textContent=`Attempts: ${attempts}`;
+  document.getElementById('pf').style.width=`${matched.size/2/P.length*100}%`;
+  if(done){document.getElementById('ga').innerHTML=`<div class="done"><div style="font-size:48px;margin-bottom:12px">🎉</div><h2>All Matched!</h2><p>${attempts} attempts${attempts<=P.length?' — Perfect!':attempts<=P.length+3?' — Great job!':''}</p><button class="btn" onclick="init()">Play Again</button></div>`;document.getElementById('ht').style.display='none';return;}
+  let h='<div class="grid"><div><div class="col-lbl">Terms</div>';
+  P.forEach(p=>{let cls='item';if(matched.has(p.t))cls+=' matched';else if(selTerm===p.t)cls+=' selected';
+    h+=`<div class="${cls}" onclick="pickT('${p.t.replace(/'/g,"\\'")}')">${matched.has(p.t)?'✓ ':''}${p.t}</div>`;});
+  h+='</div><div><div class="col-lbl">Definitions</div>';
+  shuffled.forEach((d,i)=>{let cls='item def';if(matched.has(d))cls+=' matched';if(wrongDef===d)cls+=' wrong shake';
+    h+=`<div class="${cls}" onclick="pickD(${i})">${matched.has(d)?'✓ ':''}${d}</div>`;});
+  h+='</div></div>';document.getElementById('ga').innerHTML=h;
+  const ht=document.getElementById('ht');
+  if(selTerm){ht.style.display='block';ht.innerHTML=`Selected: <strong>${selTerm}</strong> — now tap its definition →`;}else{ht.style.display='none';}
+}
+function pickT(t){if(matched.has(t))return;selTerm=t;wrongDef=null;render();}
+function pickD(i){const d=shuffled[i];if(!selTerm||matched.has(d))return;attempts++;
+  const pair=P.find(p=>p.t===selTerm);
+  if(pair&&pair.m===d){matched.add(selTerm);matched.add(d);selTerm=null;render();}
+  else{wrongDef=d;render();setTimeout(()=>{wrongDef=null;render();},700);}
+}
+init();
+</script>
+</body>
+</html>

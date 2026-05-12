@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Draw Procedures — Clinical Case Studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Karla:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080C14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7098;--success:#38C97A;--error:#E05555;--border:#1E2848;--info:#5B8CDB;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(170deg,var(--bg),#0D1224);font-family:'Libre Baskerville',serif;color:var(--text);}
+  .wrap{max-width:600px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  h1{font-size:32px;color:var(--gold);}
+  .sub{font-family:'Karla',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
+  .tab{padding:8px 18px;border-radius:20px;font-family:'Karla',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);transition:all .2s;}
+  .tab.active{background:rgba(26,138,125,.15);border-color:var(--teal);color:var(--gold);}
+  .sc-card{background:var(--card);border-radius:14px;padding:24px;border:1px solid var(--border);border-left:4px solid var(--info);margin-bottom:20px;}
+  .sc-badge{display:inline-block;background:rgba(91,140,219,.12);color:var(--info);padding:4px 12px;border-radius:8px;font-size:11px;font-family:'Karla',sans-serif;font-weight:600;margin-bottom:10px;}
+  .sc-title{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+  .sc-text{font-size:16px;line-height:1.7;font-style:italic;}
+  .q-card{background:var(--card);border-radius:14px;padding:24px;border:1px solid var(--border);}
+  .q-prog{font-family:'Karla',sans-serif;font-size:12px;color:var(--dim);margin-bottom:10px;}
+  .q-text{font-size:18px;font-weight:700;margin-bottom:20px;line-height:1.5;}
+  .opt{padding:14px 18px;margin-bottom:8px;border-radius:10px;border:1.5px solid var(--border);font-family:'Karla',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;}
+  .opt:hover{transform:translateX(4px);}
+  .opt .ltr{font-weight:600;color:var(--dim);width:20px;}
+  .opt.correct{background:rgba(56,201,122,.08);border-color:var(--success);color:var(--success);}
+  .opt.wrong{background:rgba(224,85,85,.08);border-color:var(--error);color:var(--error);}
+  .opt.dis{cursor:default;}.opt.dis:hover{transform:none;}
+  .exp{margin-top:16px;padding:16px 20px;border-radius:12px;font-family:'Karla',sans-serif;font-size:14px;line-height:1.6;}
+  .exp-t{font-weight:600;margin-bottom:4px;}
+  .nw{text-align:center;margin-top:20px;}
+  .btn{padding:14px 40px;border-radius:10px;border:none;background:var(--gold);color:var(--bg);font-size:15px;font-weight:600;font-family:'Karla',sans-serif;cursor:pointer;}
+  .results{text-align:center;padding:40px 20px;}
+  .res-score{font-size:56px;font-weight:700;color:var(--gold);margin:16px 0;}
+  .res-msg{font-family:'Karla',sans-serif;font-size:15px;color:var(--dim);margin-bottom:24px;}
+  .res-case{text-align:left;padding:10px 14px;margin-bottom:8px;border-radius:10px;background:var(--card);border:1px solid var(--border);font-family:'Karla',sans-serif;font-size:13px;}
+  .btn-retry{margin-top:20px;padding:14px 40px;border-radius:10px;border:none;background:var(--teal);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>Clinical Case Studies</h1><p class="sub">Apply your pre-draw knowledge to real-world scenarios.</p></div>
+  <div id="game">
+    <div class="tabs" id="tabs"></div>
+    <div class="sc-card" id="scc"></div>
+    <div class="q-card" id="qc"></div>
+    <div id="ea"></div>
+    <div class="nw" id="nw" style="display:none"></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const CASES=[
+  {
+    title:"Wrong Patient ID",
+    scenario:"You enter Room 204 to draw blood. You ask 'Are you Maria Garcia?' and the patient nods and says 'yes.' You notice the requisition says the patient is 67 years old, but this patient appears to be in her 30s.",
+    questions:[
+      {q:"What is the FIRST thing you should do?",o:["Proceed with the draw — she said yes","Stop and ask the patient to state her full name and date of birth","Call security","Draw the blood and check later"],a:1,why:"The patient may have answered yes out of habit, confusion, or a language barrier. You must have the patient actively STATE both identifiers — never just confirm."},
+      {q:"What was the phlebotomist's initial mistake?",o:["Not wearing gloves","Asking a yes/no question instead of an open-ended one","Using the wrong needle","Entering without knocking"],a:1,why:"Asking 'Are you Maria Garcia?' is a closed question that patients may agree to incorrectly. Instead ask: 'Can you tell me your full name and date of birth?'"},
+      {q:"If this patient turns out to be the wrong person, what happens next?",o:["Nothing — no blood was drawn","Document the near-miss, re-verify the correct patient, and report the incident","Pretend it didn't happen","Draw the blood anyway since you're already in the room"],a:1,why:"Near-misses must be documented and reported. Find the correct patient, verify with two identifiers, and follow your facility's incident reporting procedure."},
+    ]
+  },
+  {
+    title:"Fainting Patient",
+    scenario:"You are about to draw blood from a young male patient who mentions he 'gets lightheaded around needles.' He is currently sitting upright in a standard chair with no armrests. His arm is unsupported.",
+    questions:[
+      {q:"What should you do BEFORE starting the draw?",o:["Proceed quickly so it's over fast","Reposition the patient — recline or lay them down and support the arm","Tell the patient to look away","Give the patient water"],a:1,why:"A patient with a history of feeling lightheaded should be repositioned to a reclined or supine position with their arm properly supported. This prevents injury if they faint."},
+      {q:"The patient begins to feel faint during the draw. What is your immediate action?",o:["Continue drawing — you're almost done","Remove the needle, apply pressure, and lower the patient's head","Ask the patient to stand up and walk","Slap the patient to keep them alert"],a:1,why:"Stop the procedure immediately. Remove the needle safely, apply pressure, lower the patient's head (or recline them), and monitor until they recover. Never continue drawing on a fainting patient."},
+      {q:"What pre-draw step could have reduced the risk of this situation?",o:["Proper patient positioning from the start","Using a smaller needle","Drawing blood faster","Skipping the tourniquet"],a:0,why:"Proper patient positioning is a key pre-draw step. Patients who report dizziness or fainting should always be reclined before the draw begins, with arm supported and safety measures in place."},
+    ]
+  },
+];
+let ci=0,qi=0,sel=null,answered=false,scores=[0,0];
+function tq(){return CASES.reduce((a,c)=>a+c.questions.length,0);}
+function ts(){return scores.reduce((a,b)=>a+b,0);}
+function render(){
+  let th='';CASES.forEach((c,i)=>{th+=`<div class="tab ${ci===i?'active':''}" onclick="sw(${i})">Case ${i+1}</div>`;});
+  document.getElementById('tabs').innerHTML=th;
+  const cs=CASES[ci],q=cs.questions[qi];
+  document.getElementById('scc').innerHTML=`<div class="sc-badge">SCENARIO</div><div class="sc-title">${cs.title}</div><div class="sc-text">${cs.scenario}</div>`;
+  let oh='';q.o.forEach((o,i)=>{let cls='opt';if(answered){cls+=' dis';if(i===q.a)cls+=' correct';else if(i===sel)cls+=' wrong';}
+    oh+=`<div class="${cls}" onclick="pick(${i})"><span class="ltr">${String.fromCharCode(65+i)}.</span><span>${o}</span></div>`;});
+  document.getElementById('qc').innerHTML=`<div class="q-prog">Question ${qi+1} of ${cs.questions.length}</div><div class="q-text">${q.q}</div>${oh}`;
+  if(answered){const c=sel===q.a;document.getElementById('ea').innerHTML=`<div class="exp" style="background:${c?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)'};border:1px solid ${c?'rgba(56,201,122,.18)':'rgba(224,85,85,.18)'}"><div class="exp-t" style="color:${c?'var(--success)':'var(--error)'}">${c?'Correct!':'Incorrect'}</div><div style="color:var(--dim)">${q.why}</div></div>`;
+    let bl=qi+1<cs.questions.length?'Next Question →':ci+1<CASES.length?'Next Case →':'See Results';
+    document.getElementById('nw').style.display='block';document.getElementById('nw').innerHTML=`<button class="btn" onclick="next()">${bl}</button>`;
+  }else{document.getElementById('ea').innerHTML='';document.getElementById('nw').style.display='none';}
+}
+function pick(i){if(answered)return;sel=i;answered=true;if(i===CASES[ci].questions[qi].a)scores[ci]++;render();}
+function next(){const cs=CASES[ci];if(qi+1<cs.questions.length){qi++;sel=null;answered=false;render();}else if(ci+1<CASES.length){ci++;qi=0;sel=null;answered=false;render();}else showRes();}
+function sw(i){if(i===ci)return;ci=i;qi=0;sel=null;answered=false;render();}
+function showRes(){document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='block';
+  const s=ts(),t=tq();const msg=s===t?"Perfect clinical reasoning!":s>=4?"Strong thinking — review missed questions.":"Review the material and try again.";
+  let ch='';CASES.forEach((c,i)=>{const col=scores[i]===c.questions.length?'var(--success)':'var(--error)';ch+=`<div class="res-case"><span style="color:var(--gold)">${c.title}:</span> <span style="color:${col}">${scores[i]}/${c.questions.length}</span></div>`;});
+  r.innerHTML=`<div style="font-family:Karla,sans-serif;font-size:12px;letter-spacing:3px;color:var(--teal);text-transform:uppercase">Cases Complete</div><div class="res-score">${s}/${t}</div><div class="res-msg">${msg}</div>${ch}<button class="btn-retry" onclick="reset()">Try Again</button>`;}
+function reset(){ci=0;qi=0;sel=null;answered=false;scores=[0,0];document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

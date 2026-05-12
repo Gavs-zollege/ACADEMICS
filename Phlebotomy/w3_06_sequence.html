@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Draw Procedures — Pre-Draw Sequence</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080C14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7090;--success:#38C97A;--error:#E05555;--border:#1E2848;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg),#0C1020);font-family:'Fraunces',serif;color:var(--text);}
+  .wrap{max-width:620px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  h1{font-size:32px;color:var(--gold);}
+  .sub{font-family:'Plus Jakarta Sans',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .seq-box{background:var(--card);border-radius:14px;padding:20px;border:1px solid var(--border);margin-bottom:16px;min-height:80px;}
+  .seq-title{display:flex;justify-content:space-between;margin-bottom:12px;}
+  .seq-lbl{font-size:11px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;}
+  .seq-cnt{font-size:12px;color:var(--dim);font-family:'Plus Jakarta Sans',sans-serif;}
+  .seq-empty{color:var(--dim);font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;padding:12px 0;}
+  .seq-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:4px;cursor:pointer;transition:all .2s;border:1px solid var(--border);background:var(--surface);}
+  .seq-item:hover{transform:translateX(2px);}
+  .seq-item .num{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0;}
+  .seq-item .lbl{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;flex:1;}
+  .seq-item .x{color:var(--dim);font-size:11px;}
+  .seq-item.correct{background:rgba(56,201,122,.05);border-color:rgba(56,201,122,.25);}
+  .seq-item.correct .num{background:rgba(56,201,122,.12);color:var(--success);}
+  .seq-item.wrong{background:rgba(224,85,85,.05);border-color:rgba(224,85,85,.25);}
+  .seq-item.wrong .num{background:rgba(224,85,85,.12);color:var(--error);}
+  .pool-lbl{font-size:11px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;margin-bottom:10px;padding-left:4px;}
+  .pool{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;}
+  .chip{padding:9px 16px;border-radius:8px;background:var(--surface);border:1px solid var(--border);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;}
+  .chip:hover{transform:translateY(-2px);}
+  .ctrls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px;}
+  .btn{padding:14px 36px;border-radius:10px;border:none;font-size:15px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;}
+  .btn-gold{background:var(--gold);color:var(--bg);}
+  .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);font-size:14px;padding:14px 28px;}
+  .btn-dim{background:transparent;border:1px solid var(--border);color:var(--dim);font-size:14px;padding:14px 28px;}
+  .msg{text-align:center;margin-top:16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;}
+  .done-box{text-align:center;margin-top:20px;padding:20px;background:rgba(56,201,122,.06);border-radius:12px;border:1px solid rgba(56,201,122,.2);}
+  .done-box h2{font-size:22px;color:var(--success);}
+  .done-box p{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:var(--dim);margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>Pre-Draw Sequence</h1>
+    <p class="sub">Arrange the 10 pre-draw steps in the correct order.</p>
+  </div>
+  <div class="seq-box"><div class="seq-title"><span class="seq-lbl">Your Sequence</span><span class="seq-cnt" id="sc">0/10</span></div><div id="sl"></div></div>
+  <div id="pa"></div>
+  <div class="ctrls" id="ctrls"></div>
+  <div class="msg" id="msg"></div>
+  <div class="done-box" id="db" style="display:none"></div>
+</div>
+<script>
+const STEPS=[
+  {l:"Review requisition and verify test orders",s:"Review Requisition",c:"#5B8CDB"},
+  {l:"Perform hand hygiene",s:"Hand Hygiene",c:"#1A8A7D"},
+  {l:"Gather and check supplies (tubes, needles, sharps container)",s:"Gather Supplies",c:"#8B6AAE"},
+  {l:"Greet patient and verify identity with two identifiers",s:"Patient ID",c:"#E2B94C"},
+  {l:"Explain procedure and confirm fasting/special requirements",s:"Explain Procedure",c:"#E8976A"},
+  {l:"Position patient and support arm",s:"Position Patient",c:"#C4A84D"},
+  {l:"Apply tourniquet and assess/palpate veins",s:"Apply Tourniquet",c:"#E05555"},
+  {l:"Put on gloves (PPE)",s:"Don Gloves",c:"#38C97A"},
+  {l:"Cleanse site with 70% alcohol in concentric circles",s:"Cleanse Site",c:"#5B9BD5"},
+  {l:"Allow site to air dry and perform final safety check",s:"Air Dry & Final Check",c:"#D47AB5"},
+];
+let userOrder=[],pool=[],checked=false,correct=false;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function init(){userOrder=[];pool=shuffle([...STEPS]);checked=false;correct=false;render();}
+function render(){
+  document.getElementById('sc').textContent=`${userOrder.length}/${STEPS.length}`;
+  let sl='';
+  if(!userOrder.length)sl='<div class="seq-empty">Tap steps below to build the sequence...</div>';
+  else userOrder.forEach((s,i)=>{
+    let cls='seq-item';if(checked)cls+=s.s===STEPS[i].s?' correct':' wrong';
+    const nb=checked?(s.s===STEPS[i].s?'rgba(56,201,122,.12)':'rgba(224,85,85,.12)'):(s.c+'22');
+    const nc=checked?(s.s===STEPS[i].s?'var(--success)':'var(--error)'):s.c;
+    sl+=`<div class="${cls}" onclick="rem(${i})"><div class="num" style="background:${nb};color:${nc}">${i+1}</div><span class="lbl">${s.l}</span>${!correct?'<span class="x">✕</span>':''}</div>`;
+  });
+  document.getElementById('sl').innerHTML=sl;
+  let ph='';if(pool.length){ph='<div class="pool-lbl">Available Steps</div><div class="pool">';pool.forEach((s,i)=>ph+=`<div class="chip" style="border-color:${s.c}33" onclick="add(${i})">${s.s}</div>`);ph+='</div>';}
+  document.getElementById('pa').innerHTML=ph;
+  let ch='';
+  if(!correct&&userOrder.length===STEPS.length)ch+=`<button class="btn btn-gold" onclick="check()">Check Order</button>`;
+  ch+=`<button class="btn btn-outline" onclick="init()">Reset</button>`;
+  if(!correct)ch+=`<button class="btn btn-dim" onclick="reveal()">Show Answer</button>`;
+  document.getElementById('ctrls').innerHTML=ch;
+  document.getElementById('msg').innerHTML=checked&&!correct?'<span style="color:var(--error)">Some steps are out of order — rearrange those marked ✕.</span>':'';
+  const db=document.getElementById('db');
+  if(correct){db.style.display='block';db.innerHTML='<h2>Correct Sequence!</h2><p>Requisition → Hand Hygiene → Supplies → Patient ID → Explain → Position → Tourniquet → Gloves → Cleanse → Air Dry & Check</p>';}else db.style.display='none';
+}
+function add(i){userOrder.push(pool[i]);pool.splice(i,1);checked=false;render();}
+function rem(i){if(checked&&correct)return;pool.push(userOrder[i]);userOrder.splice(i,1);checked=false;render();}
+function check(){checked=true;correct=userOrder.every((s,i)=>s.s===STEPS[i].s);render();}
+function reveal(){userOrder=[...STEPS];pool=[];checked=true;correct=true;render();}
+init();
+</script>
+</body>
+</html>

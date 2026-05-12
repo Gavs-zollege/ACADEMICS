@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Draw Procedures — Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080C14;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#707898;--success:#38C97A;--error:#E05555;--border:#1E2848;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:radial-gradient(ellipse at 20% 10%,#111828,var(--bg));font-family:'Lora',serif;color:var(--text);}
+  .wrap{max-width:560px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:32px;}
+  h1{font-size:34px;font-weight:700;color:var(--gold);}
+  .sub{font-family:'Inter',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .dots{display:flex;justify-content:center;gap:4px;margin-bottom:20px;flex-wrap:wrap;}
+  .dot{width:10px;height:10px;border-radius:50%;transition:all .3s;}
+  .counter{text-align:center;font-family:'Inter',sans-serif;font-size:13px;color:var(--dim);margin-bottom:16px;}
+  .counter .g{color:var(--success);}
+  .card{border-radius:16px;padding:48px 32px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .4s;border:1px solid var(--border);}
+  .card:hover{box-shadow:0 10px 40px rgba(26,138,125,.15);}
+  .card .side{font-size:10px;letter-spacing:3px;text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:700;margin-bottom:14px;}
+  .card .main-term{font-size:26px;font-weight:700;color:var(--gold);text-align:center;line-height:1.4;}
+  .card .main-def{font-size:17px;color:var(--text);text-align:center;line-height:1.6;font-family:'Inter',sans-serif;}
+  .card .hint{font-size:11px;color:var(--dim);margin-top:18px;font-family:'Inter',sans-serif;}
+  .badge{position:absolute;top:12px;left:12px;font-size:10px;background:rgba(56,201,122,.15);color:var(--success);padding:2px 10px;border-radius:8px;font-family:'Inter',sans-serif;font-weight:700;}
+  .controls{display:flex;gap:10px;justify-content:center;margin-top:24px;align-items:center;}
+  .btn{border:none;cursor:pointer;font-family:inherit;transition:all .2s;border-radius:12px;color:var(--text);font-size:14px;font-weight:600;}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.15);}
+  .btn-nav{width:48px;height:48px;background:var(--surface);font-size:20px;}
+  .btn-know{padding:12px 28px;}
+  .done-box{text-align:center;margin-top:32px;padding:20px;background:rgba(56,201,122,.07);border-radius:12px;border:1px solid rgba(56,201,122,.25);}
+  .done-box h2{font-size:22px;color:var(--success);}
+  .done-box p{font-family:'Inter',sans-serif;color:var(--dim);font-size:13px;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>Flashcards</h1>
+    <p class="sub">Tap the card to flip. 20 key terms from Pre-Draw Procedures.</p>
+  </div>
+  <div class="dots" id="dots"></div>
+  <div class="counter"><span id="pos">1 of 20</span> · <span class="g" id="mastered">0 mastered</span></div>
+  <div class="card" id="card" onclick="flip()"></div>
+  <div class="controls">
+    <button class="btn btn-nav" onclick="go(-1)">←</button>
+    <button class="btn btn-know" id="knowBtn" onclick="toggleKnown()">✓ I Know This</button>
+    <button class="btn btn-nav" onclick="go(1)">→</button>
+  </div>
+  <div class="done-box" id="doneBox" style="display:none"><h2>All cards mastered!</h2><p>You've reviewed every term. Great work!</p></div>
+</div>
+<script>
+const C=[
+  {t:"Patient Identification",d:"The critical first step before any blood draw — verify identity using TWO identifiers (full name and date of birth). Never rely on room number alone."},
+  {t:"Requisition",d:"The lab order form listing tests ordered, patient information, special requirements (fasting, STAT), and correct tubes/additives needed."},
+  {t:"Two Identifiers",d:"The standard for patient verification: full name + date of birth. The patient should STATE their identifiers, not just confirm yes/no."},
+  {t:"Tourniquet",d:"A constricting band placed 3–4 inches above the venipuncture site. Must not remain on longer than 1 minute. Should be snug but not painful."},
+  {t:"Palpation",d:"Using your fingertip to feel for a vein's location, depth, and direction. More reliable than visual inspection alone."},
+  {t:"Site Assessment",d:"Inspecting and palpating veins before collection. Includes checking for compromised sites, skin condition, and adequate circulation."},
+  {t:"Compromised Site",d:"An area that should NOT be used for venipuncture — includes mastectomy side, IV sites, burned/scarred areas, edematous tissue, and hematomas."},
+  {t:"70% Isopropyl Alcohol",d:"The standard antiseptic used to cleanse a venipuncture site. Applied in concentric circles moving outward from the puncture point."},
+  {t:"Concentric Circular Motion",d:"The cleaning technique for site preparation — start at the center and spiral outward to push contaminants away from the puncture site."},
+  {t:"Air Dry",d:"After cleaning with alcohol, the site MUST air dry completely. Do not blow, fan, or touch the site — this prevents contamination and stinging."},
+  {t:"Hand Hygiene",d:"Required before AND after every patient contact. The single most important step in infection prevention."},
+  {t:"PPE (Personal Protective Equipment)",d:"Gloves must be worn for ALL blood draws and changed between patients. May also include face shields or gowns in certain situations."},
+  {t:"Sharps Container",d:"Must be positioned within arm's reach BEFORE starting a blood draw. Used for immediate disposal of needles after use."},
+  {t:"Order of Draw",d:"The specific sequence in which collection tubes must be filled to prevent cross-contamination of additives between tubes."},
+  {t:"Needle Gauge",d:"The measurement of needle diameter — a larger gauge number means a smaller needle. Selected based on vein size and patient population."},
+  {t:"Fasting",d:"A special requirement where the patient must not eat or drink (except water) for a specified time before collection (usually 8–12 hours)."},
+  {t:"Pre-Analytical Error",d:"A mistake occurring before testing begins. Most lab errors happen in this phase — ID errors, wrong tubes, improper tourniquet use, poor site cleaning."},
+  {t:"Patient Positioning",d:"Seat or recline the patient with arm properly supported to prevent fainting, injury, and ensure optimal vein access."},
+  {t:"HIPAA",d:"Health Insurance Portability and Accountability Act — protects patient privacy. Phlebotomists must maintain confidentiality during all interactions."},
+  {t:"Pre-Draw Safety Check",d:"Final verification before needle insertion: confirm patient ID again, supplies ready, patient comfort assessed, and order of draw verified."},
+];
+let idx=0,flipped=false,known=new Set();
+function render(){
+  const c=C[idx],el=document.getElementById('card');
+  el.style.background=flipped?'linear-gradient(135deg,var(--card),#141a30)':'linear-gradient(135deg,rgba(26,138,125,.08),var(--card))';
+  el.style.borderColor=flipped?'rgba(226,185,76,.2)':'rgba(26,138,125,.25)';
+  el.innerHTML=`${known.has(idx)?'<div class="badge">Mastered</div>':''}<div class="side" style="color:${flipped?'rgba(226,185,76,.6)':'var(--teal)'}">${flipped?'Definition':'Term'}</div><div class="${flipped?'main-def':'main-term'}">${flipped?c.d:c.t}</div><div class="hint">tap to ${flipped?'see term':'reveal'}</div>`;
+  let dots='';C.forEach((_,i)=>{const bg=known.has(i)?'var(--success)':i===idx?'var(--gold)':'rgba(26,138,125,.25)';dots+=`<div class="dot" style="background:${bg};transform:${i===idx?'scale(1.3)':'scale(1)'}"></div>`;});
+  document.getElementById('dots').innerHTML=dots;
+  document.getElementById('pos').textContent=`${idx+1} of ${C.length}`;
+  document.getElementById('mastered').textContent=`${known.size} mastered`;
+  const kb=document.getElementById('knowBtn');kb.textContent=known.has(idx)?'Unmark':'✓ I Know This';kb.style.background=known.has(idx)?'var(--surface)':'var(--success)';
+  document.getElementById('doneBox').style.display=known.size===C.length?'block':'none';
+}
+function flip(){flipped=!flipped;render();}
+function go(d){idx=(idx+d+C.length)%C.length;flipped=false;render();}
+function toggleKnown(){known.has(idx)?known.delete(idx):known.add(idx);render();}
+render();
+</script>
+</body>
+</html>

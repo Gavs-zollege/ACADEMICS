@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Draw Procedures — Interactive Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Nunito+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#070B14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#68708A;--border:#1C2444;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg),#0C1220);font-family:'Cormorant Garamond',serif;color:var(--text);}
+  .wrap{max-width:640px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  h1{font-size:34px;color:var(--gold);}
+  .sub{font-family:'Nunito Sans',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  #search{width:100%;padding:14px 20px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:15px;font-family:'Nunito Sans',sans-serif;margin-bottom:14px;outline:none;}
+  #search:focus{border-color:var(--teal);}
+  .cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+  .cat{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Nunito Sans',sans-serif;transition:all .2s;}
+  .cat.active{border-color:var(--gold);background:rgba(226,185,76,.1);color:var(--gold);}
+  .count{font-size:12px;font-family:'Nunito Sans',sans-serif;color:var(--dim);margin-bottom:10px;}
+  .list{border-radius:12px;border:1px solid var(--border);overflow:hidden;}
+  .item{padding:14px 20px;cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border);}
+  .item:last-child{border-bottom:none;}
+  .item:hover{background:var(--surface);}
+  .item-head{display:flex;justify-content:space-between;align-items:center;}
+  .item-left{display:flex;align-items:center;gap:12px;}
+  .bar{width:3px;height:22px;border-radius:2px;flex-shrink:0;}
+  .term{font-size:16px;font-weight:700;}
+  .tag{font-size:10px;padding:2px 8px;border-radius:6px;font-family:'Nunito Sans',sans-serif;font-weight:600;}
+  .arrow{color:var(--dim);font-size:14px;transition:transform .2s;}
+  .def{margin-top:10px;padding-left:15px;font-size:14px;line-height:1.7;color:var(--dim);font-family:'Nunito Sans',sans-serif;display:none;}
+  .item.open .def{display:block;}
+  .item.open .arrow{transform:rotate(180deg);}
+  .item.open .term{color:var(--gold);}
+  .empty{padding:40px;text-align:center;color:var(--dim);font-family:'Nunito Sans',sans-serif;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>Interactive Glossary</h1>
+    <p class="sub">28 terms · Search or filter by category</p>
+  </div>
+  <input type="text" id="search" placeholder="Search terms or definitions..." oninput="render()">
+  <div class="cats" id="cats"></div>
+  <div class="count" id="count"></div>
+  <div class="list" id="list"></div>
+</div>
+<script>
+const G=[
+  {t:"Two Identifiers",d:"Patient verification standard: full name + date of birth. Patient must actively state them.",c:"Identification"},
+  {t:"Requisition",d:"Lab order form with tests, patient info, special requirements, and tube/additive instructions.",c:"Identification"},
+  {t:"Room Number",d:"NEVER used as a patient identifier — patients may be moved or switched between rooms.",c:"Identification"},
+  {t:"HIPAA",d:"Federal law protecting patient health information privacy. Must be observed during all phlebotomy interactions.",c:"Identification"},
+  {t:"Tourniquet",d:"Constricting band placed 3–4 inches above puncture site. Must not stay on longer than 1 minute.",c:"Equipment"},
+  {t:"Needle Gauge",d:"Measurement of needle diameter. Larger gauge number = smaller needle. Selected based on vein and patient.",c:"Equipment"},
+  {t:"Sharps Container",d:"Puncture-resistant disposal container for needles. Must be within arm's reach before starting a draw.",c:"Equipment"},
+  {t:"Collection Tubes",d:"Tubes with specific additives selected based on the tests ordered. Must check expiration dates before use.",c:"Equipment"},
+  {t:"Alcohol Prep Pad",d:"70% isopropyl alcohol wipe used to cleanse the venipuncture site before needle insertion.",c:"Equipment"},
+  {t:"Butterfly Needle",d:"Winged infusion set used for difficult, small, or fragile veins. Common for pediatric and elderly patients.",c:"Equipment"},
+  {t:"Palpation",d:"Using fingertips to feel for vein location, depth, direction, and resilience. More reliable than visual inspection.",c:"Site Prep"},
+  {t:"Antecubital Fossa",d:"Area in front of the elbow containing the median cubital, cephalic, and basilic veins — the primary draw site.",c:"Site Prep"},
+  {t:"Compromised Site",d:"Area to AVOID: mastectomy side, IV sites, burns, scars, edema, hematomas, or infected areas.",c:"Site Prep"},
+  {t:"Concentric Circles",d:"Cleaning technique: start at center of puncture site and spiral outward to push contaminants away.",c:"Site Prep"},
+  {t:"Air Dry",d:"After alcohol cleaning, the site must dry completely on its own. Do not blow, fan, or touch it.",c:"Site Prep"},
+  {t:"Hand Hygiene",d:"Must be performed before AND after every patient contact. Most important infection prevention measure.",c:"Safety"},
+  {t:"PPE",d:"Personal Protective Equipment — gloves required for ALL draws; change between patients.",c:"Safety"},
+  {t:"Pre-Draw Safety Check",d:"Final check before needle insertion: re-confirm ID, supplies ready, patient comfort, order of draw verified.",c:"Safety"},
+  {t:"Order of Draw",d:"Specific tube filling sequence to prevent cross-contamination of additives between collection tubes.",c:"Safety"},
+  {t:"Fasting",d:"Patient must not eat/drink (except water) for specified time (usually 8–12 hours) before certain tests.",c:"Patient Prep"},
+  {t:"Patient Positioning",d:"Seat or recline patient with arm supported. Prevents fainting, injury, and ensures proper vein access.",c:"Patient Prep"},
+  {t:"Informed Consent",d:"Patient's right to understand the procedure. Explain what you're doing before beginning the blood draw.",c:"Patient Prep"},
+  {t:"Pre-Analytical Error",d:"Mistake before testing: ID errors, wrong tubes, improper tourniquet use, poor cleaning. Most errors occur here.",c:"Errors"},
+  {t:"Identification Error",d:"Drawing blood from the wrong patient or mislabeling. Prevented by always using two identifiers.",c:"Errors"},
+  {t:"Incorrect Tube Selection",d:"Using the wrong collection tube for the ordered test. Can lead to specimen rejection and redraw.",c:"Errors"},
+  {t:"Improper Tourniquet Use",d:"Leaving tourniquet on >1 minute, placing too close to site, or making it too tight. Affects results.",c:"Errors"},
+  {t:"Inadequate Site Cleaning",d:"Not cleaning properly, not allowing to air dry, or touching site after cleaning. Risks contamination.",c:"Errors"},
+  {t:"Excessive Fist Pumping",d:"Patient should NOT pump fist repeatedly — can falsely elevate potassium and other electrolyte levels.",c:"Errors"},
+];
+const CATS=["All","Identification","Equipment","Site Prep","Safety","Patient Prep","Errors"];
+const CC={Identification:"#5B8CDB",Equipment:"#8B6AAE",["Site Prep"]:"#1A8A7D",Safety:"#E2B94C",["Patient Prep"]:"#E8976A",Errors:"#E05555"};
+let activeCat="All",openIdx=-1;
+function render(){
+  const s=document.getElementById('search').value.toLowerCase();
+  const filtered=G.filter(g=>(g.t.toLowerCase().includes(s)||g.d.toLowerCase().includes(s))&&(activeCat==="All"||g.c===activeCat));
+  let ch='';CATS.forEach(c=>{const n=c==="All"?G.length:G.filter(g=>g.c===c).length;ch+=`<button class="cat ${activeCat===c?'active':''}" onclick="setCat('${c}')">${c} (${n})</button>`;});
+  document.getElementById('cats').innerHTML=ch;
+  document.getElementById('count').textContent=`Showing ${filtered.length} term${filtered.length!==1?'s':''}`;
+  if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms found.</div>';return;}
+  let h='';filtered.forEach((g,i)=>{const col=CC[g.c]||'var(--gold)';const op=openIdx===i;
+    h+=`<div class="item ${op?'open':''}" onclick="tog(${i})"><div class="item-head"><div class="item-left"><div class="bar" style="background:${col}"></div><span class="term">${g.t}</span></div><div style="display:flex;align-items:center;gap:8px"><span class="tag" style="color:${col};background:${col}18">${g.c}</span><span class="arrow">▾</span></div></div><div class="def" style="border-left:2px solid ${col}33;${op?'display:block':''}">${g.d}</div></div>`;
+  });document.getElementById('list').innerHTML=h;
+}
+function setCat(c){activeCat=c;openIdx=-1;render();}
+function tog(i){openIdx=openIdx===i?-1:i;render();}
+render();
+</script>
+</body>
+</html>

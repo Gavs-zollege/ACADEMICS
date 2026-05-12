@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Phlebotomy True or False</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700;6..72,800&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#f0ebe3;font-family:'Newsreader',Georgia,serif;color:#1e1a14}
+.wrap{max-width:520px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Figtree',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#b45309;font-weight:700;margin-bottom:8px}
+h1{font-size:32px;font-weight:800;margin-bottom:24px}
+.info{display:flex;justify-content:space-between;margin-bottom:8px;font-family:'Figtree',sans-serif;font-size:13px;color:#8a7e70}
+.bar{height:5px;background:#d8d0c4;border-radius:3px;margin-bottom:36px;overflow:hidden}
+.bar-fill{height:100%;background:#1e1a14;border-radius:3px;transition:width .5s}
+.statement-card{padding:36px 32px;border-radius:20px;background:#fff;margin-bottom:24px;border:1px solid #ddd5c8;box-shadow:0 8px 40px rgba(0,0,0,.04)}
+.statement-card p{font-size:20px;line-height:1.6;font-weight:600;text-align:center}
+.btn-row{display:flex;gap:16px;margin-bottom:20px}
+.tf-btn{flex:1;padding:22px 0;border-radius:16px;border:2px solid #d8d0c4;background:#fff;font-family:'Figtree',sans-serif;font-weight:800;font-size:20px;letter-spacing:1px;cursor:pointer;transition:all .2s;color:#1e1a14}
+.tf-btn:hover{transform:scale(1.03)}
+.tf-btn.correct-pick{background:#e8f5ed;border-color:#27ae60;color:#1a7a3a}
+.tf-btn.wrong-pick{background:#fde8e8;border-color:#e74c3c;color:#c0392b}
+.tf-btn.faded{background:#f0ece6;border-color:#d8d0c4;color:#aaa}
+.tf-btn:disabled{cursor:default}
+.feedback{padding:24px;border-radius:16px;margin-bottom:20px}
+.feedback.ok{background:#f0faf3;border:1px solid #27ae6030}
+.feedback.bad{background:#fef5f0;border:1px solid #e74c3c30}
+.feedback h3{font-family:'Figtree',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px}
+.feedback p{font-family:'Figtree',sans-serif;font-size:14px;color:#5a5045;line-height:1.6}
+.next-btn{width:100%;padding:14px;border-radius:12px;border:none;background:#1e1a14;color:#fff;font-family:'Figtree',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-top:16px}
+.result{text-align:center;padding:40px 0}
+.result .pct{font-size:80px;font-weight:800;line-height:1}
+.result .det{font-family:'Figtree',sans-serif;font-size:16px;color:#8a7e70;margin-top:8px}
+.result .streak{margin-top:16px;padding:10px 20px;border-radius:12px;background:#e8e2d8;display:inline-block;font-family:'Figtree',sans-serif;font-size:13px;color:#8a7e70}
+.result .streak b{color:#b45309}
+.retry-btn{margin-top:32px;padding:16px 48px;border-radius:50px;border:none;background:#1e1a14;color:#fff;font-family:'Figtree',sans-serif;font-weight:700;font-size:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const items=[
+{statement:"A butterfly needle should be used for large, easy-to-access veins.",answer:false,explanation:"Butterfly needles are used for small or fragile veins. Standard evacuated tubes are appropriate for large, easy veins."},
+{statement:"Dehydration can make veins smaller and harder to find.",answer:true,explanation:"Dehydration reduces blood volume, making veins flatter, smaller, and more difficult to locate and puncture."},
+{statement:"It is acceptable to draw blood from an arm with an AV fistula if you are careful.",answer:false,explanation:"Blood must NEVER be drawn from an arm with an AV fistula. This is an absolute contraindication."},
+{statement:"Hemolysis can invalidate laboratory test results.",answer:true,explanation:"Hemolysis (destruction of red blood cells) releases intracellular contents into the sample, compromising many lab results."},
+{statement:"If a patient faints during a draw, you should continue to finish the collection.",answer:false,explanation:"You must immediately stop the draw, remove the needle, position the patient safely, and call for help if needed."},
+{statement:"Syringe collection requires blood to be transferred using a transfer device.",answer:true,explanation:"Blood from a syringe must be transferred using a transfer device — never forced through the needle into tubes."},
+{statement:"Petechiae are caused by blood pooling under the skin at the puncture site.",answer:false,explanation:"Petechiae are tiny dots from capillary bleeding, often from a tourniquet left on too long. A blood pool under the skin is a hematoma."},
+{statement:"You should stop a procedure if the patient withdraws consent.",answer:true,explanation:"Patient consent can be withdrawn at any time. The phlebotomist must immediately comply and document the incident."},
+{statement:"Rolling veins are easier to puncture because they are more visible.",answer:false,explanation:"Rolling veins shift laterally when pressure is applied, making them harder — not easier — to puncture."},
+{statement:"Geriatric patients often have fragile skin and veins prone to collapse.",answer:true,explanation:"Elderly patients commonly have thinner skin, more fragile veins, and increased risk of bruising and vein collapse."},
+{statement:"Stopping a draw because you cannot find a vein is a sign of failure.",answer:false,explanation:"Knowing when to stop and seek assistance is a sign of professionalism, not failure. Patient safety comes first."},
+{statement:"Nerve irritation during a draw requires immediate needle removal.",answer:true,explanation:"Sharp, radiating pain indicates nerve contact. The needle must be removed immediately to prevent injury."}
+];
+let idx=0,choice=null,score=0,streak=0,bestStreak=0,done=false;
+function render(){
+  const app=document.getElementById('app');
+  if(done){
+    const pct=Math.round(score/items.length*100);const col=pct>=80?'#1a7a3a':pct>=60?'#b45309':'#c0392b';
+    app.innerHTML=`<div class="result"><div class="pct" style="color:${col}">${pct}%</div><div class="det">${score} of ${items.length} correct</div><div class="streak">Best streak: <b>${bestStreak}</b></div><div><button class="retry-btn" onclick="restart()">Try Again</button></div></div>`;return;
+  }
+  const it=items[idx];const answered=choice!==null;const correct=answered&&choice===it.answer;
+  let html=`<div class="tag">Advanced Phlebotomy</div><h1>True or False</h1>`;
+  html+=`<div class="info"><span>${idx+1} of ${items.length}</span><div><span>Score: <b style="color:#1a7a3a">${score}</b></span>${streak>1?` &nbsp;🔥 <b style="color:#b45309">${streak}</b>`:''}</div></div>`;
+  html+=`<div class="bar"><div class="bar-fill" style="width:${((idx+(answered?1:0))/items.length)*100}%"></div></div>`;
+  html+=`<div class="statement-card"><p>"${it.statement}"</p></div><div class="btn-row">`;
+  [true,false].forEach(val=>{let cls='tf-btn';if(answered){if(val===it.answer)cls+=' correct-pick';else if(val===choice)cls+=' wrong-pick';else cls+=' faded';}html+=`<button class="${cls}" ${answered?'disabled':''} onclick="pick(${val})">${val?'TRUE':'FALSE'}</button>`;});
+  html+=`</div>`;
+  if(answered){html+=`<div class="feedback ${correct?'ok':'bad'}"><h3 style="color:${correct?'#1a7a3a':'#c0392b'}">${correct?'Correct!':'Incorrect'}</h3><p>${it.explanation}</p><button class="next-btn" onclick="next()">${idx+1>=items.length?'See Results':'Next Statement →'}</button></div>`;}
+  app.innerHTML=html;
+}
+function pick(val){if(choice!==null)return;choice=val;const correct=val===items[idx].answer;if(correct){score++;streak++;if(streak>bestStreak)bestStreak=streak;}else{streak=0;}render();}
+function next(){if(idx+1>=items.length){done=true;render();return;}idx++;choice=null;render();}
+function restart(){idx=0;choice=null;score=0;streak=0;bestStreak=0;done=false;render();}
+render();
+</script>
+</body>
+</html>

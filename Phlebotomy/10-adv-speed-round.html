@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Phlebotomy Speed Round</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Oxanium:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#040810,#0a0418,#060c14);font-family:'Chakra Petch',sans-serif;color:#fff;transition:background .15s}
+body.flash-correct{background:#001a10}
+body.flash-wrong{background:#1a0008}
+.wrap{max-width:500px;margin:0 auto;padding:32px 20px}
+.center{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.ready-box{text-align:center;padding:32px 24px;max-width:440px}
+.logo{font-family:'Oxanium',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#00e5ff;font-weight:700;margin-bottom:12px;text-shadow:0 0 12px rgba(0,229,255,.3)}
+h1{font-family:'Oxanium',sans-serif;font-size:38px;font-weight:800;letter-spacing:3px;margin:0 0 12px;background:linear-gradient(135deg,#00e5ff,#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ready-sub{font-size:18px;color:#607888;margin-bottom:8px}
+.ready-detail{font-size:15px;color:#3a4a58;margin-bottom:36px}
+.features{display:flex;justify-content:center;gap:32px;margin-bottom:40px;padding:20px 24px;border-radius:16px;background:#080e18;border:1px solid #0e1a28}
+.features div{text-align:center}
+.features .ico{font-size:24px;margin-bottom:4px}
+.features .ftxt{font-size:11px;color:#3a5060;letter-spacing:.5px}
+.start-btn{padding:18px 64px;border-radius:14px;border:2px solid #00e5ff;background:transparent;color:#00e5ff;font-family:'Oxanium',sans-serif;font-weight:800;font-size:18px;cursor:pointer;letter-spacing:3px;text-shadow:0 0 12px rgba(0,229,255,.3);box-shadow:0 0 30px rgba(0,229,255,.1),inset 0 0 30px rgba(0,229,255,.05);transition:all .2s}
+.start-btn:hover{background:rgba(0,229,255,.1);box-shadow:0 0 50px rgba(0,229,255,.2)}
+/* Playing */
+.timer-num{font-family:'Oxanium',sans-serif;font-size:36px;font-weight:800;font-variant-numeric:tabular-nums}
+.timer-bar{height:6px;background:#0a1018;border-radius:3px;overflow:hidden;margin-top:8px}
+.timer-fill{height:100%;border-radius:3px;transition:width 1s linear}
+.top-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.score-area{font-size:14px}
+.score-area .ck{color:#4a5a68}
+.score-area .cv{font-weight:700;color:#00e5ff}
+.streak{color:#7c4dff;font-weight:700;margin-left:12px;text-shadow:0 0 8px rgba(124,77,255,.3)}
+.q-card{padding:36px 28px;border-radius:20px;margin:28px 0 24px;background:linear-gradient(145deg,#0a1018,#0c0818);border:1px solid #141e30;box-shadow:0 12px 48px rgba(0,0,0,.4),0 0 1px rgba(0,229,255,.2)}
+.q-label{font-size:10px;color:#2a3a48;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:16px}
+.q-text{font-size:21px;color:#c0d8e8;line-height:1.6;font-weight:600}
+.input-row{display:flex;gap:10px;margin-bottom:12px}
+.input-row input{flex:1;padding:16px 20px;border-radius:14px;font-size:18px;font-weight:600;border:2px solid #141e30;background:#06080e;color:#fff;font-family:'Chakra Petch',sans-serif;outline:none;transition:border .2s}
+.input-row input:focus{border-color:#00e5ff;box-shadow:0 0 0 3px rgba(0,229,255,.15)}
+.input-row input::placeholder{color:#1a2a38}
+.go-btn{padding:16px 28px;border-radius:14px;border:none;font-weight:800;font-size:16px;cursor:pointer;font-family:'Chakra Petch',sans-serif;transition:all .2s;letter-spacing:1px}
+.go-btn.active{background:linear-gradient(135deg,#00e5ff,#00b8d4);color:#040810;box-shadow:0 0 20px rgba(0,229,255,.2)}
+.go-btn.inactive{background:#0a1018;color:#1a2a38;cursor:default}
+.skip-btn{width:100%;padding:12px;border-radius:10px;border:1px solid #141e30;background:transparent;color:#3a4a58;font-size:14px;font-weight:600;cursor:pointer;font-family:'Chakra Petch',sans-serif}
+.skip-btn:hover{border-color:#2a3a48}
+/* Done */
+.done-box{text-align:center;margin-bottom:36px}
+.done-tag{font-family:'Oxanium',sans-serif;font-size:11px;letter-spacing:3px;color:#7c4dff;font-weight:700;margin-bottom:12px;text-shadow:0 0 10px rgba(124,77,255,.3)}
+.done-num{font-family:'Oxanium',sans-serif;font-size:64px;font-weight:800;color:#00e5ff;line-height:1;text-shadow:0 0 30px rgba(0,229,255,.3)}
+.done-label{font-size:16px;color:#4a6070;margin-top:4px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
+.stat-card{text-align:center;padding:16px;border-radius:14px;background:#080e18;border:1px solid #0e1a28}
+.stat-card .sv{font-family:'Oxanium',sans-serif;font-size:24px;font-weight:800}
+.stat-card .sl{font-size:11px;color:#3a4a58;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.review-title{font-size:12px;color:#3a4a58;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.review-item{padding:14px 16px;border-radius:12px;background:#080e18;border:1px solid #0e1a28;margin-bottom:6px}
+.review-item .rq{font-size:13px;color:#607888;margin-bottom:6px}
+.review-item .ranswer{display:flex;justify-content:space-between;align-items:center}
+.review-item .correct-ans{font-size:14px;font-weight:700;color:#00e5ff}
+.review-item .given-ans{font-size:12px;color:#ff3860}
+.review-item .skipped{font-size:12px;color:#ffaa00}
+.again-btn{width:100%;padding:18px;border-radius:14px;border:2px solid #00e5ff;background:transparent;color:#00e5ff;font-family:'Oxanium',sans-serif;font-weight:800;font-size:17px;cursor:pointer;letter-spacing:3px;text-shadow:0 0 12px rgba(0,229,255,.3);box-shadow:0 0 30px rgba(0,229,255,.08);margin-top:20px;transition:all .2s}
+.again-btn:hover{background:rgba(0,229,255,.1)}
+@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{0%,100%{text-shadow:0 0 12px rgba(0,229,255,.3)}50%{text-shadow:0 0 24px rgba(0,229,255,.5)}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const allQuestions=[
+{q:"A vein that shifts laterally is called a ___ vein",a:"rolling"},
+{q:"___ needles are best for small or fragile veins",a:"butterfly"},
+{q:"Destruction of red blood cells is called ___",a:"hemolysis"},
+{q:"Fainting during a blood draw is called ___",a:"syncope"},
+{q:"Blood pooling under the skin is a ___",a:"hematoma"},
+{q:"Tiny red dots from capillary bleeds are ___",a:"petechiae"},
+{q:"Never draw blood from an arm with a ___",a:"fistula"},
+{q:"___ patients have fragile skin and vein collapse risk",a:"geriatric"},
+{q:"___ patients need age-appropriate comfort techniques",a:"pediatric"},
+{q:"A patient can withdraw ___ at any time",a:"consent"},
+{q:"All complications must be ___ in the patient record",a:"documented"},
+{q:"Syringe blood needs a ___ device for tube transfer",a:"transfer"},
+{q:"___ causes smaller, flatter veins from low blood volume",a:"dehydration"},
+{q:"Stopping a difficult draw shows ___, not failure",a:"professionalism"},
+{q:"Excessive vacuum or forceful aspiration causes ___",a:"hemolysis"},
+{q:"If a patient faints, the first step is ___ the draw",a:"stop"},
+{q:"After removing the needle during syncope, position patient ___",a:"safely"},
+{q:"Sharp radiating pain during a draw suggests ___ irritation",a:"nerve"},
+{q:"A syringe gives ___ vacuum control on fragile veins",a:"low"},
+{q:"___ history means avoid drawing from that side",a:"mastectomy"},
+{q:"When an IV is present, draw ___ the IV site",a:"below"},
+{q:"Excessive ___ can be caused by a coagulation disorder",a:"bleeding"},
+{q:"A tourniquet left on too long can cause ___",a:"petechiae"},
+{q:"Calm ___ helps manage anxious patients during draws",a:"communication"},
+{q:"Early ___ of complications prevents patient injury",a:"recognition"}
+];
+const TOTAL=60;
+let phase='ready',questions=[],idx=0,input='',timeLeft=TOTAL,correct=0,skipped=0,streak=0,bestStreak=0,history=[],timerInterval=null;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function start(){
+  questions=shuffle(allQuestions);idx=0;input='';timeLeft=TOTAL;correct=0;skipped=0;streak=0;bestStreak=0;history=[];
+  phase='playing';render();
+  document.querySelector('.input-box')?.focus();
+  timerInterval=setInterval(()=>{timeLeft--;updateTimerDisplay();if(timeLeft<=0){clearInterval(timerInterval);phase='done';render();}},1000);
+}
+function updateTimerDisplay(){
+  const el=document.getElementById('timerNum');if(el)el.textContent=timeLeft;
+  const bar=document.getElementById('timerFill');if(bar)bar.style.width=(timeLeft/TOTAL*100)+'%';
+  const col=timeLeft>20?'#00e5ff':timeLeft>10?'#ffaa00':'#ff3860';
+  if(el)el.style.color=col;if(bar)bar.style.background=`linear-gradient(90deg,${col},${col}cc)`;
+}
+function endGame(){clearInterval(timerInterval);phase='done';render();}
+function flash(type){document.body.classList.add('flash-'+type);setTimeout(()=>document.body.classList.remove('flash-'+type),200);}
+function advance(){if(idx+1>=questions.length){endGame();return;}idx++;input='';render();setTimeout(()=>{const el=document.querySelector('.input-box');if(el)el.focus();},50);}
+function submit(){
+  if(!input.trim())return;
+  const isCorrect=input.trim().toLowerCase()===questions[idx].a.toLowerCase();
+  history.push({q:questions[idx].q,a:questions[idx].a,given:input.trim(),correct:isCorrect});
+  if(isCorrect){correct++;streak++;if(streak>bestStreak)bestStreak=streak;flash('correct');}
+  else{streak=0;flash('wrong');}
+  advance();
+}
+function skip(){skipped++;streak=0;history.push({q:questions[idx].q,a:questions[idx].a,given:null,correct:false});flash('wrong');advance();}
+function render(){
+  const app=document.getElementById('app');
+  if(phase==='ready'){
+    app.innerHTML=`<div class="center"><div class="ready-box">
+      <div class="logo">Advanced Phlebotomy</div>
+      <h1>SPEED ROUND</h1>
+      <div class="ready-sub">60 seconds. Quick-fire questions.</div>
+      <div class="ready-detail">Type the missing word as fast as you can!</div>
+      <div class="features"><div><div class="ico">⏱</div><div class="ftxt">60 sec timer</div></div><div><div class="ico">⚡</div><div class="ftxt">Streak bonus</div></div><div><div class="ico">⏭</div><div class="ftxt">Skip allowed</div></div></div>
+      <button class="start-btn" onclick="start()">START</button>
+    </div></div>`;return;
+  }
+  if(phase==='done'){
+    const missed=history.filter(h=>!h.correct);
+    app.innerHTML=`<div class="wrap">
+      <div class="done-box"><div class="done-tag">TIME'S UP</div><div class="done-num">${correct}</div><div class="done-label">correct answers</div></div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="sv" style="color:#5dade2">${history.length}</div><div class="sl">Attempted</div></div>
+        <div class="stat-card"><div class="sv" style="color:#ffaa00">${skipped}</div><div class="sl">Skipped</div></div>
+        <div class="stat-card"><div class="sv" style="color:#7c4dff">${bestStreak}</div><div class="sl">Best Streak</div></div>
+      </div>
+      ${missed.length?`<div class="review-title">Review Missed</div>${missed.map(h=>`<div class="review-item"><div class="rq">${h.q}</div><div class="ranswer"><span class="correct-ans">→ ${h.a}</span>${h.given?`<span class="given-ans">You said: ${h.given}</span>`:`<span class="skipped">Skipped</span>`}</div></div>`).join('')}`:''}
+      <button class="again-btn" onclick="start()">PLAY AGAIN</button>
+    </div>`;return;
+  }
+  const col=timeLeft>20?'#00e5ff':timeLeft>10?'#ffaa00':'#ff3860';
+  const hasInput=input.trim().length>0;
+  app.innerHTML=`<div class="wrap">
+    <div class="top-row"><div class="timer-num" id="timerNum" style="color:${col}">${timeLeft}</div><div class="score-area"><span class="ck">✓ </span><span class="cv">${correct}</span>${streak>=2?`<span class="streak">🔥 ${streak}</span>`:''}</div></div>
+    <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:${timeLeft/TOTAL*100}%;background:linear-gradient(90deg,${col},${col}cc)"></div></div>
+    <div class="q-card" style="animation:slideIn .25s ease"><div class="q-label">Question ${idx+1}</div><div class="q-text">${questions[idx].q}</div></div>
+    <div class="input-row"><input class="input-box" type="text" placeholder="Type your answer..." value="${input}" autocomplete="off" autocorrect="off" autocapitalize="off"><button class="go-btn ${hasInput?'active':'inactive'}" onclick="submit()">GO</button></div>
+    <button class="skip-btn" onclick="skip()">Skip →</button>
+  </div>`;
+  const inp=document.querySelector('.input-box');
+  if(inp){inp.addEventListener('input',e=>{input=e.target.value;const btn=document.querySelector('.go-btn');if(btn)btn.className='go-btn '+(e.target.value.trim()?'active':'inactive');});inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});inp.focus();}
+}
+render();
+</script>
+</body>
+</html>

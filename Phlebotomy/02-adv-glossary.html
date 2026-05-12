@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Phlebotomy Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@400;500;600;700;800&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#f5f2ec;font-family:'Vollkorn',Georgia,serif;color:#1e2a1e}
+.wrap{max-width:580px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Karla',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#6b8f3c;font-weight:700;margin-bottom:8px}
+h1{font-size:36px;font-weight:800;line-height:1.1;margin-bottom:4px}
+.sub{font-family:'Karla',sans-serif;font-size:14px;color:#7a8a70;margin-bottom:24px}
+.search-wrap{position:relative;margin-bottom:16px}
+.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:#a0b090}
+.search-wrap input{width:100%;padding:14px 16px 14px 44px;border-radius:14px;font-size:15px;border:2px solid #ddd8cc;background:#fff;color:#1e2a1e;outline:none;font-family:'Karla',sans-serif}
+.search-wrap input:focus{border-color:#6b8f3c}
+.search-wrap input::placeholder{color:#aaa89e}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.cat-btn{padding:6px 14px;border-radius:20px;border:1.5px solid #ccc;background:transparent;color:#888;font-family:'Karla',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.count{font-family:'Karla',sans-serif;font-size:12px;color:#a0a090;margin-bottom:12px}
+.item{padding:18px 20px;border-radius:14px;cursor:pointer;margin-bottom:6px;border:1.5px solid transparent;transition:all .25s}
+.item:hover{background:#eae7df}
+.item.open{background:#fff;border-color:var(--item-bdr);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.item-head{display:flex;justify-content:space-between;align-items:center}
+.item-left{display:flex;align-items:center;gap:12px}
+.item-bar{width:4px;height:28px;border-radius:2px;opacity:.3;transition:opacity .2s}
+.item.open .item-bar{opacity:1}
+.item-term{font-size:18px;font-weight:700}
+.item-cat{font-family:'Karla',sans-serif;font-size:10px;padding:3px 10px;border-radius:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.item-def{margin-top:14px;margin-left:16px;padding-top:14px;border-top:1px solid #e0ddd5;font-size:15px;color:#4a5a40;line-height:1.75;font-style:italic;display:none}
+.item.open .item-def{display:block}
+.empty{text-align:center;padding:48px;color:#a0a090;font-family:'Karla',sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">Advanced Phlebotomy</div>
+  <h1>Glossary</h1>
+  <p class="sub">18 terms — search, filter, and explore</p>
+  <div class="search-wrap"><span>⌕</span><input type="text" id="search" placeholder="Search terms or definitions..."></div>
+  <div class="filters" id="filters"></div>
+  <div class="count" id="count"></div>
+  <div id="list"></div>
+</div>
+<script>
+const glossary=[
+{term:"Difficult Draw",definition:"A venipuncture that is complicated by factors such as small veins, rolling veins, dehydration, obesity, or patient anxiety.",category:"Challenges"},
+{term:"Rolling Vein",definition:"A vein that moves laterally under the skin when pressure is applied, making successful venipuncture more difficult.",category:"Challenges"},
+{term:"Dehydration",definition:"A condition where reduced fluid intake causes lower blood volume, making veins smaller, flatter, and harder to access.",category:"Challenges"},
+{term:"Butterfly Needle (Winged Set)",definition:"A small, flexible needle attached to tubing, used for small or fragile veins. Provides better control and lower vacuum pressure.",category:"Techniques"},
+{term:"Syringe Collection",definition:"A technique using a syringe to manually control vacuum pressure. Blood must be transferred to tubes via a transfer device — never forced through a needle.",category:"Techniques"},
+{term:"Transfer Device",definition:"A safety device used to move blood from a syringe into vacuum tubes without opening the syringe or using the needle.",category:"Techniques"},
+{term:"Hemolysis",definition:"The destruction of red blood cells, often caused by excessive vacuum, forceful aspiration, or improper handling. Invalidates many lab results.",category:"Complications"},
+{term:"Hematoma",definition:"A collection of blood under the skin at the puncture site, caused by blood leaking from a vein. Prevented by proper technique and firm pressure after draw.",category:"Complications"},
+{term:"Syncope",definition:"Fainting or loss of consciousness during or after phlebotomy. Requires stopping the draw, removing the needle, positioning the patient safely, and documenting.",category:"Complications"},
+{term:"Petechiae",definition:"Tiny red or purple dots on the skin from small capillary bleeding, often caused by a tourniquet left on too long or a bleeding disorder.",category:"Complications"},
+{term:"Nerve Irritation",definition:"Sharp, radiating pain during venipuncture indicating the needle has contacted a nerve. The needle must be removed immediately.",category:"Complications"},
+{term:"Vein Collapse",definition:"When a vein flattens or closes during blood draw due to excessive suction or fragile vein walls, interrupting blood flow.",category:"Complications"},
+{term:"Pediatric Phlebotomy",definition:"Blood draws on children, requiring special considerations for small veins, fear management, movement control, and age-appropriate communication.",category:"Populations"},
+{term:"Geriatric Phlebotomy",definition:"Blood draws on elderly patients with fragile skin, thin tissue, increased bruising risk, and veins prone to collapse.",category:"Populations"},
+{term:"Medically Complex Patient",definition:"Patients with IV lines, AV fistulas, or mastectomy history who require specific arm/site restrictions for blood draws.",category:"Populations"},
+{term:"AV Fistula",definition:"A surgically created connection between an artery and vein (for dialysis). Blood must NEVER be drawn from an arm with a fistula.",category:"Populations"},
+{term:"Consent Withdrawal",definition:"A patient's right to refuse or stop a procedure at any time. The phlebotomist must immediately comply and document.",category:"Safety"},
+{term:"Incident Documentation",definition:"A written record of any complication during phlebotomy, including details of the event, actions taken, patient condition, and personnel notified.",category:"Safety"}
+];
+const catColors={Challenges:"#d4783c",Techniques:"#3498db",Complications:"#e74c3c",Populations:"#6b8f3c",Safety:"#8e44ad"};
+const cats=["All",...new Set(glossary.map(g=>g.category))];
+let filter="All",search="",openIdx=null;
+function renderFilters(){
+  document.getElementById('filters').innerHTML=cats.map(c=>{
+    const col=c==="All"?"#666":(catColors[c]||"#888");
+    const active=filter===c;
+    return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}15;${active?`border-color:${col};color:${col};background:${col}15`:''}" onclick="setFilter('${c}')">${c}</button>`;
+  }).join('');
+}
+function renderList(){
+  const s=search.toLowerCase();
+  const filtered=glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));
+  document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' found';
+  if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms match your search.</div>';return;}
+  document.getElementById('list').innerHTML=filtered.map((g)=>{
+    const col=catColors[g.category]||"#888";
+    const origIdx=glossary.indexOf(g);
+    const isOpen=openIdx===origIdx;
+    return `<div class="item ${isOpen?'open':''}" style="--item-bdr:${col}30" onclick="toggle(${origIdx})">
+      <div class="item-head"><div class="item-left"><div class="item-bar" style="background:${col}"></div><span class="item-term">${g.term}</span></div>
+      <span class="item-cat" style="background:${col}15;color:${col}">${g.category}</span></div>
+      <div class="item-def">${g.definition}</div></div>`;
+  }).join('');
+}
+function setFilter(c){filter=c;renderFilters();renderList()}
+function toggle(i){openIdx=openIdx===i?null:i;renderList()}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;renderList()});
+renderFilters();renderList();
+</script>
+</body>
+</html>

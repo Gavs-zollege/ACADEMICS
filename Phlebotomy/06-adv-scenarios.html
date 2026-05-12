@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Phlebotomy Scenarios</title>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#0c0814,#100c1a);font-family:'Zilla Slab',Georgia,serif;color:#e0dae8}
+.wrap{max-width:580px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Rubik',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#e8557a;font-weight:700;margin-bottom:8px}
+h1{font-size:32px;color:#f0eef5;margin-bottom:4px}
+.sub{font-family:'Rubik',sans-serif;font-size:14px;color:#6a5f78;margin-bottom:28px}
+.stats{display:flex;gap:16px;margin-bottom:28px;font-family:'Rubik',sans-serif}
+.stat{padding:8px 18px;border-radius:10px;background:#16122a;border:1px solid #28204a;font-size:12px;color:#6a5f78}
+.stat b{font-size:14px;font-weight:700;margin-left:4px}
+.scenario-card{padding:28px;border-radius:20px;margin-bottom:20px;background:linear-gradient(145deg,#18122e,#1c1535);border:1px solid #2e2050;box-shadow:0 12px 48px rgba(232,85,122,.06)}
+.sc-title{font-family:'Rubik',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#e8557a;font-weight:700;margin-bottom:14px}
+.sc-text{font-size:18px;line-height:1.7}
+.opt{padding:16px 20px;border-radius:14px;border:1.5px solid #28204a;background:#120e22;margin-bottom:10px;font-size:15px;cursor:pointer;font-family:'Rubik',sans-serif;line-height:1.5;transition:all .25s;color:#c0b8d8}
+.opt:hover{background:#1c1530;border-color:#e8557a}
+.opt.correct{background:#0d1f16;border-color:#27ae60;color:#2ecc71;font-weight:600}
+.opt.wrong{background:#1f0d10;border-color:#e74c3c;color:#e74c3c}
+.opt.dim{color:#444}
+.opt .letter{font-weight:700;margin-right:10px;opacity:.5}
+.rationale{margin-top:16px;padding:24px;border-radius:16px}
+.rationale.ok{background:#0a1a10;border:1px solid #27ae6033}
+.rationale.bad{background:#1a0c10;border:1px solid #e74c3c33}
+.rationale h3{font-family:'Rubik',sans-serif;font-weight:700;font-size:15px;margin-bottom:10px}
+.rationale p{font-family:'Rubik',sans-serif;font-size:14px;color:#998faa;line-height:1.7}
+.rationale p b{color:#c0b0d8}
+.next-btn{margin-top:18px;width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#e8557a,#c03060);color:#fff;font-family:'Rubik',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const scenarios=[
+{title:"The Rolling Vein",scenario:"You're drawing blood from an elderly patient. Each time you anchor and attempt puncture, the vein slides away laterally. What is the best approach?",options:["Push the needle in deeper to catch it","Apply traction by pulling the skin taut below the site to anchor the vein","Ask the patient to grip a stress ball harder","Switch to a larger-bore needle for more control"],correct:1,rationale:"Rolling veins require you to apply more traction by pulling the skin taut below the puncture site to stabilize the vein. A larger needle or deeper insertion would increase the risk of complications."},
+{title:"Pediatric Draw Challenge",scenario:"A 4-year-old needs blood drawn. The child is crying, moving, and has very small veins. The parent is anxious. What is your best strategy?",options:["Restrain the child firmly and proceed quickly","Use a butterfly needle, speak calmly to both parent and child, and consider having a helper stabilize the arm","Use a standard evacuated tube to get it done faster","Ask the parent to leave so the child calms down"],correct:1,rationale:"Pediatric draws require butterfly needles for small veins, calm and age-appropriate communication, and a helper to stabilize the arm. Rushing or forceful restraint increases anxiety and injury risk."},
+{title:"AV Fistula Patient",scenario:"You need to draw blood from a dialysis patient. You notice a thrill (buzzing sensation) in the patient's left arm. The right arm has an IV running above the wrist. Where should you draw?",options:["Left arm — the thrill means good blood flow","Right arm — above the IV site","Right arm — below the IV site","Neither arm — request physician guidance"],correct:2,rationale:"Never draw from an arm with a fistula (the left arm with a thrill). When an IV is present, draw below the IV site to avoid contamination from IV fluids. Drawing above the IV would dilute the sample."},
+{title:"Patient Feels Faint",scenario:"During a routine blood draw, the patient says they feel dizzy and their face goes pale. What is the correct sequence of actions?",options:["Tell them to look away and continue the draw","Finish the current tube, then check on them","Stop the draw, remove the needle, lower the patient's head, and call for help if needed","Give them juice immediately while keeping the needle in place"],correct:2,rationale:"Syncope protocol: stop the draw immediately, remove the needle safely, assist the patient to a safe position (lower head or recline), call for help if needed, and document the incident."},
+{title:"Suspected Hemolysis",scenario:"You used a syringe on a difficult vein and pulled the plunger back forcefully. The blood appears unusually pink/red in the tube. What likely happened and what should you do?",options:["The sample is fine — the color is normal","The forceful aspiration likely caused hemolysis — the sample may be compromised and you should notify the lab","Shake the tube vigorously to fix the color","Add more anticoagulant to correct it"],correct:1,rationale:"Forceful syringe aspiration is a common cause of hemolysis. The pink/red appearance indicates red blood cell destruction. The lab must be notified because hemolysis can invalidate many test results. A redraw may be required."},
+{title:"Patient Refuses",scenario:"Midway through a draw, the patient suddenly says 'Stop — I don't want this anymore' and begins pulling their arm away. The tube is only half full. What do you do?",options:["Explain the test is important and continue","Hold their arm steady and finish quickly","Immediately stop, remove the needle, apply pressure, and document","Tell them you're almost done and keep going"],correct:2,rationale:"A patient can withdraw consent at any time. You must immediately stop the procedure, safely remove the needle, apply pressure, care for the site, and document that the patient withdrew consent. Continuing against the patient's wishes is both unethical and potentially illegal."}
+];
+let idx=0,selected=null,locked=false,score=0,completed=0;
+function render(){
+  const app=document.getElementById('app');const s=scenarios[idx];
+  let html=`<div class="tag">Advanced Phlebotomy</div><h1>Clinical Scenarios</h1><p class="sub">Apply your knowledge to real-world situations</p>`;
+  html+=`<div class="stats"><div class="stat">Scenario <b style="color:#c0b0d8">${idx+1}/${scenarios.length}</b></div>`;
+  if(completed>0)html+=`<div class="stat">Score <b style="color:#27ae60">${score}/${completed}</b></div>`;
+  html+=`</div><div class="scenario-card"><div class="sc-title">${s.title}</div><div class="sc-text">${s.scenario}</div></div>`;
+  s.options.forEach((o,i)=>{let cls='opt';if(locked){if(i===s.correct)cls+=' correct';else if(i===selected)cls+=' wrong';else cls+=' dim';}html+=`<div class="${cls}" onclick="pick(${i})"><span class="letter">${String.fromCharCode(65+i)}.</span>${o}</div>`;});
+  if(locked){const correct=selected===s.correct;html+=`<div class="rationale ${correct?'ok':'bad'}"><h3 style="color:${correct?'#27ae60':'#e74c3c'}">${correct?'✓ Correct Response':'✗ Incorrect'}</h3><p><b>Rationale: </b>${s.rationale}</p><button class="next-btn" onclick="next()">Next Scenario →</button></div>`;}
+  app.innerHTML=html;
+}
+function pick(i){if(locked)return;selected=i;locked=true;completed++;if(i===scenarios[idx].correct)score++;render();}
+function next(){idx=(idx+1)%scenarios.length;selected=null;locked=false;render();}
+render();
+</script>
+</body>
+</html>

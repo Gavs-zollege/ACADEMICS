@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Phlebotomy Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700&family=Work+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#1a0f08 0%,#201510 50%,#180e0e 100%);font-family:'Bitter',Georgia,serif;color:#f0e8dd}
+.wrap{max-width:520px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Work Sans',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#d4783c;font-weight:700;margin-bottom:10px;text-align:center}
+h1{font-size:30px;font-weight:700;text-align:center;margin-bottom:4px}
+.sub{font-family:'Work Sans',sans-serif;font-size:13px;color:#7a6b5d;text-align:center;margin-bottom:24px}
+.stats{display:flex;justify-content:center;gap:24px;margin-bottom:24px;font-family:'Work Sans',sans-serif}
+.stats div{text-align:center}
+.stats .num{font-size:22px;font-weight:700}
+.stats .lbl{font-size:10px;color:#6a5a4a;letter-spacing:1px;text-transform:uppercase}
+.bar{height:4px;background:#2a1e15;border-radius:2px;margin-bottom:28px;overflow:hidden;display:flex}
+.bar-known{background:#27ae60;transition:width .4s}
+.bar-review{background:#d4783c;transition:width .4s}
+.counter{font-family:'Work Sans',sans-serif;font-size:12px;color:#6a5a4a;text-align:center;margin-bottom:14px;letter-spacing:1px}
+.counter .badge{margin-left:10px;font-weight:600}
+.card-wrap{perspective:1000px;cursor:pointer;margin-bottom:20px}
+.card-inner{position:relative;width:100%;min-height:270px;border-radius:20px;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card-inner.flipped{transform:rotateY(180deg)}
+.card-face{backface-visibility:hidden;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;border-radius:20px}
+.card-front{background:linear-gradient(145deg,#251a10,#1e1410);border:1px solid #3a2a1e;box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04)}
+.card-back{transform:rotateY(180deg);background:linear-gradient(145deg,#0f1a14,#151e18);border:1px solid #1a3a28;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.card-label{position:absolute;top:16px;left:20px;font-family:'Work Sans',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase}
+.card-front .card-label{color:#5a4a3a}
+.card-back .card-label{color:#27ae60}
+.card-front .card-text{font-size:19px;text-align:center;line-height:1.6;font-weight:700}
+.card-back .card-text{font-size:16px;color:#c0d8c8;text-align:center;line-height:1.8;font-style:italic}
+.card-hint{position:absolute;bottom:16px;font-family:'Work Sans',sans-serif;font-size:11px;color:#5a4a3a}
+.rate-row{display:flex;gap:10px;margin-bottom:16px}
+.rate-row button{flex:1;padding:14px 0;border-radius:12px;font-family:'Work Sans',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:background .2s}
+.btn-learn{border:1px solid #5a3800;background:#2a1800;color:#d4783c}
+.btn-learn:hover{background:#3a2800}
+.btn-got{border:1px solid #1a5c30;background:#0d2a16;color:#27ae60}
+.btn-got:hover{background:#1a3a22}
+.nav-row{display:flex;gap:10px}
+.nav-row button{flex:1;padding:12px 0;border-radius:10px;border:1px solid #3a2a1e;background:transparent;color:#7a6b5d;font-family:'Work Sans',sans-serif;font-size:13px;cursor:pointer;transition:background .2s}
+.nav-row button:hover{background:#2a1e15}
+.reset-btn{display:block;margin:20px auto 0;padding:8px 24px;border-radius:8px;border:none;background:transparent;color:#5a4a3a;font-family:'Work Sans',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">Advanced Phlebotomy</div>
+  <h1>Flashcards</h1>
+  <p class="sub">Tap the card to reveal the answer</p>
+  <div class="stats">
+    <div><div class="num" style="color:#27ae60" id="knownCount">0</div><div class="lbl">Mastered</div></div>
+    <div><div class="num" style="color:#d4783c" id="reviewCount">0</div><div class="lbl">Review</div></div>
+    <div><div class="num" style="color:#8a7a6a" id="remainCount">15</div><div class="lbl">Remaining</div></div>
+  </div>
+  <div class="bar"><div class="bar-known" id="barKnown"></div><div class="bar-review" id="barReview"></div></div>
+  <div class="counter" id="counter">1 / 15</div>
+  <div class="card-wrap" id="cardWrap">
+    <div class="card-inner" id="cardInner">
+      <div class="card-face card-front">
+        <div class="card-label">Question</div>
+        <div class="card-text" id="frontText"></div>
+        <div class="card-hint">tap to flip</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-label">Answer</div>
+        <div class="card-text" id="backText"></div>
+      </div>
+    </div>
+  </div>
+  <div class="rate-row">
+    <button class="btn-learn" onclick="markReview()">Still Learning</button>
+    <button class="btn-got" onclick="markKnown()">Got It ✓</button>
+  </div>
+  <div class="nav-row">
+    <button onclick="go(-1)">← Previous</button>
+    <button onclick="go(1)">Next →</button>
+  </div>
+  <button class="reset-btn" id="resetBtn" style="display:none" onclick="reset()">Reset Progress</button>
+</div>
+<script>
+const cards=[
+{front:"What makes a blood draw 'difficult'?",back:"Small or fragile veins, rolling veins, dehydration, obesity, and patient anxiety or movement."},
+{front:"What are rolling veins?",back:"Veins that move or shift laterally when pressure is applied during venipuncture, making them hard to puncture."},
+{front:"How does dehydration affect phlebotomy?",back:"Dehydration reduces blood volume, making veins smaller, flatter, and harder to locate and puncture."},
+{front:"What special considerations apply to pediatric patients?",back:"Small veins, fear and movement, and the need for age-appropriate communication and comfort techniques."},
+{front:"What special considerations apply to geriatric patients?",back:"Fragile skin, tendency for vein collapse, increased bruising risk, and thinner tissue around veins."},
+{front:"What medically complex conditions affect venipuncture?",back:"IV lines (draw below the site), fistulas (never use that arm), and mastectomy history (avoid affected side)."},
+{front:"When should a butterfly (winged) set be used?",back:"For small or fragile veins — it provides better control and less vacuum pressure than a standard holder."},
+{front:"When should a syringe collection be used?",back:"When you need low vacuum control on fragile veins. Blood must be transferred using a transfer device, never pushed through a needle."},
+{front:"What is hemolysis and what causes it?",back:"Destruction of red blood cells, caused by excessive vacuum, forceful aspiration, or improper technique — invalidates many lab results."},
+{front:"What is a hematoma?",back:"A collection of blood under the skin caused by blood leaking from a punctured vein. Apply firm pressure to prevent."},
+{front:"What is syncope and how do you manage it?",back:"Fainting during or after a draw. Stop the draw, remove the needle, assist the patient to a safe position, call for help if needed, and document."},
+{front:"What are petechiae?",back:"Tiny red or purple spots on the skin indicating small capillary bleeds, often from a tourniquet left on too long."},
+{front:"When must you stop a phlebotomy procedure?",back:"When the patient withdraws consent, severe pain occurs, the vein collapses repeatedly, or the patient becomes unstable."},
+{front:"Is stopping a draw a sign of failure?",back:"No — knowing when to stop and seek assistance is a sign of professionalism and prioritizes patient safety."},
+{front:"What should you always document after a complication?",back:"The incident details, actions taken, patient condition, and notification of appropriate personnel."}
+];
+let idx=0,known=new Set(),review=new Set();
+function render(){
+  document.getElementById('frontText').textContent=cards[idx].front;
+  document.getElementById('backText').textContent=cards[idx].back;
+  document.getElementById('cardInner').classList.remove('flipped');
+  const t=cards.length,k=known.size,r=review.size;
+  document.getElementById('knownCount').textContent=k;
+  document.getElementById('reviewCount').textContent=r;
+  document.getElementById('remainCount').textContent=t-k-r;
+  document.getElementById('barKnown').style.width=(k/t*100)+'%';
+  document.getElementById('barReview').style.width=(r/t*100)+'%';
+  let extra='';
+  if(known.has(idx))extra=' <span class="badge" style="color:#27ae60">✓ Mastered</span>';
+  if(review.has(idx))extra=' <span class="badge" style="color:#d4783c">↻ Review</span>';
+  document.getElementById('counter').innerHTML=(idx+1)+' / '+t+extra;
+  document.getElementById('resetBtn').style.display=(k>0||r>0)?'block':'none';
+}
+document.getElementById('cardWrap').onclick=()=>document.getElementById('cardInner').classList.toggle('flipped');
+function go(d){idx=(idx+d+cards.length)%cards.length;render()}
+function markKnown(){known.add(idx);review.delete(idx);go(1)}
+function markReview(){review.add(idx);known.delete(idx);go(1)}
+function reset(){known.clear();review.clear();idx=0;render()}
+render();
+</script>
+</body>
+</html>

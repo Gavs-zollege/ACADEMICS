@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Phlebotomy Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&family=Merriweather:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#0a1418,#0e1a1e);font-family:'Josefin Sans',sans-serif;color:#d0e0e4}
+.wrap{max-width:560px;margin:0 auto;padding:40px 20px}
+.tag{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#1abc9c;font-weight:700;margin-bottom:8px}
+h1{font-family:'Merriweather',serif;font-size:30px;color:#f0f4f5;margin-bottom:24px}
+.info{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:13px;color:#607880}
+.info .sc{color:#1abc9c;font-weight:600}
+.bar{height:5px;background:#152025;border-radius:3px;margin-bottom:32px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#1abc9c,#16a085);border-radius:3px;transition:width .5s}
+.question{font-family:'Merriweather',serif;font-size:20px;color:#e8f0f2;margin-bottom:24px;line-height:1.5}
+.opt{padding:16px 20px;border-radius:12px;border:1.5px solid #1e3038;background:#0e1a1e;margin-bottom:10px;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s}
+.opt:hover{background:#142428;border-color:#1abc9c}
+.opt.correct{background:#0a2a20;border-color:#1abc9c;color:#1abc9c;font-weight:600}
+.opt.wrong{background:#2a1010;border-color:#e74c3c;color:#e74c3c}
+.opt.dim{color:#3a4a50}
+.opt .letter{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid #2a3a42;font-size:12px;font-weight:700;color:#5a6a70;flex-shrink:0}
+.opt.correct .letter{border-color:#1abc9c;color:#1abc9c}
+.opt.wrong .letter{border-color:#e74c3c;color:#e74c3c}
+.next-btn{width:100%;padding:16px;border-radius:12px;border:none;margin-top:8px;background:linear-gradient(135deg,#1abc9c,#16a085);color:#fff;font-weight:700;font-size:16px;cursor:pointer;display:none}
+.result{text-align:center;padding:40px 0}
+.result .pct{font-size:72px;font-weight:900;font-family:'Merriweather',serif;line-height:1}
+.result .detail{font-size:18px;color:#607880;margin-top:8px}
+.result .msg{font-size:24px;font-weight:700;margin-top:16px}
+.btn-row{display:flex;gap:12px;margin-top:32px;justify-content:center}
+.btn-row button{padding:14px 32px;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer}
+.btn-outline{border:1px solid #2a3a42;background:transparent;color:#607880}
+.btn-solid{border:none;background:#1abc9c;color:#fff;font-weight:700}
+.review-card{padding:20px;border-radius:14px;background:#0e1a1e;margin-bottom:12px;border:1px solid #1e3038}
+.review-card .rq{font-size:14px;font-weight:600;color:#d0e0e4;margin-bottom:12px}
+.review-opt{padding:8px 14px;border-radius:8px;margin-bottom:4px;font-size:13px;border:1px solid transparent}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const questions=[
+{q:"Which of the following is NOT a common cause of a difficult draw?",opts:["Rolling veins","Dehydration","High blood pressure","Patient anxiety"],ans:2},
+{q:"What type of needle provides better control for small or fragile veins?",opts:["Standard evacuated tube","Butterfly (winged) needle","Large-bore needle","Lancet"],ans:1},
+{q:"When is a syringe collection technique preferred?",opts:["When you need maximum vacuum","When drawing from large veins","When you need low vacuum control on fragile veins","For arterial blood draws"],ans:2},
+{q:"What must you use to transfer blood from a syringe to vacuum tubes?",opts:["The same needle used for the draw","A transfer device","A butterfly adapter","Pour directly into the tube"],ans:1},
+{q:"What is hemolysis?",opts:["Blood clotting too quickly","Destruction of red blood cells","Vein inflammation","Low platelet count"],ans:1},
+{q:"A patient develops a large bruise at the puncture site. This is called a:",opts:["Petechiae","Syncope","Hematoma","Phlebitis"],ans:2},
+{q:"What is the FIRST thing you should do if a patient feels faint during a draw?",opts:["Give them water","Stop the draw","Call the physician","Elevate their arm"],ans:1},
+{q:"Tiny red spots appearing on skin from capillary bleeding are called:",opts:["Hematomas","Petechiae","Ecchymosis","Erythema"],ans:1},
+{q:"You should NEVER draw blood from an arm that has:",opts:["A small bruise","An AV fistula","A previous successful draw","A visible vein"],ans:1},
+{q:"When must you stop a phlebotomy procedure?",opts:["When the tube is half full","When the tourniquet is uncomfortable","When the patient withdraws consent","When you feel nervous"],ans:2},
+{q:"Geriatric patients require special attention because they often have:",opts:["Very large veins","Fragile skin and veins prone to collapse","Excessive blood volume","No anxiety"],ans:1},
+{q:"Knowing when to stop a draw and seek help is a sign of:",opts:["Inexperience","Weakness","Professionalism","Negligence"],ans:2}
+];
+let idx=0,selected=null,locked=false,score=0,answers=[],phase='quiz';
+function render(){
+  const app=document.getElementById('app');
+  if(phase==='result'){
+    const pct=Math.round(score/questions.length*100);
+    const col=pct>=80?'#1abc9c':pct>=60?'#f1c40f':'#e74c3c';
+    const msg=pct>=90?'Outstanding!':pct>=80?'Great work!':pct>=60?'Keep studying!':'Review the material';
+    app.innerHTML=`<div class="result"><div class="pct" style="color:${col}">${pct}%</div><div class="detail">${score} of ${questions.length} correct</div><div class="msg" style="color:${col}">${msg}</div><div class="btn-row"><button class="btn-outline" onclick="startReview()">Review Answers</button><button class="btn-solid" onclick="restart()">Retry Quiz</button></div></div>`;return;
+  }
+  if(phase==='review'){
+    let html=`<h2 style="font-family:'Merriweather',serif;font-size:28px;color:#f0f4f5;margin-bottom:24px">Review Answers</h2>`;
+    answers.forEach((a,i)=>{const q=questions[a.qIdx];html+=`<div class="review-card" style="border-color:${a.correct?'#1abc9c44':'#e74c3c44'}"><div class="rq">${i+1}. ${q.q}</div>`;q.opts.forEach((o,oi)=>{let bg='transparent',col='#607880',fw=400,bdr='transparent';if(oi===q.ans){bg='#1abc9c20';col='#1abc9c';fw=600;bdr='#1abc9c33';}else if(oi===a.picked&&!a.correct){bg='#e74c3c20';col='#e74c3c';}html+=`<div class="review-opt" style="background:${bg};color:${col};font-weight:${fw};border-color:${bdr}">${o}${oi===q.ans?' ✓':''}${oi===a.picked&&!a.correct?' ✗':''}</div>`;});html+=`</div>`;});
+    html+=`<button class="btn-solid" style="width:100%;padding:16px;border-radius:12px;margin-top:12px;font-size:16px" onclick="restart()">Retry Quiz</button>`;
+    app.innerHTML=html;return;
+  }
+  const q=questions[idx];
+  let html=`<div class="tag">Advanced Phlebotomy</div><h1>Multiple Choice Quiz</h1>`;
+  html+=`<div class="info"><span>Question ${idx+1} of ${questions.length}</span><span class="sc">Score: ${score}</span></div>`;
+  html+=`<div class="bar"><div class="bar-fill" style="width:${((idx+(locked?1:0))/questions.length)*100}%"></div></div>`;
+  html+=`<div class="question">${q.q}</div>`;
+  q.opts.forEach((o,i)=>{let cls='opt';if(locked){if(i===q.ans)cls+=' correct';else if(i===selected)cls+=' wrong';else cls+=' dim';}html+=`<div class="${cls}" onclick="pick(${i})"><span class="letter">${String.fromCharCode(65+i)}</span>${o}</div>`;});
+  html+=`<button class="next-btn" onclick="next()" style="display:${locked?'block':'none'}">${idx+1>=questions.length?'See Results':'Next Question →'}</button>`;
+  app.innerHTML=html;
+}
+function pick(i){if(locked)return;selected=i;locked=true;if(i===questions[idx].ans)score++;answers.push({qIdx:idx,picked:i,correct:i===questions[idx].ans});render();}
+function next(){if(idx+1>=questions.length){phase='result';render();return;}idx++;selected=null;locked=false;render();}
+function startReview(){phase='review';render();}
+function restart(){idx=0;selected=null;locked=false;score=0;answers=[];phase='quiz';render();}
+render();
+</script>
+</body>
+</html>

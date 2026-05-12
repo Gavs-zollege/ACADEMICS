@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 7 — Fill in the Blank</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--green:#27ae60;--green-light:#2ecc71;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;--radius:16px;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 20px 60px;}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:640px;margin:0 auto;}
+header{text-align:center;padding:48px 0 28px;}
+header .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:14px;animation:fadeIn .4s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.card-num{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+.sentence{font-size:1rem;line-height:2;font-weight:500;}
+.blank{display:inline-block;border:none;border-bottom:2px dashed var(--muted);min-width:100px;padding:2px 8px;font-family:inherit;font-size:.95rem;background:transparent;color:var(--text);outline:none;transition:border-color .2s;text-align:center;}
+.blank:focus{border-bottom-color:var(--red);}
+.blank.correct{border-bottom-color:var(--green);border-bottom-style:solid;color:var(--green-light);}
+.blank.wrong{border-bottom-color:var(--red);border-bottom-style:solid;color:var(--red-light);}
+.answer-reveal{display:inline-block;font-size:.78rem;color:var(--green-light);margin-left:6px;opacity:0;transition:opacity .3s;}
+.answer-reveal.show{opacity:1;}
+.btn{padding:12px 28px;border-radius:10px;cursor:pointer;font-size:.88rem;font-weight:600;font-family:inherit;transition:all .2s;border:none;margin-top:20px;}
+.btn-primary{background:var(--red);color:#fff;}.btn-primary:hover{background:var(--red-light);}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text);margin-left:10px;}.btn-secondary:hover{border-color:var(--red);}
+.score{text-align:center;margin-top:20px;font-size:1.1rem;font-weight:600;color:var(--green-light);min-height:28px;}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<header>
+  <div class="tag">Activity 7 of 10</div>
+  <h1>Fill in the Blank</h1>
+  <p>Type the missing word or number to complete each statement.</p>
+</header>
+<div id="list"></div>
+<div>
+  <button class="btn btn-primary" onclick="check()">Check Answers</button>
+  <button class="btn btn-secondary" onclick="reset()">Reset</button>
+</div>
+<div class="score" id="score"></div>
+</div>
+
+<script>
+const qs=[
+  {text:"The tourniquet should be placed ___ inches above the puncture site.",answer:"3-4",alts:["3–4","3 to 4","3-4","3 - 4"]},
+  {text:"Clean the site using ___ isopropyl alcohol in a circular motion.",answer:"70%",alts:["70%","70 percent","70"]},
+  {text:"Insert the needle at a ___ degree angle for venipuncture.",answer:"15-30",alts:["15–30","15 to 30","15-30","15 - 30"]},
+  {text:"After collection, gently invert additive tubes ___ times.",answer:"5-10",alts:["5–10","5 to 10","5-10","5 - 10"]},
+  {text:"Specimen labels must include patient name, DOB, date/time, and the collector's ___.",answer:"initials",alts:["initials","initial"]},
+  {text:"The preferred vein for routine venipuncture is the median ___ vein.",answer:"cubital",alts:["cubital"]},
+  {text:"The tourniquet should not remain on longer than ___ minute(s).",answer:"1",alts:["1","one"]},
+  {text:"In capillary collection, the first ___ of blood should be wiped away.",answer:"drop",alts:["drop"]},
+  {text:"If a patient faints (syncope), stop the procedure and lay the patient ___.",answer:"down",alts:["down"]},
+  {text:"Tubes with additives should be gently ___, not shaken vigorously.",answer:"inverted",alts:["inverted","inverted gently"]},
+];
+
+document.getElementById('list').innerHTML=qs.map((q,i)=>{
+  const parts=q.text.split('___');
+  return`<div class="card"><div class="card-num">Question ${i+1}</div><div class="sentence">${parts[0]}<input class="blank" id="b-${i}" placeholder="?" /><span class="answer-reveal" id="ar-${i}"></span>${parts[1]||''}</div></div>`;
+}).join('');
+
+function check(){
+  let score=0;
+  qs.forEach((q,i)=>{
+    const input=document.getElementById(`b-${i}`);
+    const val=input.value.trim().toLowerCase();
+    const allAnswers=[q.answer.toLowerCase(),...q.alts.map(a=>a.toLowerCase())];
+    const ok=allAnswers.includes(val);
+    input.classList.remove('correct','wrong');
+    input.classList.add(ok?'correct':'wrong');
+    const ar=document.getElementById(`ar-${i}`);
+    if(!ok){ar.textContent=`(${q.answer})`;ar.classList.add('show');}
+    else{ar.textContent='✓';ar.classList.add('show');}
+    if(ok)score++;
+  });
+  document.getElementById('score').textContent=`${score} / ${qs.length} correct`;
+}
+function reset(){
+  qs.forEach((q,i)=>{
+    const input=document.getElementById(`b-${i}`);
+    input.value='';input.classList.remove('correct','wrong');
+    const ar=document.getElementById(`ar-${i}`);ar.textContent='';ar.classList.remove('show');
+  });
+  document.getElementById('score').textContent='';
+}
+</script>
+</body>
+</html>

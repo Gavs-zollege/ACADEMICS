@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity 8 — Vein Labeling</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--green:#27ae60;--green-light:#2ecc71;--blue:#3498db;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;--radius:16px;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 20px 60px;}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:640px;margin:0 auto;}
+header{text-align:center;padding:48px 0 20px;}
+header .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
+header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
+.instructions{color:var(--dim);font-size:.82rem;text-align:center;margin-bottom:20px;line-height:1.5;}
+.diagram{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;display:flex;justify-content:center;}
+.diagram svg{max-width:100%;height:auto;}
+.drop-zone{position:absolute;border:2px dashed var(--muted);border-radius:8px;padding:6px 14px;font-size:.75rem;color:var(--muted);text-align:center;cursor:pointer;transition:all .2s;min-width:80px;background:rgba(11,14,20,.7);backdrop-filter:blur(4px);}
+.drop-zone:hover{border-color:var(--blue);}
+.drop-zone.filled{border-style:solid;border-color:var(--blue);color:var(--text);background:rgba(52,152,219,.08);}
+.drop-zone.correct{border-color:var(--green);background:rgba(39,174,96,.1);color:var(--green-light);}
+.drop-zone.wrong{border-color:var(--red);background:rgba(192,57,43,.1);color:var(--red-light);}
+.bank-label{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-weight:700;margin-bottom:10px;}
+.bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.chip{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:10px 18px;font-size:.82rem;cursor:pointer;transition:all .2s;font-weight:600;}
+.chip:hover{border-color:var(--red);transform:translateY(-1px);}
+.chip.selected{border-color:var(--blue);background:rgba(52,152,219,.1);box-shadow:0 0 12px rgba(52,152,219,.15);}
+.chip.used{opacity:.35;pointer-events:none;}
+.btns{display:flex;gap:10px;}
+.btn{padding:12px 28px;border-radius:10px;cursor:pointer;font-size:.88rem;font-weight:600;font-family:inherit;transition:all .2s;border:none;}
+.btn-primary{background:var(--red);color:#fff;}.btn-primary:hover{background:var(--red-light);}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text);}.btn-secondary:hover{border-color:var(--red);}
+.feedback{text-align:center;margin-top:16px;font-size:1rem;font-weight:600;min-height:28px;}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+<header>
+  <div class="tag">Activity 8 of 10</div>
+  <h1>Vein Labeling</h1>
+  <p>Identify the veins of the antecubital fossa.</p>
+</header>
+<div class="instructions">1. Select a label from the bank below. 2. Click the drop zone on the diagram to place it.</div>
+<div class="diagram" id="diagram">
+  <svg viewBox="0 0 420 480" xmlns="http://www.w3.org/2000/svg" width="380">
+    <!-- Arm shape -->
+    <path d="M130,10 Q85,60 75,140 Q65,230 85,320 Q95,380 130,460 L290,460 Q325,380 335,320 Q355,230 345,140 Q335,60 290,10 Z" fill="#1a1f2e" stroke="#2e3650" stroke-width="2"/>
+    <!-- Veins -->
+    <path d="M175,20 Q155,90 150,170 Q145,260 160,350 L170,440" fill="none" stroke="#4a7bb5" stroke-width="3.5" stroke-linecap="round" opacity=".7"/>
+    <path d="M265,20 Q280,90 283,170 Q285,240 275,330 L265,440" fill="none" stroke="#4a7bb5" stroke-width="3.5" stroke-linecap="round" opacity=".7"/>
+    <path d="M158,280 Q190,300 215,310 Q245,300 275,285" fill="none" stroke="#4a7bb5" stroke-width="3.5" stroke-linecap="round" opacity=".7"/>
+    <path d="M165,230 Q185,250 210,260" fill="none" stroke="#4a7bb5" stroke-width="2.8" stroke-linecap="round" opacity=".55"/>
+    <!-- Dot markers -->
+    <circle cx="168" cy="90" r="7" fill="#4a7bb5" stroke="#0b0e14" stroke-width="2"/>
+    <circle cx="278" cy="100" r="7" fill="#4a7bb5" stroke="#0b0e14" stroke-width="2"/>
+    <circle cx="175" cy="250" r="7" fill="#4a7bb5" stroke="#0b0e14" stroke-width="2"/>
+    <circle cx="218" cy="300" r="7" fill="#4a7bb5" stroke="#0b0e14" stroke-width="2"/>
+    <!-- Leader lines -->
+    <line x1="168" y1="90" x2="60" y2="70" stroke="#4a7bb5" stroke-width="1" stroke-dasharray="3,3" opacity=".4"/>
+    <line x1="278" y1="100" x2="370" y2="80" stroke="#4a7bb5" stroke-width="1" stroke-dasharray="3,3" opacity=".4"/>
+    <line x1="175" y1="250" x2="60" y2="245" stroke="#4a7bb5" stroke-width="1" stroke-dasharray="3,3" opacity=".4"/>
+    <line x1="218" y1="300" x2="345" y2="310" stroke="#4a7bb5" stroke-width="1" stroke-dasharray="3,3" opacity=".4"/>
+  </svg>
+  <div class="drop-zone" style="left:1%;top:11%;" id="dz-0" onclick="place(0)">?</div>
+  <div class="drop-zone" style="right:1%;top:13%;" id="dz-1" onclick="place(1)">?</div>
+  <div class="drop-zone" style="left:1%;top:48%;" id="dz-2" onclick="place(2)">?</div>
+  <div class="drop-zone" style="right:2%;top:62%;" id="dz-3" onclick="place(3)">?</div>
+</div>
+<div class="bank-label">Label Bank</div>
+<div class="bank" id="bank"></div>
+<div class="btns">
+  <button class="btn btn-primary" onclick="check()">Check Labels</button>
+  <button class="btn btn-secondary" onclick="reset()">Reset</button>
+</div>
+<div class="feedback" id="feedback"></div>
+</div>
+
+<script>
+const veins=[
+  {name:"Cephalic vein",zone:0},
+  {name:"Basilic vein",zone:1},
+  {name:"Median cephalic vein",zone:2},
+  {name:"Median cubital vein",zone:3},
+];
+let selectedChip=null;
+let placed={};
+const shuffled=[...veins].sort(()=>Math.random()-.5);
+
+function renderBank(){
+  document.getElementById('bank').innerHTML=shuffled.map((v,i)=>`<div class="chip" id="chip-${i}" data-name="${v.name}" onclick="selectChip(${i})">${v.name}</div>`).join('');
+}
+function selectChip(i){
+  const chip=document.getElementById(`chip-${i}`);
+  if(chip.classList.contains('used'))return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  chip.classList.add('selected');
+  selectedChip={idx:i,name:shuffled[i].name};
+}
+function place(zone){
+  if(!selectedChip)return;
+  const dz=document.getElementById(`dz-${zone}`);
+  // Un-use previous chip in this zone
+  if(placed[zone]!==undefined){
+    const oldIdx=shuffled.findIndex(v=>v.name===placed[zone]);
+    if(oldIdx>=0)document.getElementById(`chip-${oldIdx}`).classList.remove('used');
+  }
+  placed[zone]=selectedChip.name;
+  dz.textContent=selectedChip.name;
+  dz.classList.add('filled');dz.classList.remove('correct','wrong');
+  document.getElementById(`chip-${selectedChip.idx}`).classList.remove('selected');
+  document.getElementById(`chip-${selectedChip.idx}`).classList.add('used');
+  selectedChip=null;
+}
+function check(){
+  let score=0;
+  veins.forEach(v=>{
+    const dz=document.getElementById(`dz-${v.zone}`);
+    if(placed[v.zone]===v.name){dz.classList.add('correct');dz.classList.remove('wrong');score++;}
+    else{dz.classList.add('wrong');dz.classList.remove('correct');if(!placed[v.zone])dz.textContent=v.name;}
+  });
+  const fb=document.getElementById('feedback');
+  fb.textContent=score===veins.length?'All veins labeled correctly!':'Some labels are incorrect. Correct answers shown in red zones.';
+  fb.style.color=score===veins.length?'var(--green-light)':'var(--red-light)';
+}
+function reset(){
+  placed={};selectedChip=null;
+  veins.forEach(v=>{const dz=document.getElementById(`dz-${v.zone}`);dz.textContent='?';dz.classList.remove('filled','correct','wrong');});
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('used','selected'));
+  document.getElementById('feedback').textContent='';
+}
+renderBank();
+</script>
+</body>
+</html>

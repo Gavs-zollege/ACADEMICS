@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Phlebotomist Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#060d12,#0a1218,#081010);font-family:'Cinzel',Georgia,serif;color:#e0ece8}
+.wrap{max-width:520px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Quicksand',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#2ecc71;font-weight:700;margin-bottom:10px;text-align:center}
+h1{font-size:28px;font-weight:700;text-align:center;margin-bottom:4px;letter-spacing:1px}
+.sub{font-family:'Quicksand',sans-serif;font-size:13px;color:#4a7a6a;text-align:center;margin-bottom:24px}
+.stats{display:flex;justify-content:center;gap:24px;margin-bottom:24px;font-family:'Quicksand',sans-serif}
+.stats div{text-align:center}
+.stats .num{font-size:22px;font-weight:700}
+.stats .lbl{font-size:10px;color:#3a6a5a;letter-spacing:1px;text-transform:uppercase}
+.bar{height:4px;background:#0e1e1a;border-radius:2px;margin-bottom:28px;overflow:hidden;display:flex}
+.bar-known{background:#2ecc71;transition:width .4s}
+.bar-review{background:#e67e22;transition:width .4s}
+.counter{font-family:'Quicksand',sans-serif;font-size:12px;color:#3a6a5a;text-align:center;margin-bottom:14px;letter-spacing:1px}
+.counter .badge{margin-left:10px;font-weight:600}
+.card-wrap{perspective:1000px;cursor:pointer;margin-bottom:20px}
+.card-inner{position:relative;width:100%;min-height:270px;border-radius:20px;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card-inner.flipped{transform:rotateY(180deg)}
+.card-face{backface-visibility:hidden;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;border-radius:20px}
+.card-front{background:linear-gradient(145deg,#0c1a18,#0a1614);border:1px solid #1a3a30;box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(46,204,113,.04)}
+.card-back{transform:rotateY(180deg);background:linear-gradient(145deg,#0a1a14,#0e1e18);border:1px solid #1a4a30;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.card-label{position:absolute;top:16px;left:20px;font-family:'Quicksand',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase}
+.card-front .card-label{color:#2a5a48}
+.card-back .card-label{color:#2ecc71}
+.card-front .card-text{font-size:19px;text-align:center;line-height:1.6;font-weight:600}
+.card-back .card-text{font-size:15px;color:#b0d8c8;text-align:center;line-height:1.8;font-family:'Quicksand',sans-serif;font-weight:500}
+.card-hint{position:absolute;bottom:16px;font-family:'Quicksand',sans-serif;font-size:11px;color:#2a5a48}
+.rate-row{display:flex;gap:10px;margin-bottom:16px}
+.rate-row button{flex:1;padding:14px 0;border-radius:12px;font-family:'Quicksand',sans-serif;font-weight:700;font-size:14px;cursor:pointer;transition:background .2s}
+.btn-learn{border:1px solid #5a3800;background:#2a1800;color:#e67e22}
+.btn-learn:hover{background:#3a2800}
+.btn-got{border:1px solid #1a5c30;background:#0d2a16;color:#2ecc71}
+.btn-got:hover{background:#1a3a22}
+.nav-row{display:flex;gap:10px}
+.nav-row button{flex:1;padding:12px 0;border-radius:10px;border:1px solid #1a3a30;background:transparent;color:#4a7a6a;font-family:'Quicksand',sans-serif;font-size:13px;cursor:pointer}
+.nav-row button:hover{background:#0e1e1a}
+.reset-btn{display:block;margin:20px auto 0;padding:8px 24px;border-radius:8px;border:none;background:transparent;color:#2a5a48;font-family:'Quicksand',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">The Professional Phlebotomist</div>
+  <h1>Flashcards</h1>
+  <p class="sub">Tap the card to reveal the answer</p>
+  <div class="stats">
+    <div><div class="num" style="color:#2ecc71" id="knownCount">0</div><div class="lbl">Mastered</div></div>
+    <div><div class="num" style="color:#e67e22" id="reviewCount">0</div><div class="lbl">Review</div></div>
+    <div><div class="num" style="color:#5a8a7a" id="remainCount">15</div><div class="lbl">Remaining</div></div>
+  </div>
+  <div class="bar"><div class="bar-known" id="barKnown"></div><div class="bar-review" id="barReview"></div></div>
+  <div class="counter" id="counter">1 / 15</div>
+  <div class="card-wrap" id="cardWrap">
+    <div class="card-inner" id="cardInner">
+      <div class="card-face card-front"><div class="card-label">Question</div><div class="card-text" id="frontText"></div><div class="card-hint">tap to flip</div></div>
+      <div class="card-face card-back"><div class="card-label">Answer</div><div class="card-text" id="backText"></div></div>
+    </div>
+  </div>
+  <div class="rate-row">
+    <button class="btn-learn" onclick="markReview()">Still Learning</button>
+    <button class="btn-got" onclick="markKnown()">Got It ✓</button>
+  </div>
+  <div class="nav-row"><button onclick="go(-1)">← Previous</button><button onclick="go(1)">Next →</button></div>
+  <button class="reset-btn" id="resetBtn" style="display:none" onclick="reset()">Reset Progress</button>
+</div>
+<script>
+const cards=[
+{front:"What is the primary role of a phlebotomist?",back:"To collect blood specimens safely and accurately, prepare patients, label and handle specimens correctly, and maintain infection control standards."},
+{front:"Why are phlebotomists called 'ambassadors' of healthcare?",back:"Because they represent the laboratory and healthcare facility — their professionalism directly impacts patient trust and experience."},
+{front:"What are the key traits of a successful phlebotomist?",back:"Professional appearance, accuracy, strong communication, empathy, ability to stay calm under pressure, and adaptability."},
+{front:"How should a phlebotomist introduce themselves?",back:"By stating their name and role, then verifying the patient's identity using two identifiers before explaining the procedure."},
+{front:"What are two patient identifiers?",back:"Typically the patient's full name and date of birth — used to confirm identity before every procedure."},
+{front:"What does 'scope of practice' mean?",back:"The legally defined boundaries of what a phlebotomist can and cannot do. Working outside this scope is a legal violation."},
+{front:"What is informed consent?",back:"The patient's agreement to a procedure after being told what it involves. It must be obtained before every blood draw."},
+{front:"What does HIPAA protect?",back:"Patient Health Information (PHI). Phlebotomists must never share patient info with unauthorized people or discuss it in public areas."},
+{front:"What are examples of HIPAA compliance?",back:"Logging out of computers, securing paperwork, discussing patient info only with authorized personnel, never in public areas."},
+{front:"Why is documentation considered a legal record?",back:"Because it can be used in court as evidence. All documentation must be accurate, honest, and timely."},
+{front:"What ethical responsibilities does a phlebotomist have?",back:"Respect patient rights and dignity, provide equitable care, maintain honesty and integrity, and know when to seek help."},
+{front:"What Standard Precautions apply to every patient?",back:"Hand hygiene before and after contact, PPE based on exposure risk, immediate sharps disposal, and reporting needlestick injuries."},
+{front:"What does professional appearance include?",back:"Clean uniform or scrubs, proper footwear, minimal jewelry, and having supplies and identification ready."},
+{front:"How should a phlebotomist handle a frustrated patient?",back:"Acknowledge their concerns, remain calm and respectful, communicate delays appropriately, and maintain professionalism throughout."},
+{front:"What does professional growth include?",back:"Accepting feedback, continuing education, maintaining certifications, and demonstrating reliability and punctuality."}
+];
+let idx=0,known=new Set(),review=new Set();
+function render(){
+  document.getElementById('frontText').textContent=cards[idx].front;
+  document.getElementById('backText').textContent=cards[idx].back;
+  document.getElementById('cardInner').classList.remove('flipped');
+  const t=cards.length,k=known.size,r=review.size;
+  document.getElementById('knownCount').textContent=k;
+  document.getElementById('reviewCount').textContent=r;
+  document.getElementById('remainCount').textContent=t-k-r;
+  document.getElementById('barKnown').style.width=(k/t*100)+'%';
+  document.getElementById('barReview').style.width=(r/t*100)+'%';
+  let extra='';
+  if(known.has(idx))extra=' <span class="badge" style="color:#2ecc71">✓ Mastered</span>';
+  if(review.has(idx))extra=' <span class="badge" style="color:#e67e22">↻ Review</span>';
+  document.getElementById('counter').innerHTML=(idx+1)+' / '+t+extra;
+  document.getElementById('resetBtn').style.display=(k>0||r>0)?'block':'none';
+}
+document.getElementById('cardWrap').onclick=()=>document.getElementById('cardInner').classList.toggle('flipped');
+function go(d){idx=(idx+d+cards.length)%cards.length;render()}
+function markKnown(){known.add(idx);review.delete(idx);go(1)}
+function markReview(){review.add(idx);known.delete(idx);go(1)}
+function reset(){known.clear();review.clear();idx=0;render()}
+render();
+</script>
+</body>
+</html>

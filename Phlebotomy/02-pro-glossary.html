@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Phlebotomist Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:wght@400;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#faf5ef;font-family:'Cardo',Georgia,serif;color:#2a1e14}
+.wrap{max-width:580px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Nunito',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#c0523e;font-weight:700;margin-bottom:8px}
+h1{font-size:36px;font-weight:700;line-height:1.1;margin-bottom:4px}
+.sub{font-family:'Nunito',sans-serif;font-size:14px;color:#9a8878;margin-bottom:24px}
+.search-wrap{position:relative;margin-bottom:16px}
+.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:#c0a890}
+.search-wrap input{width:100%;padding:14px 16px 14px 44px;border-radius:14px;font-size:15px;border:2px solid #e0d8cc;background:#fff;color:#2a1e14;outline:none;font-family:'Nunito',sans-serif}
+.search-wrap input:focus{border-color:#c0523e}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.cat-btn{padding:6px 14px;border-radius:20px;border:1.5px solid #d0c8bc;background:transparent;color:#998878;font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.count{font-family:'Nunito',sans-serif;font-size:12px;color:#b0a898;margin-bottom:12px}
+.item{padding:18px 20px;border-radius:14px;cursor:pointer;margin-bottom:6px;border:1.5px solid transparent;transition:all .25s}
+.item:hover{background:#f0ebe2}
+.item.open{background:#fff;border-color:var(--item-bdr);box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.item-head{display:flex;justify-content:space-between;align-items:center}
+.item-left{display:flex;align-items:center;gap:12px}
+.item-bar{width:4px;height:28px;border-radius:2px;opacity:.3;transition:opacity .2s}
+.item.open .item-bar{opacity:1}
+.item-term{font-size:18px;font-weight:700}
+.item-cat{font-family:'Nunito',sans-serif;font-size:10px;padding:3px 10px;border-radius:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.item-def{margin-top:14px;margin-left:16px;padding-top:14px;border-top:1px solid #e8e0d8;font-size:15px;color:#5a4a38;line-height:1.75;font-style:italic;display:none}
+.item.open .item-def{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">The Professional Phlebotomist</div>
+  <h1>Glossary</h1>
+  <p class="sub">20 terms — search, filter, and explore</p>
+  <div class="search-wrap"><span>⌕</span><input type="text" id="search" placeholder="Search terms or definitions..."></div>
+  <div class="filters" id="filters"></div>
+  <div class="count" id="count"></div>
+  <div id="list"></div>
+</div>
+<script>
+const glossary=[
+{term:"Phlebotomist",definition:"A healthcare professional trained to collect blood specimens safely and accurately, prepare patients, label specimens, and maintain infection control.",category:"Roles"},
+{term:"Scope of Practice",definition:"The legally defined range of activities a phlebotomist is authorized to perform. Working outside scope is a legal violation.",category:"Legal"},
+{term:"Informed Consent",definition:"A patient's voluntary agreement to a procedure after being given a clear explanation of what the procedure involves.",category:"Legal"},
+{term:"HIPAA",definition:"Health Insurance Portability and Accountability Act — federal law protecting patient health information (PHI) from unauthorized disclosure.",category:"Legal"},
+{term:"PHI",definition:"Protected Health Information — any identifiable health data (name, DOB, diagnoses, lab results) that must be kept confidential.",category:"Legal"},
+{term:"Documentation",definition:"Accurate, honest, timely written records of patient care activities. Legally considered a formal medical and legal record.",category:"Legal"},
+{term:"Two Patient Identifiers",definition:"Two pieces of identifying information (typically full name and date of birth) used to verify a patient's identity before any procedure.",category:"Communication"},
+{term:"Patient-Friendly Language",definition:"Clear, simple explanations of medical procedures that avoid jargon, helping patients understand what will happen and reducing anxiety.",category:"Communication"},
+{term:"Active Listening",definition:"Fully concentrating on what the patient says, showing understanding, and responding to their concerns and questions.",category:"Communication"},
+{term:"Professional Boundaries",definition:"Appropriate limits on the phlebotomist-patient relationship — avoiding sharing personal information and maintaining a professional demeanor.",category:"Communication"},
+{term:"Standard Precautions",definition:"Infection control practices applied to every patient: hand hygiene, PPE use, sharps disposal, and treating all blood/body fluids as potentially infectious.",category:"Safety"},
+{term:"PPE",definition:"Personal Protective Equipment — gloves, gowns, masks, or eye protection used based on the level of exposure risk during a procedure.",category:"Safety"},
+{term:"Hand Hygiene",definition:"Washing hands or using alcohol-based sanitizer before and after every patient contact — the single most important infection control measure.",category:"Safety"},
+{term:"Sharps Disposal",definition:"Immediately placing used needles and lancets in an approved puncture-resistant container after use — never recapping.",category:"Safety"},
+{term:"Needlestick Injury",definition:"An accidental puncture with a contaminated needle. Must be reported immediately per facility policy for post-exposure evaluation.",category:"Safety"},
+{term:"Empathy",definition:"The ability to understand and share a patient's feelings, especially important when working with anxious, pediatric, or difficult patients.",category:"Traits"},
+{term:"Adaptability",definition:"The ability to adjust techniques and approach when encountering unexpected situations or difficult draws.",category:"Traits"},
+{term:"Professional Appearance",definition:"Clean uniform/scrubs, proper footwear, minimal jewelry, and having supplies and identification ready — reflects competence and trust.",category:"Traits"},
+{term:"Equitable Care",definition:"Providing the same quality of care to all patients regardless of background, status, or personal characteristics. An ethical obligation.",category:"Ethics"},
+{term:"Professional Growth",definition:"Ongoing commitment to accepting feedback, continuing education, maintaining certifications, and demonstrating reliability and punctuality.",category:"Ethics"}
+];
+const catColors={Roles:"#2980b9",Legal:"#c0523e",Communication:"#8e44ad",Safety:"#27ae60",Traits:"#d4783c",Ethics:"#16a085"};
+const cats=["All",...new Set(glossary.map(g=>g.category))];
+let filter="All",search="",openIdx=null;
+function renderFilters(){
+  document.getElementById('filters').innerHTML=cats.map(c=>{
+    const col=c==="All"?"#666":(catColors[c]||"#888");const active=filter===c;
+    return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}15;${active?`border-color:${col};color:${col};background:${col}15`:''}" onclick="setFilter('${c}')">${c}</button>`;
+  }).join('');
+}
+function renderList(){
+  const s=search.toLowerCase();
+  const filtered=glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));
+  document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' found';
+  if(!filtered.length){document.getElementById('list').innerHTML='<div style="text-align:center;padding:48px;color:#b0a898;font-family:Nunito,sans-serif">No terms match your search.</div>';return;}
+  document.getElementById('list').innerHTML=filtered.map(g=>{
+    const col=catColors[g.category]||"#888";const origIdx=glossary.indexOf(g);const isOpen=openIdx===origIdx;
+    return `<div class="item ${isOpen?'open':''}" style="--item-bdr:${col}30" onclick="toggle(${origIdx})"><div class="item-head"><div class="item-left"><div class="item-bar" style="background:${col}"></div><span class="item-term">${g.term}</span></div><span class="item-cat" style="background:${col}15;color:${col}">${g.category}</span></div><div class="item-def">${g.definition}</div></div>`;
+  }).join('');
+}
+function setFilter(c){filter=c;renderFilters();renderList()}
+function toggle(i){openIdx=openIdx===i?null:i;renderList()}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;renderList()});
+renderFilters();renderList();
+</script>
+</body>
+</html>

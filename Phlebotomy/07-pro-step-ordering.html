@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Phlebotomist Step Ordering</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;500;600;700;800&family=Crimson+Text:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#eef5f2;font-family:'Crimson Text',Georgia,serif;color:#142820}
+.wrap{max-width:540px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Libre Franklin',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#0e8a5f;font-weight:700;margin-bottom:8px}
+h1{font-size:32px;font-weight:700;margin-bottom:4px}
+.sub{font-family:'Libre Franklin',sans-serif;font-size:14px;color:#5a8a78;margin-bottom:24px}
+.tabs{display:flex;gap:6px;margin-bottom:28px;flex-wrap:wrap}
+.tab{padding:10px 16px;border-radius:12px;border:1.5px solid #c0d8cc;background:#fff;color:#3a7a5e;font-family:'Libre Franklin',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.tab:hover{background:#d8ece2}
+.tab.active{background:#0e8a5f;border-color:#0e8a5f;color:#fff}
+.perfect{font-family:'Libre Franklin',sans-serif;font-size:13px;color:#0e8a5f;margin-bottom:16px;font-weight:600}
+.step{display:flex;align-items:center;gap:14px;padding:16px 18px;border-radius:14px;margin-bottom:8px;background:#fff;border:1.5px solid #d0e0d8;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.03);transition:all .2s}
+.step.correct{background:#edf7f0;border-color:#27ae60}
+.step.wrong{background:#fef5f0;border-color:#e74c3c}
+.step .num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Libre Franklin',sans-serif;font-weight:800;font-size:14px;flex-shrink:0}
+.step .text{flex:1;font-family:'Libre Franklin',sans-serif;font-size:15px;color:#2a4a38;line-height:1.4}
+.arrows{display:flex;flex-direction:column;gap:4px}
+.arr-btn{width:28px;height:24px;border-radius:6px;border:1px solid #c0d8cc;background:#f0f8f4;cursor:pointer;font-size:11px;color:#5a8a78;display:flex;align-items:center;justify-content:center}
+.arr-btn:hover{background:#d8ece2}
+.result-box{padding:20px;border-radius:14px;margin-bottom:16px;text-align:center}
+.result-box h3{font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:18px}
+.result-box p{font-family:'Libre Franklin',sans-serif;font-size:13px;color:#5a8a78;margin-top:6px}
+.btn-row{display:flex;gap:10px}
+.btn-row button{flex:1;padding:14px;border-radius:12px;font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+.btn-outline{border:1.5px solid #c0d8cc;background:#fff;color:#3a7a5e}
+.btn-solid{border:none;background:#0e8a5f;color:#fff}
+.check-btn{width:100%;padding:16px;border-radius:12px;border:none;background:#0e8a5f;color:#fff;font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:16px;cursor:pointer}
+.mark{font-size:18px;flex-shrink:0}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const procedures=[
+{title:"Patient Interaction",icon:"👋",steps:["Perform hand hygiene","Introduce yourself by name and role","Verify patient identity using two identifiers","Explain the procedure in patient-friendly language","Obtain informed consent","Proceed with the blood draw"]},
+{title:"Handling Frustrated Patient",icon:"😤",steps:["Listen to the patient's concern without interrupting","Acknowledge their frustration with empathy","Apologize for any inconvenience or delay","Calmly explain the situation or next steps","Maintain professional demeanor throughout","Proceed with care once the patient is ready"]},
+{title:"Needlestick Response",icon:"⚠️",steps:["Immediately remove gloves and wash the injury site","Apply first aid to the wound","Report the incident to your supervisor immediately","Complete an incident report per facility policy","Seek post-exposure medical evaluation","Follow up as directed by occupational health"]},
+{title:"HIPAA Compliance Checklist",icon:"🔒",steps:["Verify you are discussing info with authorized personnel only","Move to a private area away from other patients","Share only the minimum necessary information","Log out of computers before stepping away","Secure all physical documents and charts","Never discuss patient info in public areas"]}
+];
+let procIdx=0,items=[],checked=false,perfect=0,dragIdx=null;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function init(){items=shuffle(procedures[procIdx].steps);checked=false;render();}
+function move(from,to){if(checked)return;const n=[...items];const[m]=n.splice(from,1);n.splice(to,0,m);items=n;render();}
+function check(){checked=true;if(items.every((it,i)=>it===procedures[procIdx].steps[i]))perfect++;render();}
+function setProc(i){procIdx=i;init();}
+function render(){
+  const app=document.getElementById('app');const p=procedures[procIdx];
+  const allRight=checked&&items.every((it,i)=>it===p.steps[i]);const correctCount=checked?items.filter((it,i)=>it===p.steps[i]).length:0;
+  let html=`<div class="tag">The Professional Phlebotomist</div><h1>Step Ordering</h1><p class="sub">Arrange the steps in the correct order</p><div class="tabs">`;
+  procedures.forEach((pr,i)=>{html+=`<button class="tab ${procIdx===i?'active':''}" onclick="setProc(${i})">${pr.icon} ${pr.title}</button>`;});html+=`</div>`;
+  if(perfect>0)html+=`<div class="perfect">⭐ ${perfect} procedure${perfect>1?'s':''} perfected</div>`;
+  items.forEach((it,i)=>{const isR=checked&&it===p.steps[i];const isW=checked&&it!==p.steps[i];const nc=checked?(isR?'#27ae60':'#e74c3c'):'#0e8a5f';
+    html+=`<div class="step ${isR?'correct':''}${isW?'wrong':''}" draggable="${!checked}" ondragstart="dragIdx=${i}" ondragover="event.preventDefault()" ondrop="move(dragIdx,${i})"><div class="num" style="background:${nc}15;color:${nc}">${i+1}</div><div class="text">${it}</div>`;
+    if(!checked)html+=`<div class="arrows"><button class="arr-btn" onclick="event.stopPropagation();if(${i}>0)move(${i},${i-1})">▲</button><button class="arr-btn" onclick="event.stopPropagation();if(${i}<${items.length-1})move(${i},${i+1})">▼</button></div>`;
+    else html+=`<span class="mark">${isR?'✓':'✗'}</span>`;html+=`</div>`;});
+  if(checked){html+=`<div class="result-box" style="background:${allRight?'#edf7f0':'#fffaf5'};border:1.5px solid ${allRight?'#27ae6044':'#e67e2244'}"><h3 style="color:${allRight?'#0e7a4a':'#c06020'}">${allRight?'🎉 Perfect Order!':correctCount+'/'+items.length+' correct'}</h3>${!allRight?'<p>Red steps are out of position</p>':''}</div><div class="btn-row"><button class="btn-outline" onclick="init()">Retry</button><button class="btn-solid" onclick="setProc((procIdx+1)%${procedures.length})">Next →</button></div>`;}
+  else html+=`<button class="check-btn" onclick="check()">Check Order</button>`;
+  app.innerHTML=html;
+}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Phlebotomist Speed Round</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&family=Michroma&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#0a0418,#100820,#0a0418);font-family:'Exo 2',sans-serif;color:#e0daf0;overflow-x:hidden}
+.wrap{max-width:560px;margin:0 auto;padding:36px 20px}
+.header{text-align:center;margin-bottom:28px}
+.tag{font-family:'Michroma',sans-serif;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#00e5ff;margin-bottom:10px}
+h1{font-size:36px;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,#00e5ff,#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:13px;color:#4a3a6a;margin-top:6px}
+.start-screen{text-align:center;padding:60px 20px}
+.start-screen .icon{font-size:80px;margin-bottom:20px}
+.start-screen h2{font-size:28px;font-weight:800;margin-bottom:8px}
+.start-screen p{color:#6a5a8a;font-size:15px;margin-bottom:36px;line-height:1.6}
+.start-btn{padding:18px 56px;border-radius:50px;border:none;background:linear-gradient(135deg,#7c4dff,#00e5ff);color:#fff;font-family:'Michroma',sans-serif;font-size:14px;font-weight:400;letter-spacing:2px;cursor:pointer;box-shadow:0 0 40px rgba(124,77,255,.3);transition:transform .2s}
+.start-btn:hover{transform:scale(1.05)}
+.hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.timer-wrap{display:flex;align-items:center;gap:10px}
+.timer{font-family:'Michroma',sans-serif;font-size:32px;font-weight:400;font-variant-numeric:tabular-nums}
+.timer.danger{color:#ff1744;animation:pulse .5s ease infinite alternate}
+@keyframes pulse{from{opacity:1}to{opacity:.5}}
+.timer-bar{height:5px;background:#1a1030;border-radius:3px;overflow:hidden;margin-bottom:24px}
+.timer-bar-fill{height:100%;border-radius:3px;transition:width .3s linear}
+.score-box{text-align:center}
+.score-box .val{font-family:'Michroma',sans-serif;font-size:24px;color:#00e5ff}
+.score-box .lbl{font-size:10px;color:#4a3a6a;letter-spacing:2px;text-transform:uppercase}
+.q-card{padding:32px;border-radius:20px;background:linear-gradient(145deg,#140c28,#1a1030);border:1px solid #2a1a48;margin-bottom:20px;box-shadow:0 12px 48px rgba(0,0,0,.4)}
+.q-num{font-family:'Michroma',sans-serif;font-size:10px;letter-spacing:2px;color:#4a3a6a;margin-bottom:14px}
+.q-text{font-size:19px;font-weight:700;line-height:1.5;color:#e8e0f8}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.opt{padding:16px;border-radius:14px;border:2px solid #2a1a48;background:#100820;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;line-height:1.4}
+.opt:hover{border-color:#7c4dff;background:#1a1030}
+.opt.correct{background:#00e5ff15;border-color:#00e5ff;color:#00e5ff}
+.opt.wrong{background:#ff174415;border-color:#ff1744;color:#ff1744}
+.opt.dim{opacity:.3}
+.streak{text-align:center;font-family:'Michroma',sans-serif;font-size:11px;color:#7c4dff;letter-spacing:2px;margin-bottom:8px}
+.result{text-align:center;padding:40px 0}
+.result .big{font-family:'Michroma',sans-serif;font-size:64px;font-weight:400;background:linear-gradient(135deg,#00e5ff,#7c4dff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.result .det{font-size:16px;color:#6a5a8a;margin-top:12px}
+.result .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px}
+.result .stat{padding:16px;border-radius:14px;background:#140c28;border:1px solid #2a1a48}
+.result .stat .sv{font-family:'Michroma',sans-serif;font-size:20px;margin-bottom:4px}
+.result .stat .sl{font-size:10px;color:#4a3a6a;letter-spacing:1px;text-transform:uppercase}
+.result .grade{margin-top:24px;font-size:22px;font-weight:800}
+.play-btn{margin-top:32px;padding:16px 48px;border-radius:50px;border:none;background:linear-gradient(135deg,#7c4dff,#00e5ff);color:#fff;font-family:'Michroma',sans-serif;font-size:13px;letter-spacing:2px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const allQ=[
+{q:"What is the phlebotomist's primary job?",opts:["Diagnose patients","Collect blood specimens","Prescribe tests","Read lab results"],ans:1},
+{q:"How many patient identifiers are required?",opts:["One","Two","Three","None"],ans:1},
+{q:"What does HIPAA protect?",opts:["Employee salaries","Patient health info","Hospital budgets","Insurance premiums"],ans:1},
+{q:"What type of record is documentation?",opts:["Personal notes","Suggestions","Legal record","Rough draft"],ans:2},
+{q:"Most important infection control measure?",opts:["Double gloving","Face shield","Hand hygiene","Wearing a gown"],ans:2},
+{q:"When should sharps be disposed?",opts:["End of shift","After each room","Immediately after use","Weekly"],ans:2},
+{q:"What must be obtained before a blood draw?",opts:["Insurance card","Informed consent","Physician signature","Family approval"],ans:1},
+{q:"Where should you NOT discuss patient info?",opts:["Private office","Public areas","Break room with team","Nurse's station"],ans:1},
+{q:"What does PHI stand for?",opts:["Public Health Index","Protected Health Information","Patient Hospital ID","Primary Healthcare Info"],ans:1},
+{q:"Professional appearance includes:",opts:["Dangling jewelry","Open-toe shoes","Clean scrubs & minimal jewelry","Long acrylic nails"],ans:2},
+{q:"What should you do after a needlestick?",opts:["Keep working","Report immediately","Document next week","Tell a friend"],ans:1},
+{q:"Scope of practice defines:",opts:["Your salary range","Legal limits of your role","Your work schedule","Patient preferences"],ans:1},
+{q:"Phlebotomists are called _____ of healthcare.",opts:["Directors","Ambassadors","Managers","Supervisors"],ans:1},
+{q:"Professional growth includes:",opts:["Refusing feedback","Skipping training","Accepting feedback","Ignoring certifications"],ans:2},
+{q:"How to handle a frustrated patient?",opts:["Ignore them","Argue back","Acknowledge & stay calm","Rush the procedure"],ans:2},
+{q:"Patient-friendly language means:",opts:["Using medical jargon","Clear simple explanations","Speaking quickly","Using abbreviations"],ans:1},
+{q:"Active listening involves:",opts:["Multitasking","Interrupting","Fully attending to concerns","Looking at your phone"],ans:2},
+{q:"Professional boundaries mean:",opts:["Sharing personal stories","Appropriate limits with patients","Being cold and distant","Avoiding all conversation"],ans:1},
+{q:"Equitable care means:",opts:["Treat VIPs better","Same quality for all patients","Prioritize by insurance","Serve friends first"],ans:1},
+{q:"What PPE stands for:",opts:["Patient Protection Equipment","Personal Protective Equipment","Professional Practice Exam","Pre-Procedure Evaluation"],ans:1},
+{q:"Computer with patient records visible — you must:",opts:["Leave it open","Minimize window","Log out before leaving","Ask someone to watch"],ans:2},
+{q:"Standard Precautions apply to:",opts:["Only sick patients","Only surgical patients","Every single patient","Only elderly patients"],ans:2},
+{q:"Professionalism impacts:",opts:["Only your paycheck","Patient trust","Nothing important","Only your schedule"],ans:1},
+{q:"When to seek help is a sign of:",opts:["Weakness","Failure","Professionalism","Incompetence"],ans:2},
+{q:"Ethical responsibility includes:",opts:["Cutting corners","Honesty and integrity","Hiding mistakes","Guessing results"],ans:1}
+];
+let phase='start',questions=[],qIdx=0,score=0,streak=0,bestStreak=0,timer=60,interval=null,selected=null,locked=false,answered=0;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function startGame(){questions=shuffle(allQ);qIdx=0;score=0;streak=0;bestStreak=0;timer=60;selected=null;locked=false;answered=0;phase='play';render();interval=setInterval(()=>{timer--;const el=document.getElementById('timerEl');if(el){el.textContent=timer;if(timer<=10)el.classList.add('danger');}const bar=document.getElementById('timerBar');if(bar)bar.style.width=(timer/60*100)+'%';if(timer<=0){clearInterval(interval);phase='result';render();}},1000);}
+function pick(i){if(locked||phase!=='play')return;selected=i;locked=true;answered++;const q=questions[qIdx];if(i===q.ans){score++;streak++;if(streak>bestStreak)bestStreak=streak;}else{streak=0;}render();setTimeout(()=>{if(timer<=0){phase='result';render();return;}qIdx++;if(qIdx>=questions.length){questions=shuffle(allQ);qIdx=0;}selected=null;locked=false;render();},500);}
+function render(){
+  const app=document.getElementById('app');
+  if(phase==='start'){app.innerHTML=`<div class="header"><div class="tag">The Professional Phlebotomist</div><h1>Speed Round</h1></div><div class="start-screen"><div class="icon">⚡</div><h2>60-Second Challenge</h2><p>Answer as many questions as you can about professional phlebotomy roles, responsibilities, and conduct before time runs out!</p><button class="start-btn" onclick="startGame()">START</button></div>`;return;}
+  if(phase==='result'){const pct=answered?Math.round(score/answered*100):0;const col=pct>=80?'#00e5ff':pct>=60?'#7c4dff':'#ff1744';const grade=pct>=90?'ELITE':pct>=80?'EXPERT':pct>=60?'PROFICIENT':'KEEP STUDYING';
+    app.innerHTML=`<div class="header"><div class="tag">The Professional Phlebotomist</div><h1>Speed Round</h1></div><div class="result"><div class="big">${score}</div><div class="det">correct answers in 60 seconds</div><div class="stats-grid"><div class="stat"><div class="sv" style="color:#00e5ff">${answered}</div><div class="sl">Attempted</div></div><div class="stat"><div class="sv" style="color:#7c4dff">${pct}%</div><div class="sl">Accuracy</div></div><div class="stat"><div class="sv" style="color:#ff9100">${bestStreak}</div><div class="sl">Best Streak</div></div></div><div class="grade" style="color:${col}">${grade}</div><button class="play-btn" onclick="startGame()">PLAY AGAIN</button></div>`;return;}
+  const q=questions[qIdx];const tCol=timer<=10?'#ff1744':timer<=20?'#ff9100':'#00e5ff';const barGrad=timer<=10?'linear-gradient(90deg,#ff1744,#ff5252)':timer<=20?'linear-gradient(90deg,#ff9100,#ffab40)':'linear-gradient(90deg,#00e5ff,#7c4dff)';
+  let html=`<div class="hud"><div class="timer-wrap"><div class="timer ${timer<=10?'danger':''}" id="timerEl">${timer}</div><span style="font-size:12px;color:#4a3a6a">sec</span></div><div class="score-box"><div class="val">${score}</div><div class="lbl">Score</div></div></div><div class="timer-bar"><div class="timer-bar-fill" id="timerBar" style="width:${timer/60*100}%;background:${barGrad}"></div></div>`;
+  if(streak>=3)html+=`<div class="streak">🔥 ${streak} STREAK</div>`;
+  html+=`<div class="q-card"><div class="q-num">QUESTION ${answered+1}</div><div class="q-text">${q.q}</div></div><div class="opts">`;
+  q.opts.forEach((o,i)=>{let cls='opt';if(locked){if(i===q.ans)cls+=' correct';else if(i===selected)cls+=' wrong';else cls+=' dim';}html+=`<div class="${cls}" onclick="pick(${i})">${o}</div>`;});
+  html+=`</div>`;app.innerHTML=html;
+}
+render();
+</script>
+</body>
+</html>

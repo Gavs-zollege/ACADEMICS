@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Phlebotomist Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@400;500;600;700&family=Mulish:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#121214,#18161a);font-family:'Mulish',sans-serif;color:#d8d4de}
+.wrap{max-width:560px;margin:0 auto;padding:40px 20px}
+.tag{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#dc3545;font-weight:800;margin-bottom:8px}
+h1{font-family:'Gelasio',serif;font-size:30px;color:#f0eef2;margin-bottom:24px}
+.info{display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#6a6674}
+.info .sc{color:#dc3545;font-weight:700}
+.bar{height:5px;background:#1e1c22;border-radius:3px;margin-bottom:32px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#dc3545,#ff6b6b);border-radius:3px;transition:width .5s}
+.question{font-family:'Gelasio',serif;font-size:20px;color:#eae8ee;margin-bottom:24px;line-height:1.5}
+.opt{padding:16px 20px;border-radius:12px;border:1.5px solid #2a282e;background:#1a181e;margin-bottom:10px;font-size:15px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s}
+.opt:hover{background:#222028;border-color:#dc3545}
+.opt.correct{background:#0d2a16;border-color:#27ae60;color:#2ecc71;font-weight:600}
+.opt.wrong{background:#2a0d10;border-color:#dc3545;color:#dc3545}
+.opt.dim{color:#3a3840}
+.opt .letter{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid #3a3840;font-size:12px;font-weight:800;color:#5a5664;flex-shrink:0}
+.opt.correct .letter{border-color:#27ae60;color:#27ae60}
+.opt.wrong .letter{border-color:#dc3545;color:#dc3545}
+.next-btn{width:100%;padding:16px;border-radius:12px;border:none;margin-top:8px;background:linear-gradient(135deg,#dc3545,#c82333);color:#fff;font-weight:800;font-size:16px;cursor:pointer;display:none}
+.result{text-align:center;padding:40px 0}
+.result .pct{font-size:72px;font-weight:900;font-family:'Gelasio',serif;line-height:1}
+.result .detail{font-size:18px;color:#6a6674;margin-top:8px}
+.result .msg{font-size:24px;font-weight:800;margin-top:16px}
+.btn-row{display:flex;gap:12px;margin-top:32px;justify-content:center}
+.btn-row button{padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer}
+.btn-outline{border:1px solid #3a3840;background:transparent;color:#6a6674}
+.btn-solid{border:none;background:#dc3545;color:#fff;font-weight:800}
+.review-card{padding:20px;border-radius:14px;background:#1a181e;margin-bottom:12px;border:1px solid #2a282e}
+.review-card .rq{font-size:14px;font-weight:600;color:#d8d4de;margin-bottom:12px}
+.review-opt{padding:8px 14px;border-radius:8px;margin-bottom:4px;font-size:13px;border:1px solid transparent}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const questions=[
+{q:"What is the PRIMARY role of a phlebotomist?",opts:["Diagnose patient conditions","Collect blood specimens safely and accurately","Prescribe laboratory tests","Interpret lab results"],ans:1},
+{q:"Which is NOT a key trait of a successful phlebotomist?",opts:["Empathy","Accuracy","Diagnosing conditions","Adaptability"],ans:2},
+{q:"How should a phlebotomist verify patient identity?",opts:["Ask their room number","Use two identifiers (name and DOB)","Check their appearance","Ask a family member"],ans:1},
+{q:"What does HIPAA protect?",opts:["Phlebotomist salary info","Patient Health Information (PHI)","Hospital financial records","Insurance company data"],ans:1},
+{q:"Which is an example of HIPAA compliance?",opts:["Discussing a patient in the cafeteria","Leaving a chart on the counter","Logging out of computers when unattended","Sharing results with a patient's friend"],ans:2},
+{q:"What must be obtained before every blood draw?",opts:["A physician's signature","Informed consent","Insurance verification","A second phlebotomist"],ans:1},
+{q:"Documentation in healthcare is considered a:",opts:["Suggestion","Personal note","Legal record","Draft"],ans:2},
+{q:"What is the MOST important infection control measure?",opts:["Wearing a gown","Hand hygiene","Double gloving","Using a face shield"],ans:1},
+{q:"When should sharps be disposed of?",opts:["At the end of the shift","After each patient room","Immediately after use","When the container is full"],ans:2},
+{q:"A frustrated patient complains about the long wait. You should:",opts:["Ignore them and proceed","Acknowledge concerns and remain professional","Tell them to complain to management","Rush through the procedure"],ans:1},
+{q:"What should a phlebotomist do after a needlestick injury?",opts:["Continue working and tell someone later","Report it immediately per facility policy","Clean it and forget about it","Document it at the end of the week"],ans:1},
+{q:"Professional growth for a phlebotomist includes all EXCEPT:",opts:["Accepting feedback","Maintaining certifications","Refusing additional training","Demonstrating punctuality"],ans:2}
+];
+let idx=0,selected=null,locked=false,score=0,answers=[],phase='quiz';
+function render(){
+  const app=document.getElementById('app');
+  if(phase==='result'){const pct=Math.round(score/questions.length*100);const col=pct>=80?'#27ae60':pct>=60?'#f1c40f':'#dc3545';const msg=pct>=90?'Outstanding!':pct>=80?'Great work!':pct>=60?'Keep studying!':'Review the material';app.innerHTML=`<div class="result"><div class="pct" style="color:${col}">${pct}%</div><div class="detail">${score} of ${questions.length} correct</div><div class="msg" style="color:${col}">${msg}</div><div class="btn-row"><button class="btn-outline" onclick="startReview()">Review Answers</button><button class="btn-solid" onclick="restart()">Retry Quiz</button></div></div>`;return;}
+  if(phase==='review'){let html=`<h2 style="font-family:'Gelasio',serif;font-size:28px;color:#f0eef2;margin-bottom:24px">Review Answers</h2>`;answers.forEach((a,i)=>{const q=questions[a.qIdx];html+=`<div class="review-card" style="border-color:${a.correct?'#27ae6044':'#dc354544'}"><div class="rq">${i+1}. ${q.q}</div>`;q.opts.forEach((o,oi)=>{let bg='transparent',col='#6a6674',fw=400,bdr='transparent';if(oi===q.ans){bg='#27ae6020';col='#27ae60';fw=600;bdr='#27ae6033';}else if(oi===a.picked&&!a.correct){bg='#dc354520';col='#dc3545';}html+=`<div class="review-opt" style="background:${bg};color:${col};font-weight:${fw};border-color:${bdr}">${o}${oi===q.ans?' ✓':''}${oi===a.picked&&!a.correct?' ✗':''}</div>`;});html+=`</div>`;});html+=`<button class="btn-solid" style="width:100%;padding:16px;border-radius:12px;margin-top:12px;font-size:16px" onclick="restart()">Retry Quiz</button>`;app.innerHTML=html;return;}
+  const q=questions[idx];let html=`<div class="tag">The Professional Phlebotomist</div><h1>Multiple Choice Quiz</h1><div class="info"><span>Question ${idx+1} of ${questions.length}</span><span class="sc">Score: ${score}</span></div><div class="bar"><div class="bar-fill" style="width:${((idx+(locked?1:0))/questions.length)*100}%"></div></div><div class="question">${q.q}</div>`;
+  q.opts.forEach((o,i)=>{let cls='opt';if(locked){if(i===q.ans)cls+=' correct';else if(i===selected)cls+=' wrong';else cls+=' dim';}html+=`<div class="${cls}" onclick="pick(${i})"><span class="letter">${String.fromCharCode(65+i)}</span>${o}</div>`;});
+  html+=`<button class="next-btn" onclick="next()" style="display:${locked?'block':'none'}">${idx+1>=questions.length?'See Results':'Next Question →'}</button>`;app.innerHTML=html;
+}
+function pick(i){if(locked)return;selected=i;locked=true;if(i===questions[idx].ans)score++;answers.push({qIdx:idx,picked:i,correct:i===questions[idx].ans});render();}
+function next(){if(idx+1>=questions.length){phase='result';render();return;}idx++;selected=null;locked=false;render();}
+function startReview(){phase='review';render();}
+function restart(){idx=0;selected=null;locked=false;score=0;answers=[];phase='quiz';render();}
+render();
+</script>
+</body>
+</html>

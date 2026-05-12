@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Phlebotomist Scenarios</title>
+<link href="https://fonts.googleapis.com/css2?family=Eczar:wght@400;500;600;700;800&family=Overpass:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(170deg,#0c1018,#101520);font-family:'Eczar',Georgia,serif;color:#d8e0e8}
+.wrap{max-width:580px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Overpass',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#ff6b6b;font-weight:700;margin-bottom:8px}
+h1{font-size:30px;color:#f0f2f5;margin-bottom:4px}
+.sub{font-family:'Overpass',sans-serif;font-size:14px;color:#5a6a7a;margin-bottom:28px}
+.stats{display:flex;gap:16px;margin-bottom:28px;font-family:'Overpass',sans-serif}
+.stat{padding:8px 18px;border-radius:10px;background:#141a24;border:1px solid #1e2838;font-size:12px;color:#5a6a7a}
+.stat b{font-size:14px;font-weight:700;margin-left:4px}
+.scenario-card{padding:28px;border-radius:20px;margin-bottom:20px;background:linear-gradient(145deg,#141a24,#181e2a);border:1px solid #1e2838;box-shadow:0 12px 48px rgba(255,107,107,.04)}
+.sc-title{font-family:'Overpass',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#ff6b6b;font-weight:700;margin-bottom:14px}
+.sc-text{font-size:17px;line-height:1.7}
+.opt{padding:16px 20px;border-radius:14px;border:1.5px solid #1e2838;background:#0e1418;margin-bottom:10px;font-size:15px;cursor:pointer;font-family:'Overpass',sans-serif;line-height:1.5;transition:all .25s;color:#b0bcc8}
+.opt:hover{background:#141a24;border-color:#ff6b6b}
+.opt.correct{background:#0d1f16;border-color:#27ae60;color:#2ecc71;font-weight:600}
+.opt.wrong{background:#1f0d10;border-color:#e74c3c;color:#e74c3c}
+.opt.dim{color:#3a4450}
+.opt .letter{font-weight:700;margin-right:10px;opacity:.5}
+.rationale{margin-top:16px;padding:24px;border-radius:16px}
+.rationale.ok{background:#0a1a10;border:1px solid #27ae6033}
+.rationale.bad{background:#1a0c10;border:1px solid #e74c3c33}
+.rationale h3{font-family:'Overpass',sans-serif;font-weight:700;font-size:15px;margin-bottom:10px}
+.rationale p{font-family:'Overpass',sans-serif;font-size:14px;color:#8a98a8;line-height:1.7}
+.rationale p b{color:#b0c0d0}
+.next-btn{margin-top:18px;width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#ff6b6b,#e05050);color:#fff;font-family:'Overpass',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const scenarios=[
+{title:"The Frustrated Patient",scenario:"You're about to draw blood from a patient who has been waiting 45 minutes. They say angrily, 'This is ridiculous — I've been sitting here forever!' How should you respond?",options:["Tell them it's not your fault and proceed silently","Acknowledge their frustration, apologize for the wait, and calmly explain you're ready to help them now","Argue that other patients also had to wait","Rush through the draw to make up for lost time"],correct:1,rationale:"Professional communication means acknowledging patient concerns, remaining calm and respectful, communicating about delays, and maintaining your composure. Rushing or dismissing the patient makes things worse."},
+{title:"HIPAA in the Hallway",scenario:"A coworker asks you in the hallway, 'Hey, did Mr. Johnson's glucose come back high?' Two other patients are nearby and can overhear. What should you do?",options:["Answer quietly since they probably didn't hear","Tell your coworker you can't discuss patient information in a public area","Say 'I'm not sure' even if you know","Report your coworker to HR immediately"],correct:1,rationale:"HIPAA requires that patient health information only be discussed with authorized personnel in private settings. Public areas like hallways, elevators, and cafeterias are never appropriate for discussing PHI."},
+{title:"Scope of Practice",scenario:"After drawing blood, the patient asks you, 'So what do my results mean? Am I okay?' How do you handle this?",options:["Give your best guess based on what you've seen","Explain that interpreting results is outside your scope and their provider will discuss results with them","Refuse to answer and walk away","Look up the normal ranges and tell them if they're in range"],correct:1,rationale:"Interpreting lab results is outside a phlebotomist's scope of practice. You should kindly redirect the patient to their provider who is qualified to discuss results and their meaning."},
+{title:"The Needlestick",scenario:"While disposing of a needle, you accidentally stick yourself through your glove. The patient has an unknown medical history. What should you do?",options:["Clean it and continue working — it's just a small prick","Report the injury immediately per facility policy for post-exposure evaluation","Document it at the end of the day when you have time","Tell a coworker but don't make a formal report"],correct:1,rationale:"Needlestick injuries must be reported immediately per facility policy. Prompt reporting ensures proper post-exposure evaluation and treatment. Delaying or not reporting puts your health at risk and violates protocol."},
+{title:"Computer Left Open",scenario:"You finish entering patient data and get called to another draw urgently. The computer screen shows the previous patient's medical records. What must you do?",options:["Leave it — you'll be right back","Log out of the system before leaving","Minimize the window so it's less visible","Ask someone nearby to watch the screen"],correct:1,rationale:"HIPAA requires that you log out of computer systems when stepping away. Leaving patient records visible — even momentarily — is a breach of patient confidentiality. It only takes seconds to log out."},
+{title:"Professional Appearance Challenge",scenario:"A new phlebotomist arrives for their first clinical shift wearing open-toed shoes, dangling earrings, and long acrylic nails. As their mentor, what do you address?",options:["Nothing — appearance is a personal choice","All three issues: footwear must be closed-toe, jewelry minimal, and nails short for infection control and safety","Only the nails since they affect specimen collection","Compliment their style but mention the shoes"],correct:1,rationale:"Professional appearance standards exist for both patient safety and infection control: closed-toe shoes protect against spills, minimal jewelry prevents contamination, and short nails are required for proper hand hygiene and glove integrity."}
+];
+let idx=0,selected=null,locked=false,score=0,completed=0;
+function render(){
+  const app=document.getElementById('app');const s=scenarios[idx];
+  let html=`<div class="tag">The Professional Phlebotomist</div><h1>Clinical Scenarios</h1><p class="sub">Apply your knowledge to real-world situations</p>`;
+  html+=`<div class="stats"><div class="stat">Scenario <b style="color:#b0c0d0">${idx+1}/${scenarios.length}</b></div>`;
+  if(completed>0)html+=`<div class="stat">Score <b style="color:#27ae60">${score}/${completed}</b></div>`;
+  html+=`</div><div class="scenario-card"><div class="sc-title">${s.title}</div><div class="sc-text">${s.scenario}</div></div>`;
+  s.options.forEach((o,i)=>{let cls='opt';if(locked){if(i===s.correct)cls+=' correct';else if(i===selected)cls+=' wrong';else cls+=' dim';}html+=`<div class="${cls}" onclick="pick(${i})"><span class="letter">${String.fromCharCode(65+i)}.</span>${o}</div>`;});
+  if(locked){const c=selected===s.correct;html+=`<div class="rationale ${c?'ok':'bad'}"><h3 style="color:${c?'#27ae60':'#e74c3c'}">${c?'✓ Correct':'✗ Incorrect'}</h3><p><b>Rationale: </b>${s.rationale}</p><button class="next-btn" onclick="next()">Next Scenario →</button></div>`;}
+  app.innerHTML=html;
+}
+function pick(i){if(locked)return;selected=i;locked=true;completed++;if(i===scenarios[idx].correct)score++;render();}
+function next(){idx=(idx+1)%scenarios.length;selected=null;locked=false;render();}
+render();
+</script>
+</body>
+</html>

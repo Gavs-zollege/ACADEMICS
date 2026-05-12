@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Phlebotomist True or False</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#f3f0f8;font-family:'Libre Caslon Text',Georgia,serif;color:#1a1428}
+.wrap{max-width:520px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Atkinson Hyperlegible',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#7c3aed;font-weight:700;margin-bottom:8px}
+h1{font-size:32px;font-weight:700;margin-bottom:24px}
+.info{display:flex;justify-content:space-between;margin-bottom:8px;font-family:'Atkinson Hyperlegible',sans-serif;font-size:13px;color:#8a80a0}
+.bar{height:5px;background:#ddd8e8;border-radius:3px;margin-bottom:36px;overflow:hidden}
+.bar-fill{height:100%;background:#7c3aed;border-radius:3px;transition:width .5s}
+.statement-card{padding:36px 32px;border-radius:20px;background:#fff;margin-bottom:24px;border:1px solid #e0dae8;box-shadow:0 8px 40px rgba(124,58,237,.04)}
+.statement-card p{font-size:20px;line-height:1.6;font-weight:700;text-align:center}
+.btn-row{display:flex;gap:16px;margin-bottom:20px}
+.tf-btn{flex:1;padding:22px 0;border-radius:16px;border:2px solid #ddd8e8;background:#fff;font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;font-size:20px;letter-spacing:1px;cursor:pointer;transition:all .2s;color:#1a1428}
+.tf-btn:hover{transform:scale(1.03)}
+.tf-btn.correct-pick{background:#ecfdf5;border-color:#27ae60;color:#1a7a3a}
+.tf-btn.wrong-pick{background:#fef2f2;border-color:#dc3545;color:#c0392b}
+.tf-btn.faded{background:#f0eef4;border-color:#ddd8e8;color:#b0a8c0}
+.tf-btn:disabled{cursor:default}
+.feedback{padding:24px;border-radius:16px;margin-bottom:20px}
+.feedback.ok{background:#f0faf3;border:1px solid #27ae6030}
+.feedback.bad{background:#fef5f2;border:1px solid #dc354530}
+.feedback h3{font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px}
+.feedback p{font-family:'Atkinson Hyperlegible',sans-serif;font-size:14px;color:#5a4a68;line-height:1.6}
+.next-btn{width:100%;padding:14px;border-radius:12px;border:none;background:#7c3aed;color:#fff;font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-top:16px}
+.result{text-align:center;padding:40px 0}
+.result .pct{font-size:80px;font-weight:700;line-height:1}
+.result .det{font-family:'Atkinson Hyperlegible',sans-serif;font-size:16px;color:#8a80a0;margin-top:8px}
+.result .streak{margin-top:16px;padding:10px 20px;border-radius:12px;background:#e8e4f0;display:inline-block;font-family:'Atkinson Hyperlegible',sans-serif;font-size:13px;color:#8a80a0}
+.result .streak b{color:#7c3aed}
+.retry-btn{margin-top:32px;padding:16px 48px;border-radius:50px;border:none;background:#7c3aed;color:#fff;font-family:'Atkinson Hyperlegible',sans-serif;font-weight:700;font-size:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const items=[
+{statement:"A phlebotomist may interpret and diagnose based on lab results.",answer:false,explanation:"Phlebotomists collect, label, and handle specimens — they do NOT interpret or diagnose. That is outside their scope of practice."},
+{statement:"Informed consent must be obtained before every blood draw.",answer:true,explanation:"Patients must agree to the procedure after being told what it involves. This is both a legal and ethical requirement."},
+{statement:"It is acceptable to discuss a patient's results with their spouse without permission.",answer:false,explanation:"HIPAA prohibits sharing PHI with unauthorized individuals, including family members, without the patient's explicit consent."},
+{statement:"Hand hygiene is the most important infection control measure.",answer:true,explanation:"Hand hygiene before and after every patient contact is universally recognized as the single most effective way to prevent infection transmission."},
+{statement:"Professional appearance has no effect on patient trust.",answer:false,explanation:"Professional appearance — clean scrubs, proper footwear, minimal jewelry — directly reflects competence and builds patient trust."},
+{statement:"Documentation in healthcare is considered a legal record.",answer:true,explanation:"All medical documentation can be used as evidence in legal proceedings. It must always be accurate, honest, and timely."},
+{statement:"Sharps should be disposed of at the end of your shift.",answer:false,explanation:"Sharps must be disposed of immediately after use in an approved puncture-resistant container — never saved for later disposal."},
+{statement:"Phlebotomists should verify patient identity using two identifiers.",answer:true,explanation:"Using two identifiers (typically full name and date of birth) before every procedure prevents patient misidentification errors."},
+{statement:"It's fine to share personal information with patients to build rapport.",answer:false,explanation:"Professional boundaries require avoiding sharing personal information. Rapport is built through empathy, respect, and competent care."},
+{statement:"Needlestick injuries should be reported immediately.",answer:true,explanation:"All needlestick injuries must be reported immediately per facility policy for proper evaluation and post-exposure treatment."},
+{statement:"Phlebotomists should accept feedback as part of professional growth.",answer:true,explanation:"Accepting constructive feedback, continuing education, and maintaining certifications are all components of professional growth."},
+{statement:"If a patient is frustrated about waiting, you should ignore their complaints.",answer:false,explanation:"You should acknowledge concerns, remain calm and respectful, communicate about any delays, and maintain professionalism throughout."}
+];
+let idx=0,choice=null,score=0,streak=0,bestStreak=0,done=false;
+function render(){
+  const app=document.getElementById('app');
+  if(done){const pct=Math.round(score/items.length*100);const col=pct>=80?'#1a7a3a':pct>=60?'#7c3aed':'#c0392b';app.innerHTML=`<div class="result"><div class="pct" style="color:${col}">${pct}%</div><div class="det">${score} of ${items.length} correct</div><div class="streak">Best streak: <b>${bestStreak}</b></div><div><button class="retry-btn" onclick="restart()">Try Again</button></div></div>`;return;}
+  const it=items[idx];const answered=choice!==null;const correct=answered&&choice===it.answer;
+  let html=`<div class="tag">The Professional Phlebotomist</div><h1>True or False</h1><div class="info"><span>${idx+1} of ${items.length}</span><div><span>Score: <b style="color:#1a7a3a">${score}</b></span>${streak>1?` &nbsp;🔥 <b style="color:#7c3aed">${streak}</b>`:''}</div></div><div class="bar"><div class="bar-fill" style="width:${((idx+(answered?1:0))/items.length)*100}%"></div></div><div class="statement-card"><p>"${it.statement}"</p></div><div class="btn-row">`;
+  [true,false].forEach(val=>{let cls='tf-btn';if(answered){if(val===it.answer)cls+=' correct-pick';else if(val===choice)cls+=' wrong-pick';else cls+=' faded';}html+=`<button class="${cls}" ${answered?'disabled':''} onclick="pick(${val})">${val?'TRUE':'FALSE'}</button>`;});
+  html+=`</div>`;if(answered)html+=`<div class="feedback ${correct?'ok':'bad'}"><h3 style="color:${correct?'#1a7a3a':'#c0392b'}">${correct?'Correct!':'Incorrect'}</h3><p>${it.explanation}</p><button class="next-btn" onclick="next()">${idx+1>=items.length?'See Results':'Next Statement →'}</button></div>`;
+  app.innerHTML=html;
+}
+function pick(val){if(choice!==null)return;choice=val;if(val===items[idx].answer){score++;streak++;if(streak>bestStreak)bestStreak=streak;}else streak=0;render();}
+function next(){if(idx+1>=items.length){done=true;render();return;}idx++;choice=null;render();}
+function restart(){idx=0;choice=null;score=0;streak=0;bestStreak=0;done=false;render();}
+render();
+</script>
+</body>
+</html>

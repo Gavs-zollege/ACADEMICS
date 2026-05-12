@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POCT True or False</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#faf8f4;font-family:'Fraunces',Georgia,serif;color:#1a1510}
+.wrap{max-width:520px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Manrope',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#c0392b;font-weight:700;margin-bottom:8px}
+h1{font-size:32px;font-weight:800;margin-bottom:24px}
+.info{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-family:'Manrope',sans-serif;font-size:13px;color:#8a7e6e}
+.bar{height:5px;background:#e8e2d8;border-radius:3px;margin-bottom:36px;overflow:hidden}
+.bar-fill{height:100%;background:#1a1510;border-radius:3px;transition:width .5s}
+.statement-card{padding:36px 32px;border-radius:20px;background:#fff;margin-bottom:24px;border:1px solid #e8e2d8;box-shadow:0 8px 40px rgba(0,0,0,.04)}
+.statement-card p{font-size:20px;line-height:1.6;font-weight:600;text-align:center}
+.btn-row{display:flex;gap:16px;margin-bottom:20px}
+.tf-btn{flex:1;padding:22px 0;border-radius:16px;border:2px solid #e8e2d8;background:#fff;font-family:'Manrope',sans-serif;font-weight:800;font-size:20px;letter-spacing:1px;cursor:pointer;transition:all .2s;color:#1a1510}
+.tf-btn:hover{transform:scale(1.03)}
+.tf-btn.correct-pick{background:#e8f5ed;border-color:#27ae60;color:#1a7a3a}
+.tf-btn.wrong-pick{background:#fde8e8;border-color:#e74c3c;color:#c0392b}
+.tf-btn.faded{background:#f5f3ef;border-color:#e8e2d8;color:#aaa}
+.tf-btn:disabled{cursor:default}
+.feedback{padding:24px;border-radius:16px;margin-bottom:20px}
+.feedback.ok{background:#f0faf3;border:1px solid #27ae6030}
+.feedback.bad{background:#fef5f0;border:1px solid #e74c3c30}
+.feedback h3{font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;margin-bottom:8px}
+.feedback p{font-family:'Manrope',sans-serif;font-size:14px;color:#5a5045;line-height:1.6}
+.next-btn{width:100%;padding:14px;border-radius:12px;border:none;background:#1a1510;color:#fff;font-family:'Manrope',sans-serif;font-weight:700;font-size:15px;cursor:pointer;margin-top:16px}
+.result{text-align:center;padding:40px 0}
+.result .pct{font-size:80px;font-weight:800;line-height:1}
+.result .det{font-family:'Manrope',sans-serif;font-size:16px;color:#8a7e6e;margin-top:8px}
+.result .streak{margin-top:16px;padding:10px 20px;border-radius:12px;background:#f0ece4;display:inline-block;font-family:'Manrope',sans-serif;font-size:13px;color:#8a7e6e}
+.result .streak b{color:#e67e22}
+.retry-btn{margin-top:32px;padding:16px 48px;border-radius:50px;border:none;background:#1a1510;color:#fff;font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const items=[
+{statement:"CPTs may interpret the diagnostic meaning of POCT results.",answer:false,explanation:"CPTs may NOT interpret diagnostic meaning — they only report results to authorized personnel."},
+{statement:"Quality control must pass before patient testing can proceed.",answer:true,explanation:"Patient testing resumes only after QC passes. Failed QC means all testing must stop."},
+{statement:"CLIA-waived tests include blood glucose and urine pregnancy testing.",answer:true,explanation:"Blood glucose and urine pregnancy tests are among the most common CLIA-waived tests."},
+{statement:"It is acceptable to use expired test supplies if the results look normal.",answer:false,explanation:"Using expired supplies is a common POCT error that invalidates results regardless of appearance."},
+{statement:"POCT results should be shared with any interested family member.",answer:false,explanation:"Results must only be communicated to authorized personnel, never to unauthorized individuals."},
+{statement:"Hand hygiene must be performed before all POCT procedures.",answer:true,explanation:"Standard Precautions require hand hygiene for all patient care activities including POCT."},
+{statement:"Manufacturer instructions are optional guidelines for POCT.",answer:false,explanation:"Manufacturer instructions must be followed exactly — they are mandatory, not optional."},
+{statement:"CPTs can perform moderate complexity tests with additional training.",answer:false,explanation:"CPTs perform CLIA-waived tests only, regardless of additional training received."},
+{statement:"Urinalysis dipstick evaluates glucose, protein, ketones, blood, and pH.",answer:true,explanation:"These are the key analytes assessed by a urinalysis dipstick test."},
+{statement:"Critical values can be documented at the end of the shift.",answer:false,explanation:"Critical values must be reported immediately — delay can endanger patient safety."},
+{statement:"Single-use lancets must be disposed of in a sharps container.",answer:true,explanation:"Proper sharps disposal is a key component of Standard Precautions in POCT."},
+{statement:"POCT reduces turnaround time for test results.",answer:true,explanation:"One of the primary benefits of POCT is providing rapid results for immediate clinical decisions."}
+];
+let idx=0,choice=null,score=0,streak=0,bestStreak=0,done=false;
+function render(){
+  const app=document.getElementById('app');
+  if(done){
+    const pct=Math.round(score/items.length*100);
+    const col=pct>=80?'#1a7a3a':pct>=60?'#b8860b':'#c0392b';
+    app.innerHTML=`<div class="result"><div class="pct" style="color:${col}">${pct}%</div><div class="det">${score} of ${items.length} correct</div><div class="streak">Best streak: <b>${bestStreak}</b></div><div><button class="retry-btn" onclick="restart()">Try Again</button></div></div>`;
+    return;
+  }
+  const it=items[idx];
+  const answered=choice!==null;
+  const correct=answered&&choice===it.answer;
+  let html=`<div class="tag">POCT & CLIA-Waived Procedures</div><h1>True or False</h1>`;
+  html+=`<div class="info"><span>${idx+1} of ${items.length}</span><div><span>Score: <b style="color:#1a7a3a">${score}</b></span>${streak>1?` &nbsp;🔥 <b style="color:#e67e22">${streak}</b>`:''}</div></div>`;
+  html+=`<div class="bar"><div class="bar-fill" style="width:${((idx+(answered?1:0))/items.length)*100}%"></div></div>`;
+  html+=`<div class="statement-card"><p>"${it.statement}"</p></div>`;
+  html+=`<div class="btn-row">`;
+  [true,false].forEach(val=>{
+    let cls='tf-btn';
+    if(answered){
+      if(val===it.answer)cls+=' correct-pick';
+      else if(val===choice)cls+=' wrong-pick';
+      else cls+=' faded';
+    }
+    html+=`<button class="${cls}" ${answered?'disabled':''} onclick="pick(${val})">${val?'TRUE':'FALSE'}</button>`;
+  });
+  html+=`</div>`;
+  if(answered){
+    html+=`<div class="feedback ${correct?'ok':'bad'}"><h3 style="color:${correct?'#1a7a3a':'#c0392b'}">${correct?'Correct!':'Incorrect'}</h3><p>${it.explanation}</p><button class="next-btn" onclick="next()">${idx+1>=items.length?'See Results':'Next Statement →'}</button></div>`;
+  }
+  app.innerHTML=html;
+}
+function pick(val){
+  if(choice!==null)return;
+  choice=val;
+  const correct=val===items[idx].answer;
+  if(correct){score++;streak++;if(streak>bestStreak)bestStreak=streak;}else{streak=0;}
+  render();
+}
+function next(){
+  if(idx+1>=items.length){done=true;render();return;}
+  idx++;choice=null;render();
+}
+function restart(){idx=0;choice=null;score=0;streak=0;bestStreak=0;done=false;render();}
+render();
+</script>
+</body>
+</html>

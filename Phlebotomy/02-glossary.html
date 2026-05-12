@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POCT Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#f8f6f1;font-family:'Source Serif 4',Georgia,serif;color:#1a1510}
+.wrap{max-width:580px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#c0392b;font-weight:700;margin-bottom:8px}
+h1{font-size:36px;font-weight:700;line-height:1.1;margin-bottom:4px}
+.sub{font-family:'DM Sans',sans-serif;font-size:14px;color:#8a7e6e;margin-bottom:24px}
+.search-wrap{position:relative;margin-bottom:16px}
+.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:#b0a898}
+.search-wrap input{width:100%;padding:14px 16px 14px 44px;border-radius:14px;font-size:15px;border:2px solid #e8e2d8;background:#fff;color:#1a1510;outline:none;font-family:'DM Sans',sans-serif}
+.search-wrap input:focus{border-color:#c0392b}
+.search-wrap input::placeholder{color:#a09888}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.cat-btn{padding:6px 14px;border-radius:20px;border:1.5px solid #ddd;background:transparent;color:#888;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.cat-btn:hover{opacity:.85}
+.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.count{font-family:'DM Sans',sans-serif;font-size:12px;color:#a09888;margin-bottom:12px}
+.item{padding:18px 20px;border-radius:14px;cursor:pointer;margin-bottom:6px;border:1.5px solid transparent;transition:all .25s}
+.item:hover{background:#f0ece4}
+.item.open{background:#fff;border-color:var(--item-bdr);box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.item-head{display:flex;justify-content:space-between;align-items:center}
+.item-left{display:flex;align-items:center;gap:12px}
+.item-bar{width:4px;height:28px;border-radius:2px;opacity:.3;transition:opacity .2s}
+.item.open .item-bar{opacity:1}
+.item-term{font-size:18px;font-weight:700}
+.item-cat{font-family:'DM Sans',sans-serif;font-size:10px;padding:3px 10px;border-radius:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.item-def{margin-top:14px;margin-left:16px;padding-top:14px;border-top:1px solid #ebe6dc;font-size:15px;color:#4a4035;line-height:1.75;font-style:italic;display:none}
+.item.open .item-def{display:block}
+.empty{text-align:center;padding:48px;color:#a09888;font-family:'DM Sans',sans-serif}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">POCT & CLIA-Waived Procedures</div>
+  <h1>Glossary</h1>
+  <p class="sub">20 terms — search, filter, and explore</p>
+  <div class="search-wrap">
+    <span>⌕</span>
+    <input type="text" id="search" placeholder="Search terms or definitions...">
+  </div>
+  <div class="filters" id="filters"></div>
+  <div class="count" id="count"></div>
+  <div id="list"></div>
+</div>
+<script>
+const glossary=[
+{term:"POCT",definition:"Point-of-Care Testing — laboratory tests performed at or near the patient for rapid results, rather than in a central laboratory.",category:"Core Concepts"},
+{term:"CLIA",definition:"Clinical Laboratory Improvement Amendments — federal regulations governing all laboratory testing performed on humans in the United States, ensuring accuracy and reliability.",category:"Regulations"},
+{term:"CPT (Phlebotomy)",definition:"Certified Phlebotomy Technician — a healthcare professional who may perform CLIA-waived POCT, follow manufacturer instructions, perform QC, and report results.",category:"Core Concepts"},
+{term:"Waived Test",definition:"A low-complexity laboratory test approved by CLIA for use by non-laboratory personnel. Examples include blood glucose, urine pregnancy, and urinalysis dipstick tests.",category:"Regulations"},
+{term:"Moderate Complexity Test",definition:"A CLIA-classified test requiring more training and oversight than waived tests. CPTs may NOT perform these tests.",category:"Regulations"},
+{term:"High Complexity Test",definition:"The most complex CLIA-classified test, requiring specialized training and equipment. Only performed in certified laboratories by trained personnel.",category:"Regulations"},
+{term:"Quality Control (QC)",definition:"Procedures that ensure POCT results are accurate, reliable, and reproducible. QC must pass before patient testing can proceed.",category:"Quality"},
+{term:"Liquid Control Solutions",definition:"A type of quality control material used to verify that a POCT device is producing accurate results within an acceptable range.",category:"Quality"},
+{term:"Electronic Controls",definition:"Built-in or external electronic checks used as part of quality control for POCT devices.",category:"Quality"},
+{term:"Corrective Action",definition:"Steps taken to identify and resolve a quality control failure before patient testing resumes. Must be documented.",category:"Quality"},
+{term:"hCG",definition:"Human Chorionic Gonadotropin — a hormone produced during pregnancy that is detected by urine pregnancy tests.",category:"Clinical"},
+{term:"Hypoglycemia",definition:"A critically low blood glucose level that may be life-threatening. Classified as a critical value requiring immediate reporting.",category:"Clinical"},
+{term:"Hyperglycemia",definition:"A critically high blood glucose level that may be life-threatening. Classified as a critical value requiring immediate reporting.",category:"Clinical"},
+{term:"Critical Value",definition:"A test result that indicates a potentially life-threatening condition. Must be reported immediately and documented per facility policy.",category:"Clinical"},
+{term:"Capillary Puncture",definition:"A skin puncture technique (usually on the fingertip) used to collect small blood samples for POCT such as blood glucose testing.",category:"Procedures"},
+{term:"Urinalysis Dipstick",definition:"A CLIA-waived test that evaluates urine for glucose, protein, ketones, blood, and pH using a chemically treated strip.",category:"Procedures"},
+{term:"Reading Window",definition:"The specific time frame during which a test result must be read for accuracy. Defined by manufacturer instructions.",category:"Procedures"},
+{term:"Standard Precautions",definition:"Infection control practices applied to all patient care: hand hygiene, gloves, single-use lancets, cleaning meters between patients, and proper sharps disposal.",category:"Safety"},
+{term:"EMR",definition:"Electronic Medical Record — a digital system where POCT results may be entered as part of proper documentation.",category:"Documentation"},
+{term:"Manufacturer Instructions",definition:"The official guidelines from the test device manufacturer that must be followed exactly. Includes storage requirements, test timing, specimen volume, and reading windows.",category:"Procedures"}
+];
+const catColors={"Core Concepts":"#3498db",Regulations:"#e74c3c",Quality:"#27ae60",Clinical:"#e67e22",Procedures:"#9b59b6",Safety:"#1abc9c",Documentation:"#f39c12"};
+const cats=["All",...new Set(glossary.map(g=>g.category))];
+let filter="All",search="",openIdx=null;
+
+function renderFilters(){
+  const el=document.getElementById('filters');
+  el.innerHTML=cats.map(c=>{
+    const col=c==="All"?"#555":(catColors[c]||"#888");
+    const active=filter===c;
+    return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}15;${active?`border-color:${col};color:${col};background:${col}15`:''}" onclick="setFilter('${c}')">${c}</button>`;
+  }).join('');
+}
+function renderList(){
+  const s=search.toLowerCase();
+  const filtered=glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));
+  document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' found';
+  if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms match your search.</div>';return;}
+  document.getElementById('list').innerHTML=filtered.map((g,i)=>{
+    const col=catColors[g.category]||"#888";
+    const origIdx=glossary.indexOf(g);
+    const isOpen=openIdx===origIdx;
+    return `<div class="item ${isOpen?'open':''}" style="--item-bdr:${col}30" onclick="toggle(${origIdx})">
+      <div class="item-head">
+        <div class="item-left">
+          <div class="item-bar" style="background:${col}"></div>
+          <span class="item-term">${g.term}</span>
+        </div>
+        <span class="item-cat" style="background:${col}15;color:${col}">${g.category}</span>
+      </div>
+      <div class="item-def">${g.definition}</div>
+    </div>`;
+  }).join('');
+}
+function setFilter(c){filter=c;renderFilters();renderList()}
+function toggle(i){openIdx=openIdx===i?null:i;renderList()}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;renderList()});
+renderFilters();renderList();
+</script>
+</body>
+</html>

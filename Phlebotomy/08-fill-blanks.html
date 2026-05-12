@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POCT Fill in the Blanks</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#14101e;font-family:'Space Mono',monospace;color:#f0eef5}
+.wrap{max-width:560px;margin:0 auto;padding:40px 20px}
+.tag{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#9b59b6;font-weight:700;margin-bottom:8px}
+h1{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:4px}
+.sub{font-size:13px;color:#665f80;margin-bottom:28px}
+.info{display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px;color:#665f80}
+.info .sc{color:#00d68f;font-weight:700}
+.bar{height:4px;background:#1e1a2e;border-radius:2px;margin-bottom:36px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#9b59b6,#6c5ce7);transition:width .4s}
+.sentence-card{padding:32px 28px;border-radius:16px;margin-bottom:24px;background:#1a1628;border:1px solid #2a2440;font-family:'Syne',sans-serif;font-size:18px;font-weight:500;line-height:2.4;color:#d0c8e0}
+.sentence-card input{display:inline-block;padding:6px 12px;border-radius:8px;font-size:17px;font-weight:700;text-align:center;font-family:'Space Mono',monospace;border:2px solid #3a3455;background:#0e0b18;color:#f0eef5;outline:none;margin:0 6px;transition:all .2s;vertical-align:baseline}
+.sentence-card input:focus{border-color:#9b59b6;box-shadow:0 0 0 3px rgba(155,89,182,.2)}
+.sentence-card input::placeholder{color:#4a4060}
+.sentence-card input.correct{border-color:#00d68f;background:#00d68f15;color:#00d68f}
+.sentence-card input.wrong{border-color:#ff3860;background:#ff386015;color:#ff3860}
+.reveal{padding:16px;border-radius:10px;background:#1a1628;border:1px solid #2a2440;margin-bottom:16px;font-size:12px;color:#665f80}
+.reveal b{color:#00d68f;font-size:14px}
+.ok-msg{padding:16px;border-radius:10px;background:#00d68f12;border:1px solid #00d68f33;margin-bottom:16px;text-align:center;font-size:15px;color:#00d68f;font-weight:700}
+.action-btn{width:100%;padding:16px;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;font-family:'Space Mono',monospace;transition:all .2s}
+.btn-check{border:2px solid #9b59b6;background:transparent;color:#9b59b6}
+.btn-check:disabled{opacity:.5;cursor:default}
+.btn-next{border:none;background:linear-gradient(135deg,#9b59b6,#6c5ce7);color:#fff}
+.result{text-align:center;padding:40px 0}
+.result .pct{font-family:'Syne',sans-serif;font-size:72px;font-weight:700;line-height:1}
+.result .det{font-size:15px;color:#887fa0;margin-top:10px}
+.result .msg{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-top:16px}
+.result button{margin-top:32px;padding:16px 48px;border-radius:8px;border:2px solid #9b59b6;background:transparent;color:#9b59b6;font-weight:700;font-size:16px;cursor:pointer;font-family:'Space Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const questions=[
+{display:"POCT stands for {0}-of-{1} Testing.",answers:["Point","Care"]},
+{display:"CLIA categorizes tests into waived, {0} complexity, and {1} complexity.",answers:["moderate","high"]},
+{display:"If QC fails, you must {0} patient testing and notify your {1}.",answers:["stop","supervisor"]},
+{display:"Urine pregnancy tests detect the {0} hormone.",answers:["hCG"]},
+{display:"POCT documentation must include patient name, DOB, test, result, date/time, and your {0}.",answers:["initials"]},
+{display:"Critical values must be reported {0} and documented per facility policy.",answers:["immediately"]},
+{display:"CPTs may perform {0}-waived tests only.",answers:["CLIA"]},
+{display:"{0} instructions must be followed exactly for valid results.",answers:["Manufacturer"]},
+{display:"Urinalysis dipstick evaluates glucose, protein, ketones, {0}, and pH.",answers:["blood"]},
+{display:"POCT supports rapid {0} and treatment decisions.",answers:["diagnosis"]},
+{display:"Always use {0}-use lancets and dispose in sharps containers.",answers:["single"]},
+{display:"Incomplete documentation means the test is {0}.",answers:["invalid"]}
+];
+let idx=0,checked=false,score=0,done=false,inputs=[];
+function getInputs(){
+  const els=document.querySelectorAll('.blank-input');
+  return Array.from(els).map(e=>e.value);
+}
+function renderSentence(q){
+  const parts=q.display.split(/\{(\d+)\}/);
+  let html='';let ii=0;
+  parts.forEach(part=>{
+    if(/^\d+$/.test(part)){
+      const n=Number(part);
+      const w=Math.max(90,q.answers[n].length*16);
+      let cls='blank-input';
+      if(checked){
+        const val=(inputs[n]||'').trim().toLowerCase();
+        cls+=val===q.answers[n].toLowerCase()?' correct':' wrong';
+      }
+      html+=`<input class="${cls}" data-idx="${n}" style="width:${w}px" placeholder="___" value="${inputs[n]||''}" ${checked?'disabled':''}>`;
+    }else{
+      html+=part;
+    }
+  });
+  return html;
+}
+function render(){
+  const app=document.getElementById('app');
+  if(done){
+    const pct=Math.round(score/questions.length*100);
+    const col=pct>=80?'#00d68f':pct>=60?'#ffaa00':'#ff3860';
+    const msg=pct>=90?'Excellent recall!':pct>=70?'Solid work!':'Keep practicing!';
+    app.innerHTML=`<div class="result"><div class="pct" style="color:${col}">${pct}%</div><div class="det">${score} / ${questions.length} correct</div><div class="msg" style="color:${col}">${msg}</div><button onclick="restart()">Restart</button></div>`;
+    return;
+  }
+  const q=questions[idx];
+  let html=`<div class="tag">POCT & CLIA-Waived Procedures</div><h1>Fill in the Blanks</h1><p class="sub">Type the missing words to complete each statement</p>`;
+  html+=`<div class="info"><span>${idx+1} / ${questions.length}</span><span class="sc">Score: ${score}</span></div>`;
+  html+=`<div class="bar"><div class="bar-fill" style="width:${((idx+(checked?1:0))/questions.length)*100}%"></div></div>`;
+  html+=`<div class="sentence-card">${renderSentence(q)}</div>`;
+  const allCorrect=checked&&inputs.every((v,i)=>(v||'').trim().toLowerCase()===q.answers[i].toLowerCase());
+  if(checked&&!allCorrect){
+    html+=`<div class="reveal">Correct answer: <b>${q.answers.join(', ')}</b></div>`;
+  }
+  if(checked&&allCorrect){
+    html+=`<div class="ok-msg">✓ Correct!</div>`;
+  }
+  if(!checked){
+    html+=`<button class="action-btn btn-check" id="checkBtn" onclick="doCheck()">Check Answer</button>`;
+  }else{
+    html+=`<button class="action-btn btn-next" onclick="next()">${idx+1>=questions.length?'See Results':'Next →'}</button>`;
+  }
+  app.innerHTML=html;
+  // Wire up input events
+  if(!checked){
+    const els=document.querySelectorAll('.blank-input');
+    els.forEach(el=>{
+      el.addEventListener('input',()=>{
+        inputs[Number(el.dataset.idx)]=el.value;
+        updateCheckBtn();
+      });
+      el.addEventListener('keydown',e=>{if(e.key==='Enter')doCheck()});
+    });
+    if(els.length)els[0].focus();
+    updateCheckBtn();
+  }
+}
+function updateCheckBtn(){
+  const btn=document.getElementById('checkBtn');
+  if(!btn)return;
+  const allFilled=questions[idx].answers.every((_,i)=>(inputs[i]||'').trim());
+  btn.disabled=!allFilled;
+  btn.style.opacity=allFilled?1:.5;
+}
+function doCheck(){
+  inputs=getInputs();
+  const q=questions[idx];
+  const allFilled=q.answers.every((_,i)=>(inputs[i]||'').trim());
+  if(!allFilled)return;
+  checked=true;
+  const allCorrect=inputs.every((v,i)=>(v||'').trim().toLowerCase()===q.answers[i].toLowerCase());
+  if(allCorrect)score++;
+  render();
+}
+function next(){
+  if(idx+1>=questions.length){done=true;render();return;}
+  idx++;checked=false;inputs=[];render();
+}
+function restart(){idx=0;checked=false;score=0;done=false;inputs=[];render();}
+render();
+</script>
+</body>
+</html>

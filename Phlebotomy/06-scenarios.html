@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POCT Clinical Scenarios</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#0c0a14;font-family:'Instrument Serif',Georgia,serif;color:#e0dce8}
+.wrap{max-width:580px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:#6c5ce7;font-weight:700;margin-bottom:8px}
+h1{font-size:34px;color:#f0eef5;margin-bottom:4px}
+.sub{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#665f80;margin-bottom:28px}
+.stats{display:flex;gap:16px;margin-bottom:28px;font-family:'Plus Jakarta Sans',sans-serif}
+.stat{padding:8px 18px;border-radius:10px;background:#151225;border:1px solid #252040;font-size:12px;color:#665f80}
+.stat b{font-size:14px;font-weight:700;margin-left:4px}
+.scenario-card{padding:28px;border-radius:20px;margin-bottom:20px;background:linear-gradient(145deg,#16122a,#1a1530);border:1px solid #252045;box-shadow:0 12px 48px rgba(108,92,231,.08)}
+.sc-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#6c5ce7;font-weight:700;margin-bottom:14px}
+.sc-text{font-size:18px;line-height:1.7}
+.opt{padding:16px 20px;border-radius:14px;border:1.5px solid #252040;background:#110f20;margin-bottom:10px;font-size:15px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;line-height:1.5;transition:all .25s;color:#c0b8d8}
+.opt:hover{background:#1a1525;border-color:#6c5ce7}
+.opt.correct{background:#0d1f16;border-color:#27ae60;color:#2ecc71;font-weight:600}
+.opt.wrong{background:#1f0d0d;border-color:#e74c3c;color:#e74c3c}
+.opt.dim{color:#444}
+.opt .letter{font-weight:700;margin-right:10px;opacity:.5}
+.rationale{margin-top:16px;padding:24px;border-radius:16px}
+.rationale.ok{background:#0a1a10;border:1px solid #27ae6033}
+.rationale.bad{background:#1a0c0c;border:1px solid #e74c3c33}
+.rationale h3{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:15px;margin-bottom:10px}
+.rationale p{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#998faa;line-height:1.7}
+.rationale p b{color:#b8b0d0}
+.next-btn{margin-top:18px;width:100%;padding:14px;border-radius:12px;border:none;background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const scenarios=[
+{title:"QC Failure During Testing",scenario:"You're performing a blood glucose test and the QC result is outside the acceptable range. A patient is waiting for their test. What do you do?",options:["Test the patient anyway since they're waiting","Stop testing, notify your supervisor, and document the QC failure","Run QC again without telling anyone","Use a different test strip and proceed with the patient"],correct:1,rationale:"When QC fails, you must stop all patient testing immediately, notify your supervisor, and document corrective action. Patient testing only resumes after QC passes. Never continue testing with failed QC — patient results would be unreliable."},
+{title:"Unauthorized Results Request",scenario:"A patient's family member approaches you and asks for the results of their loved one's urine pregnancy test. They seem genuinely concerned. What is the correct response?",options:["Share the results since they're family","Tell them the test was negative to ease their worry","Politely explain that results can only be shared with authorized personnel","Show them the test device so they can read it themselves"],correct:2,rationale:"POCT results must only be communicated to authorized personnel. Sharing results with unauthorized individuals — even well-meaning family members — violates legal and ethical obligations regarding patient confidentiality."},
+{title:"Expired Test Supplies",scenario:"You notice the test strips for the glucose meter expired last week, but you have a patient who needs testing now. There are no unexpired strips available. What should you do?",options:["Use them since they just expired recently","Do not use expired strips — notify your supervisor and obtain new supplies","Use them but note the expiration in the chart","Test with expired strips and confirm with a lab draw later"],correct:1,rationale:"Using expired supplies is a common POCT error that invalidates results. Always check expiration dates before testing. If no current supplies are available, notify your supervisor rather than using expired materials."},
+{title:"Sharps Disposal",scenario:"After performing a capillary puncture for glucose testing, what is the correct way to dispose of the used lancet?",options:["Place it in the regular trash with your gloves","Recap it carefully and place in a biohazard bag","Dispose of it immediately in an approved sharps container","Set it aside to dispose of after you finish with the patient"],correct:2,rationale:"Single-use lancets must be disposed of immediately in an approved sharps container. This is a key component of Standard Precautions. Never recap, delay disposal, or place sharps in regular trash."},
+{title:"Critical Glucose Value",scenario:"A patient's blood glucose reads 42 mg/dL — a critically low value. The patient says they feel fine. What is your next step?",options:["Since the patient feels fine, just document and move on","Repeat the test; if normal, discard the first result","Report the critical value to the nurse/provider immediately and document","Give the patient juice and retest in 30 minutes"],correct:2,rationale:"Critical values must be reported immediately to the nurse or provider regardless of how the patient feels. You must also document the result and notification. CPTs do not treat patients or interpret results — immediate reporting is the priority."},
+{title:"Reading Window Violation",scenario:"You performed a urine pregnancy test but got distracted by another patient. When you return 15 minutes later, the reading window was 5 minutes. What should you do?",options:["Read the result anyway — it's probably still accurate","The test is invalid; discard and perform a new test following proper timing","Document that the reading was delayed but report the result","Ask a coworker what the result showed earlier"],correct:1,rationale:"Manufacturer instructions specify reading windows for a reason — results read outside the window are invalid. You must discard the test and perform a new one with proper timing. Improper timing is a common POCT error."}
+];
+let idx=0,selected=null,locked=false,score=0,completed=0;
+function render(){
+  const app=document.getElementById('app');
+  const s=scenarios[idx];
+  let html=`<div class="tag">POCT & CLIA-Waived Procedures</div><h1>Clinical Scenarios</h1><p class="sub">Apply your knowledge to real-world situations</p>`;
+  html+=`<div class="stats"><div class="stat">Scenario <b style="color:#b8b0d0">${idx+1}/${scenarios.length}</b></div>`;
+  if(completed>0)html+=`<div class="stat">Score <b style="color:#27ae60">${score}/${completed}</b></div>`;
+  html+=`</div>`;
+  html+=`<div class="scenario-card"><div class="sc-title">${s.title}</div><div class="sc-text">${s.scenario}</div></div>`;
+  s.options.forEach((o,i)=>{
+    let cls='opt';
+    if(locked){
+      if(i===s.correct)cls+=' correct';
+      else if(i===selected)cls+=' wrong';
+      else cls+=' dim';
+    }
+    html+=`<div class="${cls}" onclick="pick(${i})"><span class="letter">${String.fromCharCode(65+i)}.</span>${o}</div>`;
+  });
+  if(locked){
+    const correct=selected===s.correct;
+    html+=`<div class="rationale ${correct?'ok':'bad'}"><h3 style="color:${correct?'#27ae60':'#e74c3c'}">${correct?'✓ Correct Response':'✗ Incorrect'}</h3><p><b>Rationale: </b>${s.rationale}</p><button class="next-btn" onclick="next()">Next Scenario →</button></div>`;
+  }
+  app.innerHTML=html;
+}
+function pick(i){
+  if(locked)return;
+  selected=i;locked=true;completed++;
+  if(i===scenarios[idx].correct)score++;
+  render();
+}
+function next(){idx=(idx+1)%scenarios.length;selected=null;locked=false;render();}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POCT Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#080c14;font-family:'Libre Baskerville',Georgia,serif;color:#f4f0eb}
+.wrap{max-width:520px;margin:0 auto;padding:40px 20px}
+.tag{font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#c0392b;font-weight:700;margin-bottom:10px;text-align:center}
+h1{font-size:32px;font-weight:700;text-align:center;margin-bottom:4px}
+.sub{font-family:'Outfit',sans-serif;font-size:13px;color:#667788;text-align:center;margin-bottom:24px}
+.stats{display:flex;justify-content:center;gap:24px;margin-bottom:24px;font-family:'Outfit',sans-serif}
+.stats div{text-align:center}
+.stats .num{font-size:22px;font-weight:700}
+.stats .lbl{font-size:10px;color:#556;letter-spacing:1px;text-transform:uppercase}
+.bar{height:4px;background:#151c2c;border-radius:2px;margin-bottom:28px;overflow:hidden;display:flex}
+.bar-known{background:#27ae60;transition:width .4s}
+.bar-review{background:#e6a817;transition:width .4s}
+.counter{font-family:'Outfit',sans-serif;font-size:12px;color:#556;text-align:center;margin-bottom:14px;letter-spacing:1px}
+.counter .badge{margin-left:10px;font-weight:600}
+.card-wrap{perspective:1000px;cursor:pointer;margin-bottom:20px}
+.card-inner{position:relative;width:100%;min-height:260px;border-radius:20px;transition:transform .5s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.card-inner.flipped{transform:rotateY(180deg)}
+.card-face{backface-visibility:hidden;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;border-radius:20px}
+.card-front{background:linear-gradient(145deg,#111827,#0f1520);border:1px solid #1e293b;box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.04)}
+.card-back{transform:rotateY(180deg);background:linear-gradient(145deg,#0f1a1a,#0f1520);border:1px solid #1a3a2a;box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(39,174,96,.1)}
+.card-label{position:absolute;top:16px;left:20px;font-family:'Outfit',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase}
+.card-front .card-label{color:#445}
+.card-back .card-label{color:#27ae60}
+.card-front .card-text{font-size:20px;text-align:center;line-height:1.6;font-weight:700}
+.card-back .card-text{font-size:16px;color:#d0dde8;text-align:center;line-height:1.8;font-style:italic}
+.card-hint{position:absolute;bottom:16px;font-family:'Outfit',sans-serif;font-size:11px;color:#445}
+.rate-row{display:flex;gap:10px;margin-bottom:16px}
+.rate-row button{flex:1;padding:14px 0;border-radius:12px;font-family:'Outfit',sans-serif;font-weight:600;font-size:14px;cursor:pointer;transition:background .2s}
+.btn-learn{border:1px solid #5a4200;background:#2a1f00;color:#e6a817}
+.btn-learn:hover{background:#3a2f00}
+.btn-got{border:1px solid #1a5c30;background:#0d2a16;color:#27ae60}
+.btn-got:hover{background:#1a3a22}
+.nav-row{display:flex;gap:10px}
+.nav-row button{flex:1;padding:12px 0;border-radius:10px;border:1px solid #1e293b;background:transparent;color:#667788;font-family:'Outfit',sans-serif;font-size:13px;cursor:pointer;transition:background .2s}
+.nav-row button:hover{background:#1a2236}
+.reset-btn{display:block;margin:20px auto 0;padding:8px 24px;border-radius:8px;border:none;background:transparent;color:#445;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="tag">POCT & CLIA-Waived Procedures</div>
+  <h1>Flashcards</h1>
+  <p class="sub">Tap the card to reveal the answer</p>
+  <div class="stats">
+    <div><div class="num" style="color:#27ae60" id="knownCount">0</div><div class="lbl">Mastered</div></div>
+    <div><div class="num" style="color:#e6a817" id="reviewCount">0</div><div class="lbl">Review</div></div>
+    <div><div class="num" style="color:#8899aa" id="remainCount">15</div><div class="lbl">Remaining</div></div>
+  </div>
+  <div class="bar"><div class="bar-known" id="barKnown"></div><div class="bar-review" id="barReview"></div></div>
+  <div class="counter" id="counter">1 / 15</div>
+  <div class="card-wrap" id="cardWrap">
+    <div class="card-inner" id="cardInner">
+      <div class="card-face card-front">
+        <div class="card-label">Question</div>
+        <div class="card-text" id="frontText"></div>
+        <div class="card-hint">tap to flip</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-label">Answer</div>
+        <div class="card-text" id="backText"></div>
+      </div>
+    </div>
+  </div>
+  <div class="rate-row">
+    <button class="btn-learn" onclick="markReview()">Still Learning</button>
+    <button class="btn-got" onclick="markKnown()">Got It ✓</button>
+  </div>
+  <div class="nav-row">
+    <button onclick="go(-1)">← Previous</button>
+    <button onclick="go(1)">Next →</button>
+  </div>
+  <button class="reset-btn" id="resetBtn" style="display:none" onclick="reset()">Reset Progress</button>
+</div>
+<script>
+const cards=[
+{front:"What is POCT?",back:"Laboratory tests performed at or near the patient rather than in a central laboratory."},
+{front:"What does CLIA stand for?",back:"Clinical Laboratory Improvement Amendments — regulations ensuring test accuracy, reliability, and patient safety."},
+{front:"What CLIA category can CPTs perform?",back:"CLIA-waived (low complexity) tests only."},
+{front:"Name 5 common CLIA-waived tests",back:"Blood glucose, urine pregnancy testing, urinalysis dipstick, hemoglobin/hematocrit, rapid strep testing."},
+{front:"What must you do if QC fails?",back:"Stop patient testing immediately, do not report results, notify supervisor, document corrective action."},
+{front:"What are critical glucose values?",back:"Values indicating hypoglycemia (dangerously low) or hyperglycemia (dangerously high) requiring immediate reporting."},
+{front:"What does hCG stand for?",back:"Human Chorionic Gonadotropin — the hormone detected in urine pregnancy tests."},
+{front:"What must POCT documentation include?",back:"Patient name & DOB, test performed, result, date & time, and your initials."},
+{front:"Why are manufacturer instructions critical?",back:"They dictate storage, timing, specimen volume, and reading windows. Not following them invalidates results."},
+{front:"What Standard Precautions apply to POCT?",back:"Hand hygiene, gloves, single-use lancets, cleaning meters between patients, proper sharps disposal."},
+{front:"What are the 3 CLIA test categories?",back:"Waived (low complexity), Moderate complexity, and High complexity."},
+{front:"Where is POCT commonly performed?",back:"Physician offices, urgent care centers, clinics, long-term care facilities, and community health centers."},
+{front:"What does a urinalysis dipstick evaluate?",back:"Glucose, protein, ketones, blood, and pH."},
+{front:"Who can receive POCT results?",back:"Only authorized personnel. Results must be entered into EMR if required."},
+{front:"What are common POCT errors?",back:"Skipping QC, using expired supplies, improper timing, and incomplete documentation."}
+];
+let idx=0,known=new Set(),review=new Set();
+function render(){
+  document.getElementById('frontText').textContent=cards[idx].front;
+  document.getElementById('backText').textContent=cards[idx].back;
+  document.getElementById('cardInner').classList.remove('flipped');
+  const t=cards.length,k=known.size,r=review.size;
+  document.getElementById('knownCount').textContent=k;
+  document.getElementById('reviewCount').textContent=r;
+  document.getElementById('remainCount').textContent=t-k-r;
+  document.getElementById('barKnown').style.width=(k/t*100)+'%';
+  document.getElementById('barReview').style.width=(r/t*100)+'%';
+  let extra='';
+  if(known.has(idx))extra=' <span class="badge" style="color:#27ae60">✓ Mastered</span>';
+  if(review.has(idx))extra=' <span class="badge" style="color:#e6a817">↻ Review</span>';
+  document.getElementById('counter').innerHTML=(idx+1)+' / '+t+extra;
+  document.getElementById('resetBtn').style.display=(k>0||r>0)?'block':'none';
+}
+document.getElementById('cardWrap').onclick=()=>document.getElementById('cardInner').classList.toggle('flipped');
+function go(d){idx=(idx+d+cards.length)%cards.length;render()}
+function markKnown(){known.add(idx);review.delete(idx);go(1)}
+function markReview(){review.add(idx);known.delete(idx);go(1)}
+function reset(){known.clear();review.clear();idx=0;render()}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POCT Speed Round</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:linear-gradient(160deg,#0a0e1a,#120818);font-family:'Rajdhani',sans-serif;color:#fff;transition:background .15s}
+body.flash-correct{background:#001a0d}
+body.flash-wrong{background:#1a0008}
+.wrap{max-width:500px;margin:0 auto;padding:32px 20px}
+.center{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.ready-box{text-align:center;padding:32px 24px;max-width:440px}
+.logo{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#ff3860;font-weight:700;margin-bottom:12px}
+h1{font-family:'Orbitron',sans-serif;font-size:38px;font-weight:900;letter-spacing:2px;margin:0 0 12px}
+.ready-sub{font-size:18px;color:#667;margin-bottom:8px}
+.ready-detail{font-size:15px;color:#445;margin-bottom:36px}
+.features{display:flex;justify-content:center;gap:32px;margin-bottom:40px;padding:20px 24px;border-radius:16px;background:#111520;border:1px solid #1a2030}
+.features div{text-align:center}
+.features .ico{font-size:24px;margin-bottom:4px}
+.features .ftxt{font-size:11px;color:#556;letter-spacing:.5px}
+.start-btn{padding:18px 64px;border-radius:14px;border:none;background:linear-gradient(135deg,#ff3860,#e01050);color:#fff;font-family:'Orbitron',sans-serif;font-weight:800;font-size:18px;cursor:pointer;letter-spacing:2px;box-shadow:0 8px 32px rgba(255,56,96,.3);transition:transform .15s}
+.start-btn:active{transform:scale(.96)}
+/* Playing */
+.timer-num{font-family:'Orbitron',sans-serif;font-size:36px;font-weight:900;font-variant-numeric:tabular-nums}
+.timer-bar{height:6px;background:#111520;border-radius:3px;overflow:hidden;margin-top:8px}
+.timer-fill{height:100%;border-radius:3px;transition:width 1s linear}
+.top-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.score-area{font-size:14px}
+.score-area .ck{color:#556}
+.score-area .cv{font-weight:700;color:#00d68f}
+.streak{color:#ff3860;font-weight:700;margin-left:12px}
+.q-card{padding:36px 28px;border-radius:20px;margin:28px 0 24px;background:linear-gradient(145deg,#111520,#151a28);border:1px solid #1e2538;box-shadow:0 12px 48px rgba(0,0,0,.3)}
+.q-label{font-size:10px;color:#445;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:16px}
+.q-text{font-size:22px;color:#e8e4f0;line-height:1.6;font-weight:600}
+.input-row{display:flex;gap:10px;margin-bottom:12px}
+.input-row input{flex:1;padding:16px 20px;border-radius:14px;font-size:18px;font-weight:600;border:2px solid #1e2538;background:#0c0f18;color:#fff;font-family:'Rajdhani',sans-serif;outline:none;transition:border .2s}
+.input-row input:focus{border-color:#ff3860;box-shadow:0 0 0 3px rgba(255,56,96,.2)}
+.input-row input::placeholder{color:#334}
+.go-btn{padding:16px 28px;border-radius:14px;border:none;font-weight:800;font-size:16px;cursor:pointer;font-family:'Rajdhani',sans-serif;transition:all .2s}
+.go-btn.active{background:linear-gradient(135deg,#00d68f,#00b877);color:#fff}
+.go-btn.inactive{background:#1a2030;color:#334;cursor:default}
+.skip-btn{width:100%;padding:12px;border-radius:10px;border:1px solid #1e2538;background:transparent;color:#556;font-size:14px;font-weight:600;cursor:pointer;font-family:'Rajdhani',sans-serif}
+/* Done */
+.done-box{text-align:center;margin-bottom:36px}
+.done-tag{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:3px;color:#ff3860;font-weight:700;margin-bottom:12px}
+.done-num{font-family:'Orbitron',sans-serif;font-size:64px;font-weight:900;color:#00d68f;line-height:1}
+.done-label{font-size:16px;color:#667;margin-top:4px}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
+.stat-card{text-align:center;padding:16px;border-radius:14px;background:#111520;border:1px solid #1a2030}
+.stat-card .sv{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:800}
+.stat-card .sl{font-size:11px;color:#556;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.review-title{font-size:12px;color:#556;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.review-item{padding:14px 16px;border-radius:12px;background:#111520;border:1px solid #1a2030;margin-bottom:6px}
+.review-item .rq{font-size:13px;color:#889;margin-bottom:6px}
+.review-item .ranswer{display:flex;justify-content:space-between;align-items:center}
+.review-item .correct-ans{font-size:14px;font-weight:700;color:#00d68f}
+.review-item .given-ans{font-size:12px;color:#ff3860}
+.review-item .skipped{font-size:12px;color:#ffaa00}
+.again-btn{width:100%;padding:18px;border-radius:14px;border:none;background:linear-gradient(135deg,#ff3860,#e01050);color:#fff;font-family:'Orbitron',sans-serif;font-weight:800;font-size:17px;cursor:pointer;letter-spacing:2px;box-shadow:0 6px 24px rgba(255,56,96,.25);margin-top:20px}
+@keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const allQuestions=[
+{q:"POCT stands for Point-of-___ Testing",a:"Care"},
+{q:"CLIA stands for Clinical Laboratory Improvement ___",a:"Amendments"},
+{q:"CPTs can only perform ___-waived tests",a:"CLIA"},
+{q:"If QC fails, ___ all patient testing",a:"Stop"},
+{q:"Urine pregnancy tests detect ___",a:"hCG"},
+{q:"Critical values must be reported ___",a:"Immediately"},
+{q:"Blood glucose uses a ___ puncture",a:"Capillary"},
+{q:"Used lancets go in ___ containers",a:"Sharps"},
+{q:"Expired test supplies make results ___",a:"Invalid"},
+{q:"Results are documented in the ___",a:"EMR"},
+{q:"CPTs may NOT ___ test results",a:"Interpret"},
+{q:"___ hygiene is required before all POCT",a:"Hand"},
+{q:"Urinalysis dipstick tests urine ___",a:"pH"},
+{q:"QC must ___ before patient testing",a:"Pass"},
+{q:"POCT documentation requires your ___",a:"Initials"},
+{q:"A dangerously low glucose is called ___",a:"Hypoglycemia"},
+{q:"A dangerously high glucose is called ___",a:"Hyperglycemia"},
+{q:"___ instructions must always be followed",a:"Manufacturer"},
+{q:"Results go only to ___ personnel",a:"Authorized"},
+{q:"POCT gives ___ results near the patient",a:"Rapid"},
+{q:"___ Precautions include gloves and hand hygiene",a:"Standard"},
+{q:"CLIA has 3 categories: waived, moderate, and ___",a:"High"},
+{q:"Failed QC requires notifying your ___",a:"Supervisor"},
+{q:"Incomplete documentation makes results ___",a:"Invalid"},
+{q:"Always check ___ dates before testing",a:"Expiration"}
+];
+const TOTAL=60;
+let phase='ready',questions=[],idx=0,input='',timeLeft=TOTAL,correct=0,skipped=0,streak=0,bestStreak=0,history=[],timerInterval=null;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function start(){
+  questions=shuffle(allQuestions);idx=0;input='';timeLeft=TOTAL;correct=0;skipped=0;streak=0;bestStreak=0;history=[];
+  phase='playing';render();
+  document.querySelector('.input-box')?.focus();
+  timerInterval=setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft<=0){clearInterval(timerInterval);phase='done';render();}
+  },1000);
+}
+function updateTimerDisplay(){
+  const el=document.getElementById('timerNum');if(el)el.textContent=timeLeft;
+  const bar=document.getElementById('timerFill');if(bar)bar.style.width=(timeLeft/TOTAL*100)+'%';
+  const col=timeLeft>20?'#00d68f':timeLeft>10?'#ffaa00':'#ff3860';
+  if(el)el.style.color=col;
+  if(bar)bar.style.background=`linear-gradient(90deg,${col},${col}cc)`;
+}
+function endGame(){clearInterval(timerInterval);phase='done';render();}
+function flash(type){
+  document.body.classList.add('flash-'+type);
+  setTimeout(()=>document.body.classList.remove('flash-'+type),200);
+}
+function advance(){
+  if(idx+1>=questions.length){endGame();return;}
+  idx++;input='';render();
+  setTimeout(()=>{const el=document.querySelector('.input-box');if(el)el.focus();},50);
+}
+function submit(){
+  if(!input.trim())return;
+  const isCorrect=input.trim().toLowerCase()===questions[idx].a.toLowerCase();
+  history.push({q:questions[idx].q,a:questions[idx].a,given:input.trim(),correct:isCorrect});
+  if(isCorrect){correct++;streak++;if(streak>bestStreak)bestStreak=streak;flash('correct');}
+  else{streak=0;flash('wrong');}
+  advance();
+}
+function skip(){
+  skipped++;streak=0;
+  history.push({q:questions[idx].q,a:questions[idx].a,given:null,correct:false});
+  flash('wrong');advance();
+}
+
+function render(){
+  const app=document.getElementById('app');
+  if(phase==='ready'){
+    app.innerHTML=`<div class="center"><div class="ready-box">
+      <div class="logo">POCT & CLIA-Waived Procedures</div>
+      <h1>SPEED ROUND</h1>
+      <div class="ready-sub">60 seconds. Quick-fire questions.</div>
+      <div class="ready-detail">Type the missing word as fast as you can!</div>
+      <div class="features">
+        <div><div class="ico">⏱</div><div class="ftxt">60 sec timer</div></div>
+        <div><div class="ico">⚡</div><div class="ftxt">Streak bonus</div></div>
+        <div><div class="ico">⏭</div><div class="ftxt">Skip allowed</div></div>
+      </div>
+      <button class="start-btn" onclick="start()">START</button>
+    </div></div>`;
+    return;
+  }
+  if(phase==='done'){
+    const missed=history.filter(h=>!h.correct);
+    app.innerHTML=`<div class="wrap">
+      <div class="done-box"><div class="done-tag">TIME'S UP</div><div class="done-num">${correct}</div><div class="done-label">correct answers</div></div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="sv" style="color:#3498db">${history.length}</div><div class="sl">Attempted</div></div>
+        <div class="stat-card"><div class="sv" style="color:#ffaa00">${skipped}</div><div class="sl">Skipped</div></div>
+        <div class="stat-card"><div class="sv" style="color:#ff3860">${bestStreak}</div><div class="sl">Best Streak</div></div>
+      </div>
+      ${missed.length?`<div class="review-title">Review Missed</div>${missed.map(h=>`<div class="review-item"><div class="rq">${h.q}</div><div class="ranswer"><span class="correct-ans">→ ${h.a}</span>${h.given?`<span class="given-ans">You said: ${h.given}</span>`:`<span class="skipped">Skipped</span>`}</div></div>`).join('')}`:''}
+      <button class="again-btn" onclick="start()">PLAY AGAIN</button>
+    </div>`;
+    return;
+  }
+  // Playing
+  const col=timeLeft>20?'#00d68f':timeLeft>10?'#ffaa00':'#ff3860';
+  const hasInput=input.trim().length>0;
+  app.innerHTML=`<div class="wrap">
+    <div class="top-row">
+      <div class="timer-num" id="timerNum" style="color:${col}">${timeLeft}</div>
+      <div class="score-area"><span class="ck">✓ </span><span class="cv">${correct}</span>${streak>=2?`<span class="streak">🔥 ${streak}</span>`:''}</div>
+    </div>
+    <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:${timeLeft/TOTAL*100}%;background:linear-gradient(90deg,${col},${col}cc)"></div></div>
+    <div class="q-card" style="animation:slideIn .25s ease">
+      <div class="q-label">Question ${idx+1}</div>
+      <div class="q-text">${questions[idx].q}</div>
+    </div>
+    <div class="input-row">
+      <input class="input-box" type="text" placeholder="Type your answer..." value="${input}" autocomplete="off" autocorrect="off" autocapitalize="off">
+      <button class="go-btn ${hasInput?'active':'inactive'}" onclick="submit()">GO</button>
+    </div>
+    <button class="skip-btn" onclick="skip()">Skip →</button>
+  </div>`;
+  const inp=document.querySelector('.input-box');
+  if(inp){
+    inp.addEventListener('input',e=>{input=e.target.value;
+      const btn=document.querySelector('.go-btn');
+      if(btn){btn.className='go-btn '+(e.target.value.trim()?'active':'inactive');}
+    });
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+    inp.focus();
+  }
+}
+render();
+</script>
+</body>
+</html>

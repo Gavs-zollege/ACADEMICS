@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Collection Language — Activity 6: Word Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080C14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7090;--success:#38C97A;--error:#E05555;--border:#1E2848;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg),#0C1020);font-family:'Source Serif 4',serif;color:var(--text);}
+  .wrap{max-width:580px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--teal);text-transform:uppercase;font-family:'Space Grotesk',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:32px;color:var(--gold);}
+  .sub{font-family:'Space Grotesk',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .prog-row{display:flex;align-items:center;gap:12px;margin-bottom:28px;}
+  .prog-text{font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--dim);}
+  .prog-bar{flex:1;height:5px;border-radius:3px;background:var(--border);overflow:hidden;}
+  .prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .4s;}
+  .q-card{background:var(--card);border-radius:14px;padding:28px 24px;border:1px solid var(--border);margin-bottom:20px;}
+  .q-num{font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--dim);margin-bottom:8px;}
+  .q-prompt{font-size:18px;line-height:1.6;margin-bottom:8px;}
+  .q-def{font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--teal);line-height:1.5;margin-bottom:16px;padding:10px 14px;background:rgba(26,138,125,.06);border-radius:8px;border-left:3px solid var(--teal);}
+  .build-area{display:flex;flex-wrap:wrap;gap:6px;min-height:48px;padding:12px;border-radius:10px;border:1.5px dashed var(--border);margin-bottom:16px;align-items:center;}
+  .build-area.empty-hint::before{content:'Tap word parts below to build the term...';color:var(--dim);font-family:'Space Grotesk',sans-serif;font-size:13px;}
+  .build-chip{padding:8px 14px;border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;border:1px solid;}
+  .build-chip:hover{transform:translateY(-1px);}
+  .pool-lbl{font-size:11px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;font-family:'Space Grotesk',sans-serif;font-weight:600;margin-bottom:8px;}
+  .pool{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+  .pool-chip{padding:8px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);font-family:'Space Grotesk',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;}
+  .pool-chip:hover{transform:translateY(-2px);}
+  .ctrls{display:flex;gap:10px;justify-content:center;margin-top:16px;}
+  .btn{padding:14px 36px;border-radius:10px;border:none;font-size:15px;font-weight:600;font-family:'Space Grotesk',sans-serif;cursor:pointer;}
+  .btn-gold{background:var(--gold);color:var(--bg);}
+  .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text);font-size:14px;padding:12px 24px;}
+  .fb{text-align:center;margin-top:12px;padding:12px;border-radius:10px;font-family:'Space Grotesk',sans-serif;font-size:14px;}
+  .results{text-align:center;padding:40px 20px;}
+  .rs{font-size:56px;font-weight:700;color:var(--gold);margin:16px 0 8px;}
+  .rm{font-family:'Space Grotesk',sans-serif;font-size:16px;color:var(--dim);margin-bottom:32px;}
+  .br{padding:14px 40px;border-radius:10px;border:none;background:var(--teal);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>Word Builder</h1><p class="sub">Construct medical terms from their word parts.</p></div>
+  <div id="game">
+    <div class="prog-row"><span class="prog-text" id="pp">1/8</span><div class="prog-bar"><div class="prog-fill" id="pf"></div></div><span class="prog-text" style="color:var(--success)" id="st">0✓</span></div>
+    <div class="q-card" id="qc"></div>
+    <div class="build-area" id="ba"></div>
+    <div id="pa"></div>
+    <div class="ctrls" id="ctrls"></div>
+    <div id="fba"></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {def:"Cutting into a vein",answer:["Phleb/o","-tomy"],term:"Phlebotomy",pool:["Phleb/o","-tomy","-lysis","Hem/o"]},
+  {def:"Destruction of red blood cells",answer:["Hem/o","-lysis"],term:"Hemolysis",pool:["Hem/o","-lysis","-itis","Ven/i"]},
+  {def:"Inflammation of a vein",answer:["Phleb/o","-itis"],term:"Phlebitis",pool:["Phleb/o","-itis","-emia","Erythr/o"]},
+  {def:"Blood mass / swelling under the skin",answer:["Hemat/o","-oma"],term:"Hematoma",pool:["Hemat/o","-oma","-lysis","Leuk/o"]},
+  {def:"Low blood sugar condition",answer:["Hypo-","glyc/o","-emia"],term:"Hypoglycemia",pool:["Hypo-","glyc/o","-emia","Hyper-","-itis"]},
+  {def:"High potassium in the blood",answer:["Hyper-","kal","-emia"],term:"Hyperkalemia",pool:["Hyper-","kal","-emia","Hypo-","-lysis"]},
+  {def:"Low platelet (clot cell) count",answer:["Thromb/o","-cyte","-penia"],term:"Thrombocytopenia",pool:["Thromb/o","-cyte","-penia","Erythr/o","-emia"]},
+  {def:"Study of blood",answer:["Hemat/o","-logy"],term:"Hematology",pool:["Hemat/o","-logy","-gram","Phleb/o"]},
+];
+let idx=0,score=0,built=[],checked=false,correct=false;
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+let shuffledPools=QS.map(q=>shuffle([...q.pool]));
+function render(){
+  const q=QS[idx];
+  document.getElementById('pp').textContent=`${idx+1}/${QS.length}`;
+  document.getElementById('pf').style.width=`${(idx+1)/QS.length*100}%`;
+  document.getElementById('st').textContent=`${score}✓`;
+  document.getElementById('qc').innerHTML=`<div class="q-num">Term ${idx+1} of ${QS.length}</div><div class="q-prompt">Build the term for:</div><div class="q-def">${q.def}</div>`;
+  // build area
+  const ba=document.getElementById('ba');
+  if(!built.length&&!checked){ba.className='build-area empty-hint';ba.innerHTML='';}
+  else{ba.className='build-area';
+    let bh='';built.forEach((p,i)=>{
+      const col=checked?(correct?'var(--success)':'var(--error)'):'var(--gold)';
+      bh+=`<div class="build-chip" style="background:${col}15;border-color:${col}44;color:${col}" onclick="removePart(${i})">${p}</div>`;
+    });ba.innerHTML=bh;}
+  // pool
+  const remaining=shuffledPools[idx].filter(p=>!built.includes(p));
+  let ph='';
+  if(remaining.length&&!checked){ph='<div class="pool-lbl">Word Parts</div><div class="pool">';
+    remaining.forEach((p,i)=>{ph+=`<div class="pool-chip" onclick="addPart('${p.replace(/'/g,"\\'")}')">${p}</div>`;});ph+='</div>';}
+  document.getElementById('pa').innerHTML=ph;
+  // controls
+  let ch='';
+  if(!checked&&built.length>0)ch+=`<button class="btn btn-gold" onclick="check()">Check</button>`;
+  if(!checked)ch+=`<button class="btn btn-outline" onclick="clearBuild()">Clear</button>`;
+  if(checked)ch+=`<button class="btn btn-gold" onclick="next()">${idx+1>=QS.length?'See Results':'Next →'}</button>`;
+  document.getElementById('ctrls').innerHTML=ch;
+  // feedback
+  if(checked){
+    const bg=correct?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)';
+    const bc=correct?'rgba(56,201,122,.2)':'rgba(224,85,85,.2)';
+    const col=correct?'var(--success)':'var(--error)';
+    document.getElementById('fba').innerHTML=`<div class="fb" style="background:${bg};border:1px solid ${bc};color:${col}">${correct?'Correct! ':'The answer is: '}${q.answer.join(' + ')} = <strong>${q.term}</strong></div>`;
+  }else{document.getElementById('fba').innerHTML='';}
+}
+function addPart(p){if(checked)return;built.push(p);render();}
+function removePart(i){if(checked)return;built.splice(i,1);render();}
+function clearBuild(){built=[];render();}
+function check(){
+  checked=true;
+  const q=QS[idx];
+  correct=built.length===q.answer.length&&built.every((p,i)=>p===q.answer[i]);
+  if(correct)score++;render();
+}
+function next(){if(idx+1>=QS.length){showRes();return;}idx++;built=[];checked=false;correct=false;render();}
+function showRes(){document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='block';
+  const pct=score/QS.length*100;const col=pct>=80?'var(--success)':pct>=60?'var(--gold)':'var(--error)';
+  const msg=pct>=80?"Excellent word building!":pct>=60?"Good work — practice the tricky ones.":"Review prefixes, roots, and suffixes.";
+  r.innerHTML=`<div class="rs">${score}/${QS.length}</div><div class="rm" style="color:${col}">${msg}</div><button class="br" onclick="reset()">Try Again</button>`;}
+function reset(){idx=0;score=0;built=[];checked=false;correct=false;shuffledPools=QS.map(q=>shuffle([...q.pool]));document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

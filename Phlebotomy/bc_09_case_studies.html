@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Collection Language — Activity 9: Case Studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:wght@400;600;700&family=Epilogue:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080C14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7098;--success:#38C97A;--error:#E05555;--border:#1E2848;--info:#5B8CDB;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(170deg,var(--bg),#0D1224);font-family:'Cormorant Infant',serif;color:var(--text);}
+  .wrap{max-width:600px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--teal);text-transform:uppercase;font-family:'Epilogue',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:32px;color:var(--gold);}
+  .sub{font-family:'Epilogue',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .tabs{display:flex;gap:6px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
+  .tab{padding:7px 14px;border-radius:20px;font-family:'Epilogue',sans-serif;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);transition:all .2s;}
+  .tab.active{background:rgba(26,138,125,.15);border-color:var(--teal);color:var(--gold);}
+  .sc-card{background:var(--card);border-radius:14px;padding:24px;border:1px solid var(--border);border-left:4px solid var(--info);margin-bottom:20px;}
+  .sc-badge{display:inline-block;background:rgba(91,140,219,.12);color:var(--info);padding:4px 12px;border-radius:8px;font-size:11px;font-family:'Epilogue',sans-serif;font-weight:600;margin-bottom:10px;}
+  .sc-title{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+  .sc-order{font-size:15px;line-height:1.7;font-style:italic;padding:12px 16px;background:rgba(91,140,219,.04);border-radius:8px;border-left:3px solid var(--info);margin-bottom:8px;font-family:'Epilogue',sans-serif;}
+  .sc-text{font-size:15px;line-height:1.6;color:var(--dim);font-family:'Epilogue',sans-serif;}
+  .q-card{background:var(--card);border-radius:14px;padding:24px;border:1px solid var(--border);}
+  .q-prog{font-family:'Epilogue',sans-serif;font-size:12px;color:var(--dim);margin-bottom:10px;}
+  .q-text{font-size:18px;font-weight:600;margin-bottom:20px;line-height:1.5;}
+  .opt{padding:14px 18px;margin-bottom:8px;border-radius:10px;border:1.5px solid var(--border);font-family:'Epilogue',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;}
+  .opt:hover{transform:translateX(4px);}
+  .opt .ltr{font-weight:600;color:var(--dim);width:20px;}
+  .opt.correct{background:rgba(56,201,122,.08);border-color:var(--success);color:var(--success);}
+  .opt.wrong{background:rgba(224,85,85,.08);border-color:var(--error);color:var(--error);}
+  .opt.dis{cursor:default;}.opt.dis:hover{transform:none;}
+  .exp{margin-top:16px;padding:16px 20px;border-radius:12px;font-family:'Epilogue',sans-serif;font-size:14px;line-height:1.6;}
+  .exp-t{font-weight:600;margin-bottom:4px;}
+  .nw{text-align:center;margin-top:20px;}
+  .btn{padding:14px 40px;border-radius:10px;border:none;background:var(--gold);color:var(--bg);font-size:15px;font-weight:600;font-family:'Epilogue',sans-serif;cursor:pointer;}
+  .btn:hover{filter:brightness(1.1);}
+  .results{text-align:center;padding:40px 20px;}
+  .res-lbl{font-size:14px;letter-spacing:3px;color:var(--teal);text-transform:uppercase;font-family:'Epilogue',sans-serif;font-weight:600;}
+  .res-score{font-size:56px;font-weight:700;color:var(--gold);margin:16px 0;}
+  .res-msg{font-family:'Epilogue',sans-serif;font-size:15px;color:var(--dim);margin-bottom:24px;}
+  .res-case{text-align:left;padding:10px 14px;margin-bottom:8px;border-radius:10px;background:var(--card);border:1px solid var(--border);font-family:'Epilogue',sans-serif;font-size:13px;}
+  .btn-retry{margin-top:20px;padding:14px 40px;border-radius:10px;border:none;background:var(--teal);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    
+    <h1>Clinical Case Studies</h1>
+    <p class="sub">Apply your terminology knowledge to real-world charting scenarios.</p>
+  </div>
+  <div id="game">
+    <div class="tabs" id="tabs"></div>
+    <div class="sc-card" id="scc"></div>
+    <div class="q-card" id="qc"></div>
+    <div id="ea"></div>
+    <div class="nw" id="nw" style="display:none"></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const CASES=[
+  {
+    title:"STAT Order",
+    order:'"STAT draw for CBC and PT/INR. No tourniquet above 1 minute. Avoid hemolysis."',
+    scenario:"You receive this order for a patient in the emergency department. You must interpret every term correctly before proceeding.",
+    questions:[
+      {q:"What does 'STAT' mean in this order?",o:["Routine priority","Collect at a specific time","Immediately / urgent priority","Collect after fasting"],a:2,why:"STAT means immediately — this is the highest priority. The specimen must be collected and transported without delay."},
+      {q:"Why does the order say 'no tourniquet above 1 minute'?",o:["Tourniquets are never used","Prolonged tourniquet use can cause hemolysis and alter results","It saves time","The patient is allergic to latex"],a:1,why:"Leaving a tourniquet on too long (>1 minute) can cause hemoconcentration and hemolysis, which interfere with accurate lab results — especially for CBC and clotting studies."},
+      {q:"What does 'hemolysis' mean, and why must it be avoided?",o:["Blood clotting — it delays testing","Vein inflammation — it hurts the patient","Destruction of red blood cells — it can interfere with results","Low blood sugar — it's dangerous for the patient"],a:2,why:"Hemolysis = hemo (blood) + lysis (breakdown). Destroyed red blood cells release contents that skew lab values, potentially causing specimen rejection."},
+    ]
+  },
+  {
+    title:"Routine Draw",
+    order:'"Patient requires a fasting lipid panel and CMP. Use butterfly needle for venipuncture. Label tubes immediately."',
+    scenario:"A routine outpatient order. You need to identify each term and understand the proper collection procedure.",
+    questions:[
+      {q:"What does CMP stand for?",o:["Complete Metabolic Panel — includes BMP plus liver function","Comprehensive Blood Count","Capillary Micro-Puncture","Central Medical Protocol"],a:0,why:"CMP = Comprehensive Metabolic Panel. It includes all the tests in a BMP (glucose, electrolytes, kidney function) plus liver function tests and total protein."},
+      {q:"A 'butterfly needle' is also known as a:",o:["Lancet","Microcollection device","Winged infusion set","Tourniquet"],a:2,why:"A butterfly needle is a winged infusion set — it has small plastic wings for grip and a flexible tube. It's used for difficult, small, or fragile veins."},
+      {q:"Why must tubes be labeled 'immediately'?",o:["To save time at the end of the shift","To prevent mislabeling errors that could endanger the patient","It's optional but recommended","The lab prefers neat handwriting"],a:1,why:"Labeling immediately at the bedside after collection prevents mix-ups. Mislabeled specimens can lead to wrong-patient results, incorrect treatment, and serious patient harm."},
+    ]
+  },
+  {
+    title:"Pediatric Heel Stick",
+    order:'"Heel stick for newborn bilirubin test. Use microcollection tube. Protect sample from light."',
+    scenario:"A neonatal order. The terminology here involves capillary collection and special handling requirements.",
+    questions:[
+      {q:"A 'heel stick' is a type of:",o:["Venipuncture","Arterial puncture","Capillary puncture","Surgical incision"],a:2,why:"A heel stick is a capillary puncture — blood is collected from the infant's heel using a lancet because their veins are too small for standard venipuncture."},
+      {q:"Why must the bilirubin sample be 'protected from light'?",o:["Light activates the anticoagulant","Bilirubin degrades when exposed to light, giving inaccurate results","The tube is light-sensitive plastic","It prevents hemolysis"],a:1,why:"Bilirubin is a light-sensitive compound. Exposure to light breaks it down, leading to falsely low results and potentially missing jaundice in the newborn."},
+      {q:"A 'microcollection tube' is used because:",o:["It's cheaper than regular tubes","Newborns have limited blood volume requiring small collection devices","It prevents hemolysis","It's required for all bilirubin tests"],a:1,why:"Microcollection tubes hold very small volumes of blood — essential for pediatric patients who cannot safely give the larger volumes needed for standard tubes."},
+    ]
+  },
+  {
+    title:"Complicated Draw",
+    order:'"Patient with history of phlebitis. Use smallest gauge possible. Monitor for hematoma post-draw."',
+    scenario:"A patient with a vein condition. You must understand the medical terminology to handle this safely.",
+    questions:[
+      {q:"'Phlebitis' breaks down to:",o:["Phleb/o (vein) + -itis (inflammation)","Phleb/o (blood) + -itis (cutting)","Phil (love) + -itis (condition)","Phleb/o (vein) + -lysis (breakdown)"],a:0,why:"Phlebitis = phleb/o (vein) + -itis (inflammation). It means the patient has inflamed veins, requiring extra care during collection."},
+      {q:"'Use smallest gauge possible' means using a needle that is:",o:["The thickest available for fast collection","The smallest diameter (higher gauge number) for patient comfort","The longest needle available","A lancet instead of a needle"],a:1,why:"In needle gauge, a HIGHER number = SMALLER diameter. Using the smallest gauge reduces trauma to already-inflamed veins and minimizes pain."},
+      {q:"A 'hematoma' occurs when:",o:["Blood clots inside the tube","Blood pools under the skin from vein trauma","The patient faints during collection","Red blood cells are destroyed"],a:1,why:"Hematoma = hemat/o (blood) + -oma (mass/swelling). It's blood pooling under the skin, often from the needle puncturing through the vein or inadequate pressure after the draw."},
+    ]
+  },
+];
+let ci=0,qi=0,sel=null,answered=false,scores=[0,0,0,0];
+function tq(){return CASES.reduce((a,c)=>a+c.questions.length,0);}
+function ts(){return scores.reduce((a,b)=>a+b,0);}
+function render(){
+  let th='';CASES.forEach((c,i)=>{th+=`<div class="tab ${ci===i?'active':''}" onclick="sw(${i})">Case ${i+1}</div>`;});
+  document.getElementById('tabs').innerHTML=th;
+  const cs=CASES[ci],q=cs.questions[qi];
+  document.getElementById('scc').innerHTML=`<div class="sc-badge">CHARTING ORDER</div><div class="sc-title">${cs.title}</div><div class="sc-order">${cs.order}</div><div class="sc-text">${cs.scenario}</div>`;
+  let oh='';q.o.forEach((o,i)=>{let cls='opt';if(answered){cls+=' dis';if(i===q.a)cls+=' correct';else if(i===sel)cls+=' wrong';}
+    oh+=`<div class="${cls}" onclick="pick(${i})"><span class="ltr">${String.fromCharCode(65+i)}.</span><span>${o}</span></div>`;});
+  document.getElementById('qc').innerHTML=`<div class="q-prog">Question ${qi+1} of ${cs.questions.length}</div><div class="q-text">${q.q}</div>${oh}`;
+  if(answered){const c=sel===q.a;document.getElementById('ea').innerHTML=`<div class="exp" style="background:${c?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)'};border:1px solid ${c?'rgba(56,201,122,.18)':'rgba(224,85,85,.18)'}"><div class="exp-t" style="color:${c?'var(--success)':'var(--error)'}">${c?'Correct!':'Incorrect'}</div><div style="color:var(--dim)">${q.why}</div></div>`;
+    let bl=qi+1<cs.questions.length?'Next Question →':ci+1<CASES.length?'Next Case →':'See Results';
+    document.getElementById('nw').style.display='block';document.getElementById('nw').innerHTML=`<button class="btn" onclick="next()">${bl}</button>`;
+  }else{document.getElementById('ea').innerHTML='';document.getElementById('nw').style.display='none';}
+}
+function pick(i){if(answered)return;sel=i;answered=true;if(i===CASES[ci].questions[qi].a)scores[ci]++;render();}
+function next(){const cs=CASES[ci];if(qi+1<cs.questions.length){qi++;sel=null;answered=false;render();}else if(ci+1<CASES.length){ci++;qi=0;sel=null;answered=false;render();}else showRes();}
+function sw(i){if(i===ci)return;ci=i;qi=0;sel=null;answered=false;render();}
+function showRes(){document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='block';
+  const s=ts(),t=tq();const msg=s===t?"Perfect clinical reasoning!":s>=t-2?"Strong work — review missed questions.":"Review the terminology and try again.";
+  let ch='';CASES.forEach((c,i)=>{const col=scores[i]===c.questions.length?'var(--success)':'var(--error)';ch+=`<div class="res-case"><span style="color:var(--gold)">${c.title}:</span> <span style="color:${col}">${scores[i]}/${c.questions.length}</span></div>`;});
+  r.innerHTML=`<div class="res-lbl">Cases Complete</div><div class="res-score">${s}/${t}</div><div class="res-msg">${msg}</div>${ch}<button class="btn-retry" onclick="reset()">Try Again</button>`;}
+function reset(){ci=0;qi=0;sel=null;answered=false;scores=[0,0,0,0];document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

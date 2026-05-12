@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Collection Language — Activity 2: Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:wght@400;700&family=Assistant:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#070B14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#68708A;--border:#1C2444;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg),#0C1220);font-family:'Cardo',serif;color:var(--text);}
+  .wrap{max-width:640px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--teal);text-transform:uppercase;font-family:'Assistant',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:34px;color:var(--gold);}
+  .sub{font-family:'Assistant',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  #search{width:100%;padding:14px 20px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:15px;font-family:'Assistant',sans-serif;margin-bottom:14px;outline:none;}
+  #search:focus{border-color:var(--teal);}
+  .cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+  .cat{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Assistant',sans-serif;transition:all .2s;}
+  .cat.active{border-color:var(--gold);background:rgba(226,185,76,.1);color:var(--gold);}
+  .count{font-size:12px;font-family:'Assistant',sans-serif;color:var(--dim);margin-bottom:10px;}
+  .list{border-radius:12px;border:1px solid var(--border);overflow:hidden;}
+  .item{padding:14px 20px;cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border);}
+  .item:last-child{border-bottom:none;}
+  .item:hover{background:var(--surface);}
+  .item-head{display:flex;justify-content:space-between;align-items:center;}
+  .item-left{display:flex;align-items:center;gap:12px;}
+  .bar{width:3px;height:22px;border-radius:2px;flex-shrink:0;}
+  .term{font-size:16px;font-weight:700;}
+  .tag{font-size:10px;padding:2px 8px;border-radius:6px;font-family:'Assistant',sans-serif;font-weight:600;}
+  .arrow{color:var(--dim);font-size:14px;transition:transform .2s;}
+  .def{margin-top:10px;padding-left:15px;font-size:14px;line-height:1.7;color:var(--dim);font-family:'Assistant',sans-serif;display:none;}
+  .item.open .def{display:block;}
+  .item.open .arrow{transform:rotate(180deg);}
+  .item.open .term{color:var(--gold);}
+  .empty{padding:40px;text-align:center;color:var(--dim);font-family:'Assistant',sans-serif;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    
+    <h1>Interactive Glossary</h1>
+    <p class="sub">30+ terms · Search or filter by category</p>
+  </div>
+  <input type="text" id="search" placeholder="Search terms or definitions..." oninput="render()">
+  <div class="cats" id="cats"></div>
+  <div class="count" id="count"></div>
+  <div class="list" id="list"></div>
+</div>
+<script>
+const G=[
+  {t:"A-/An-",d:"Prefix meaning 'without.' Example: Anoxia = without oxygen.",c:"Prefixes"},
+  {t:"Anti-",d:"Prefix meaning 'against.' Example: Anticoagulant = against clotting; Antibodies = against foreign substances.",c:"Prefixes"},
+  {t:"Brady-",d:"Prefix meaning 'slow.' Example: Bradycardia = slow heart rate.",c:"Prefixes"},
+  {t:"Hemo-/Hemat/o",d:"Root meaning 'blood.' Example: Hemolysis = blood breakdown; Hematoma = blood mass.",c:"Roots"},
+  {t:"Hyper-",d:"Prefix meaning 'above/high.' Example: Hyperkalemia = high potassium in blood.",c:"Prefixes"},
+  {t:"Hypo-",d:"Prefix meaning 'below/low.' Example: Hypoglycemia = low blood sugar.",c:"Prefixes"},
+  {t:"Tachy-",d:"Prefix meaning 'fast.' Example: Tachycardia = fast heart rate.",c:"Prefixes"},
+  {t:"Erythr/o",d:"Root meaning 'red.' Example: Erythrocytes = red blood cells.",c:"Roots"},
+  {t:"Leuk/o",d:"Root meaning 'white.' Example: Leukocytes = white blood cells.",c:"Roots"},
+  {t:"Phleb/o",d:"Root meaning 'vein.' Example: Phlebotomy = cutting into a vein; Phlebitis = vein inflammation.",c:"Roots"},
+  {t:"Thromb/o",d:"Root meaning 'clot.' Example: Thrombocytopenia = low platelet (clot cell) count.",c:"Roots"},
+  {t:"Ven/i",d:"Root meaning 'vein.' Example: Venipuncture = piercing a vein.",c:"Roots"},
+  {t:"-emia",d:"Suffix meaning 'blood condition.' Example: Anemia = condition of low red blood cells.",c:"Suffixes"},
+  {t:"-gram",d:"Suffix meaning 'record or picture.' Example: Angiogram = image of blood vessels.",c:"Suffixes"},
+  {t:"-itis",d:"Suffix meaning 'inflammation.' Example: Phlebitis = inflammation of a vein.",c:"Suffixes"},
+  {t:"-logy",d:"Suffix meaning 'study of.' Example: Hematology = study of blood.",c:"Suffixes"},
+  {t:"-lysis",d:"Suffix meaning 'breakdown/destruction.' Example: Hemolysis = destruction of red blood cells.",c:"Suffixes"},
+  {t:"-otomy/-tomy",d:"Suffix meaning 'cutting/incision.' Example: Phlebotomy = cutting into a vein.",c:"Suffixes"},
+  {t:"Antecubital",d:"The area in front of the elbow — the most common site for venipuncture.",c:"Procedures"},
+  {t:"Anticoagulant",d:"A substance that prevents blood from clotting. Found in collection tubes like EDTA and heparin tubes.",c:"Procedures"},
+  {t:"Butterfly Needle",d:"A winged infusion set used for difficult veins or small, fragile veins.",c:"Equipment"},
+  {t:"Capillary Puncture",d:"Blood collection via finger stick or heel stick using a lancet. Collected into microcollection tubes.",c:"Procedures"},
+  {t:"Tourniquet",d:"A device used to restrict venous blood flow to make veins more visible and palpable before collection.",c:"Equipment"},
+  {t:"Lancet",d:"A small, sharp device used to puncture the skin for capillary blood collection.",c:"Equipment"},
+  {t:"Microcollection Tube",d:"A small tube used for small blood volumes from capillary punctures, such as in pediatric patients.",c:"Equipment"},
+  {t:"Gauge",d:"Measurement of needle diameter. Higher gauge number = smaller needle. Important for patient comfort and hemolysis prevention.",c:"Equipment"},
+  {t:"CBC",d:"Complete Blood Count — measures red cells, white cells, hemoglobin, hematocrit, and platelets.",c:"Abbreviations"},
+  {t:"BMP",d:"Basic Metabolic Panel — measures glucose, calcium, electrolytes, and kidney function.",c:"Abbreviations"},
+  {t:"CMP",d:"Comprehensive Metabolic Panel — includes BMP tests plus liver function tests and total protein.",c:"Abbreviations"},
+  {t:"PT/INR",d:"Prothrombin Time / International Normalized Ratio — a clotting test for monitoring anticoagulant therapy.",c:"Abbreviations"},
+  {t:"Hgb",d:"Hemoglobin — the protein in red blood cells that carries oxygen.",c:"Abbreviations"},
+  {t:"Hct",d:"Hematocrit — the percentage of blood volume made up of red blood cells.",c:"Abbreviations"},
+  {t:"ESR",d:"Erythrocyte Sedimentation Rate — a test measuring how quickly red blood cells settle, indicating inflammation.",c:"Abbreviations"},
+  {t:"STAT",d:"Abbreviation meaning 'immediately' — highest priority for specimen collection and processing.",c:"Abbreviations"},
+  {t:"Bilirubin",d:"A substance tested in newborns to detect jaundice. Samples must be protected from light.",c:"Procedures"},
+];
+const CATS=["All","Prefixes","Roots","Suffixes","Procedures","Equipment","Abbreviations"];
+const CC={Prefixes:"#E05555",Roots:"#1A8A7D",Suffixes:"#5B8CDB",Procedures:"#E2B94C",Equipment:"#8B6AAE",Abbreviations:"#E8976A"};
+let activeCat="All",openIdx=-1;
+function render(){
+  const s=document.getElementById('search').value.toLowerCase();
+  const filtered=G.filter(g=>(g.t.toLowerCase().includes(s)||g.d.toLowerCase().includes(s))&&(activeCat==="All"||g.c===activeCat));
+  let ch='';CATS.forEach(c=>{const n=c==="All"?G.length:G.filter(g=>g.c===c).length;ch+=`<button class="cat ${activeCat===c?'active':''}" onclick="setCat('${c}')">${c} (${n})</button>`;});
+  document.getElementById('cats').innerHTML=ch;
+  document.getElementById('count').textContent=`Showing ${filtered.length} term${filtered.length!==1?'s':''}`;
+  if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms found.</div>';return;}
+  let h='';filtered.forEach((g,i)=>{const col=CC[g.c]||'var(--gold)';const op=openIdx===i;
+    h+=`<div class="item ${op?'open':''}" onclick="tog(${i})"><div class="item-head"><div class="item-left"><div class="bar" style="background:${col}"></div><span class="term">${g.t}</span></div><div style="display:flex;align-items:center;gap:8px"><span class="tag" style="color:${col};background:${col}18">${g.c}</span><span class="arrow">▾</span></div></div><div class="def" style="border-left:2px solid ${col}33;${op?'display:block':''}">${g.d}</div></div>`;
+  });document.getElementById('list').innerHTML=h;
+}
+function setCat(c){activeCat=c;openIdx=-1;render();}
+function tog(i){openIdx=openIdx===i?-1:i;render();}
+render();
+</script>
+</body>
+</html>

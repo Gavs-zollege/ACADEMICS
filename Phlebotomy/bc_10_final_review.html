@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blood Collection Language — Activity 10: Final Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Sorts+Mill+Goudy:wght@400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080C14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6870A0;--success:#38C97A;--border:#1E2848;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg),#0C1020);font-family:'Sorts Mill Goudy',serif;color:var(--text);}
+  .wrap{max-width:620px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--teal);text-transform:uppercase;font-family:'Outfit',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:34px;color:var(--gold);}
+  .sub{font-family:'Outfit',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .prog-section{margin-bottom:28px;}
+  .prog-row{display:flex;justify-content:space-between;font-family:'Outfit',sans-serif;font-size:13px;margin-bottom:6px;}
+  .prog-bar{height:8px;border-radius:4px;background:var(--border);overflow:hidden;}
+  .prog-fill{height:100%;border-radius:4px;transition:width .5s,background .5s;}
+  .topic{background:var(--card);border-radius:14px;padding:18px 20px;margin-bottom:10px;border:1px solid var(--border);transition:all .3s;cursor:pointer;}
+  .topic:hover{transform:translateY(-1px);}
+  .topic.checked{opacity:.5;}
+  .topic-head{display:flex;align-items:center;gap:14px;}
+  .check-box{width:28px;height:28px;border-radius:8px;border:2px solid;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;font-weight:700;color:#fff;transition:all .2s;cursor:pointer;}
+  .check-box:hover{transform:scale(1.1);}
+  .topic-info{flex:1;}
+  .topic-title-row{display:flex;align-items:center;gap:10px;}
+  .color-bar{width:4px;height:20px;border-radius:2px;flex-shrink:0;}
+  .topic-title{font-size:17px;font-weight:600;}
+  .topic-meta{font-family:'Outfit',sans-serif;font-size:12px;color:var(--dim);margin-top:4px;padding-left:14px;}
+  .arrow{color:var(--dim);font-size:16px;transition:transform .2s;user-select:none;}
+  .topic.open .arrow{transform:rotate(180deg);}
+  .points{margin-top:14px;padding-left:42px;}
+  .point{font-family:'Outfit',sans-serif;font-size:14px;color:var(--dim);line-height:1.7;padding-left:12px;margin-bottom:6px;}
+  .done-box{text-align:center;margin-top:24px;padding:28px 24px;border-radius:16px;}
+  .done-emoji{font-size:32px;}
+  .done-title{font-size:24px;font-weight:700;color:var(--success);margin-top:8px;}
+  .done-text{font-family:'Outfit',sans-serif;font-size:14px;color:var(--dim);margin-top:8px;line-height:1.6;}
+  .reset-wrap{text-align:center;margin-top:20px;}
+  .btn-reset{padding:10px 24px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-family:'Outfit',sans-serif;cursor:pointer;}
+  .btn-reset:hover{border-color:var(--dim);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    
+    <h1>Final Review Checklist</h1>
+    <p class="sub">Check off each topic as you feel confident. Aim for 100% before your exam!</p>
+  </div>
+  <div class="prog-section">
+    <div class="prog-row">
+      <span style="color:var(--dim)">Mastery Progress</span>
+      <span id="progText" style="font-weight:600"></span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+  <div id="topicList"></div>
+  <div id="doneBox" style="display:none"></div>
+  <div class="reset-wrap"><button class="btn-reset" onclick="resetAll()">Reset Checklist</button></div>
+</div>
+<script>
+const TOPICS=[
+  {title:"Why Medical Terminology Matters",color:"#1A8A7D",points:[
+    "Clear communication in healthcare settings prevents misunderstandings",
+    "Avoiding critical errors — wrong terms can mean wrong procedures",
+    "Enhancing professionalism and confidence in clinical environments",
+    "Knowing correct terms ensures patient safety and accurate lab work"
+  ]},
+  {title:"Structure of Medical Terms",color:"#E2B94C",points:[
+    "Most medical terms are built from Latin or Greek roots",
+    "Formula: Prefix + Root + Suffix",
+    "Combining vowel (usually 'o') joins roots to suffixes",
+    "Example: Venipuncture = Veni (vein) + puncture (to pierce)",
+    "Example: Cardiology = Cardi (heart) + o + logy (study of)"
+  ]},
+  {title:"Common Prefixes",color:"#E05555",points:[
+    "Hemo- = Blood (Hemolysis)",
+    "Hypo- = Below/low (Hypoglycemia)",
+    "Hyper- = Above/high (Hyperkalemia)",
+    "Anti- = Against (Anticoagulant, Antibodies)",
+    "A-/An- = Without (Anoxia = without oxygen)",
+    "Tachy- = Fast (Tachycardia)",
+    "Brady- = Slow (Bradycardia)"
+  ]},
+  {title:"Common Roots",color:"#8B6AAE",points:[
+    "Ven/i = Vein (Venipuncture)",
+    "Phleb/o = Vein (Phlebotomy, Phlebitis)",
+    "Hem/o or Hemat/o = Blood (Hematoma, Hematology)",
+    "Erythr/o = Red (Erythrocytes = red blood cells)",
+    "Leuk/o = White (Leukocytes = white blood cells)",
+    "Thromb/o = Clot (Thrombocytopenia = low platelet count)"
+  ]},
+  {title:"Common Suffixes",color:"#5B8CDB",points:[
+    "-otomy/-tomy = Cutting/incision (Phlebotomy)",
+    "-emia = Blood condition (Anemia)",
+    "-lysis = Breakdown/destruction (Hemolysis)",
+    "-itis = Inflammation (Phlebitis)",
+    "-gram = Record or picture (Angiogram)",
+    "-logy = Study of (Hematology)"
+  ]},
+  {title:"Phlebotomy-Specific Terms",color:"#E8976A",points:[
+    "Capillary Puncture = finger/heel stick blood collection",
+    "Tourniquet = device restricting venous blood flow",
+    "Anticoagulant = substance preventing clotting",
+    "Hemolysis = destruction of red blood cells",
+    "Venipuncture = piercing a vein to draw blood",
+    "Hematoma = blood mass under the skin from vein trauma",
+    "Antecubital = area in front of the elbow (most common draw site)",
+    "Gauge = needle diameter (higher number = smaller needle)"
+  ]},
+  {title:"Lab Abbreviations",color:"#C4A84D",points:[
+    "CBC = Complete Blood Count",
+    "BMP = Basic Metabolic Panel",
+    "CMP = Comprehensive Metabolic Panel",
+    "PT/INR = Prothrombin Time / International Normalized Ratio (clotting)",
+    "Hgb = Hemoglobin",
+    "Hct = Hematocrit",
+    "ESR = Erythrocyte Sedimentation Rate",
+    "STAT = Immediately (highest priority)"
+  ]},
+  {title:"Tube Labeling & Real-World Charting",color:"#38C97A",points:[
+    "Labels must include: test name, patient name/DOB, time/date, collector initials, special conditions",
+    "STAT order example: urgent CBC and PT/INR, avoid hemolysis, limit tourniquet time",
+    "Routine draw: fasting lipid panel + CMP, butterfly needle, label immediately",
+    "Pediatric: heel stick for bilirubin, microcollection tube, protect from light",
+    "Complicated draw: phlebitis history — smallest gauge, monitor for hematoma",
+    "Capillary collection: lancet on lateral side of fingertip for blood glucose"
+  ]},
+];
+let checked=new Set(),openIdx=-1;
+function render(){
+  const pct=checked.size/TOPICS.length*100;const allDone=checked.size===TOPICS.length;
+  const pe=document.getElementById('progText');
+  pe.textContent=`${checked.size}/${TOPICS.length} topics (${Math.round(pct)}%)`;
+  pe.style.color=allDone?'var(--success)':'var(--gold)';
+  const fill=document.getElementById('progFill');
+  fill.style.width=pct+'%';
+  fill.style.background=allDone?'var(--success)':'linear-gradient(90deg,var(--teal),var(--gold))';
+  let h='';
+  TOPICS.forEach((t,i)=>{
+    const isDone=checked.has(i);const isOpen=openIdx===i;
+    h+=`<div class="topic ${isDone?'checked':''} ${isOpen?'open':''}" id="topic${i}">
+      <div class="topic-head">
+        <div class="check-box" style="border-color:${isDone?'var(--success)':t.color};background:${isDone?'var(--success)':'transparent'}" onclick="event.stopPropagation();toggleCheck(${i})">${isDone?'✓':''}</div>
+        <div class="topic-info" onclick="toggleOpen(${i})">
+          <div class="topic-title-row">
+            <div class="color-bar" style="background:${t.color}"></div>
+            <span class="topic-title" style="color:${isDone?'var(--success)':'var(--gold)'}">${t.title}</span>
+          </div>
+          ${!isOpen?`<div class="topic-meta">${t.points.length} key points · tap to expand</div>`:''}
+        </div>
+        <span class="arrow" onclick="toggleOpen(${i})">▾</span>
+      </div>
+      ${isOpen?`<div class="points">${t.points.map(p=>`<div class="point" style="border-left:2px solid ${t.color}33">${p}</div>`).join('')}</div>`:''}
+    </div>`;
+  });
+  document.getElementById('topicList').innerHTML=h;
+  const db=document.getElementById('doneBox');
+  if(allDone){
+    db.style.display='block';
+    db.innerHTML=`<div class="done-box" style="background:linear-gradient(135deg,rgba(56,201,122,.07),rgba(56,201,122,.02));border:1px solid rgba(56,201,122,.25)">
+      <div class="done-emoji">🎓</div>
+      <div class="done-title">Review Complete!</div>
+      <div class="done-text">You've reviewed all 8 topic areas covering the language of blood collection — prefixes, roots, suffixes, procedures, abbreviations, and real-world charting. You're ready for your exam!</div>
+    </div>`;
+  }else{db.style.display='none';}
+}
+function toggleCheck(i){checked.has(i)?checked.delete(i):checked.add(i);render();}
+function toggleOpen(i){openIdx=openIdx===i?-1:i;render();}
+function resetAll(){checked=new Set();openIdx=-1;render();}
+render();
+</script>
+</body>
+</html>

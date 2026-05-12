@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Ops — Activity 2: Glossary</title>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Rubik:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#070B14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#68708A;--border:#1C2444;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg),#0C1220);font-family:'Merriweather',serif;color:var(--text);}
+  .wrap{max-width:640px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--teal);text-transform:uppercase;font-family:'Rubik',sans-serif;font-weight:600;margin-bottom:8px;}
+  h1{font-size:34px;color:var(--gold);}
+  .sub{font-family:'Rubik',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  #search{width:100%;padding:14px 20px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:15px;font-family:'Rubik',sans-serif;margin-bottom:14px;outline:none;}
+  #search:focus{border-color:var(--teal);}
+  .cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+  .cat{padding:5px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Rubik',sans-serif;transition:all .2s;}
+  .cat.active{border-color:var(--gold);background:rgba(226,185,76,.1);color:var(--gold);}
+  .count{font-size:12px;font-family:'Rubik',sans-serif;color:var(--dim);margin-bottom:10px;}
+  .list{border-radius:12px;border:1px solid var(--border);overflow:hidden;}
+  .item{padding:14px 20px;cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border);}
+  .item:last-child{border-bottom:none;}
+  .item:hover{background:var(--surface);}
+  .item-head{display:flex;justify-content:space-between;align-items:center;}
+  .item-left{display:flex;align-items:center;gap:12px;}
+  .bar{width:3px;height:22px;border-radius:2px;flex-shrink:0;}
+  .term{font-size:16px;font-weight:700;}
+  .tag{font-size:10px;padding:2px 8px;border-radius:6px;font-family:'Rubik',sans-serif;font-weight:600;}
+  .arrow{color:var(--dim);font-size:14px;transition:transform .2s;}
+  .def{margin-top:10px;padding-left:15px;font-size:14px;line-height:1.7;color:var(--dim);font-family:'Rubik',sans-serif;display:none;}
+  .item.open .def{display:block;}
+  .item.open .arrow{transform:rotate(180deg);}
+  .item.open .term{color:var(--gold);}
+  .empty{padding:40px;text-align:center;color:var(--dim);font-family:'Rubik',sans-serif;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 2 of 10</div>
+    <h1>Interactive Glossary</h1>
+    <p class="sub">28 terms · Search or filter by category</p>
+  </div>
+  <input type="text" id="search" placeholder="Search terms or definitions..." oninput="render()">
+  <div class="cats" id="cats"></div>
+  <div class="count" id="count"></div>
+  <div class="list" id="list"></div>
+</div>
+<script>
+const G=[
+  {t:"Accessioning",d:"Lab process of receiving, barcoding, and logging a specimen into the system before testing begins.",c:"Workflow"},
+  {t:"Barcode",d:"Unique identifier assigned to a specimen during accessioning to track it through the testing process.",c:"Technology"},
+  {t:"Chain of Custody",d:"Continuous documented tracking of a specimen from collection to disposal — required for forensic and legal specimens.",c:"Legal"},
+  {t:"Clotted Sample",d:"A specimen that has inappropriately coagulated, often due to inadequate mixing with anticoagulant. Grounds for rejection.",c:"Errors"},
+  {t:"Communication Error",d:"Failure in reporting, escalation, or interaction that delays diagnosis and compromises patient safety.",c:"Communication"},
+  {t:"Critical Value",d:"A lab result indicating a life-threatening condition requiring immediate provider notification (e.g., dangerously low glucose).",c:"Results"},
+  {t:"Drug Screen",d:"A type of test requiring chain of custody documentation to ensure legal validity of results.",c:"Legal"},
+  {t:"EMR",d:"Electronic Medical Record — the patient's digital chart containing provider documentation, linked to the LIS.",c:"Technology"},
+  {t:"Forensic Specimen",d:"A specimen collected for legal or investigative purposes, requiring strict chain of custody and documentation.",c:"Legal"},
+  {t:"Hemolysis",d:"Destruction of red blood cells during or after collection, often from improper technique. A common reason for specimen rejection.",c:"Errors"},
+  {t:"Insufficient Volume",d:"Not enough specimen collected for the required tests. A pre-analytical error requiring re-collection.",c:"Errors"},
+  {t:"LIS",d:"Laboratory Information System — software tracking orders, specimen status, results, and collection timestamps.",c:"Technology"},
+  {t:"Mislabeling",d:"Incorrect or missing information on a specimen label. One of the most common and dangerous pre-analytical errors.",c:"Errors"},
+  {t:"Patient Identification",d:"Verifying the patient's identity using at least two identifiers before specimen collection to prevent errors.",c:"Workflow"},
+  {t:"POCT",d:"Point-of-Care Testing — testing performed at or near the patient's bedside, such as glucose monitoring.",c:"Results"},
+  {t:"Pre-Analytical Error",d:"Any error occurring before testing begins, including collection, labeling, and transport mistakes.",c:"Errors"},
+  {t:"Re-Collection",d:"Drawing a new specimen after the original is rejected. Requires notification, patient communication, and documentation.",c:"Workflow"},
+  {t:"Result Reporting",d:"Final step in lab workflow — communicating verified results to the ordering provider.",c:"Results"},
+  {t:"Result Verification",d:"Lab step confirming accuracy of test results before official reporting to providers.",c:"Results"},
+  {t:"Routine Order",d:"Standard-priority lab order processed on a normal timeline.",c:"Orders"},
+  {t:"Specimen Integrity",d:"Maintaining quality and condition of a specimen through proper handling, temperature control, and timely transport.",c:"Workflow"},
+  {t:"Specimen Labeling",d:"Marking the container immediately after collection with patient info, date, time, and collector initials.",c:"Workflow"},
+  {t:"Specimen Rejection",d:"Lab refusal to process a specimen due to quality issues such as mislabeling, clotting, hemolysis, or expired time.",c:"Errors"},
+  {t:"Specimen Transport",d:"Moving the collected specimen from collection site to the lab promptly and under appropriate conditions.",c:"Workflow"},
+  {t:"STAT Order",d:"Highest-priority order requiring immediate collection, STAT labeling, rapid transport, and direct lab communication.",c:"Orders"},
+  {t:"Timed Order",d:"Specimen collected at a specific time (e.g., drug peak/trough) to ensure clinically accurate results.",c:"Orders"},
+  {t:"Wrong Tube Type",d:"Collecting a specimen in an incorrect tube for the ordered test. A pre-analytical error leading to rejection.",c:"Errors"},
+  {t:"Workflow Error",d:"Any mistake in the laboratory testing process that can delay diagnosis, cause incorrect treatment, or lead to legal liability.",c:"Errors"},
+];
+const CATS=["All","Workflow","Orders","Errors","Results","Technology","Communication","Legal"];
+const CC={Workflow:"#1A8A7D",Orders:"#E2B94C",Errors:"#E05555",Results:"#5B8CDB",Technology:"#8B6AAE",Communication:"#E8976A",Legal:"#C4A84D"};
+let activeCat="All",openIdx=-1;
+function render(){
+  const s=document.getElementById('search').value.toLowerCase();
+  const filtered=G.filter(g=>(g.t.toLowerCase().includes(s)||g.d.toLowerCase().includes(s))&&(activeCat==="All"||g.c===activeCat));
+  let ch='';CATS.forEach(c=>{const n=c==="All"?G.length:G.filter(g=>g.c===c).length;ch+=`<button class="cat ${activeCat===c?'active':''}" onclick="setCat('${c}')">${c} (${n})</button>`;});
+  document.getElementById('cats').innerHTML=ch;
+  document.getElementById('count').textContent=`Showing ${filtered.length} term${filtered.length!==1?'s':''}`;
+  if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms found.</div>';return;}
+  let h='';filtered.forEach((g,i)=>{const col=CC[g.c]||'var(--gold)';const op=openIdx===i;
+    h+=`<div class="item ${op?'open':''}" onclick="tog(${i})"><div class="item-head"><div class="item-left"><div class="bar" style="background:${col}"></div><span class="term">${g.t}</span></div><div style="display:flex;align-items:center;gap:8px"><span class="tag" style="color:${col};background:${col}18">${g.c}</span><span class="arrow">▾</span></div></div><div class="def" style="border-left:2px solid ${col}33;${op?'display:block':''}">${g.d}</div></div>`;
+  });document.getElementById('list').innerHTML=h;
+}
+function setCat(c){activeCat=c;openIdx=-1;render();}
+function tog(i){openIdx=openIdx===i?-1:i;render();}
+render();
+</script>
+</body>
+</html>

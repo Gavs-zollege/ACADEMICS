@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Ops — Activity 9: Case Studies</title>
+<link href="https://fonts.googleapis.com/css2?family=Petrona:wght@400;600;700&family=Onest:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080C14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7098;--success:#38C97A;--error:#E05555;--border:#1E2848;--info:#5B8CDB;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(170deg,var(--bg),#0D1224);font-family:'Petrona',serif;color:var(--text);}
+  .wrap{max-width:600px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--teal);text-transform:uppercase;font-family:'Onest',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:32px;color:var(--gold);margin:0;}
+  .sub{font-family:'Onest',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .tabs{display:flex;gap:8px;justify-content:center;margin-bottom:20px;}
+  .tab{padding:8px 18px;border-radius:20px;font-family:'Onest',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);transition:all .2s;}
+  .tab.active{background:rgba(26,138,125,.15);border-color:var(--teal);color:var(--gold);}
+  .sc-card{background:var(--card);border-radius:14px;padding:24px;border:1px solid var(--border);border-left:4px solid var(--info);margin-bottom:20px;}
+  .sc-badge{display:inline-block;background:rgba(91,140,219,.12);color:var(--info);padding:4px 12px;border-radius:8px;font-size:11px;font-family:'Onest',sans-serif;font-weight:600;margin-bottom:10px;}
+  .sc-title{font-size:18px;font-weight:700;color:var(--gold);margin-bottom:8px;}
+  .sc-text{font-size:16px;line-height:1.7;font-style:italic;}
+  .q-card{background:var(--card);border-radius:14px;padding:24px;border:1px solid var(--border);}
+  .q-prog{font-family:'Onest',sans-serif;font-size:12px;color:var(--dim);margin-bottom:10px;}
+  .q-text{font-size:18px;font-weight:600;margin-bottom:20px;line-height:1.5;}
+  .opt{padding:14px 18px;margin-bottom:8px;border-radius:10px;border:1.5px solid var(--border);font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;}
+  .opt:hover{transform:translateX(4px);}
+  .opt .ltr{font-weight:600;color:var(--dim);width:20px;}
+  .opt.correct{background:rgba(56,201,122,.08);border-color:var(--success);color:var(--success);}
+  .opt.wrong{background:rgba(224,85,85,.08);border-color:var(--error);color:var(--error);}
+  .opt.dis{cursor:default;}.opt.dis:hover{transform:none;}
+  .exp{margin-top:16px;padding:16px 20px;border-radius:12px;font-family:'Onest',sans-serif;font-size:14px;line-height:1.6;}
+  .exp-t{font-weight:600;margin-bottom:4px;}
+  .nw{text-align:center;margin-top:20px;}
+  .btn{padding:14px 40px;border-radius:10px;border:none;background:var(--gold);color:var(--bg);font-size:15px;font-weight:600;font-family:'Onest',sans-serif;cursor:pointer;}
+  .btn:hover{filter:brightness(1.1);}
+  .results{text-align:center;padding:40px 20px;}
+  .res-lbl{font-size:14px;letter-spacing:3px;color:var(--teal);text-transform:uppercase;font-family:'Onest',sans-serif;font-weight:600;}
+  .res-score{font-size:56px;font-weight:700;color:var(--gold);margin:16px 0;}
+  .res-msg{font-family:'Onest',sans-serif;font-size:15px;color:var(--dim);margin-bottom:24px;}
+  .res-case{text-align:left;padding:10px 14px;margin-bottom:8px;border-radius:10px;background:var(--card);border:1px solid var(--border);font-family:'Onest',sans-serif;font-size:13px;}
+  .btn-retry{margin-top:20px;padding:14px 40px;border-radius:10px;border:none;background:var(--teal);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 9 of 10</div>
+    <h1>Clinical Case Studies</h1>
+    <p class="sub">Apply your lab operations knowledge to real-world scenarios.</p>
+  </div>
+  <div id="game">
+    <div class="tabs" id="tabs"></div>
+    <div class="sc-card" id="scc"></div>
+    <div class="q-card" id="qc"></div>
+    <div id="ea"></div>
+    <div class="nw" id="nw" style="display:none"></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const CASES=[
+  {
+    title:"STAT Specimen Delay",
+    scenario:"You collect a STAT potassium level from a patient in the ER. As you walk to the lab, a coworker asks you to help with a routine draw. The STAT specimen is still in your hand.",
+    questions:[
+      {q:"What should you do with the STAT specimen?",o:["Set it aside and help with the routine draw","Deliver the STAT specimen first, then help","Batch it with the routine specimens","Place it in the outgoing bin for later transport"],a:1,why:"STAT specimens must be delivered immediately. Delays can compromise patient outcomes — never set a STAT specimen aside."},
+      {q:"Why is it critical not to delay a STAT potassium result?",o:["Potassium levels don't matter much","Critically abnormal potassium can cause cardiac arrest","It's a routine test with no urgency","The lab prefers to receive it later"],a:1,why:"Elevated potassium (hyperkalemia) can cause life-threatening cardiac arrhythmias. STAT results are ordered because they require immediate clinical action."},
+      {q:"If the STAT result comes back as a critical value, what must happen?",o:["File it in the chart for later review","Notify the provider immediately and document it","Wait until end of shift to report","Only report if the patient asks"],a:1,why:"Critical values require immediate provider notification. Delayed reporting of critical results can lead to patient harm and legal liability."},
+    ]
+  },
+  {
+    title:"Specimen Rejection Scenario",
+    scenario:"You deliver a CBC specimen to the lab. Thirty minutes later, the lab calls to say the specimen is hemolyzed and must be rejected. The patient is anxious and already asked if they need to be stuck again.",
+    questions:[
+      {q:"What is the most likely cause of the hemolysis?",o:["Using the correct tube","Improper collection technique (e.g., too much vacuum, small needle)","Patient's medical condition only","The lab made an error"],a:1,why:"Hemolysis during collection is most commonly caused by factors like excessive vacuum, too small a needle gauge, or aggressive shaking of the tube."},
+      {q:"What should you do about the rejected specimen?",o:["Discard it and hope nobody notices","Notify appropriate personnel and prepare for re-collection","Tell the patient it was the lab's fault","Send the same specimen to a different lab"],a:1,why:"When re-collection is needed: notify personnel, communicate with the patient honestly, document the reason, and maintain professionalism. Never discard without instruction."},
+      {q:"How should you communicate with the anxious patient?",o:["Use technical jargon to explain hemolysis","Tell them it's not a big deal","Explain simply that the sample needs to be recollected and apologize for the inconvenience","Avoid telling them anything"],a:2,why:"Clear, honest, and empathetic communication builds trust. Explain the need for a re-draw in simple language, acknowledge their discomfort, and remain professional."},
+    ]
+  },
+];
+let ci=0,qi=0,sel=null,answered=false,scores=[0,0];
+function tq(){return CASES.reduce((a,c)=>a+c.questions.length,0);}
+function ts(){return scores.reduce((a,b)=>a+b,0);}
+function render(){
+  let th='';CASES.forEach((c,i)=>{th+=`<div class="tab ${ci===i?'active':''}" onclick="sw(${i})">Case ${i+1}</div>`;});
+  document.getElementById('tabs').innerHTML=th;
+  const cs=CASES[ci],q=cs.questions[qi];
+  document.getElementById('scc').innerHTML=`<div class="sc-badge">SCENARIO</div><div class="sc-title">${cs.title}</div><div class="sc-text">${cs.scenario}</div>`;
+  let oh='';q.o.forEach((o,i)=>{let cls='opt';if(answered){cls+=' dis';if(i===q.a)cls+=' correct';else if(i===sel)cls+=' wrong';}
+    oh+=`<div class="${cls}" onclick="pick(${i})"><span class="ltr">${String.fromCharCode(65+i)}.</span><span>${o}</span></div>`;});
+  document.getElementById('qc').innerHTML=`<div class="q-prog">Question ${qi+1} of ${cs.questions.length}</div><div class="q-text">${q.q}</div>${oh}`;
+  if(answered){const c=sel===q.a;document.getElementById('ea').innerHTML=`<div class="exp" style="background:${c?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)'};border:1px solid ${c?'rgba(56,201,122,.18)':'rgba(224,85,85,.18)'}"><div class="exp-t" style="color:${c?'var(--success)':'var(--error)'}">${c?'Correct!':'Incorrect'}</div><div style="color:var(--dim)">${q.why}</div></div>`;
+    let bl=qi+1<cs.questions.length?'Next Question →':ci+1<CASES.length?'Next Case →':'See Results';
+    document.getElementById('nw').style.display='block';document.getElementById('nw').innerHTML=`<button class="btn" onclick="next()">${bl}</button>`;
+  }else{document.getElementById('ea').innerHTML='';document.getElementById('nw').style.display='none';}
+}
+function pick(i){if(answered)return;sel=i;answered=true;if(i===CASES[ci].questions[qi].a)scores[ci]++;render();}
+function next(){const cs=CASES[ci];if(qi+1<cs.questions.length){qi++;sel=null;answered=false;render();}else if(ci+1<CASES.length){ci++;qi=0;sel=null;answered=false;render();}else showRes();}
+function sw(i){if(i===ci)return;ci=i;qi=0;sel=null;answered=false;render();}
+function showRes(){document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='block';
+  const s=ts(),t=tq();const msg=s===t?"Perfect clinical reasoning!":s>=4?"Strong thinking — review missed questions.":"Review the material and try again.";
+  let ch='';CASES.forEach((c,i)=>{const col=scores[i]===c.questions.length?'var(--success)':'var(--error)';ch+=`<div class="res-case"><span style="color:var(--gold)">${c.title}:</span> <span style="color:${col}">${scores[i]}/${c.questions.length}</span></div>`;});
+  r.innerHTML=`<div class="res-lbl">Cases Complete</div><div class="res-score">${s}/${t}</div><div class="res-msg">${msg}</div>${ch}<button class="btn-retry" onclick="reset()">Try Again</button>`;}
+function reset(){ci=0;qi=0;sel=null;answered=false;scores=[0,0];document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

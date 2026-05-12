@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Ops — Activity 4: True or False</title>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#090D16;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7090;--success:#38C97A;--error:#E05555;--border:#1C2444;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#141A2E,var(--bg));font-family:'Crimson Text',serif;color:var(--text);}
+  .wrap{max-width:560px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:32px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--teal);text-transform:uppercase;font-family:'Barlow',sans-serif;font-weight:600;margin-bottom:8px;}
+  h1{font-size:34px;color:var(--gold);}
+  .sub{font-family:'Barlow',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .steps{display:flex;gap:4px;justify-content:center;margin-bottom:24px;}
+  .step{height:10px;border-radius:5px;transition:all .3s;}
+  .stmt-card{background:var(--card);border-radius:14px;padding:32px 24px;border:1px solid var(--border);margin-bottom:24px;position:relative;}
+  .stmt-card .num{position:absolute;top:14px;right:18px;font-size:12px;color:var(--dim);font-family:'Barlow',sans-serif;}
+  .stmt-text{font-size:20px;line-height:1.6;}
+  .btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+  .tf-btn{border:2px solid;cursor:pointer;font-family:'Barlow',sans-serif;font-weight:700;font-size:18px;border-radius:12px;padding:20px;color:var(--text);transition:all .2s;}
+  .tf-btn:hover{transform:scale(1.03);}
+  .feedback{padding:16px 20px;border-radius:12px;margin-bottom:16px;}
+  .fb-title{font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;margin-bottom:4px;}
+  .fb-text{font-family:'Barlow',sans-serif;font-size:14px;color:var(--dim);line-height:1.5;}
+  .next-w{text-align:center;}
+  .btn-next{padding:14px 40px;border-radius:10px;border:none;background:var(--gold);color:var(--bg);font-size:15px;font-weight:600;font-family:'Barlow',sans-serif;cursor:pointer;}
+  .results{text-align:center;padding:40px 20px;}
+  .res-score{font-size:60px;font-weight:700;color:var(--gold);margin:16px 0 8px;}
+  .res-msg{font-size:16px;font-family:'Barlow',sans-serif;margin-bottom:32px;}
+  .btn-retry{padding:14px 40px;border-radius:10px;border:none;background:var(--teal);color:var(--text);font-size:16px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 4 of 10</div>
+    <h1>True or False</h1>
+    <p class="sub">Read each statement carefully. Is it true or false?</p>
+  </div>
+  <div id="game">
+    <div class="steps" id="steps"></div>
+    <div class="stmt-card" id="sc"></div>
+    <div class="btns" id="btns"></div>
+    <div id="fb" style="display:none"></div>
+    <div class="next-w" id="nw" style="display:none"><button class="btn-next" id="nBtn" onclick="next()">Next →</button></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {s:"Phlebotomy is the first step in laboratory testing.",a:true,e:"Correct — specimen collection by the phlebotomist is where the lab testing process begins."},
+  {s:"STAT specimens can be batched with routine specimens for efficiency.",a:false,e:"STAT specimens must NEVER be batched. They require immediate, individual processing."},
+  {s:"Most laboratory errors occur during the analytical (testing) phase.",a:false,e:"Most lab errors occur in the PRE-ANALYTICAL phase — before testing even begins (collection, labeling, transport)."},
+  {s:"The LIS tracks orders, specimen status, results, and collection timestamps.",a:true,e:"Correct — the Laboratory Information System is the central tracking tool for lab workflow."},
+  {s:"Phlebotomists are responsible for interpreting lab results.",a:false,e:"Phlebotomists do NOT interpret results. They collect, label, and transport specimens."},
+  {s:"Chain of custody documentation is required for drug screens and forensic specimens.",a:true,e:"Correct — continuous, accurate documentation must follow these specimens from collection to disposal."},
+  {s:"A mislabeled specimen can still be processed if the lab is busy.",a:false,e:"Mislabeled specimens must ALWAYS be rejected. Processing them risks wrong-patient results."},
+  {s:"Critical values require immediate provider notification.",a:true,e:"Correct — critical (panic) values indicate life-threatening conditions and cannot wait."},
+  {s:"Hemolysis refers to the clotting of a blood specimen.",a:false,e:"Hemolysis is the DESTRUCTION of red blood cells, not clotting. It's a common cause of specimen rejection."},
+  {s:"Workflow errors in phlebotomy can lead to legal liability.",a:true,e:"Correct — documentation may be reviewed in audits or investigations, and errors can lead to delayed diagnosis or incorrect treatment."},
+];
+let idx=0,answer=null,score=0;
+function render(){
+  const q=QS[idx];let sh='';QS.forEach((_,i)=>{const w=i===idx?24:10;const bg=i<idx?'var(--success)':i===idx?'var(--gold)':'var(--border)';sh+=`<div class="step" style="width:${w}px;background:${bg}"></div>`;});
+  document.getElementById('steps').innerHTML=sh;
+  document.getElementById('sc').innerHTML=`<div class="num">Q${idx+1}</div><div class="stmt-text">"${q.s}"</div>`;
+  if(answer===null){
+    document.getElementById('btns').innerHTML=`<button class="tf-btn" onclick="pick(true)" style="background:rgba(56,201,122,.1);border-color:rgba(56,201,122,.3)">✓ TRUE</button><button class="tf-btn" onclick="pick(false)" style="background:rgba(224,85,85,.1);border-color:rgba(224,85,85,.3)">✗ FALSE</button>`;
+    document.getElementById('btns').style.display='grid';document.getElementById('fb').style.display='none';document.getElementById('nw').style.display='none';
+  }
+}
+function pick(v){
+  if(answer!==null)return;answer=v;const q=QS[idx];const c=v===q.a;if(c)score++;
+  const tBg=q.a===true?'var(--success)':answer===true?'var(--error)':'var(--surface)';
+  const fBg=q.a===false?'var(--success)':answer===false?'var(--error)':'var(--surface)';
+  document.getElementById('btns').innerHTML=`<button class="tf-btn" style="background:${tBg};border-color:${tBg};opacity:${answer!==true&&q.a!==true?'.4':'1'};cursor:default">✓ TRUE</button><button class="tf-btn" style="background:${fBg};border-color:${fBg};opacity:${answer!==false&&q.a!==false?'.4':'1'};cursor:default">✗ FALSE</button>`;
+  const fb=document.getElementById('fb');fb.style.display='block';
+  fb.innerHTML=`<div class="feedback" style="background:${c?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)'};border:1px solid ${c?'rgba(56,201,122,.2)':'rgba(224,85,85,.2)'}"><div class="fb-title" style="color:${c?'var(--success)':'var(--error)'}">${c?'Correct!':'Incorrect'}</div><div class="fb-text">${q.e}</div></div>`;
+  document.getElementById('nw').style.display='block';document.getElementById('nBtn').textContent=idx+1>=QS.length?'See Results':'Next →';
+}
+function next(){if(idx+1>=QS.length){showRes();return;}idx++;answer=null;render();}
+function showRes(){
+  document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='block';
+  const pct=score/QS.length*100;const col=pct>=80?'var(--success)':pct>=60?'var(--gold)':'var(--error)';
+  const msg=pct>=80?"Excellent understanding!":pct>=60?"Good effort — review the tricky ones.":"Keep studying and retry!";
+  r.innerHTML=`<div class="label" style="margin-bottom:16px">Complete</div><div class="res-score">${score}/${QS.length}</div><div class="res-msg" style="color:${col}">${msg}</div><button class="btn-retry" onclick="reset()">Try Again</button>`;
+}
+function reset(){idx=0;answer=null;score=0;document.getElementById('game').style.display='block';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

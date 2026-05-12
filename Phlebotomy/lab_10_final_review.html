@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Ops — Activity 10: Final Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Gelasio:wght@400;600;700&family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080C14;--card:#0F1526;--surface:#171E36;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6870A0;--success:#38C97A;--border:#1E2848;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:linear-gradient(180deg,var(--bg),#0C1020);font-family:'Gelasio',serif;color:var(--text);}
+  .wrap{max-width:620px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:28px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--teal);text-transform:uppercase;font-family:'Lexend',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:34px;color:var(--gold);margin:0;}
+  .sub{font-family:'Lexend',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .prog-section{margin-bottom:28px;}
+  .prog-row{display:flex;justify-content:space-between;font-family:'Lexend',sans-serif;font-size:13px;margin-bottom:6px;}
+  .prog-bar{height:8px;border-radius:4px;background:var(--border);overflow:hidden;}
+  .prog-fill{height:100%;border-radius:4px;transition:width .5s,background .5s;}
+  .topic{background:var(--card);border-radius:14px;padding:18px 20px;margin-bottom:10px;border:1px solid var(--border);transition:all .3s;cursor:pointer;}
+  .topic:hover{transform:translateY(-1px);}
+  .topic.checked{opacity:.5;}
+  .topic-head{display:flex;align-items:center;gap:14px;}
+  .check-box{width:28px;height:28px;border-radius:8px;border:2px solid;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;font-weight:700;color:#fff;transition:all .2s;cursor:pointer;}
+  .check-box:hover{transform:scale(1.1);}
+  .topic-info{flex:1;}
+  .topic-title-row{display:flex;align-items:center;gap:10px;}
+  .color-bar{width:4px;height:20px;border-radius:2px;flex-shrink:0;}
+  .topic-title{font-size:17px;font-weight:600;}
+  .topic-meta{font-family:'Lexend',sans-serif;font-size:12px;color:var(--dim);margin-top:4px;padding-left:14px;}
+  .arrow{color:var(--dim);font-size:16px;transition:transform .2s;user-select:none;}
+  .topic.open .arrow{transform:rotate(180deg);}
+  .points{margin-top:14px;padding-left:42px;}
+  .point{font-family:'Lexend',sans-serif;font-size:14px;color:var(--dim);line-height:1.7;padding-left:12px;margin-bottom:6px;}
+  .done-box{text-align:center;margin-top:24px;padding:28px 24px;border-radius:16px;}
+  .done-emoji{font-size:32px;}
+  .done-title{font-size:24px;font-weight:700;color:var(--success);margin-top:8px;}
+  .done-text{font-family:'Lexend',sans-serif;font-size:14px;color:var(--dim);margin-top:8px;line-height:1.6;}
+  .reset-wrap{text-align:center;margin-top:20px;}
+  .btn-reset{padding:10px 24px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-family:'Lexend',sans-serif;cursor:pointer;}
+  .btn-reset:hover{border-color:var(--dim);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 10 of 10</div>
+    <h1>Final Review Checklist</h1>
+    <p class="sub">Check off each topic as you feel confident. Aim for 100% before your exam!</p>
+  </div>
+  <div class="prog-section">
+    <div class="prog-row">
+      <span style="color:var(--dim)">Mastery Progress</span>
+      <span id="progText" style="font-weight:600"></span>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  </div>
+  <div id="topicList"></div>
+  <div id="doneBox" style="display:none"></div>
+  <div class="reset-wrap"><button class="btn-reset" onclick="resetAll()">Reset Checklist</button></div>
+</div>
+<script>
+const TOPICS=[
+  {title:"Lab Workflow Overview",color:"#1A8A7D",points:[
+    "8-step process: Order → Patient ID → Collection → Labeling → Transport → Analysis → Verification → Reporting",
+    "Phlebotomy is the FIRST step — errors here affect everything downstream",
+    "Every specimen has a journey; phlebotomists start it",
+    "Communication failures delay diagnosis and treatment"
+  ]},
+  {title:"Order Types (STAT, Timed, Routine)",color:"#E2B94C",points:[
+    "STAT: Immediate priority, hand-delivered, never batched",
+    "Timed: Collected at specific times (e.g., peak/trough drug levels)",
+    "Routine: Standard processing timeline",
+    "Misclassification of order type can delay critical care",
+    "Always verify order priority BEFORE collection"
+  ]},
+  {title:"Pre-Analytical Errors",color:"#E05555",points:[
+    "Most lab errors occur BEFORE testing begins",
+    "Common errors: incorrect patient ID, wrong tube type, insufficient volume",
+    "Hemolysis from improper technique",
+    "Improper storage or transport conditions",
+    "These errors affect every department downstream"
+  ]},
+  {title:"Specimen Rejection & Re-Collection",color:"#E8976A",points:[
+    "Rejection reasons: mislabeling, clotted samples, hemolysis, expired collection time",
+    "Rejected specimens ALWAYS require re-collection",
+    "Re-collection protocol: notify personnel → communicate with patient → document reason → maintain professionalism",
+    "NEVER discard specimens without instruction"
+  ]},
+  {title:"Technology Systems (LIS & EMR)",color:"#8B6AAE",points:[
+    "LIS tracks: orders, specimen status, results, collection timestamps",
+    "EMR is the patient's digital chart with provider documentation",
+    "Accurate data entry links the two systems",
+    "Phlebotomists may input or verify collection data in the LIS"
+  ]},
+  {title:"Critical Values & Reporting",color:"#5B8CDB",points:[
+    "Critical (panic) values = life-threatening conditions",
+    "Examples: critically low glucose, elevated potassium",
+    "Require IMMEDIATE provider notification",
+    "Phlebotomists may recognize critical POCT values",
+    "Must document the notification — never delay reporting"
+  ]},
+  {title:"Chain of Custody",color:"#C4A84D",points:[
+    "Applies to: drug screens, blood alcohol testing, forensic specimens",
+    "Documentation must be continuous and accurate",
+    "Tracks specimen from collection through disposal",
+    "Any break in the chain can invalidate results legally"
+  ]},
+  {title:"Communication & Legal Implications",color:"#38C97A",points:[
+    "Effective communication: clear reporting, proper escalation, respectful interaction",
+    "Communication errors = patient safety risks",
+    "Workflow errors can lead to: delayed diagnosis, incorrect treatment, legal liability",
+    "Phlebotomy documentation may be reviewed in audits or investigations",
+    "Best practices: label immediately, transport promptly, communicate issues, document accurately"
+  ]},
+];
+let checked=new Set(),openIdx=-1;
+function render(){
+  const pct=checked.size/TOPICS.length*100;const allDone=checked.size===TOPICS.length;
+  const pe=document.getElementById('progText');
+  pe.textContent=`${checked.size}/${TOPICS.length} topics (${Math.round(pct)}%)`;
+  pe.style.color=allDone?'var(--success)':'var(--gold)';
+  const fill=document.getElementById('progFill');
+  fill.style.width=pct+'%';
+  fill.style.background=allDone?'var(--success)':'linear-gradient(90deg,var(--teal),var(--gold))';
+  let h='';
+  TOPICS.forEach((t,i)=>{
+    const isDone=checked.has(i);const isOpen=openIdx===i;
+    h+=`<div class="topic ${isDone?'checked':''} ${isOpen?'open':''}" id="topic${i}">
+      <div class="topic-head">
+        <div class="check-box" style="border-color:${isDone?'var(--success)':t.color};background:${isDone?'var(--success)':'transparent'}" onclick="event.stopPropagation();toggleCheck(${i})">${isDone?'✓':''}</div>
+        <div class="topic-info" onclick="toggleOpen(${i})">
+          <div class="topic-title-row">
+            <div class="color-bar" style="background:${t.color}"></div>
+            <span class="topic-title" style="color:${isDone?'var(--success)':'var(--gold)'}">${t.title}</span>
+          </div>
+          ${!isOpen?`<div class="topic-meta">${t.points.length} key points · tap to expand</div>`:''}
+        </div>
+        <span class="arrow" onclick="toggleOpen(${i})">▾</span>
+      </div>
+      ${isOpen?`<div class="points">${t.points.map(p=>`<div class="point" style="border-left:2px solid ${t.color}33">${p}</div>`).join('')}</div>`:''}
+    </div>`;
+  });
+  document.getElementById('topicList').innerHTML=h;
+  const db=document.getElementById('doneBox');
+  if(allDone){
+    db.style.display='block';
+    db.innerHTML=`<div class="done-box" style="background:linear-gradient(135deg,rgba(56,201,122,.07),rgba(56,201,122,.02));border:1px solid rgba(56,201,122,.25)">
+      <div class="done-emoji">🎓</div>
+      <div class="done-title">Review Complete!</div>
+      <div class="done-text">You've reviewed all 8 topic areas covering laboratory operations, workflow, and result communication. You're well-prepared for your exam!</div>
+    </div>`;
+  }else{db.style.display='none';}
+}
+function toggleCheck(i){checked.has(i)?checked.delete(i):checked.add(i);render();}
+function toggleOpen(i){openIdx=openIdx===i?-1:i;render();}
+function resetAll(){checked=new Set();openIdx=-1;render();}
+render();
+</script>
+</body>
+</html>

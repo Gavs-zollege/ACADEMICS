@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Ops — Activity 1: Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;600;700&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#080C14;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--teal2:#25B5A5;--gold:#E2B94C;--text:#ECE8E0;--dim:#707898;--success:#38C97A;--error:#E05555;--border:#1E2848;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{min-height:100vh;background:radial-gradient(ellipse at 20% 10%,#111828,var(--bg));font-family:'IBM Plex Serif',serif;color:var(--text);}
+  .wrap{max-width:560px;margin:0 auto;padding:40px 20px;}
+  .header{text-align:center;margin-bottom:32px;}
+  .label{font-size:11px;letter-spacing:4px;color:var(--teal);text-transform:uppercase;font-family:'Quicksand',sans-serif;font-weight:700;margin-bottom:8px;}
+  h1{font-size:34px;font-weight:700;color:var(--gold);}
+  .sub{font-family:'Quicksand',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
+  .dots{display:flex;justify-content:center;gap:4px;margin-bottom:20px;flex-wrap:wrap;}
+  .dot{width:10px;height:10px;border-radius:50%;transition:all .3s;}
+  .counter{text-align:center;font-family:'Quicksand',sans-serif;font-size:13px;color:var(--dim);margin-bottom:16px;}
+  .counter .g{color:var(--success);}
+  .card{border-radius:16px;padding:48px 32px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .4s;border:1px solid var(--border);}
+  .card:hover{box-shadow:0 10px 40px rgba(26,138,125,.15);}
+  .card .side{font-size:10px;letter-spacing:3px;text-transform:uppercase;font-family:'Quicksand',sans-serif;font-weight:700;margin-bottom:14px;}
+  .card .main-term{font-size:26px;font-weight:700;color:var(--gold);text-align:center;line-height:1.4;}
+  .card .main-def{font-size:17px;color:var(--text);text-align:center;line-height:1.6;font-family:'Quicksand',sans-serif;}
+  .card .hint{font-size:11px;color:var(--dim);margin-top:18px;font-family:'Quicksand',sans-serif;}
+  .badge{position:absolute;top:12px;left:12px;font-size:10px;background:rgba(56,201,122,.15);color:var(--success);padding:2px 10px;border-radius:8px;font-family:'Quicksand',sans-serif;font-weight:600;}
+  .controls{display:flex;gap:10px;justify-content:center;margin-top:24px;align-items:center;}
+  .btn{border:none;cursor:pointer;font-family:inherit;transition:all .2s;border-radius:12px;color:var(--text);font-size:14px;font-weight:600;}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.15);}
+  .btn-nav{width:48px;height:48px;background:var(--surface);font-size:20px;}
+  .btn-know{padding:12px 28px;}
+  .done-box{text-align:center;margin-top:32px;padding:20px;background:rgba(56,201,122,.07);border-radius:12px;border:1px solid rgba(56,201,122,.25);}
+  .done-box h2{font-size:22px;color:var(--success);}
+  .done-box p{font-family:'Quicksand',sans-serif;color:var(--dim);font-size:13px;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="label">Activity 1 of 10</div>
+    <h1>Flashcards</h1>
+    <p class="sub">Tap the card to flip. 20 key terms from Lab Operations.</p>
+  </div>
+  <div class="dots" id="dots"></div>
+  <div class="counter"><span id="pos">1 of 20</span> · <span class="g" id="mastered">0 mastered</span></div>
+  <div class="card" id="card" onclick="flip()"></div>
+  <div class="controls">
+    <button class="btn btn-nav" onclick="go(-1)">←</button>
+    <button class="btn btn-know" id="knowBtn" onclick="toggleKnown()">✓ I Know This</button>
+    <button class="btn btn-nav" onclick="go(1)">→</button>
+  </div>
+  <div class="done-box" id="doneBox" style="display:none"><h2>All cards mastered!</h2><p>You've reviewed every term. Great work!</p></div>
+</div>
+<script>
+const C=[
+  {t:"Pre-Analytical Error",d:"An error occurring before testing begins — includes mislabeling, wrong tube type, hemolysis, and insufficient volume. Most lab errors fall in this category."},
+  {t:"STAT Order",d:"Highest-priority lab order requiring immediate collection, correct STAT labeling, rapid transport, and direct communication with lab staff. Never batched."},
+  {t:"Timed Order",d:"A specimen that must be collected at a specific time (e.g., peak/trough drug levels) to ensure clinically accurate results."},
+  {t:"Routine Order",d:"Standard-priority lab order processed on a normal timeline, as opposed to STAT or timed specimens."},
+  {t:"Accessioning",d:"The process of receiving a specimen in the lab, assigning a barcode, and logging it into the system before testing begins."},
+  {t:"Specimen Rejection",d:"When a lab refuses to process a specimen due to issues like mislabeling, clotting, hemolysis, or expired collection time. Requires re-collection."},
+  {t:"Hemolysis",d:"Destruction of red blood cells, often from improper collection technique. A common reason for specimen rejection."},
+  {t:"LIS (Laboratory Information System)",d:"Software that tracks lab orders, specimen status, results, and collection timestamps. Phlebotomists may input or verify data."},
+  {t:"EMR (Electronic Medical Record)",d:"The patient's digital chart containing provider documentation, diagnosis, and treatment plans. Linked to the LIS via accurate data entry."},
+  {t:"Critical Value",d:"A lab result indicating a life-threatening condition (e.g., critically low glucose, elevated potassium) requiring immediate provider notification."},
+  {t:"Chain of Custody",d:"Continuous, documented tracking of a specimen from collection to disposal — required for drug screens, blood alcohol, and forensic specimens."},
+  {t:"Specimen Integrity",d:"Maintaining the quality and condition of a collected specimen through proper handling, temperature control, and timely transport."},
+  {t:"Re-Collection",d:"Drawing a new specimen when the original is rejected. Requires notifying personnel, communicating with the patient, and documenting the reason."},
+  {t:"Patient Identification",d:"The critical first step of verifying the patient's identity before collection using at least two identifiers (name + DOB) to prevent errors."},
+  {t:"Specimen Labeling",d:"Marking the specimen container immediately after collection with patient info, date, time, and collector initials. Mislabeling leads to rejection."},
+  {t:"POCT (Point-of-Care Testing)",d:"Testing performed at or near the patient's bedside (e.g., glucose monitoring). Phlebotomists may recognize and report critical POCT values."},
+  {t:"Result Verification",d:"The step where lab personnel confirm accuracy of results before they are officially reported to the provider."},
+  {t:"Result Reporting",d:"The final step in lab workflow — communicating verified results to the ordering provider for clinical decision-making."},
+  {t:"Laboratory Testing Workflow",d:"The 8-step process: order → patient ID → collection → labeling → transport → analysis → verification → reporting."},
+  {t:"Communication Errors",d:"Failures in reporting, escalation, or team interaction that can delay diagnosis, compromise treatment, and create patient safety risks."},
+];
+let idx=0,flipped=false,known=new Set();
+function render(){
+  const c=C[idx],el=document.getElementById('card');
+  el.style.background=flipped?'linear-gradient(135deg,var(--card),#141a30)':'linear-gradient(135deg,rgba(26,138,125,.08),var(--card))';
+  el.style.borderColor=flipped?'rgba(226,185,76,.2)':'rgba(26,138,125,.25)';
+  el.innerHTML=`${known.has(idx)?'<div class="badge">Mastered</div>':''}<div class="side" style="color:${flipped?'rgba(226,185,76,.6)':'var(--teal)'}">${flipped?'Definition':'Term'}</div><div class="${flipped?'main-def':'main-term'}">${flipped?c.d:c.t}</div><div class="hint">tap to ${flipped?'see term':'reveal'}</div>`;
+  let dots='';C.forEach((_,i)=>{const bg=known.has(i)?'var(--success)':i===idx?'var(--gold)':'rgba(26,138,125,.25)';dots+=`<div class="dot" style="background:${bg};transform:${i===idx?'scale(1.3)':'scale(1)'}"></div>`;});
+  document.getElementById('dots').innerHTML=dots;
+  document.getElementById('pos').textContent=`${idx+1} of ${C.length}`;
+  document.getElementById('mastered').textContent=`${known.size} mastered`;
+  const kb=document.getElementById('knowBtn');kb.textContent=known.has(idx)?'Unmark':'✓ I Know This';kb.style.background=known.has(idx)?'var(--surface)':'var(--success)';
+  document.getElementById('doneBox').style.display=known.size===C.length?'block':'none';
+}
+function flip(){flipped=!flipped;render();}
+function go(d){idx=(idx+d+C.length)%C.length;flipped=false;render();}
+function toggleKnown(){known.has(idx)?known.delete(idx):known.add(idx);render();}
+render();
+</script>
+</body>
+</html>

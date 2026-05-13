@@ -8,31 +8,43 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--green:#27ae60;--green-light:#2ecc71;--yellow:#f39c12;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;--radius:16px;}
-body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0 20px 60px;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;}
 .grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
-.wrap{max-width:640px;margin:0 auto;}
-header{text-align:center;padding:48px 0 28px;}
-header .week{font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);font-weight:700;margin-bottom:4px;}
-header .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:10px;}
-header h1{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
-.progress{width:100%;height:4px;background:var(--border);border-radius:2px;margin-bottom:28px;overflow:hidden;}
+.wrap{max-width:640px;width:100%;margin:0 auto;display:flex;flex-direction:column;height:100vh;padding:0 20px;overflow:hidden;}
+header{text-align:center;padding:20px 0 12px;flex-shrink:0;}
+header .week{font-size:.55rem;text-transform:uppercase;letter-spacing:3px;color:var(--muted);font-weight:700;margin-bottom:2px;}
+header .tag{font-size:.6rem;text-transform:uppercase;letter-spacing:3px;color:var(--red-light);font-weight:700;margin-bottom:6px;}
+header h1{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+header p{color:var(--dim);font-size:.78rem;margin-top:4px;}
+.progress{width:100%;height:4px;background:var(--border);border-radius:2px;margin-bottom:12px;overflow:hidden;flex-shrink:0;}
 .progress-fill{height:100%;background:var(--red);transition:width .5s;border-radius:2px;}
-.scenario{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;animation:fadeIn .4s ease;}
+.card-area{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+.scenario{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:none;flex-direction:column;animation:fadeIn .4s ease;flex:1;min-height:0;overflow-y:auto;}
+.scenario.active{display:flex;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.sc-label{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--yellow);font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.sc-label{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--yellow);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .sc-label::before{content:'🏥';}
-.sc-text{font-size:.95rem;line-height:1.65;margin-bottom:16px;color:var(--text);font-weight:500;padding:16px;background:linear-gradient(135deg,var(--surface2),rgba(243,156,18,.03));border-radius:10px;border-left:3px solid var(--yellow);}
-.opts{display:flex;flex-direction:column;gap:10px;}
-.opt{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;cursor:pointer;font-size:.86rem;transition:all .2s;line-height:1.4;}
+.sc-text{font-size:.85rem;line-height:1.55;margin-bottom:12px;color:var(--text);font-weight:500;padding:12px;background:linear-gradient(135deg,var(--surface2),rgba(243,156,18,.03));border-radius:10px;border-left:3px solid var(--yellow);flex-shrink:0;}
+.opts{display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+.opt{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;cursor:pointer;font-size:.8rem;transition:all .2s;line-height:1.4;}
 .opt:hover{border-color:var(--red);background:rgba(192,57,43,.06);}
 .opt.correct{border-color:var(--green);background:rgba(39,174,96,.12);color:var(--green-light);}
 .opt.wrong{border-color:var(--red);background:rgba(192,57,43,.12);color:var(--red-light);opacity:.6;}
 .opt.disabled{pointer-events:none;}
-.explain{margin-top:12px;font-size:.82rem;color:var(--dim);padding:14px;background:rgba(255,255,255,.02);border-radius:8px;border-left:3px solid var(--green);line-height:1.5;animation:fadeIn .3s ease;}
-.score-card{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;margin-top:20px;animation:fadeIn .5s ease;}
+.explain{margin-top:10px;font-size:.76rem;color:var(--dim);padding:10px;background:rgba(255,255,255,.02);border-radius:8px;border-left:3px solid var(--green);line-height:1.45;animation:fadeIn .3s ease;flex-shrink:0;}
+.next-btn{margin-top:10px;padding:10px 24px;background:var(--red);color:#fff;border:none;border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;align-self:flex-end;transition:background .2s;flex-shrink:0;}
+.next-btn:hover{background:var(--red-light);}
+.score-card{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px;animation:fadeIn .5s ease;display:none;flex-direction:column;align-items:center;justify-content:center;flex:1;}
+.score-card.active{display:flex;}
 .score-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:var(--green-light);}
 .score-label{color:var(--dim);font-size:.9rem;margin-top:4px;}
+.restart-btn{margin-top:20px;padding:10px 28px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:10px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.restart-btn:hover{border-color:var(--red);background:rgba(192,57,43,.06);}
+.nav-footer{flex-shrink:0;padding:10px 0 14px;display:flex;justify-content:center;gap:6px;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s;}
+.dot.active{background:var(--red);}
+.dot.done{background:var(--green);}
 </style>
 </head>
 <body>
@@ -45,8 +57,8 @@ header p{color:var(--dim);font-size:.88rem;margin-top:8px;}
   <p>Read each advanced phlebotomy situation and choose the best action.</p>
 </header>
 <div class="progress"><div class="progress-fill" id="prog"></div></div>
-<div id="list"></div>
-<div id="score"></div>
+<div class="card-area" id="cardArea"></div>
+<div class="nav-footer" id="dots"></div>
 </div>
 <script>
 const scenarios=[
@@ -72,21 +84,81 @@ const scenarios=[
    opts:["It was collected in the wrong container","The specimen is likely saliva, not true sputum from the lungs","Sputum must be refrigerated before transport","Clear sputum always indicates the patient is healthy"],correct:1,
    explain:"True sputum is thicker and may be colored; watery/clear specimens are usually saliva and are non-diagnostic. The patient needs re-education on proper deep-cough collection technique."},
 ];
-let score=0,answered=0;
-document.getElementById('list').innerHTML=scenarios.map((s,si)=>`
-  <div class="scenario" id="sc-${si}"><div class="sc-label">Scenario ${si+1} of ${scenarios.length}</div>
+let score=0,current=0;
+const cardArea=document.getElementById('cardArea');
+const dotsEl=document.getElementById('dots');
+
+// Build dots
+dotsEl.innerHTML=scenarios.map((_,i)=>`<div class="dot${i===0?' active':''}" id="dot-${i}"></div>`).join('');
+
+// Build cards
+scenarios.forEach((s,si)=>{
+  const div=document.createElement('div');
+  div.className='scenario'+(si===0?' active':'');
+  div.id='sc-'+si;
+  div.innerHTML=`<div class="sc-label">Scenario ${si+1} of ${scenarios.length}</div>
   <div class="sc-text">${s.scenario}</div>
-  <div class="opts" id="opts-${si}">${s.opts.map((o,oi)=>`<div class="opt" onclick="pick(${si},${oi})">${o}</div>`).join('')}</div></div>
-`).join('');
+  <div class="opts" id="opts-${si}">${s.opts.map((o,oi)=>`<div class="opt" onclick="pick(${si},${oi})">${o}</div>`).join('')}</div>`;
+  cardArea.appendChild(div);
+});
+
+// Score card
+const scoreCard=document.createElement('div');
+scoreCard.className='score-card';
+scoreCard.id='scoreCard';
+cardArea.appendChild(scoreCard);
+
 function pick(si,oi){
   const opts=document.querySelectorAll(`#opts-${si} .opt`);
   if(opts[0].classList.contains('disabled'))return;
   opts.forEach((o,i)=>{o.classList.add('disabled');if(i===scenarios[si].correct)o.classList.add('correct');else if(i===oi)o.classList.add('wrong');});
-  if(oi===scenarios[si].correct)score++;answered++;
+  if(oi===scenarios[si].correct)score++;
+
+  // Explanation
   const exp=document.createElement('div');exp.className='explain';exp.textContent=scenarios[si].explain;
-  document.getElementById(`sc-${si}`).appendChild(exp);
-  document.getElementById('prog').style.width=`${(answered/scenarios.length)*100}%`;
-  if(answered===scenarios.length){document.getElementById('score').innerHTML=`<div class="score-card"><div class="score-num">${score}/${scenarios.length}</div><div class="score-label">Scenarios handled correctly</div></div>`;}
+  document.getElementById('sc-'+si).appendChild(exp);
+
+  // Update progress
+  document.getElementById('prog').style.width=`${((si+1)/scenarios.length)*100}%`;
+  document.getElementById('dot-'+si).classList.remove('active');
+  document.getElementById('dot-'+si).classList.add('done');
+
+  // Next button or show score
+  if(si<scenarios.length-1){
+    const btn=document.createElement('button');btn.className='next-btn';btn.textContent='Next →';
+    btn.onclick=()=>goTo(si+1);
+    document.getElementById('sc-'+si).appendChild(btn);
+  } else {
+    setTimeout(()=>showScore(),600);
+  }
+}
+
+function goTo(idx){
+  document.querySelectorAll('.scenario').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sc-'+idx).classList.add('active');
+  document.getElementById('dot-'+idx).classList.add('active');
+  current=idx;
+}
+
+function showScore(){
+  document.querySelectorAll('.scenario').forEach(s=>s.classList.remove('active'));
+  scoreCard.classList.add('active');
+  scoreCard.innerHTML=`<div class="score-num">${score}/${scenarios.length}</div><div class="score-label">Scenarios handled correctly</div><button class="restart-btn" onclick="restart()">Try Again</button>`;
+}
+
+function restart(){
+  score=0;current=0;
+  document.getElementById('prog').style.width='0%';
+  scenarios.forEach((_,i)=>{
+    const sc=document.getElementById('sc-'+i);
+    const expl=sc.querySelector('.explain');if(expl)expl.remove();
+    const btn=sc.querySelector('.next-btn');if(btn)btn.remove();
+    const opts=sc.querySelectorAll('.opt');
+    opts.forEach(o=>{o.classList.remove('disabled','correct','wrong');});
+    document.getElementById('dot-'+i).className='dot'+(i===0?' active':'');
+  });
+  scoreCard.classList.remove('active');
+  document.getElementById('sc-0').classList.add('active');
 }
 </script>
 </body>

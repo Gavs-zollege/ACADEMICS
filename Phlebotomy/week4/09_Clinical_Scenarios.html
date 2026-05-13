@@ -35,14 +35,14 @@ header p{color:var(--dim);font-size:.95rem;margin-top:4px;}
 .nav-btn{background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 36px;font-family:'Source Sans 3',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;display:none;}
 .nav-btn:hover{background:var(--red-light);}
 .nav-btn.show{display:inline-block;}
-
+ 
 .score-card{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:40px 24px;animation:fadeIn .5s ease;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;}
 .score-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:var(--green-light);}
 .score-label{color:var(--dim);font-size:1.05rem;margin-top:4px;}
 .score-sub{color:var(--muted);font-size:.95rem;margin-top:14px;}
 .restart-btn{margin-top:20px;background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px 36px;font-family:'Source Sans 3',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;}
 .restart-btn:hover{background:var(--red-light);}
-
+ 
 .hidden{display:none!important;}
 </style>
 </head>
@@ -58,7 +58,7 @@ header p{color:var(--dim);font-size:.95rem;margin-top:4px;}
   <div class="scenario-area" id="area"></div>
   <div class="nav-row"><button class="nav-btn" id="nextBtn" onclick="nextScenario()">Next Scenario →</button></div>
 </div>
-
+ 
 <script>
 const scenarios=[
   {scenario:"You're about to draw blood from Mrs. Johnson. You notice the lavender-top tubes in your tray expired last month. What do you do?",
@@ -83,14 +83,14 @@ const scenarios=[
    opts:["Continue — some pain is normal","Reposition the needle slightly","Immediately stop and withdraw the needle","Apply more pressure with the tourniquet"],correct:2,
    explain:"Shooting pain suggests a nerve may have been contacted. Stop immediately to prevent nerve injury."},
 ];
-
+ 
 let score=0, current=0, answeredCurrent=false;
-
+ 
 function render(){
   const area=document.getElementById('area');
   const btn=document.getElementById('nextBtn');
   btn.classList.remove('show');
-
+ 
   if(current>=scenarios.length){
     area.innerHTML=`<div class="score-card">
       <div class="score-num">${score}/${scenarios.length}</div>
@@ -101,7 +101,7 @@ function render(){
     document.getElementById('prog').style.width='100%';
     return;
   }
-
+ 
   const s=scenarios[current];
   answeredCurrent=false;
   area.innerHTML=`<div class="scenario">
@@ -111,7 +111,7 @@ function render(){
   </div>`;
   document.getElementById('prog').style.width=`${(current/scenarios.length)*100}%`;
 }
-
+ 
 function pick(oi){
   if(answeredCurrent) return;
   answeredCurrent=true;
@@ -123,29 +123,30 @@ function pick(oi){
     else if(i===oi) o.classList.add('wrong');
   });
   if(oi===s.correct) score++;
-
+ 
   const exp=document.createElement('div');
   exp.className='explain';
   exp.textContent=s.explain;
   document.querySelector('.scenario').appendChild(exp);
-
+ 
   document.getElementById('prog').style.width=`${((current+1)/scenarios.length)*100}%`;
-
+ 
   const btn=document.getElementById('nextBtn');
   btn.textContent=current<scenarios.length-1?'Next Scenario →':'See Results';
   btn.classList.add('show');
 }
-
+ 
 function nextScenario(){
   current++;
   render();
 }
-
+ 
 function restart(){
   score=0;current=0;render();
 }
-
+ 
 render();
 </script>
 </body>
 </html>
+ 

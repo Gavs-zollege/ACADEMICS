@@ -8,35 +8,45 @@
 <style>
   :root{--bg:#0A0F1C;--card:#111827;--surface:#1A2236;--crimson:#8B1A1A;--gold:#D4A843;--text:#EDE9E0;--dim:#6B7280;--border:#1E293B;}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{min-height:100vh;background:linear-gradient(180deg,var(--bg) 0%,#0E1525 100%);font-family:'Cormorant Garamond','Georgia',serif;color:var(--text);}
-  .wrap{max-width:620px;margin:0 auto;padding:40px 20px;}
-  .header{text-align:center;margin-bottom:32px;}
-  .label{font-size:11px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Nunito Sans',sans-serif;font-weight:600;margin-bottom:8px;}
-  h1{font-size:36px;font-weight:700;color:var(--gold);}
-  .sub{font-family:'Nunito Sans',sans-serif;color:var(--dim);font-size:14px;margin-top:8px;}
-  #search{width:100%;padding:14px 20px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:15px;font-family:'Nunito Sans',sans-serif;margin-bottom:16px;outline:none;}
+  html,body{height:100%;overflow:hidden !important;background:linear-gradient(180deg,var(--bg) 0%,#0E1525 100%);font-family:'Cormorant Garamond','Georgia',serif;color:var(--text);}
+  .wrap{max-width:680px;margin:0 auto;padding:16px 20px 12px;display:flex;flex-direction:column;height:100dvh;overflow:hidden !important;}
+  .header{text-align:center;margin-bottom:10px;}
+  .label{font-size:12px;letter-spacing:4px;color:var(--crimson);text-transform:uppercase;font-family:'Nunito Sans',sans-serif;font-weight:600;margin-bottom:4px;}
+  h1{font-size:32px;font-weight:700;color:var(--gold);line-height:1.2;}
+  .sub{font-family:'Nunito Sans',sans-serif;color:var(--dim);font-size:14px;margin-top:4px;}
+  #search{width:100%;padding:12px 18px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:16px;font-family:'Nunito Sans',sans-serif;margin-bottom:10px;outline:none;}
   #search:focus{border-color:var(--gold);}
-  .cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px;}
-  .cat-btn{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Nunito Sans',sans-serif;transition:all .2s;}
+  .cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+  .cat-btn{padding:4px 12px;border-radius:14px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Nunito Sans',sans-serif;transition:all .2s;line-height:1.4;}
   .cat-btn:hover{transform:translateY(-1px);}
   .cat-btn.active{border-color:var(--gold);background:rgba(212,168,67,.13);color:var(--gold);}
-  .count{font-size:12px;font-family:'Nunito Sans',sans-serif;color:var(--dim);margin-bottom:12px;}
-  .list{border-radius:12px;border:1px solid var(--border);overflow:hidden;}
-  .item{padding:14px 20px;cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border);}
+  .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .count{font-size:13px;font-family:'Nunito Sans',sans-serif;color:var(--dim);}
+  .list-wrap{border-radius:10px;border:1px solid var(--border);overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column;}
+  .items{flex:1;overflow:hidden;}
+  .item{padding:10px 16px;cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border);}
   .item:last-child{border-bottom:none;}
   .item:hover{background:var(--surface);}
   .item-head{display:flex;justify-content:space-between;align-items:center;}
-  .item-left{display:flex;align-items:center;gap:12px;}
-  .bar{width:3px;height:24px;border-radius:2px;flex-shrink:0;}
-  .term-name{font-size:17px;font-weight:600;}
+  .item-left{display:flex;align-items:center;gap:10px;}
+  .bar{width:3px;height:22px;border-radius:2px;flex-shrink:0;}
+  .term-name{font-size:20px;font-weight:600;}
   .item-right{display:flex;align-items:center;gap:8px;}
-  .cat-tag{font-size:10px;padding:2px 8px;border-radius:6px;font-family:'Nunito Sans',sans-serif;font-weight:600;}
+  .cat-tag{font-size:12px;padding:2px 8px;border-radius:6px;font-family:'Nunito Sans',sans-serif;font-weight:600;}
   .arrow{color:var(--dim);font-size:16px;transition:transform .2s;}
-  .def{margin-top:12px;padding-left:15px;font-size:15px;line-height:1.7;color:var(--dim);font-family:'Nunito Sans',sans-serif;display:none;}
+  .def{margin-top:6px;padding-left:13px;font-size:15px;line-height:1.6;color:var(--dim);font-family:'Nunito Sans',sans-serif;display:none;}
   .item.open .def{display:block;}
   .item.open .arrow{transform:rotate(180deg);}
   .item.open .term-name{color:var(--gold);}
-  .empty{padding:40px;text-align:center;color:var(--dim);font-family:'Nunito Sans',sans-serif;}
+  .empty{padding:30px;text-align:center;color:var(--dim);font-family:'Nunito Sans',sans-serif;font-size:15px;}
+  .pager{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:var(--card);border-radius:0 0 10px 10px;}
+  .pg-btn{padding:6px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:'Nunito Sans',sans-serif;transition:all .2s;}
+  .pg-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);}
+  .pg-btn:disabled{opacity:.3;cursor:default;}
+  .pg-dots{display:flex;gap:5px;justify-content:center;align-items:center;}
+  .pg-dot{width:8px;height:8px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s;}
+  .pg-dot.active{background:var(--gold);transform:scale(1.3);}
+  .pg-dot:hover:not(.active){background:var(--dim);}
 </style>
 </head>
 <body>
@@ -46,10 +56,15 @@
     <h1>Interactive Glossary</h1>
     <p class="sub">30 terms · Search or filter by category</p>
   </div>
-  <input type="text" id="search" placeholder="Search terms or definitions..." oninput="render()">
+  <input type="text" id="search" placeholder="Search terms or definitions..." oninput="onSearch()">
   <div class="cats" id="cats"></div>
-  <div class="count" id="count"></div>
-  <div class="list" id="list"></div>
+  <div class="top-bar">
+    <div class="count" id="count"></div>
+  </div>
+  <div class="list-wrap">
+    <div class="items" id="list"></div>
+    <div class="pager" id="pager"></div>
+  </div>
 </div>
 <script>
 const G=[
@@ -87,28 +102,46 @@ const G=[
 ];
 const CATS=["All","Structure","Layers","Chambers","Valves","Vessels","Conduction","Function"];
 const CC={Structure:"#5B9BD5",Layers:"#E8976A",Chambers:"#8B6AAE",Valves:"#D4A843",Vessels:"#E74C6F",Conduction:"#4CAF90",Function:"#8BAFD5"};
-let activeCat="All",openIdx=-1;
-function render(){
+let activeCat="All",openIdx=-1,currentPage=0;
+const PER_PAGE=4;
+
+function getFiltered(){
   const s=document.getElementById('search').value.toLowerCase();
-  const filtered=G.filter(g=>{
+  return G.filter(g=>{
     const ms=g.t.toLowerCase().includes(s)||g.d.toLowerCase().includes(s);
     const mc=activeCat==="All"||g.c===activeCat;
     return ms&&mc;
   });
-  // cats
+}
+
+function render(){
+  const filtered=getFiltered();
+  const totalPages=Math.max(1,Math.ceil(filtered.length/PER_PAGE));
+  if(currentPage>=totalPages) currentPage=totalPages-1;
+  if(currentPage<0) currentPage=0;
+  const start=currentPage*PER_PAGE;
+  const pageItems=filtered.slice(start,start+PER_PAGE);
+
   let ch='';
   CATS.forEach(cat=>{
     const cnt=cat==="All"?G.length:G.filter(g=>g.c===cat).length;
     ch+=`<button class="cat-btn ${activeCat===cat?'active':''}" onclick="setCat('${cat}')">${cat} (${cnt})</button>`;
   });
   document.getElementById('cats').innerHTML=ch;
-  document.getElementById('count').textContent=`Showing ${filtered.length} term${filtered.length!==1?'s':''}`;
-  if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms found. Try a different search.</div>';return;}
+  document.getElementById('count').textContent=`Showing ${filtered.length} term${filtered.length!==1?'s':''} · Page ${currentPage+1} of ${totalPages}`;
+
+  if(!filtered.length){
+    document.getElementById('list').innerHTML='<div class="empty">No terms found. Try a different search.</div>';
+    document.getElementById('pager').innerHTML='';
+    return;
+  }
+
   let h='';
-  filtered.forEach((g,i)=>{
+  pageItems.forEach((g,i)=>{
+    const globalIdx=start+i;
     const col=CC[g.c]||'var(--gold)';
-    const isOpen=openIdx===i;
-    h+=`<div class="item ${isOpen?'open':''}" onclick="toggle(${i})">
+    const isOpen=openIdx===globalIdx;
+    h+=`<div class="item ${isOpen?'open':''}" onclick="toggle(${globalIdx})">
       <div class="item-head">
         <div class="item-left">
           <div class="bar" style="background:${col}"></div>
@@ -123,9 +156,21 @@ function render(){
     </div>`;
   });
   document.getElementById('list').innerHTML=h;
+
+  let ph=`<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>← Prev</button>`;
+  ph+=`<div class="pg-dots">`;
+  for(let p=0;p<totalPages;p++){
+    ph+=`<div class="pg-dot ${p===currentPage?'active':''}" onclick="goPage(${p})"></div>`;
+  }
+  ph+=`</div>`;
+  ph+=`<button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''}>Next →</button>`;
+  document.getElementById('pager').innerHTML=ph;
 }
-function setCat(c){activeCat=c;openIdx=-1;render();}
+
+function setCat(c){activeCat=c;openIdx=-1;currentPage=0;render();}
 function toggle(i){openIdx=openIdx===i?-1:i;render();}
+function goPage(p){currentPage=p;openIdx=-1;render();}
+function onSearch(){currentPage=0;openIdx=-1;render();}
 render();
 </script>
 </body>

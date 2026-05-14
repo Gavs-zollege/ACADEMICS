@@ -30,32 +30,86 @@
   .header {
     flex-shrink: 0;
     text-align: center;
-    padding: 16px 24px 12px;
+    padding: 14px 24px 10px;
+    position: relative;
   }
   .header h1 {
-    font-size: 26px; font-weight: 800;
+    font-size: 28px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Fullscreen button */
+  .fs-btn {
+    position: absolute;
+    top: 14px; right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 18px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .fs-btn:hover {
+    color: var(--text-bright);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+  }
+  .fs-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
   .main {
     flex: 1; overflow: hidden;
-    display: flex; gap: 16px;
-    padding: 0 24px 16px;
+    display: flex; gap: 14px;
+    padding: 0 20px 14px;
   }
   .sidebar {
-    width: 250px; flex-shrink: 0;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 4px;
-    padding-right: 6px;
+    width: 260px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .sidebar::-webkit-scrollbar { width: 3px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .sidebar-pages {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 4px;
+    overflow: hidden;
+  }
+  .sidebar-page {
+    display: none;
+    flex-direction: column; gap: 4px;
+    flex: 1;
+  }
+  .sidebar-page.active { display: flex; }
+  .sidebar-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px 0 0;
+  }
+  .sidebar-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
+  .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .sidebar-nav .page-info {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 44px; text-align: center;
+  }
   .topic-btn {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 8px 11px;
+    border-radius: 10px; padding: 8px 12px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
@@ -63,78 +117,110 @@
   .topic-btn:hover { transform: translateX(2px); }
   .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 13px; font-weight: 500; flex: 1;
+    font-size: 14px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 4px 0; flex-shrink: 0;
-  }
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px;
+    border-radius: 16px; padding: 22px;
     display: flex; flex-direction: column;
   }
   .content-header {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     margin-bottom: 14px;
   }
-  .content-header .icon { font-size: 30px; }
+  .content-header .icon { font-size: 32px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 18px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
-  .content-scroll {
-    flex: 1; overflow-y: auto; padding-right: 6px;
+  .content-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .content-scroll::-webkit-scrollbar { width: 3px; }
-  .content-scroll::-webkit-scrollbar-track { background: transparent; }
-  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .content-points {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .content-footer {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+  .content-footer .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .content-footer .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  .content-footer .page-dots {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .content-footer .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.25s;
+  }
+  .content-footer .dot.active {
+    width: 20px; border-radius: 4px;
+  }
   .point {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px; border: 1px solid transparent;
+    border-radius: 10px; padding: 11px 14px;
+    border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .point p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .takeaway-item {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px;
+    border-radius: 10px; padding: 11px 14px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
-  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 16px; }
+  .welcome p { font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -143,48 +229,6 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
-
-  /* ===== MOBILE RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    html, body { overflow: auto; height: auto; }
-    .app { height: auto; min-height: 100vh; overflow: visible; }
-    .header { padding: 14px 16px 10px; }
-    .header h1 { font-size: 22px; }
-    .main {
-      flex-direction: column;
-      padding: 0 12px 16px;
-      overflow: visible;
-    }
-    .sidebar {
-      width: 100%;
-      flex-direction: row;
-      overflow-x: auto;
-      overflow-y: hidden;
-      gap: 6px;
-      padding-right: 0;
-      padding-bottom: 8px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
-    .topic-btn {
-      flex-shrink: 0;
-      min-width: max-content;
-      padding: 7px 12px;
-    }
-    .sidebar-divider {
-      width: 1px; height: auto;
-      min-height: 28px;
-      margin: 0 2px;
-    }
-    .content {
-      overflow: visible;
-      min-height: 60vh;
-      padding: 16px;
-    }
-    .content-scroll { overflow: visible; }
-    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
-  }
-
 </style>
 </head>
 <body>
@@ -192,167 +236,256 @@
   <div class="header">
     <h1>Understanding the Human Body</h1>
     <p>Body Systems, Disease, Terminology & Psychology</p>
+    <button class="fs-btn" id="fsBtn" title="Toggle fullscreen">
+      <svg id="fsIcon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
   </div>
   <div class="main">
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-pages" id="sidebarPages"></div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
     <div class="content" id="content">
       <div class="welcome">
         <div class="big-icon">📚</div>
-        <p>Select a topic to explore its key learning points</p>
+        <p>Select a topic from the left to explore its key learning points</p>
       </div>
     </div>
   </div>
 </div>
 <script>
-var TOPICS = [
-  { id:1, num:"01", icon:"🔍", title:"Identify Cell Structure", color:"#E63946",
-    points:["Cells are the building blocks of all living things — every body structure starts here","Plasma membrane: selectively permeable outer layer; protects and separates the cell","Nucleus: control center; houses DNA and regulates all cell activity","Cytoplasm: gel-like fluid filling the cell; medium for chemical reactions","Ribosomes: synthesize proteins; mitochondria produce ATP (usable energy); lysosomes digest waste"] },
-  { id:2, num:"02", icon:"🧰", title:"Anatomical Structures, Locations & Positions", color:"#457B9D",
-    points:["Planes: sagittal (left/right), transverse (upper/lower), frontal/coronal (front/back)","Five body cavities: cranial, spinal, thoracic, abdominal, pelvic — each houses specific organs","Abdominal quadrants: RUQ, LUQ, RLQ, LLQ — used for documenting pain and organ location","Positional terms: supine (face up), prone (face down), Fowler\'s (90°), semi-Fowler\'s (45°)","Anatomical position: standing, facing forward, arms at sides, palms facing out — the standard reference"] },
-  { id:3, num:"03", icon:"🌈", title:"Structure & Function of Major Body Systems", color:"#2A9D8F",
-    points:["Integumentary: skin (largest organ) — protection, temperature regulation, sensation, vitamin D","Skeletal: 206 bones — structure, organ protection, muscle attachment, hematopoiesis (blood cell production)","Muscular: skeletal (voluntary), smooth (involuntary), cardiac — movement and posture","Cardiovascular: heart + blood vessels — pumps blood, delivers oxygen/nutrients, removes waste","Respiratory: nose → pharynx → larynx → trachea → bronchi → alveoli — gas exchange"] },
-  { id:4, num:"04", icon:"🧪", title:"Body Systems — Continued", color:"#8338EC",
-    points:["Nervous: CNS (brain/spinal cord) + PNS — controls all other systems; somatic (voluntary) and autonomic branches","Endocrine: glands produce hormones to regulate body functions and maintain homeostasis","Urinary: kidneys filter blood, produce urine; stored in bladder, eliminated via urethra","GI: mouth to anus — digests food and absorbs nutrients; liver, pancreas, gallbladder are accessory organs","Immune/Lymphatic: B-cells, T-cells, lymph nodes — defends against pathogens; four types of immunity"] },
-  { id:5, num:"05", icon:"📏", title:"Organ System Interactions & Homeostasis", color:"#FF6B35",
-    points:["Homeostasis is the body\'s ability to maintain a stable internal environment despite external changes","The nervous and endocrine systems are the primary regulators — but every system contributes","Organ systems are interdependent — disease in one system creates a cascade effect in others","Example: Diabetes (endocrine) damages kidneys (urinary), nerves (nervous), and blood vessels (cardiovascular)","When homeostasis is disrupted, the result can range from a headache to organ failure"] },
-  { id:6, num:"06", icon:"💉", title:"Signs, Symptoms & Etiology of Common Diseases", color:"#E63946",
-    points:["Sign: objective finding measurable by a provider (e.g., elevated BP, fever, abnormal lab result)","Symptom: subjective experience reported by the patient (e.g., pain, nausea, fatigue)","Etiology: the cause or origin of a disease — may be infectious, genetic, autoimmune, or unknown","Examples: hypertension (high BP, genetics/lifestyle), asthma (airway inflammation, allergens), stroke (blocked/ruptured brain vessel)","MAs don\'t diagnose — but recognizing common signs and symptoms helps you support the provider and the patient"] },
-  { id:7, num:"07", icon:"🩸", title:"Diagnostic Measures & Treatment Modalities", color:"#457B9D",
-    points:["Labs: blood tests, urinalysis, cultures, biopsies — identify disease at the cellular or chemical level","Imaging with radiation: X-ray, CT scan, angiography, mammography, nuclear medicine (PET, SPECT)","Imaging without radiation: MRI (electromagnetic field), ultrasound (sound waves)","Treatment options: medications, surgery, chemotherapy, radiation, infusion therapy, physical/occupational/respiratory therapy","Contrast materials (iodine, barium, gadolinium) make structures more visible on imaging studies"] },
-  { id:8, num:"08", icon:"📋", title:"Incidence, Prevalence, Risk Factors & Comorbidities", color:"#2A9D8F",
-    points:["Incidence: number of new cases of a disease in a population over a specific time period","Prevalence: total number of existing cases in a population at a given point in time","Risk factors: conditions or behaviors that increase likelihood of disease (e.g., smoking → COPD; obesity → Type 2 DM)","Comorbidity: two or more conditions occurring in the same patient at the same time (e.g., HTN + DM + obesity)","Understanding risk factors helps MAs educate patients on prevention and support provider screening decisions"] },
-  { id:9, num:"09", icon:"🩹", title:"Epidemics & Pandemics", color:"#8338EC",
-    points:["Endemic: a disease that spreads through a community at a normal, expected, ongoing rate","Epidemic: a sudden and rapid increase in cases beyond what is normally expected in a region","Pandemic: a worldwide disease outbreak crossing international borders (e.g., COVID-19)","Prevention: hand hygiene, cough protocols, vaccination, isolation precautions — MAs educate patients on these measures","The CDC and WHO monitor outbreaks globally and coordinate responses before epidemics become pandemics"] },
-  { id:10, num:"10", icon:"🏷️", title:"Common Abbreviations, Acronyms & Symbols", color:"#FF6B35",
-    points:["BP (blood pressure), CBC (complete blood count), HTN (hypertension), DM (diabetes mellitus)","MI (myocardial infarction), CVA (cerebrovascular accident/stroke), SOB (shortness of breath)","NPO (nothing by mouth), PRN (as needed), Stat (immediately), WNL (within normal limits)","Symbols still in use: ↑ increase, ↓ decrease, ♂ male, ♀ female, # pounds/number","Facility-specific abbreviations vary — when in doubt, spell it out to avoid errors"] },
-  { id:11, num:"11", icon:"⚙️", title:"Medical Word Building — Roots, Prefixes & Suffixes", color:"#E63946",
-    points:["Most medical terms are built from a combination of a root word, prefix, and/or suffix","Common roots: cardi (heart), hepat (liver), nephr (kidney), neur (nerve), oste (bone), derm (skin)","Common prefixes: hyper- (above), hypo- (below), brady- (slow), tachy- (fast), a-/an- (without)","Common suffixes: -itis (inflammation), -ectomy (removal), -ology (study of), -algia (pain), -pathy (disease)","Example: hepat + itis = hepatitis (inflammation of the liver); hypo + glyc + emia = low blood sugar condition"] },
-  { id:12, num:"12", icon:"🔬", title:"The Joint Commission Do Not Use List", color:"#457B9D",
-    points:["TJC established this list to prevent medication errors caused by misread or misunderstood abbreviations","Do not write MS or MSO4 — write \"Morphine\" in full","Do not write U, u, or IU — write \"Units\" to avoid confusion with the number zero","Do not write q.d., qd, QD — write \"Daily\"; do not write q.o.d. — write \"Every other day\"","Do not write SC, SQ, or sub q — write \"Subcutaneously\"; avoid @, &, and / — write \"at,\" \"and,\" \"per\""] },
-  { id:13, num:"13", icon:"⭐", title:"Lay Terms vs. Medical Terms", color:"#2A9D8F",
-    points:["Always use plain language with patients — medical jargon creates confusion and reduces adherence","Hypertension = high blood pressure; myocardial infarction = heart attack; CVA = stroke","Edema = swelling; syncope = fainting; vertigo = dizziness; tachycardia = fast heart rate","GERD = heartburn; dyspnea = shortness of breath; arrhythmia = irregular heart rhythm","If you wouldn\'t say it naturally, use the lay term — then document the medical term in the chart"] },
-  { id:14, num:"14", icon:"📦", title:"Positional & Directional Terminology", color:"#8338EC",
-    points:["Anterior = front of body; posterior = back; superior = above (toward head); inferior = below (toward feet)","Medial = closer to midline; lateral = further from midline; proximal = closer to trunk; distal = further from trunk","Superficial = near the surface; deep = further from the surface","Supine = lying face up; prone = lying face down; Fowler\'s = sitting at 90°; semi-Fowler\'s = sitting at 45°","Dorsal recumbent = face up with knees bent; used for pelvic exams and certain procedures"] },
-  { id:15, num:"15", icon:"💊", title:"Differentiate Developmental Stages", color:"#FF6B35",
-    points:["Erikson\'s 8 stages each present a psychosocial crisis — success or failure shapes the individual\'s development","Infancy (Trust vs. Mistrust) → Toddler (Autonomy vs. Shame) → Preschool (Initiative vs. Guilt)","School-age (Industry vs. Inferiority) → Adolescent (Identity vs. Role Confusion)","Young adult (Intimacy vs. Isolation) → Middle adult (Generativity vs. Stagnation)","Older adult (Ego Integrity vs. Despair) — end of life, wisdom, and self-acceptance are the goals"] },
-  { id:16, num:"16", icon:"🫀", title:"Signs & Symptoms of Common Mental Health Conditions", color:"#E63946",
-    points:["Depression: extreme sadness, fatigue, hopelessness, loss of interest, thoughts of self-harm — treated with therapy and medication","Anxiety: excessive, uncontrolled worry; fast heart rate, sweating, difficulty functioning — therapy and medication","PTSD: follows a traumatic event; flashbacks, avoidance, sleep disturbance, aggression — psychotherapy and medication","ADHD: inattention, hyperactivity, impulsivity; typically begins in childhood; more common in males","Mental health is inseparable from physical health — these conditions affect how patients respond to all aspects of care"] },
-  { id:17, num:"17", icon:"📡", title:"Environmental & Socioeconomic Stressors", color:"#457B9D",
-    points:["Environmental stressors: pollution, overcrowding, language barriers, natural disasters, physical assault","Socioeconomic stressors: medical debt, job loss, housing instability, lack of insurance coverage","\"White coat syndrome\" — anxiety-driven blood pressure elevation in clinical settings is a real and common finding","When patients can\'t afford care or medications, follow-through on treatment plans is compromised","Understanding stressors helps MAs communicate empathically and connect patients to appropriate resources"] },
-  { id:18, num:"18", icon:"🗣️", title:"Psychology for Patients with Disabilities & Illness", color:"#2A9D8F",
-    points:["Always address the patient first — never assume inability to communicate based on disability","For patients with physical disabilities: ensure accessible waiting areas, appropriate accommodations, and assistive devices","For patients with developmental delays: determine their communication level first; stay calm, clear, and consistent","For patients with chronic or terminal illness: let the patient set the tone; never say \'I know how you feel\'","Ask what they need — do not make assumptions; being over-solicitous can feel just as dismissive as neglect"] },
-  { id:19, num:"19", icon:"📚", title:"Defense Mechanisms", color:"#8338EC",
-    points:["Defense mechanisms are unconscious coping strategies people use to protect themselves from difficult emotions","Denial: refusing to accept a reality (\"I don\'t have cancer, I don\'t need tests\")","Projection: attributing your own feelings to someone else; Displacement: redirecting emotions to a safer target","Rationalization: making unacceptable behavior seem logical; Regression: reverting to childlike behavior under stress","Recognizing these helps MAs respond with patience and empathy rather than frustration or confusion"] },
-  { id:20, num:"20", icon:"🧠", title:"End of Life & Stages of Grief", color:"#FF6B35",
-    points:["Kübler-Ross identified five stages: Denial → Anger → Bargaining → Depression → Acceptance","Denial: cannot accept the loss; support without reinforcing it — provide written information with provider approval","Anger: hostility often directed at staff; do not take it personally — this is an expected response to grief","Bargaining: patient seeks deals or alternatives; listen without judgment and allow them to express feelings","Depression then Acceptance: sadness and withdrawal, then coming to terms — offer presence, referrals, and encouragement"] },
-];
-
-var TAKEAWAYS = [
-  "Body systems are interconnected — disease in one system cascades through others; homeostasis depends on all",
-  "Medical terminology is built from roots, prefixes, and suffixes — learn the components and you can decode almost anything",
-  "Always follow The Joint Commission Do Not Use list — these abbreviations cause real harm to real patients",
-  "Use plain language with patients; save medical terms for the chart",
-  "Mental health and physical health are not separate — anxiety, depression, and PTSD affect every aspect of care",
-  "Recognize defense mechanisms and grief stages — patients are coping, not attacking you personally"
-];
+var TOPICS = [{"id": 1, "num": "01", "icon": "🔍", "title": "Identify Cell Structure", "color": "#E63946", "points": ["Cells are the building blocks of all living things — every body structure starts here", "Plasma membrane: selectively permeable outer layer; protects and separates the cell", "Nucleus: control center; houses DNA and regulates all cell activity", "Cytoplasm: gel-like fluid filling the cell; medium for chemical reactions", "Ribosomes: synthesize proteins; mitochondria produce ATP (usable energy); lysosomes digest waste"]}, {"id": 2, "num": "02", "icon": "🧰", "title": "Anatomical Structures & Positions", "color": "#457B9D", "points": ["Planes: sagittal (left/right), transverse (upper/lower), frontal/coronal (front/back)", "Five body cavities: cranial, spinal, thoracic, abdominal, pelvic — each houses specific organs", "Abdominal quadrants: RUQ, LUQ, RLQ, LLQ — used for documenting pain and organ location", "Positional terms: supine (face up), prone (face down), Fowler's (90°), semi-Fowler's (45°)", "Anatomical position: standing, facing forward, arms at sides, palms facing out — the standard reference"]}, {"id": 3, "num": "03", "icon": "🌈", "title": "Major Body Systems", "color": "#2A9D8F", "points": ["Integumentary: skin (largest organ) — protection, temperature regulation, sensation, vitamin D", "Skeletal: 206 bones — structure, organ protection, muscle attachment, hematopoiesis (blood cell production)", "Muscular: skeletal (voluntary), smooth (involuntary), cardiac — movement and posture", "Cardiovascular: heart + blood vessels — pumps blood, delivers oxygen/nutrients, removes waste", "Respiratory: nose → pharynx → larynx → trachea → bronchi → alveoli — gas exchange"]}, {"id": 4, "num": "04", "icon": "🧪", "title": "Body Systems — Continued", "color": "#8338EC", "points": ["Nervous: CNS (brain/spinal cord) + PNS — controls all other systems; somatic (voluntary) and autonomic branches", "Endocrine: glands produce hormones to regulate body functions and maintain homeostasis", "Urinary: kidneys filter blood, produce urine; stored in bladder, eliminated via urethra", "GI: mouth to anus — digests food and absorbs nutrients; liver, pancreas, gallbladder are accessory organs", "Immune/Lymphatic: B-cells, T-cells, lymph nodes — defends against pathogens; four types of immunity"]}, {"id": 5, "num": "05", "icon": "📏", "title": "Organ Systems & Homeostasis", "color": "#FF6B35", "points": ["Homeostasis is the body's ability to maintain a stable internal environment despite external changes", "The nervous and endocrine systems are the primary regulators — but every system contributes", "Organ systems are interdependent — disease in one system creates a cascade effect in others", "Example: Diabetes (endocrine) damages kidneys (urinary), nerves (nervous), and blood vessels (cardiovascular)", "When homeostasis is disrupted, the result can range from a headache to organ failure"]}, {"id": 6, "num": "06", "icon": "💉", "title": "Signs, Symptoms & Etiology", "color": "#E63946", "points": ["Sign: objective finding measurable by a provider (e.g., elevated BP, fever, abnormal lab result)", "Symptom: subjective experience reported by the patient (e.g., pain, nausea, fatigue)", "Etiology: the cause or origin of a disease — may be infectious, genetic, autoimmune, or unknown", "Examples: hypertension (high BP, genetics/lifestyle), asthma (airway inflammation, allergens), stroke (blocked/ruptured brain vessel)", "MAs don't diagnose — but recognizing common signs and symptoms helps you support the provider and the patient"]}, {"id": 7, "num": "07", "icon": "🩸", "title": "Diagnostic Measures & Treatment", "color": "#457B9D", "points": ["Labs: blood tests, urinalysis, cultures, biopsies — identify disease at the cellular or chemical level", "Imaging with radiation: X-ray, CT scan, angiography, mammography, nuclear medicine (PET, SPECT)", "Imaging without radiation: MRI (electromagnetic field), ultrasound (sound waves)", "Treatment options: medications, surgery, chemotherapy, radiation, infusion therapy, physical/occupational/respiratory therapy", "Contrast materials (iodine, barium, gadolinium) make structures more visible on imaging studies"]}, {"id": 8, "num": "08", "icon": "📋", "title": "Incidence, Prevalence & Risk Factors", "color": "#2A9D8F", "points": ["Incidence: number of new cases of a disease in a population over a specific time period", "Prevalence: total number of existing cases in a population at a given point in time", "Risk factors: conditions or behaviors that increase likelihood of disease (e.g., smoking → COPD; obesity → Type 2 DM)", "Comorbidity: two or more conditions occurring in the same patient at the same time (e.g., HTN + DM + obesity)", "Understanding risk factors helps MAs educate patients on prevention and support provider screening decisions"]}, {"id": 9, "num": "09", "icon": "🩹", "title": "Epidemics & Pandemics", "color": "#8338EC", "points": ["Endemic: a disease that spreads through a community at a normal, expected, ongoing rate", "Epidemic: a sudden and rapid increase in cases beyond what is normally expected in a region", "Pandemic: a worldwide disease outbreak crossing international borders (e.g., COVID-19)", "Prevention: hand hygiene, cough protocols, vaccination, isolation precautions — MAs educate patients on these measures", "The CDC and WHO monitor outbreaks globally and coordinate responses before epidemics become pandemics"]}, {"id": 10, "num": "10", "icon": "🏷️", "title": "Common Abbreviations & Symbols", "color": "#FF6B35", "points": ["BP (blood pressure), CBC (complete blood count), HTN (hypertension), DM (diabetes mellitus)", "MI (myocardial infarction), CVA (cerebrovascular accident/stroke), SOB (shortness of breath)", "NPO (nothing by mouth), PRN (as needed), Stat (immediately), WNL (within normal limits)", "Symbols still in use: ↑ increase, ↓ decrease, ♂ male, ♀ female, # pounds/number", "Facility-specific abbreviations vary — when in doubt, spell it out to avoid errors"]}, {"id": 11, "num": "11", "icon": "⚙️", "title": "Medical Word Building", "color": "#E63946", "points": ["Most medical terms are built from a combination of a root word, prefix, and/or suffix", "Common roots: cardi (heart), hepat (liver), nephr (kidney), neur (nerve), oste (bone), derm (skin)", "Common prefixes: hyper- (above), hypo- (below), brady- (slow), tachy- (fast), a-/an- (without)", "Common suffixes: -itis (inflammation), -ectomy (removal), -ology (study of), -algia (pain), -pathy (disease)", "Example: hepat + itis = hepatitis (inflammation of the liver); hypo + glyc + emia = low blood sugar condition"]}, {"id": 12, "num": "12", "icon": "🔬", "title": "TJC Do Not Use List", "color": "#457B9D", "points": ["TJC established this list to prevent medication errors caused by misread or misunderstood abbreviations", "Do not write MS or MSO4 — write \"Morphine\" in full", "Do not write U, u, or IU — write \"Units\" to avoid confusion with the number zero", "Do not write q.d., qd, QD — write \"Daily\"; do not write q.o.d. — write \"Every other day\"", "Do not write SC, SQ, or sub q — write \"Subcutaneously\"; avoid @, &, and / — write \"at,\" \"and,\" \"per\""]}, {"id": 13, "num": "13", "icon": "⭐", "title": "Lay Terms vs. Medical Terms", "color": "#2A9D8F", "points": ["Always use plain language with patients — medical jargon creates confusion and reduces adherence", "Hypertension = high blood pressure; myocardial infarction = heart attack; CVA = stroke", "Edema = swelling; syncope = fainting; vertigo = dizziness; tachycardia = fast heart rate", "GERD = heartburn; dyspnea = shortness of breath; arrhythmia = irregular heart rhythm", "If you wouldn't say it naturally, use the lay term — then document the medical term in the chart"]}, {"id": 14, "num": "14", "icon": "📦", "title": "Positional & Directional Terminology", "color": "#8338EC", "points": ["Anterior = front of body; posterior = back; superior = above (toward head); inferior = below (toward feet)", "Medial = closer to midline; lateral = further from midline; proximal = closer to trunk; distal = further from trunk", "Superficial = near the surface; deep = further from the surface", "Supine = lying face up; prone = lying face down; Fowler's = sitting at 90°; semi-Fowler's = sitting at 45°", "Dorsal recumbent = face up with knees bent; used for pelvic exams and certain procedures"]}, {"id": 15, "num": "15", "icon": "💊", "title": "Developmental Stages", "color": "#FF6B35", "points": ["Erikson's 8 stages each present a psychosocial crisis — success or failure shapes the individual's development", "Infancy (Trust vs. Mistrust) → Toddler (Autonomy vs. Shame) → Preschool (Initiative vs. Guilt)", "School-age (Industry vs. Inferiority) → Adolescent (Identity vs. Role Confusion)", "Young adult (Intimacy vs. Isolation) → Middle adult (Generativity vs. Stagnation)", "Older adult (Ego Integrity vs. Despair) — end of life, wisdom, and self-acceptance are the goals"]}, {"id": 16, "num": "16", "icon": "🫀", "title": "Common Mental Health Conditions", "color": "#E63946", "points": ["Depression: extreme sadness, fatigue, hopelessness, loss of interest, thoughts of self-harm — treated with therapy and medication", "Anxiety: excessive, uncontrolled worry; fast heart rate, sweating, difficulty functioning — therapy and medication", "PTSD: follows a traumatic event; flashbacks, avoidance, sleep disturbance, aggression — psychotherapy and medication", "ADHD: inattention, hyperactivity, impulsivity; typically begins in childhood; more common in males", "Mental health is inseparable from physical health — these conditions affect how patients respond to all aspects of care"]}, {"id": 17, "num": "17", "icon": "📡", "title": "Environmental & Socioeconomic Stressors", "color": "#457B9D", "points": ["Environmental stressors: pollution, overcrowding, language barriers, natural disasters, physical assault", "Socioeconomic stressors: medical debt, job loss, housing instability, lack of insurance coverage", "\"White coat syndrome\" — anxiety-driven blood pressure elevation in clinical settings is a real and common finding", "When patients can't afford care or medications, follow-through on treatment plans is compromised", "Understanding stressors helps MAs communicate empathically and connect patients to appropriate resources"]}, {"id": 18, "num": "18", "icon": "🗣️", "title": "Patients with Disabilities & Illness", "color": "#2A9D8F", "points": ["Always address the patient first — never assume inability to communicate based on disability", "For patients with physical disabilities: ensure accessible waiting areas, appropriate accommodations, and assistive devices", "For patients with developmental delays: determine their communication level first; stay calm, clear, and consistent", "For patients with chronic or terminal illness: let the patient set the tone; never say 'I know how you feel'", "Ask what they need — do not make assumptions; being over-solicitous can feel just as dismissive as neglect"]}, {"id": 19, "num": "19", "icon": "📚", "title": "Defense Mechanisms", "color": "#8338EC", "points": ["Defense mechanisms are unconscious coping strategies people use to protect themselves from difficult emotions", "Denial: refusing to accept a reality (\"I don't have cancer, I don't need tests\")", "Projection: attributing your own feelings to someone else; Displacement: redirecting emotions to a safer target", "Rationalization: making unacceptable behavior seem logical; Regression: reverting to childlike behavior under stress", "Recognizing these helps MAs respond with patience and empathy rather than frustration or confusion"]}, {"id": 20, "num": "20", "icon": "🧠", "title": "End of Life & Stages of Grief", "color": "#FF6B35", "points": ["Kübler-Ross identified five stages: Denial → Anger → Bargaining → Depression → Acceptance", "Denial: cannot accept the loss; support without reinforcing it — provide written information with provider approval", "Anger: hostility often directed at staff; do not take it personally — this is an expected response to grief", "Bargaining: patient seeks deals or alternatives; listen without judgment and allow them to express feelings", "Depression then Acceptance: sadness and withdrawal, then coming to terms — offer presence, referrals, and encouragement"]}];
+var TAKEAWAYS = ["Body systems are interconnected — disease in one system cascades through others; homeostasis depends on all", "Medical terminology is built from roots, prefixes, and suffixes — learn the components and you can decode almost anything", "Always follow The Joint Commission Do Not Use list — these abbreviations cause real harm to real patients", "Use plain language with patients; save medical terms for the chart", "Mental health and physical health are not separate — anxiety, depression, and PTSD affect every aspect of care", "Recognize defense mechanisms and grief stages — patients are coping, not attacking you personally"];
 
 var activeId = null;
-var sidebar = document.getElementById('sidebar');
+var contentPage = 0;
+var contentPages = [];
+var sidebarPage = 0;
+var sidebarTotalPages = 1;
+var ITEMS_PER_SIDEBAR_PAGE = 9;
+
+var sidebarPagesEl = document.getElementById('sidebarPages');
+var sidebarNavEl = document.getElementById('sidebarNav');
 var content = document.getElementById('content');
 
+/* ── Fullscreen ── */
+var fsBtn = document.getElementById('fsBtn');
+var fsIcon = document.getElementById('fsIcon');
+var expandPath = 'M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3';
+var shrinkPath = 'M4 14h2a2 2 0 0 1 2 2v2m8-16v2a2 2 0 0 0 2 2h2M4 10h2a2 2 0 0 0 2-2V6m8 16v-2a2 2 0 0 1 2-2h2';
+
+function updateFsIcon() {
+  var isFs = !!document.fullscreenElement;
+  fsIcon.innerHTML = '<path d="' + (isFs ? shrinkPath : expandPath) + '"/>';
+  fsBtn.title = isFs ? 'Exit fullscreen' : 'Toggle fullscreen';
+}
+
+fsBtn.addEventListener('click', function() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(function(){});
+  } else {
+    document.exitFullscreen().catch(function(){});
+  }
+});
+document.addEventListener('fullscreenchange', updateFsIcon);
+
+/* ── Sidebar ── */
 function buildSidebar() {
-  TOPICS.forEach(function(t) {
-    var btn = document.createElement('button');
-    btn.className = 'topic-btn';
-    btn.dataset.id = t.id;
-    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
-    btn.addEventListener('click', function() { selectTopic(t.id); });
-    btn.addEventListener('mouseenter', function() {
-      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+  sidebarPagesEl.innerHTML = '';
+  var allItems = TOPICS.map(function(t) { return { type: 'topic', data: t }; });
+  allItems.push({ type: 'takeaway' });
+  sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
+  for (var p = 0; p < sidebarTotalPages; p++) {
+    var pageDiv = document.createElement('div');
+    pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
+    pageDiv.dataset.page = p;
+    var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p + 1) * ITEMS_PER_SIDEBAR_PAGE);
+    slice.forEach(function(item) {
+      if (item.type === 'topic') {
+        var t = item.data;
+        var btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.dataset.id = t.id;
+        btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+        btn.addEventListener('click', function() { selectTopic(t.id); });
+        btn.addEventListener('mouseenter', function() {
+          if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+        });
+        btn.addEventListener('mouseleave', function() {
+          if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(btn);
+      } else {
+        var tkBtn = document.createElement('button');
+        tkBtn.className = 'topic-btn';
+        tkBtn.dataset.id = 'takeaways';
+        tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+        tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+        tkBtn.addEventListener('mouseenter', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+        });
+        tkBtn.addEventListener('mouseleave', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(tkBtn);
+      }
     });
-    btn.addEventListener('mouseleave', function() {
-      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-    });
-    sidebar.appendChild(btn);
-  });
-  var divider = document.createElement('div');
-  divider.className = 'sidebar-divider';
-  sidebar.appendChild(divider);
-  var tkBtn = document.createElement('button');
-  tkBtn.className = 'topic-btn';
-  tkBtn.dataset.id = 'takeaways';
-  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
-  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
-  tkBtn.addEventListener('mouseenter', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
-  });
-  tkBtn.addEventListener('mouseleave', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-  });
-  sidebar.appendChild(tkBtn);
+    sidebarPagesEl.appendChild(pageDiv);
+  }
+  if (sidebarTotalPages > 1) {
+    sidebarNavEl.innerHTML =
+      '<button id="sbPrev" onclick="changeSidebarPage(-1)">\u25C0</button>' +
+      '<span class="page-info" id="sbInfo"></span>' +
+      '<button id="sbNext" onclick="changeSidebarPage(1)">\u25B6</button>';
+    updateSidebarNav();
+  } else { sidebarNavEl.innerHTML = ''; }
+}
+
+function changeSidebarPage(dir) {
+  var next = sidebarPage + dir;
+  if (next < 0 || next >= sidebarTotalPages) return;
+  sidebarPage = next;
+  var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  pages[sidebarPage].classList.add('active');
+  updateSidebarNav(); updateSidebarActive();
+}
+
+function updateSidebarNav() {
+  var info = document.getElementById('sbInfo');
+  var prev = document.getElementById('sbPrev');
+  var nxt = document.getElementById('sbNext');
+  if (!info) return;
+  info.textContent = (sidebarPage + 1) + '/' + sidebarTotalPages;
+  prev.disabled = sidebarPage === 0;
+  nxt.disabled = sidebarPage === sidebarTotalPages - 1;
 }
 
 function updateSidebarActive() {
-  var btns = sidebar.querySelectorAll('.topic-btn');
+  var btns = sidebarPagesEl.querySelectorAll('.topic-btn');
   btns.forEach(function(btn) {
     var id = btn.dataset.id;
     var topic = TOPICS.find(function(t) { return t.id == id; });
     var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
     if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
     if (isActive && topic) {
-      btn.style.background = topic.color + '20';
-      btn.style.borderColor = topic.color;
+      btn.style.background = topic.color + '20'; btn.style.borderColor = topic.color;
     } else if (isActive && id === 'takeaways') {
-      btn.style.background = 'rgba(255,255,255,0.08)';
-      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+      btn.style.background = 'rgba(255,255,255,0.08)'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
     } else {
-      btn.style.background = 'var(--surface)';
-      btn.style.borderColor = 'var(--border)';
+      btn.style.background = 'var(--surface)'; btn.style.borderColor = 'var(--border)';
     }
   });
 }
 
-function renderTopic(t) {
+/* ── Content ── */
+function showContentPage(t) {
+  var points = contentPages[contentPage];
+  var globalOffset = 0;
+  for (var i = 0; i < contentPage; i++) globalOffset += contentPages[i].length;
   var html = '<div class="content-header">' +
     '<span class="icon">' + t.icon + '</span>' +
     '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
     '<div class="title">' + t.title + '</div></div></div>' +
-    '<div class="content-scroll">';
-  t.points.forEach(function(p, i) {
+    '<div class="content-body"><div class="content-points">';
+  points.forEach(function(p, i) {
     html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<div class="num" style="background:' + t.color + '">' + (globalOffset + i + 1) + '</div>' +
       '<p>' + p + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var topicIdx = TOPICS.findIndex(function(x) { return x.id === t.id; });
+  var prevTopic = topicIdx > 0 ? TOPICS[topicIdx - 1] : null;
+  var nextTopic = topicIdx < TOPICS.length - 1 ? TOPICS[topicIdx + 1] : null;
+  html += '<div class="content-footer">';
+  if (prevTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">\u2190 ' + prevTopic.title + '</button>';
+  } else { html += '<div></div>'; }
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function(x) {
+    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '"></div>';
+  });
+  html += '</div>';
+  if (nextTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' \u2192</button>';
+  } else {
+    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways \u2192</button>';
+  }
+  html += '</div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function renderTakeaways() {
   var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<span class="icon" style="font-size:32px">\uD83C\uDFAF</span>' +
     '<div><div class="title">Key Takeaways</div></div></div>' +
-    '<div class="content-scroll">';
+    '<div class="content-body"><div class="content-points">';
   TAKEAWAYS.forEach(function(t, i) {
     html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
       '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var lastTopic = TOPICS[TOPICS.length - 1];
+  html += '<div class="content-footer">';
+  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">\u2190 ' + lastTopic.title + '</button>';
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function() { html += '<div class="dot"></div>'; });
+  html += '<div class="dot active" style="background: linear-gradient(135deg, #E63946, #FF6B35)"></div>';
+  html += '</div><div></div></div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function selectTopic(id) {
   activeId = id;
-  updateSidebarActive();
-  if (id === 'takeaways') {
-    content.innerHTML = renderTakeaways();
+  if (id !== 'takeaways') {
+    var idx = TOPICS.findIndex(function(t) { return t.id === id; });
+    var targetPage = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
+    if (targetPage !== sidebarPage) {
+      sidebarPage = targetPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   } else {
-    var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) content.innerHTML = renderTopic(topic);
+    var tkPage = sidebarTotalPages - 1;
+    if (tkPage !== sidebarPage) {
+      sidebarPage = tkPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   }
-  content.style.animation = 'none';
-  void content.offsetHeight;
-  content.style.animation = 'fadeIn 0.25s ease';
+  updateSidebarActive();
+  if (id === 'takeaways') { renderTakeaways(); }
+  else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) { contentPages = [topic.points]; contentPage = 0; showContentPage(topic); }
+  }
 }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F11') { e.preventDefault(); fsBtn.click(); return; }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (activeId === null) { selectTopic(1); return; }
+    if (activeId === 'takeaways') return;
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx < TOPICS.length - 1) selectTopic(TOPICS[idx + 1].id);
+    else selectTopic('takeaways');
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (activeId === null) return;
+    if (activeId === 'takeaways') { selectTopic(TOPICS[TOPICS.length - 1].id); return; }
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx > 0) selectTopic(TOPICS[idx - 1].id);
+  }
+});
 
 buildSidebar();
 </script>

@@ -9,19 +9,19 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg-start: #0F2B3C;
-    --bg-mid: #0D4F5C;
-    --bg-end: #0E7490;
-    --teal: #0E7490;
-    --teal-dark: #0D4F5C;
-    --teal-bright: #22A6B3;
-    --green: #10B981;
-    --green-dark: #059669;
-    --text-primary: #F1F5F9;
-    --text-secondary: #CBD5E1;
-    --text-muted: #64748B;
-    --card-border: rgba(255,255,255,0.08);
-    --card-bg: rgba(255,255,255,0.05);
+    --bg-start: #0B1D2C;
+    --bg-mid: #0F2D3D;
+    --bg-end: #0B1D2C;
+    --teal: #2DD4BF;
+    --teal-dark: #14B8A6;
+    --teal-bright: #5EEAD4;
+    --green: #34D399;
+    --green-dark: #10B981;
+    --text-primary: #FFFFFF;
+    --text-secondary: #E2E8F0;
+    --text-muted: #94A3B8;
+    --card-border: rgba(255,255,255,0.15);
+    --card-bg: rgba(255,255,255,0.08);
   }
 
   body {
@@ -87,7 +87,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 7px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
   }
   .ref-row:last-child { border-bottom: none; }
   .ref-cat {
@@ -103,7 +103,7 @@
   }
 
   .btn-start {
-    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    background: linear-gradient(135deg, #14B8A6, #0D9488);
     color: white;
     border: none;
     padding: 14px 52px;
@@ -117,7 +117,7 @@
   }
   .btn-start:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(14,116,144,0.45);
+    box-shadow: 0 8px 24px rgba(20,184,166,0.45);
   }
   .btn-start:active { transform: translateY(0); }
 
@@ -185,7 +185,7 @@
     letter-spacing: -2px;
   }
   .reading-slash {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-size: 36px;
     font-weight: 400;
     margin: 0 2px;
@@ -227,7 +227,7 @@
     letter-spacing: -0.4px;
   }
   .done-msg {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-size: 14px;
     margin-bottom: 22px;
     font-family: 'Inter', sans-serif;
@@ -255,6 +255,47 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
+
+  .btn-next {
+    display: none;
+    margin: 16px auto 0;
+    background: linear-gradient(135deg, #14B8A6, #0D9488);
+    color: white;
+    border: none;
+    padding: 12px 44px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.2px;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .btn-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(20,184,166,0.45);
+  }
+  .btn-next:active { transform: translateY(0); }
+
+  .btn-redo {
+    background: transparent;
+    color: var(--teal-bright);
+    border: 1.5px solid var(--teal-bright);
+    padding: 12px 36px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: 0.2px;
+    margin-top: 10px;
+    transition: transform 0.12s, background 0.12s;
+  }
+  .btn-redo:hover {
+    background: rgba(34,166,179,0.12);
+    transform: translateY(-2px);
+  }
+  .btn-redo:active { transform: translateY(0); }
 </style>
 </head>
 <body>
@@ -269,11 +310,11 @@
 
     <div class="ref-box">
       <div class="ref-title">Quick Reference</div>
-      <div class="ref-row"><span class="ref-cat" style="color:#10B981">Normal</span><span class="ref-range">&lt; 120 / &lt; 80</span></div>
-      <div class="ref-row"><span class="ref-cat" style="color:#F59E0B">Elevated</span><span class="ref-range">120&ndash;129 / &lt; 80</span></div>
-      <div class="ref-row"><span class="ref-cat" style="color:#F97316">Stage 1 HTN</span><span class="ref-range">130&ndash;139 / 80&ndash;89</span></div>
-      <div class="ref-row"><span class="ref-cat" style="color:#EF4444">Stage 2 HTN</span><span class="ref-range">&ge; 140 / &ge; 90</span></div>
-      <div class="ref-row"><span class="ref-cat" style="color:#DC2626">Crisis &#9888;</span><span class="ref-range">&gt; 180 / &gt; 120</span></div>
+      <div class="ref-row"><span class="ref-cat" style="color:#34D399">Normal</span><span class="ref-range">&lt; 120 / &lt; 80</span></div>
+      <div class="ref-row"><span class="ref-cat" style="color:#FBBF24">Elevated</span><span class="ref-range">120&ndash;129 / &lt; 80</span></div>
+      <div class="ref-row"><span class="ref-cat" style="color:#FB923C">Stage 1 HTN</span><span class="ref-range">130&ndash;139 / 80&ndash;89</span></div>
+      <div class="ref-row"><span class="ref-cat" style="color:#F87171">Stage 2 HTN</span><span class="ref-range">&ge; 140 / &ge; 90</span></div>
+      <div class="ref-row"><span class="ref-cat" style="color:#FCA5A5">Crisis &#9888;</span><span class="ref-range">&gt; 180 / &gt; 120</span></div>
     </div>
 
     <button class="btn-start" onclick="startGame()">Start</button>
@@ -299,6 +340,7 @@
   </div>
 
   <div class="cat-buttons" id="catButtons"></div>
+  <button class="btn-next" id="btnNext" onclick="advanceRound()">Next →</button>
 </div>
 
 <!-- DONE SCREEN -->
@@ -312,16 +354,17 @@
       <div class="result-pct" id="donePct"></div>
     </div>
     <button class="btn-start" onclick="startGame()">Play Again</button>
+    <button class="btn-redo" id="btnRedo" onclick="redoMissed()">Redo Missed</button>
   </div>
 </div>
 
 <script>
 var CATEGORIES = [
-  { label: "Normal",      color: "#10B981", bg: "rgba(16,185,129,0.12)"  },
-  { label: "Elevated",    color: "#F59E0B", bg: "rgba(245,158,11,0.12)"  },
-  { label: "Stage 1 HTN", color: "#F97316", bg: "rgba(249,115,22,0.12)"  },
-  { label: "Stage 2 HTN", color: "#EF4444", bg: "rgba(239,68,68,0.12)"   },
-  { label: "Crisis \u26a0", color: "#DC2626", bg: "rgba(220,38,38,0.12)" }
+  { label: "Normal",      color: "#34D399", bg: "rgba(52,211,153,0.18)"  },
+  { label: "Elevated",    color: "#FBBF24", bg: "rgba(251,191,36,0.18)"  },
+  { label: "Stage 1 HTN", color: "#FB923C", bg: "rgba(251,146,60,0.18)"  },
+  { label: "Stage 2 HTN", color: "#F87171", bg: "rgba(248,113,113,0.18)" },
+  { label: "Crisis \u26a0", color: "#FCA5A5", bg: "rgba(252,165,165,0.18)" }
 ];
 
 var MAX_ROUNDS = 15;
@@ -330,6 +373,8 @@ var gamePicked = null;
 var gameScore = 0;
 var gameTotal = 0;
 var gameRound = 0;
+var missedReadings = [];
+var redoMode = false;
 
 function classify(sys, dia) {
   if (sys > 180 || dia > 120) return 4;
@@ -362,14 +407,24 @@ function showScreen(id) {
 
 function startGame() {
   gameScore = 0; gameTotal = 0; gameRound = 0;
+  missedReadings = [];
+  redoMode = false;
+  MAX_ROUNDS = 15;
   nextRound();
   showScreen('playScreen');
 }
 
+var redoReadings = [];
+
 function nextRound() {
-  gameReading = genReading();
+  if (redoMode && redoReadings.length > 0) {
+    gameReading = redoReadings[gameRound];
+  } else {
+    gameReading = genReading();
+  }
   gamePicked = null;
   gameRound++;
+  document.getElementById('btnNext').style.display = 'none';
   renderPlay();
 }
 
@@ -385,7 +440,7 @@ function renderPlay() {
   for (var i = 0; i < MAX_ROUNDS; i++) {
     var seg = document.createElement('div');
     seg.className = 'progress-seg';
-    seg.style.background = i < gameRound - 1 ? '#10B981' : i === gameRound - 1 ? '#22A6B3' : 'rgba(255,255,255,0.08)';
+    seg.style.background = i < gameRound - 1 ? '#34D399' : i === gameRound - 1 ? '#5EEAD4' : 'rgba(255,255,255,0.1)';
     bar.appendChild(seg);
   }
 
@@ -399,9 +454,9 @@ function renderPlay() {
       btn.type = 'button';
       btn.className = 'cat-btn';
       btn.textContent = cat.label;
-      btn.style.background = 'rgba(255,255,255,0.04)';
-      btn.style.border = '1.5px solid rgba(255,255,255,0.1)';
-      btn.style.color = '#CBD5E1';
+      btn.style.background = 'rgba(255,255,255,0.07)';
+      btn.style.border = '1.5px solid rgba(255,255,255,0.18)';
+      btn.style.color = '#F1F5F9';
       btn.id = 'catBtn' + idx;
       btn.addEventListener('click', function() { handlePick(idx); });
       container.appendChild(btn);
@@ -414,7 +469,9 @@ function handlePick(catIdx) {
   var correctIdx = classify(gameReading.sys, gameReading.dia);
   gamePicked = catIdx;
   gameTotal++;
-  if (catIdx === correctIdx) gameScore++;
+  var isCorrect = catIdx === correctIdx;
+  if (isCorrect) gameScore++;
+  else missedReadings.push({ sys: gameReading.sys, dia: gameReading.dia });
 
   for (var i = 0; i < CATEGORIES.length; i++) {
     var cat = CATEGORIES[i];
@@ -423,28 +480,43 @@ function handlePick(catIdx) {
     btn.style.cursor = 'default';
     btn.style.transform = 'none';
 
-    if (i === correctIdx) {
+    if (i === correctIdx && isCorrect) {
+      // User picked correctly
       btn.style.background = cat.bg;
-      btn.style.border = '1.5px solid ' + cat.color;
+      btn.style.border = '2px solid ' + cat.color;
       btn.style.color = cat.color;
-    } else if (i === catIdx && i !== correctIdx) {
-      btn.style.background = 'rgba(239,68,68,0.1)';
-      btn.style.border = '1.5px solid #EF4444';
+      btn.textContent = '✓  ' + cat.label;
+    } else if (i === correctIdx && !isCorrect) {
+      // Highlight the correct answer prominently
+      btn.style.background = cat.bg;
+      btn.style.border = '2.5px solid ' + cat.color;
+      btn.style.color = cat.color;
+      btn.style.fontWeight = '800';
+      btn.style.fontSize = '15px';
+      btn.textContent = '✓  ' + cat.label + '  — Correct Answer';
+    } else if (i === catIdx && !isCorrect) {
+      // User's wrong pick
+      btn.style.background = 'rgba(248,113,113,0.15)';
+      btn.style.border = '2px solid #F87171';
       btn.style.color = '#FCA5A5';
+      btn.textContent = '✗  ' + cat.label;
     } else {
-      btn.style.background = 'rgba(255,255,255,0.02)';
-      btn.style.border = '1.5px solid rgba(255,255,255,0.04)';
-      btn.style.color = '#475569';
+      btn.style.background = 'rgba(255,255,255,0.03)';
+      btn.style.border = '1.5px solid rgba(255,255,255,0.06)';
+      btn.style.color = '#64748B';
     }
   }
 
-  setTimeout(function() {
-    if (gameRound >= MAX_ROUNDS) {
-      showDone();
-    } else {
-      nextRound();
-    }
-  }, 1100);
+  document.getElementById('scoreLabel').textContent = gameScore + ' correct';
+  document.getElementById('btnNext').style.display = 'block';
+}
+
+function advanceRound() {
+  if (gameRound >= MAX_ROUNDS) {
+    showDone();
+  } else {
+    nextRound();
+  }
 }
 
 function showDone() {
@@ -452,9 +524,20 @@ function showDone() {
   document.getElementById('doneEmoji').textContent = pct >= 80 ? '\uD83C\uDFC6' : '\uD83D\uDCDA';
   document.getElementById('doneMsg').textContent = pct >= 90 ? 'BP classification pro!' : pct >= 70 ? 'Well done \u2014 a few to review.' : 'Study the table and try again!';
   document.getElementById('doneScore').textContent = gameScore + '/' + gameTotal;
-  document.getElementById('doneScore').style.color = pct >= 80 ? '#10B981' : '#F59E0B';
+  document.getElementById('doneScore').style.color = pct >= 80 ? '#34D399' : '#FBBF24';
   document.getElementById('donePct').textContent = pct + '% accuracy';
+  document.getElementById('btnRedo').style.display = missedReadings.length > 0 ? 'inline-block' : 'none';
   showScreen('doneScreen');
+}
+
+function redoMissed() {
+  redoMode = true;
+  redoReadings = missedReadings.slice();
+  MAX_ROUNDS = redoReadings.length;
+  gameScore = 0; gameTotal = 0; gameRound = 0;
+  missedReadings = [];
+  nextRound();
+  showScreen('playScreen');
 }
 </script>
 </body>

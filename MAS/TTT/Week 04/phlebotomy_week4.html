@@ -14,63 +14,99 @@
     --text-bright: #e2e8f4;
     --text-muted: #6b7a96;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   html, body {
     height: 100%; overflow: hidden;
     background: var(--bg);
     font-family: 'DM Sans', sans-serif;
     color: var(--text);
   }
-
   .app {
     height: 100vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
   }
-
   .header {
     flex-shrink: 0;
     text-align: center;
-    padding: 16px 24px 12px;
-  }
-  .header-tag {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 3px; text-transform: uppercase;
-    background: linear-gradient(135deg, #E63946, #FF6B35, #2A9D8F, #457B9D, #8338EC);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
+    padding: 14px 24px 10px;
+    position: relative;
   }
   .header h1 {
-    font-size: 26px; font-weight: 800;
+    font-size: 28px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
-
+  .header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+  .fs-btn {
+    position: absolute;
+    top: 14px; right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 18px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .fs-btn:hover {
+    color: var(--text-bright);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+  }
+  .fs-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .main {
     flex: 1; overflow: hidden;
-    display: flex; gap: 16px;
-    padding: 0 24px 16px;
+    display: flex; gap: 14px;
+    padding: 0 20px 14px;
   }
-
   .sidebar {
-    width: 250px; flex-shrink: 0;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 4px;
-    padding-right: 6px;
+    width: 260px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .sidebar::-webkit-scrollbar { width: 3px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
-
+  .sidebar-pages {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 4px;
+    overflow: hidden;
+  }
+  .sidebar-page {
+    display: none;
+    flex-direction: column; gap: 4px;
+    flex: 1;
+  }
+  .sidebar-page.active { display: flex; }
+  .sidebar-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px 0 0;
+  }
+  .sidebar-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
+  .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .sidebar-nav .page-info {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 44px; text-align: center;
+  }
   .topic-btn {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 8px 11px;
+    border-radius: 10px; padding: 8px 12px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
@@ -78,93 +114,115 @@
   .topic-btn:hover { transform: translateX(2px); }
   .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 13px; font-weight: 500; flex: 1;
+    font-size: 14px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 4px 0; flex-shrink: 0;
-  }
-
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px;
+    border-radius: 16px; padding: 22px;
     display: flex; flex-direction: column;
   }
-
   .content-header {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     margin-bottom: 14px;
   }
-  .content-header .icon { font-size: 30px; }
+  .content-header .icon { font-size: 32px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 18px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
-
-  .content-scroll {
-    flex: 1; overflow-y: auto; padding-right: 6px;
+  .content-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .content-scroll::-webkit-scrollbar { width: 3px; }
-  .content-scroll::-webkit-scrollbar-track { background: transparent; }
-  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
-
+  .content-points {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .content-footer {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+  .content-footer .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .content-footer .page-dots {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .content-footer .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.25s;
+  }
+  .content-footer .dot.active {
+    width: 20px; border-radius: 4px;
+  }
   .point {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px; border: 1px solid transparent;
+    border-radius: 10px; padding: 10px 14px;
+    border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
-
+  .point p { font-size: 15.5px; line-height: 1.5; color: var(--text); }
   .tip-box {
-    margin-top: 4px; padding: 10px 13px;
+    margin-top: 2px; padding: 10px 14px;
     border-radius: 10px;
     animation: pointIn 0.35s ease both;
   }
-  .tip-box p { font-size: 14px; line-height: 1.55; color: var(--text-bright); }
-
+  .tip-box p { font-size: 15px; line-height: 1.5; color: var(--text-bright); }
   .takeaway-item {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px;
+    border-radius: 10px; padding: 11px 14px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
-
+  .takeaway-item p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
-  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
-
+  .welcome .big-icon { font-size: 52px; margin-bottom: 16px; }
+  .welcome p { font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -173,48 +231,6 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
-
-  /* ===== MOBILE RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    html, body { overflow: auto; height: auto; }
-    .app { height: auto; min-height: 100vh; overflow: visible; }
-    .header { padding: 14px 16px 10px; }
-    .header h1 { font-size: 22px; }
-    .main {
-      flex-direction: column;
-      padding: 0 12px 16px;
-      overflow: visible;
-    }
-    .sidebar {
-      width: 100%;
-      flex-direction: row;
-      overflow-x: auto;
-      overflow-y: hidden;
-      gap: 6px;
-      padding-right: 0;
-      padding-bottom: 8px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
-    .topic-btn {
-      flex-shrink: 0;
-      min-width: max-content;
-      padding: 7px 12px;
-    }
-    .sidebar-divider {
-      width: 1px; height: auto;
-      min-height: 28px;
-      margin: 0 2px;
-    }
-    .content {
-      overflow: visible;
-      min-height: 60vh;
-      padding: 16px;
-    }
-    .content-scroll { overflow: visible; }
-    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
-  }
-
 </style>
 </head>
 <body>
@@ -222,9 +238,15 @@
   <div class="header">
     <h1>Phlebotomy</h1>
     <p>Techniques and Best Practices</p>
+    <button class="fs-btn" id="fsBtn" title="Toggle fullscreen">
+      <svg id="fsIcon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
   </div>
   <div class="main">
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-pages" id="sidebarPages"></div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
     <div class="content" id="content">
       <div class="welcome">
         <div class="big-icon">🩸</div>
@@ -233,160 +255,167 @@
     </div>
   </div>
 </div>
-
 <script>
-const TOPICS = [
-  { id:1, num:"01", icon:"🔍", title:"Verify Order & ID Patient", color:"#E63946",
-    points:["Always obtain a written or electronic provider order before beginning any blood draw","Confirm the patient's identity using two identifiers — full name and date of birth","Ask the patient if they followed all required preparation instructions before starting","If the patient has not fasted or completed required prep, the draw cannot proceed — contact the provider","Review the laboratory directory for any test you are unfamiliar with before beginning"],
-    tip:"🧠 Think of it like a bouncer checking IDs — no exceptions, even for regulars!" },
-  { id:2, num:"02", icon:"🧰", title:"Select Supplies", color:"#457B9D",
-    points:["Evacuated tube system: most common — double-pointed needle, plastic holder, vacuum collection tubes","Butterfly (winged infusion): best for small or fragile veins — flexible wings, short needle, flexible tubing","Needle and syringe: for limited draw volumes — suction controlled via the plunger","Core supplies: alcohol wipes, gauze, bandages, tourniquet, PPE, sharps container","Arrange all supplies — including tubes in the correct order of draw — before beginning"],
-    tip:"🦋 Butterfly needles = small veins. Delicate butterfly for delicate veins!" },
-  { id:3, num:"03", icon:"🌈", title:"Tube Colors, Additives & Order of Draw", color:"#2A9D8F",
-    points:["Yellow: sodium polyanethol sulfonate — blood/body fluid cultures","Light Blue: sodium citrate — coagulation testing (3–4 inversions)","Red: no additive — serum for chemistry, blood bank, immunology (5 inversions)","Red/Gray SST: silica particles — serum chemistry, immunology (5 inversions)","Green: heparin — chemistry; Green/Gray: lithium heparin + gel — plasma chemistry (8 inversions each)","Lavender: EDTA — hematology testing (8 inversions)","Gray: potassium oxalate + sodium fluoride — glucose and alcohol levels (8–10 inversions)","Draw tubes in this exact order at every collection — additive carryover between tubes corrupts results","Fill tubes completely — the light blue tube has a minimum fill indicator line that must be met","Invert gently; never shake — forceful inversion causes hemolysis"],
-    tip:"🎨 Mnemonic: 'Your Lab Results Get Lovely Grades' — Yellow, Light blue, Red, Green, Lavender, Gray! And remember: gentle inversions only — shake them and you ruin the mix!" },
-  { id:4, num:"04", icon:"📏", title:"Fill Ratios & Inversions", color:"#FF6B35",
-    points:["All tubes should be filled to the manufacturer's intended volume — allow blood to flow until it stops","The light blue (sodium citrate) tube has a marked minimum fill line — an underfilled tube is invalid","Inversion mixes blood with the additive; each tube type has a specific required number of inversions","After filling, hold tubes upright — do not lay them on their side or shake them","Serum tubes must be allowed to clot upright at room temperature for 30–45 minutes before centrifuging"],
-    tip:"⏰ 30-45 min clot time — set a timer! Underfilled light blue = automatic redo." },
-  { id:5, num:"05", icon:"💉", title:"Perform Venipuncture", color:"#E63946",
-    points:["Anchor the vein 2–3 inches below the site; insert needle bevel up at 15–30° (arm) or 10–15° (hand)","Evacuated: insert tubes one at a time; release tourniquet once blood flows; fill in order of draw","Butterfly: use for small/fragile veins; needle gauge 21–23; ½ to ¾ inch length","Syringe: provides controlled suction; transfer to tubes immediately using a transfer device","Activate the needle safety guard immediately after withdrawal; dispose in the sharps container"],
-    tip:"📐 Arm = 15-30°, Hand = 10-15°. Think LOW angle, not diving in!" },
-  { id:6, num:"06", icon:"🩸", title:"Capillary Puncture", color:"#457B9D",
-    points:["Used for small blood volume needs, immediate results, or when the patient is an infant or young child","Adult/child site: middle or ring finger of the nondominant hand — slightly off-center, avoid nail bed","Infant site: outer edge of the underside of the heel — never puncture an infant's finger (bone damage risk)","Warm the site first; cleanse with 70% isopropyl alcohol and allow to fully air-dry","Wipe away the first drop of blood before collecting (exception: prothrombin time testing)"],
-    tip:"👶 Babies = heel stick ONLY. Always wipe away the first drop — it's contaminated with tissue fluid." },
-  { id:7, num:"07", icon:"📋", title:"Capillary Order of Draw", color:"#2A9D8F",
-    points:["Capillary order of draw differs from venipuncture — follow this sequence for skin puncture","1st: Blood gas tubes","2nd: EDTA tubes","3rd: Other additive tubes","4th: Serum tubes"],
-    tip:"💨 Gases first! They change fastest in air. 'BEOS' — Blood gas, EDTA, Other, Serum." },
-  { id:8, num:"08", icon:"🩹", title:"Post-Procedure Care", color:"#8338EC",
-    points:["Place gauze over the site before removing the needle — do not apply pressure until it is fully out","Extend and elevate the arm if needed to aid hemostasis","Apply a clean bandage once bleeding has stopped; instruct the patient to leave it on for at least 15 minutes","Check the patient before they stand — vasovagal syncope (fainting) is the most common adverse reaction","Advise the patient to avoid heavy lifting with the affected arm for the remainder of the day"],
-    tip:"😵 Always ask 'How are you feeling?' before they stand. A fainted patient = a very bad day." },
-  { id:9, num:"09", icon:"🏷️", title:"Label Specimens", color:"#FF6B35",
-    points:["Label all tubes immediately after collection, before moving away from the draw area","Required on every label: full patient name, date of birth, date and time of collection, and MA initials","Mislabeling is the single most common source of laboratory error","Match each labeled tube to its corresponding lab requisition before placing in the transport bag","Use a separate biohazard transport bag for each patient — never mix patients in the same bag"],
-    tip:"🚨 Golden rule: LABEL BEFORE YOU LEAVE the patient's side. No exceptions. Ever." },
-  { id:10, num:"10", icon:"⚙️", title:"Process & Store Samples", color:"#E63946",
-    points:["Serum tubes must clot upright at room temperature for 30–45 min before centrifuging — do not exceed 1 hour","Always balance the centrifuge — equal size and volume tubes placed directly across from each other","Use a disposable pipette for aliquots — never pour blood between containers","Light-sensitive specimens: keep lab lights low during processing; wrap in foil or use an amber tube","Refrigerated and frozen specimens must be stored in dedicated medical-grade equipment only"],
-    tip:"⚖️ Think of a centrifuge like a washing machine — unbalanced loads cause chaos!" },
-  { id:11, num:"11", icon:"🔬", title:"Preanalytical Factors", color:"#457B9D",
-    points:["Preanalytical errors occur before, during, or immediately after the venipuncture procedure","Common errors: mislabeling, wrong patient ID, wrong container, hemolysis, insufficient volume","Hemoconcentration: caused by leaving the tourniquet on longer than 1 minute — alters multiple test values","If any error is identified or specimen integrity is in question, notify the provider immediately","Postanalytical errors (data entry, reporting failures) are also the MA's responsibility to catch and report"],
-    tip:"⏱️ 1 minute MAX for the tourniquet. Start counting the second you tie it!" },
-  { id:12, num:"12", icon:"⭐", title:"Special Collections", color:"#2A9D8F",
-    points:["Timed specimens: collected at a specific provider-ordered time — do not proceed if timing is off; contact provider","Blood cultures: require special skin prep, multiple specifically labeled bottles, and strict protocol","Chain of custody: required for drug/alcohol levels and legal evidence — every handler must sign","Oral glucose tolerance test (GTT): evaluates glucose levels over time — patient must follow strict prep and timing","When in doubt on any special collection, consult the laboratory reference manual before proceeding"],
-    tip:"⛓️ Chain of custody = legal chain of proof. One unsigned link = case dismissed!" },
-  { id:13, num:"13", icon:"📦", title:"Transport to Reference Lab", color:"#8338EC",
-    points:["Have all specimens labeled, packaged, and requisitions completed before the courier arrives","Use leakproof, tear-free biohazard bags — one per patient, with matching requisition inside","Room temperature specimens: protect from extreme heat or cold if left in a lockbox","Refrigerated/frozen specimens: use appropriate coolers with ice packs for transport","Confirm pickup daily — missed transport can compromise specimen viability and delay patient care"],
-    tip:"📬 Treat specimens like first-class mail — properly packaged, correctly addressed, delivered on time!" }
-];
+var TOPICS = [{"id": 1, "num": "01", "icon": "🔍", "title": "Verify Order & ID Patient", "color": "#E63946", "points": ["Always obtain a written or electronic provider order before beginning any blood draw", "Confirm the patient's identity using two identifiers — full name and date of birth", "Ask the patient if they followed all required preparation instructions before starting", "If the patient has not fasted or completed required prep, the draw cannot proceed — contact the provider", "Review the laboratory directory for any test you are unfamiliar with before beginning"], "tip": "🧠 Think of it like a bouncer checking IDs — no exceptions, even for regulars!"}, {"id": 2, "num": "02", "icon": "🧰", "title": "Select Supplies", "color": "#457B9D", "points": ["Evacuated tube system: most common — double-pointed needle, plastic holder, vacuum collection tubes", "Butterfly (winged infusion): best for small or fragile veins — flexible wings, short needle, flexible tubing", "Needle and syringe: for limited draw volumes — suction controlled via the plunger", "Core supplies: alcohol wipes, gauze, bandages, tourniquet, PPE, sharps container", "Arrange all supplies — including tubes in the correct order of draw — before beginning"], "tip": "🦋 Butterfly needles = small veins. Delicate butterfly for delicate veins!"}, {"id": 3, "num": "03", "icon": "🌈", "title": "Tube Colors, Additives & Order of Draw", "color": "#2A9D8F", "points": ["Yellow: sodium polyanethol sulfonate — blood/body fluid cultures", "Light Blue: sodium citrate — coagulation testing (3–4 inversions)", "Red: no additive — serum for chemistry, blood bank, immunology (5 inversions)", "Red/Gray SST: silica particles — serum chemistry, immunology (5 inversions)", "Green: heparin — chemistry; Green/Gray: lithium heparin + gel — plasma chemistry (8 inversions each)", "Lavender: EDTA — hematology testing (8 inversions)", "Gray: potassium oxalate + sodium fluoride — glucose and alcohol levels (8–10 inversions)", "Draw tubes in this exact order at every collection — additive carryover between tubes corrupts results", "Fill tubes completely — the light blue tube has a minimum fill indicator line that must be met", "Invert gently; never shake — forceful inversion causes hemolysis"], "tip": "🎨 Mnemonic: 'Your Lab Results Get Lovely Grades' — Yellow, Light blue, Red, Green, Lavender, Gray! And remember: gentle inversions only — shake them and you ruin the mix!"}, {"id": 4, "num": "04", "icon": "📏", "title": "Fill Ratios & Inversions", "color": "#FF6B35", "points": ["All tubes should be filled to the manufacturer's intended volume — allow blood to flow until it stops", "The light blue (sodium citrate) tube has a marked minimum fill line — an underfilled tube is invalid", "Inversion mixes blood with the additive; each tube type has a specific required number of inversions", "After filling, hold tubes upright — do not lay them on their side or shake them", "Serum tubes must be allowed to clot upright at room temperature for 30–45 minutes before centrifuging"], "tip": "⏰ 30-45 min clot time — set a timer! Underfilled light blue = automatic redo."}, {"id": 5, "num": "05", "icon": "💉", "title": "Perform Venipuncture", "color": "#E63946", "points": ["Anchor the vein 2–3 inches below the site; insert needle bevel up at 15–30° (arm) or 10–15° (hand)", "Evacuated: insert tubes one at a time; release tourniquet once blood flows; fill in order of draw", "Butterfly: use for small/fragile veins; needle gauge 21–23; ½ to ¾ inch length", "Syringe: provides controlled suction; transfer to tubes immediately using a transfer device", "Activate the needle safety guard immediately after withdrawal; dispose in the sharps container"], "tip": "📐 Arm = 15-30°, Hand = 10-15°. Think LOW angle, not diving in!"}, {"id": 6, "num": "06", "icon": "🩸", "title": "Capillary Puncture", "color": "#457B9D", "points": ["Used for small blood volume needs, immediate results, or when the patient is an infant or young child", "Adult/child site: middle or ring finger of the nondominant hand — slightly off-center, avoid nail bed", "Infant site: outer edge of the underside of the heel — never puncture an infant's finger (bone damage risk)", "Warm the site first; cleanse with 70% isopropyl alcohol and allow to fully air-dry", "Wipe away the first drop of blood before collecting (exception: prothrombin time testing)"], "tip": "👶 Babies = heel stick ONLY. Always wipe away the first drop — it's contaminated with tissue fluid."}, {"id": 7, "num": "07", "icon": "📋", "title": "Capillary Order of Draw", "color": "#2A9D8F", "points": ["Capillary order of draw differs from venipuncture — follow this sequence for skin puncture", "1st: Blood gas tubes", "2nd: EDTA tubes", "3rd: Other additive tubes", "4th: Serum tubes"], "tip": "💨 Gases first! They change fastest in air. 'BEOS' — Blood gas, EDTA, Other, Serum."}, {"id": 8, "num": "08", "icon": "🩹", "title": "Post-Procedure Care", "color": "#8338EC", "points": ["Place gauze over the site before removing the needle — do not apply pressure until it is fully out", "Extend and elevate the arm if needed to aid hemostasis", "Apply a clean bandage once bleeding has stopped; instruct the patient to leave it on for at least 15 minutes", "Check the patient before they stand — vasovagal syncope (fainting) is the most common adverse reaction", "Advise the patient to avoid heavy lifting with the affected arm for the remainder of the day"], "tip": "😵 Always ask 'How are you feeling?' before they stand. A fainted patient = a very bad day."}, {"id": 9, "num": "09", "icon": "🏷️", "title": "Label Specimens", "color": "#FF6B35", "points": ["Label all tubes immediately after collection, before moving away from the draw area", "Required on every label: full patient name, date of birth, date and time of collection, and MA initials", "Mislabeling is the single most common source of laboratory error", "Match each labeled tube to its corresponding lab requisition before placing in the transport bag", "Use a separate biohazard transport bag for each patient — never mix patients in the same bag"], "tip": "🚨 Golden rule: LABEL BEFORE YOU LEAVE the patient's side. No exceptions. Ever."}, {"id": 10, "num": "10", "icon": "⚙️", "title": "Process & Store Samples", "color": "#E63946", "points": ["Serum tubes must clot upright at room temperature for 30–45 min before centrifuging — do not exceed 1 hour", "Always balance the centrifuge — equal size and volume tubes placed directly across from each other", "Use a disposable pipette for aliquots — never pour blood between containers", "Light-sensitive specimens: keep lab lights low during processing; wrap in foil or use an amber tube", "Refrigerated and frozen specimens must be stored in dedicated medical-grade equipment only"], "tip": "⚖️ Think of a centrifuge like a washing machine — unbalanced loads cause chaos!"}, {"id": 11, "num": "11", "icon": "🔬", "title": "Preanalytical Factors", "color": "#457B9D", "points": ["Preanalytical errors occur before, during, or immediately after the venipuncture procedure", "Common errors: mislabeling, wrong patient ID, wrong container, hemolysis, insufficient volume", "Hemoconcentration: caused by leaving the tourniquet on longer than 1 minute — alters multiple test values", "If any error is identified or specimen integrity is in question, notify the provider immediately", "Postanalytical errors (data entry, reporting failures) are also the MA's responsibility to catch and report"], "tip": "⏱️ 1 minute MAX for the tourniquet. Start counting the second you tie it!"}, {"id": 12, "num": "12", "icon": "⭐", "title": "Special Collections", "color": "#2A9D8F", "points": ["Timed specimens: collected at a specific provider-ordered time — do not proceed if timing is off; contact provider", "Blood cultures: require special skin prep, multiple specifically labeled bottles, and strict protocol", "Chain of custody: required for drug/alcohol levels and legal evidence — every handler must sign", "Oral glucose tolerance test (GTT): evaluates glucose levels over time — patient must follow strict prep and timing", "When in doubt on any special collection, consult the laboratory reference manual before proceeding"], "tip": "⛓️ Chain of custody = legal chain of proof. One unsigned link = case dismissed!"}, {"id": 13, "num": "13", "icon": "📦", "title": "Transport to Reference Lab", "color": "#8338EC", "points": ["Have all specimens labeled, packaged, and requisitions completed before the courier arrives", "Use leakproof, tear-free biohazard bags — one per patient, with matching requisition inside", "Room temperature specimens: protect from extreme heat or cold if left in a lockbox", "Refrigerated/frozen specimens: use appropriate coolers with ice packs for transport", "Confirm pickup daily — missed transport can compromise specimen viability and delay patient care"], "tip": "📬 Treat specimens like first-class mail — properly packaged, correctly addressed, delivered on time!"}];
+var TAKEAWAYS = ["Verify identity and confirm prep compliance before every draw — no exceptions", "The order of draw is not optional — additive carryover corrupts results", "Choose the right needle system for the patient's veins, not just what's convenient", "Tourniquet on for no more than 1 minute — label tubes before leaving the draw area", "Most errors occur before the specimen is tested — the pre-analytical phase is critical", "Critical values require immediate notification, read-back confirmation, and documentation"];
 
-const TAKEAWAYS = [
-  "Verify identity and confirm prep compliance before every draw — no exceptions",
-  "The order of draw is not optional — additive carryover corrupts results",
-  "Choose the right needle system for the patient's veins, not just what's convenient",
-  "Tourniquet on for no more than 1 minute — label tubes before leaving the draw area",
-  "Most errors occur before the specimen is tested — the pre-analytical phase is critical",
-  "Critical values require immediate notification, read-back confirmation, and documentation"
-];
+var activeId = null;
+var sidebarPage = 0;
+var sidebarTotalPages = 1;
+var ITEMS_PER_SIDEBAR_PAGE = 9;
 
-let activeId = null;
-const sidebar = document.getElementById('sidebar');
-const content = document.getElementById('content');
+var sidebarPagesEl = document.getElementById('sidebarPages');
+var sidebarNavEl = document.getElementById('sidebarNav');
+var content = document.getElementById('content');
 
-function buildSidebar() {
-  TOPICS.forEach(t => {
-    const btn = document.createElement('button');
-    btn.className = 'topic-btn';
-    btn.dataset.id = t.id;
-    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
-    btn.addEventListener('click', function() { selectTopic(t.id); });
-    btn.addEventListener('mouseenter', function() {
-      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
-    });
-    btn.addEventListener('mouseleave', function() {
-      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-    });
-    sidebar.appendChild(btn);
-  });
-
-  var divider = document.createElement('div');
-  divider.className = 'sidebar-divider';
-  sidebar.appendChild(divider);
-
-  var tkBtn = document.createElement('button');
-  tkBtn.className = 'topic-btn';
-  tkBtn.dataset.id = 'takeaways';
-  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
-  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
-  tkBtn.addEventListener('mouseenter', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
-  });
-  tkBtn.addEventListener('mouseleave', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-  });
-  sidebar.appendChild(tkBtn);
+/* Fullscreen */
+var fsBtn = document.getElementById('fsBtn');
+var fsIcon = document.getElementById('fsIcon');
+var expandPath = 'M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3';
+var shrinkPath = 'M4 14h2a2 2 0 0 1 2 2v2m8-16v2a2 2 0 0 0 2 2h2M4 10h2a2 2 0 0 0 2-2V6m8 16v-2a2 2 0 0 1 2-2h2';
+function updateFsIcon() {
+  var isFs = !!document.fullscreenElement;
+  fsIcon.innerHTML = '<path d="' + (isFs ? shrinkPath : expandPath) + '"/>';
+  fsBtn.title = isFs ? 'Exit fullscreen' : 'Toggle fullscreen';
 }
+fsBtn.addEventListener('click', function() {
+  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function(){});
+  else document.exitFullscreen().catch(function(){});
+});
+document.addEventListener('fullscreenchange', updateFsIcon);
 
+/* Sidebar */
+function buildSidebar() {
+  sidebarPagesEl.innerHTML = '';
+  var allItems = TOPICS.map(function(t) { return { type:'topic', data:t }; });
+  allItems.push({ type:'takeaway' });
+  sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
+  for (var p = 0; p < sidebarTotalPages; p++) {
+    var pageDiv = document.createElement('div');
+    pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
+    pageDiv.dataset.page = p;
+    var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p+1) * ITEMS_PER_SIDEBAR_PAGE);
+    slice.forEach(function(item) {
+      if (item.type === 'topic') {
+        var t = item.data;
+        var btn = document.createElement('button');
+        btn.className = 'topic-btn'; btn.dataset.id = t.id;
+        btn.innerHTML = '<span class="icon">'+t.icon+'</span><span class="label">'+t.title+'</span>';
+        btn.addEventListener('click', function() { selectTopic(t.id); });
+        btn.addEventListener('mouseenter', function() { if (activeId !== t.id) { this.style.background = t.color+'10'; this.style.borderColor = t.color+'55'; }});
+        btn.addEventListener('mouseleave', function() { if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }});
+        pageDiv.appendChild(btn);
+      } else {
+        var tkBtn = document.createElement('button');
+        tkBtn.className = 'topic-btn'; tkBtn.dataset.id = 'takeaways';
+        tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+        tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+        tkBtn.addEventListener('mouseenter', function() { if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }});
+        tkBtn.addEventListener('mouseleave', function() { if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }});
+        pageDiv.appendChild(tkBtn);
+      }
+    });
+    sidebarPagesEl.appendChild(pageDiv);
+  }
+  if (sidebarTotalPages > 1) {
+    sidebarNavEl.innerHTML = '<button id="sbPrev" onclick="changeSidebarPage(-1)">\u25C0</button><span class="page-info" id="sbInfo"></span><button id="sbNext" onclick="changeSidebarPage(1)">\u25B6</button>';
+    updateSidebarNav();
+  } else { sidebarNavEl.innerHTML = ''; }
+}
+function changeSidebarPage(dir) {
+  var next = sidebarPage + dir;
+  if (next < 0 || next >= sidebarTotalPages) return;
+  sidebarPage = next;
+  var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  pages[sidebarPage].classList.add('active');
+  updateSidebarNav(); updateSidebarActive();
+}
+function updateSidebarNav() {
+  var info = document.getElementById('sbInfo'), prev = document.getElementById('sbPrev'), nxt = document.getElementById('sbNext');
+  if (!info) return;
+  info.textContent = (sidebarPage+1)+'/'+sidebarTotalPages;
+  prev.disabled = sidebarPage === 0; nxt.disabled = sidebarPage === sidebarTotalPages - 1;
+}
 function updateSidebarActive() {
-  var btns = sidebar.querySelectorAll('.topic-btn');
-  btns.forEach(function(btn) {
+  sidebarPagesEl.querySelectorAll('.topic-btn').forEach(function(btn) {
     var id = btn.dataset.id;
     var topic = TOPICS.find(function(t) { return t.id == id; });
     var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
     if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
-    if (isActive && topic) {
-      btn.style.background = topic.color + '20';
-      btn.style.borderColor = topic.color;
-    } else if (isActive && id === 'takeaways') {
-      btn.style.background = 'rgba(255,255,255,0.08)';
-      btn.style.borderColor = 'rgba(255,255,255,0.2)';
-    } else {
-      btn.style.background = 'var(--surface)';
-      btn.style.borderColor = 'var(--border)';
-    }
+    if (isActive && topic) { btn.style.background = topic.color+'20'; btn.style.borderColor = topic.color; }
+    else if (isActive && id === 'takeaways') { btn.style.background = 'rgba(255,255,255,0.08)'; btn.style.borderColor = 'rgba(255,255,255,0.2)'; }
+    else { btn.style.background = 'var(--surface)'; btn.style.borderColor = 'var(--border)'; }
   });
 }
 
-function renderTopic(t) {
-  var html = '<div class="content-header">' +
-    '<span class="icon">' + t.icon + '</span>' +
-    '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
-    '<div class="title">' + t.title + '</div></div></div>' +
-    '<div class="content-scroll">';
-  t.points.forEach(function(p, i) {
-    html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
-      '<p>' + p + '</p></div>';
+/* Content */
+function showTopic(t) {
+  var html = '<div class="content-header"><span class="icon">'+t.icon+'</span><div><div class="tag" style="color:'+t.color+'">TOPIC '+t.num+'</div><div class="title">'+t.title+'</div></div></div><div class="content-body"><div class="content-points">';
+  t.points.forEach(function(p,i) {
+    html += '<div class="point" style="border-color:'+t.color+'22;animation-delay:'+(i*50)+'ms"><div class="num" style="background:'+t.color+'">'+(i+1)+'</div><p>'+p+'</p></div>';
   });
-  html += '<div class="tip-box" style="background:' + t.color + '12;border:1px dashed ' + t.color + '44;animation-delay:' + (t.points.length * 50) + 'ms">' +
-    '<p>' + t.tip + '</p></div></div>';
-  return html;
+  if (t.tip) {
+    html += '<div class="tip-box" style="background:'+t.color+'12;border:1px dashed '+t.color+'44;animation-delay:'+(t.points.length*50)+'ms"><p>'+t.tip+'</p></div>';
+  }
+  html += '</div>';
+  var idx = TOPICS.findIndex(function(x){return x.id===t.id;});
+  var prev = idx > 0 ? TOPICS[idx-1] : null;
+  var next = idx < TOPICS.length-1 ? TOPICS[idx+1] : null;
+  html += '<div class="content-footer">';
+  html += prev ? '<button class="nav-btn" onclick="selectTopic('+prev.id+')">\u2190 '+prev.title+'</button>' : '<div></div>';
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function(x){ html += '<div class="dot'+(x.id===t.id?' active':'')+'" style="'+(x.id===t.id?'background:'+t.color:'')+'"></div>'; });
+  html += '</div>';
+  html += next ? '<button class="nav-btn" onclick="selectTopic('+next.id+')">'+next.title+' \u2192</button>' : '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways \u2192</button>';
+  html += '</div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight; content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function renderTakeaways() {
-  var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:30px">🎯</span>' +
-    '<div><div class="title">Key Takeaways</div></div></div>' +
-    '<div class="content-scroll">';
-  TAKEAWAYS.forEach(function(t, i) {
-    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
-  });
+  var html = '<div class="content-header"><span class="icon" style="font-size:32px">\uD83C\uDFAF</span><div><div class="title">Key Takeaways</div></div></div><div class="content-body"><div class="content-points">';
+  TAKEAWAYS.forEach(function(t,i){ html += '<div class="takeaway-item" style="animation-delay:'+(i*50)+'ms"><div class="num">'+(i+1)+'</div><p>'+t+'</p></div>'; });
   html += '</div>';
-  return html;
+  var last = TOPICS[TOPICS.length-1];
+  html += '<div class="content-footer"><button class="nav-btn" onclick="selectTopic('+last.id+')">\u2190 '+last.title+'</button><div class="page-dots">';
+  TOPICS.forEach(function(){ html += '<div class="dot"></div>'; });
+  html += '<div class="dot active" style="background:linear-gradient(135deg,#E63946,#FF6B35)"></div></div><div></div></div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight; content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function selectTopic(id) {
   activeId = id;
-  updateSidebarActive();
-  if (id === 'takeaways') {
-    content.innerHTML = renderTakeaways();
+  if (id !== 'takeaways') {
+    var idx = TOPICS.findIndex(function(t){return t.id===id;});
+    var tp = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
+    if (tp !== sidebarPage) { sidebarPage = tp; var pages = sidebarPagesEl.querySelectorAll('.sidebar-page'); pages.forEach(function(p){p.classList.remove('active');}); pages[sidebarPage].classList.add('active'); updateSidebarNav(); }
   } else {
-    var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) content.innerHTML = renderTopic(topic);
+    var tkp = sidebarTotalPages - 1;
+    if (tkp !== sidebarPage) { sidebarPage = tkp; var pages = sidebarPagesEl.querySelectorAll('.sidebar-page'); pages.forEach(function(p){p.classList.remove('active');}); pages[sidebarPage].classList.add('active'); updateSidebarNav(); }
   }
-  content.style.animation = 'none';
-  void content.offsetHeight;
-  content.style.animation = 'fadeIn 0.25s ease';
+  updateSidebarActive();
+  if (id === 'takeaways') renderTakeaways();
+  else { var t = TOPICS.find(function(x){return x.id===id;}); if(t) showTopic(t); }
 }
 
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F11') { e.preventDefault(); fsBtn.click(); return; }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (!activeId) { selectTopic(1); return; }
+    if (activeId === 'takeaways') return;
+    var idx = TOPICS.findIndex(function(t){return t.id===activeId;});
+    if (idx < TOPICS.length-1) selectTopic(TOPICS[idx+1].id); else selectTopic('takeaways');
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (!activeId) return;
+    if (activeId === 'takeaways') { selectTopic(TOPICS[TOPICS.length-1].id); return; }
+    var idx = TOPICS.findIndex(function(t){return t.id===activeId;});
+    if (idx > 0) selectTopic(TOPICS[idx-1].id);
+  }
+});
 buildSidebar();
 </script>
 </body>

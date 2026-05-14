@@ -4,220 +4,178 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Week 8 Glossary — Medical Assistant Program</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
-  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
-  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
-  .header{text-align:center;margin-bottom:28px}
-  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
-  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
-  .header p{font-size:13px;color:var(--text-secondary)}
-  .search-wrap{position:relative;margin-bottom:20px}
-  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
-  .search-wrap input:focus{border-color:#C0392B}
-  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
-  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
-  .cat-btn:hover{border-color:#aaa}
-  .cat-btn .emoji{font-size:22px}
-  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
-  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
-  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
-  .cat-btn.open .arrow{transform:rotate(180deg)}
-  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
-  .term-card:hover{border-color:var(--border)}
-  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
-  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
-  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
-  .result-card .row{display:flex;align-items:center;gap:10px}
-  .result-card .r-emoji{font-size:20px}
-  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
-  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
-  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
-  .hidden{display:none!important}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;}
+html,body{height:100%;overflow:hidden !important;font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:680px;margin:0 auto;padding:16px 20px 12px;display:flex;flex-direction:column;height:100dvh;overflow:hidden !important;}
+.tag{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--red-light);font-weight:700;margin-bottom:4px;}
+h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px;}
+.sub{font-size:13px;color:var(--dim);margin-bottom:10px;}
+.search-wrap{position:relative;margin-bottom:10px}
+.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--muted)}
+.search-wrap input{width:100%;padding:12px 16px 12px 44px;border-radius:10px;font-size:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none;font-family:inherit}
+.search-wrap input:focus{border-color:var(--red)}
+.search-wrap input::placeholder{color:var(--muted)}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.cat-btn{padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.cat-btn:hover{opacity:.85}
+.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.count{font-size:13px;color:var(--dim)}
+.list-wrap{border-radius:10px;border:1px solid var(--border);overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface)}
+.items{flex:1;overflow:hidden;padding:4px 0}
+.item{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:all .25s}
+.item:last-child{border-bottom:none}
+.item:hover{background:var(--surface2)}
+.item.open{background:var(--surface2);box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.item-head{display:flex;justify-content:space-between;align-items:center}
+.item-left{display:flex;align-items:center;gap:10px}
+.item-bar{width:4px;height:22px;border-radius:2px;opacity:.3;transition:opacity .2s}
+.item.open .item-bar{opacity:1}
+.item-term{font-size:20px;font-weight:700;color:#fff}
+.item-cat{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.item-def{margin-top:8px;margin-left:14px;padding-top:8px;border-top:1px solid var(--border);font-size:15px;color:var(--dim);line-height:1.6;font-style:italic;display:none}
+.item.open .item-def{display:block}
+.item.open .item-term{color:var(--red-light)}
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:15px}
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:var(--bg)}
+.pg-btn{padding:6px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;transition:all .2s}
+.pg-btn:hover:not(:disabled){border-color:var(--red-light);color:var(--red-light)}
+.pg-btn:disabled{opacity:.3;cursor:default}
+.pg-dots{display:flex;gap:4px;justify-content:center;align-items:center;flex-wrap:wrap;max-width:200px}
+.pg-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+.pg-dot.active{background:var(--red-light);transform:scale(1.3)}
+.pg-dot:hover:not(.active){background:var(--dim)}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="header">
-    <div class="header-tag">Medical Assistant Program</div>
-    <h1>Week 8 Glossary</h1>
-    <p id="header-subtitle"></p>
+<div class="grain"></div>
+<div class="wrap">
+  <div class="tag">Medical Assistant Program</div>
+  <h1>Week 8 Glossary</h1>
+  <p class="sub">Foundational Knowledge & Basic Science</p>
+  <div class="search-wrap"><span>⌕</span><input type="text" id="search" placeholder="Search terms or definitions..."></div>
+  <div class="filters" id="filters"></div>
+  <div class="top-bar"><div class="count" id="count"></div></div>
+  <div class="list-wrap">
+    <div class="items" id="list"></div>
+    <div class="pager" id="pager"></div>
   </div>
-  <div id="browse-mode"></div>
 </div>
 <script>
-const CATEGORIES = [
-  {
-    name: "Healthcare Systems, Roles & Settings", emoji: "🏥", color: "#2C3E50",
-    terms: [
-      { term: "Scope of Practice", def: "The specific duties, procedures, and actions a healthcare professional is legally authorized and trained to perform based on their education, credentials, and state regulations. MAs work under physician supervision and may not practice medicine. Scope varies by state — always verify current state regulations before performing any task." },
-      { term: "Ambulatory / Outpatient Care", def: "Any healthcare delivered in a setting where the patient is not admitted overnight. Includes medical offices, urgent care centers, specialty clinics, and outpatient surgery centers. Most MAs work in ambulatory care settings." },
-      { term: "Inpatient Care", def: "Healthcare provided while a patient is admitted to and stays in a hospital or facility overnight. Inpatient care is used for more serious conditions requiring continuous monitoring, surgery, or intensive treatment." },
-      { term: "Patient-Centered Medical Home (PCMH)", def: "A care delivery model in which a primary care provider leads an interprofessional team to coordinate all aspects of a patient's care — from prevention and wellness to chronic disease management and end-of-life care. MAs are integral members of the PCMH team, supporting clinical care, care coordination, and patient education." },
-      { term: "Hospice Care", def: "End-of-life care focused on comfort, dignity, and quality of life rather than curative treatment. Appropriate when a patient has a terminal illness and chooses to stop pursuing curative interventions. Can be provided at home (outpatient) or in a facility (inpatient)." },
-      { term: "Home Health", def: "Skilled healthcare services (nursing, physical therapy, occupational therapy, speech therapy) delivered to patients in their home who have difficulty leaving. Must be ordered by a provider for a defined recovery period based on a specific acute event, such as hospitalization. Not intended for indefinite ongoing care." },
-      { term: "Mobile Health Unit", def: "A transportable healthcare service that brings medical care to communities that lack access — including underserved or rural populations. Examples include mobile stroke units, mobile mammogram buses, mobile vaccination sites, and mobile urgent care." },
-      { term: "Telehealth", def: "Healthcare services delivered remotely using technology — most commonly via video call. Effective for follow-ups, chronic condition management, lab result discussions, and patient education. Not appropriate for physical examinations, diagnostic testing, or new unexplained symptoms requiring hands-on evaluation." },
-      { term: "Patient Portal", def: "A secure, web-based feature of an electronic health record (EHR) that allows patients to view their health information, test results, visit notes, and education materials, send messages to the care team, and in some cases schedule appointments directly." },
-      { term: "Fee-for-Service", def: "A healthcare payment model in which providers and facilities are reimbursed for each specific service, test, or procedure performed. Every service has a procedure code and associated charge. Benefit: patients pay only for services used. Risk: can incentivize volume of services over quality of outcomes." },
-      { term: "Value-Based Care", def: "A healthcare payment model that rewards providers for improving patient outcomes and reducing costs, rather than for volume of services. Summarized by the Quadruple Aim: improved patient outcomes, improved patient satisfaction, lower cost, and healthcare professional well-being." },
-      { term: "Health Maintenance Organization (HMO)", def: "A managed care plan that contracts with a specific network of providers and hospitals. Requires patients to choose a primary care provider (PCP) and typically requires referrals for specialty care and precertification for procedures." },
-      { term: "Preferred Provider Organization (PPO)", def: "A managed care plan offering more flexibility than an HMO. Patients do not need a PCP and may self-refer to specialists. Visiting in-network providers costs less than out-of-network, but patients are not restricted to the network." },
-      { term: "Patient Navigation / Care Coordination", def: "An expanded MA role in which the MA guides patients through the healthcare system — helping them understand their care plan, connecting them with specialists, coordinating referrals, and identifying barriers to care such as transportation, language, or financial limitations." },
-    ],
-  },
-  {
-    name: "Providers, Credentials & Licensure", emoji: "🩺", color: "#1A5276",
-    terms: [
-      { term: "Medical Doctor (MD)", def: "An allopathic physician licensed to diagnose illness, prescribe medications, and perform surgical procedures. Requires four years of undergraduate education, four years of medical school, and a two-to-seven-year residency, followed by passing parts I, II, and III of the U.S. Medical Licensing Examination." },
-      { term: "Doctor of Osteopathic Medicine (DO)", def: "A physician with training equivalent to an MD who also completes training in osteopathic manipulative therapy (OMT). Has the same full scope of medical practice as an MD, including prescribing and surgery. Takes a holistic approach to care." },
-      { term: "Physician Assistant (PA)", def: "A licensed midlevel provider who practices medicine under the direction and supervision of an MD or DO. Can make clinical decisions, diagnose conditions, and prescribe medications. Requires at least four years of college plus two years of PA school." },
-      { term: "Nurse Practitioner (NP)", def: "An advanced practice registered nurse (APRN) with graduate-level clinical training beyond the RN. Can diagnose and prescribe for common illnesses. Practices under physician supervision in most states; may practice independently in others." },
-      { term: "Licensed Practical Nurse (LPN) / Licensed Vocational Nurse (LVN)", def: "A licensed nurse with approximately one year of accredited training. Limited scope — typically performs vital signs, basic wound care, and some medication administration under supervision. Increasingly used in long-term care settings." },
-      { term: "Registered Nurse (RN)", def: "A licensed nurse with an associate's, diploma, or bachelor's degree and a broad scope of clinical practice. Can work in clinical settings, public health, administration, and education. Has broader authority and responsibilities than an LPN." },
-      { term: "Licensure", def: "A mandatory, state-issued authorization to practice a regulated health profession. Controlled by the state board of medical examiners. Required for physicians (MD, DO) before practicing medicine. No state currently requires MAs to hold a license, though some states require one for specific tasks like phlebotomy or radiologic procedures." },
-      { term: "Certification", def: "A voluntary credential demonstrating competency in a field, obtained by passing a national examination. Not legally required for MAs in most states but increases job placement, wages, and career advancement. Government programs may require MA certification for specific EHR tasks." },
-      { term: "Continuing Education (CE)", def: "Educational activities completed after initial certification to maintain up-to-date knowledge and skills. Required for recertification. NHA-certified MAs must complete 10 hours of CE or retake the certification exam to renew every two years." },
-      { term: "Certified Medical Assistant (CMA / RMA)", def: "The two most widely recognized MA credentials: CMA (AAMA) and RMA (AMT). Obtained by passing a national certification examination. Required by many employers and by some government programs for EHR access and data entry." },
-    ],
-  },
-  {
-    name: "Pharmacology & Medication Classifications", emoji: "💊", color: "#C0392B",
-    terms: [
-      { term: "Pharmacology", def: "The study of medications — including their classifications, mechanisms of action, therapeutic effects, side effects, and interactions with the body and other substances." },
-      { term: "Medication Classification", def: "The grouping of medications based primarily on their therapeutic action (what the drug does in the body). Some medications belong to more than one class. Example: hydrochlorothiazide is both a diuretic (eliminates excess fluid) and an antihypertensive (lowers blood pressure)." },
-      { term: "Analgesic", def: "A medication that relieves pain. Includes over-the-counter options like acetaminophen and ibuprofen, as well as prescription opioids like hydrocodone and codeine. Some analgesics are also classified as anticonvulsants (e.g., gabapentin treats both seizures and nerve pain)." },
-      { term: "Antihypertensive", def: "A medication used to lower blood pressure. Includes several drug classes: ACE inhibitors (lisinopril), beta-blockers (metoprolol), ARBs (valsartan), calcium channel blockers, and diuretics (hydrochlorothiazide)." },
-      { term: "Diuretic", def: "A medication that increases urine production to eliminate excess fluid from the body. Used to treat edema, hypertension, and heart failure. Examples: furosemide (loop diuretic), hydrochlorothiazide (thiazide diuretic), bumetanide." },
-      { term: "Oral Hypoglycemic", def: "A medication taken by mouth to lower blood glucose levels in patients with type 2 diabetes. Examples: metformin (first-line), glyburide (sulfonylurea), pioglitazone (thiazolidinedione). Insulin is used when oral medications are insufficient." },
-      { term: "Antibiotic", def: "A medication used to treat bacterial infections by killing bacteria or inhibiting their growth. Common examples: amoxicillin, ciprofloxacin, sulfamethoxazole. Antibiotics are ineffective against viral infections." },
-      { term: "Anticoagulant", def: "A medication that slows or prevents blood clotting. Used to prevent strokes, DVT, and pulmonary embolism. Examples: warfarin, apixaban, heparin. Patients taking anticoagulants have increased bleeding risk." },
-      { term: "Bronchodilator", def: "A medication that relaxes the muscles surrounding the airways, widening them to improve airflow. Used to treat asthma and COPD. Examples: albuterol (short-acting, rescue), theophylline (long-acting), isoproterenol." },
-      { term: "Antilipemic", def: "A medication used to lower blood cholesterol or triglyceride levels to reduce cardiovascular risk. Examples: atorvastatin (statin), fenofibrate (fibrate), cholestyramine (bile acid sequestrant)." },
-      { term: "Over-the-Counter (OTC) Medication", def: "A medication that can be purchased without a prescription. Regulated by the FDA but with less oversight than prescription drugs. Common OTC medications include acetaminophen, ibuprofen, diphenhydramine, and pseudoephedrine. Patients should still report OTC medications during intake." },
-    ],
-  },
-  {
-    name: "Controlled Substances", emoji: "🔒", color: "#922B21",
-    terms: [
-      { term: "Controlled Substances Act (CSA)", def: "A federal law that classifies substances with potential for abuse and addiction into five schedules. Regulates how these substances are prescribed, stored, dispensed, and documented. Enforced by the Drug Enforcement Administration (DEA)." },
-      { term: "Schedule I", def: "Substances with the highest potential for abuse and no currently accepted medical use in the United States. Cannot be prescribed by providers. Examples: heroin, LSD, mescaline, cannabis (federally — though legal in many states for medical use)." },
-      { term: "Schedule II", def: "Substances with high abuse potential and accepted medical use but risk of severe psychological or physical dependence. Must be hand-signed (or meet electronic transmission requirements), stored in a locked steel cabinet, and cannot be refilled. Examples: morphine, oxycodone, fentanyl, hydromorphone, amphetamine, methylphenidate." },
-      { term: "Schedule III", def: "Substances with moderate to low potential for physical and psychological dependence. Can be refilled up to five times within six months of the prescription date. Examples: ketamine, anabolic steroids, acetaminophen with codeine, buprenorphine." },
-      { term: "Schedule IV", def: "Substances with low potential for abuse and dependence. Can be refilled up to five times within six months. Examples: tramadol, benzodiazepines (diazepam, alprazolam, clonazepam, lorazepam)." },
-      { term: "Schedule V", def: "Substances with the lowest abuse potential among controlled substances — typically preparations containing limited quantities of narcotics, often for antidiarrheal, antitussive, or analgesic purposes. Examples: diphenoxylate/atropine, guaifenesin with codeine, pregabalin." },
-    ],
-  },
-  {
-    name: "Drug Effects, Interactions & Safety", emoji: "⚠️", color: "#7D3C98",
-    terms: [
-      { term: "Therapeutic Effect", def: "The intended, beneficial action of a medication — the reason the provider prescribed it. Example: the therapeutic effect of lisinopril is a sustained reduction in blood pressure." },
-      { term: "Side Effect", def: "A predictable, unintended — but not necessarily harmful — response to a medication. Nearly unavoidable at standard doses. Example: diphenhydramine causes sedation as a side effect of its antihistamine action. Side effects often subside as the body adjusts." },
-      { term: "Adverse Effect", def: "An unintended, harmful response to a medication that may require discontinuing the drug or seeking immediate medical care. Example: angioedema (severe facial and throat swelling) from lisinopril is a rare but potentially fatal adverse effect." },
-      { term: "Indication", def: "The specific condition, symptom, or disease for which a medication is prescribed. Example: the indication for metformin is type 2 diabetes; the indication for furosemide is edema or hypertension." },
-      { term: "Contraindication", def: "A condition, disease, or situation that makes a particular medication or treatment inadvisable or potentially dangerous. The most common contraindication is a prior hypersensitivity (allergic) reaction to that medication. Example: cirrhosis of the liver is a contraindication for acarbose." },
-      { term: "Drug Interaction", def: "A change in a medication's effect caused by another medication, food, or supplement taken at the same time. Interactions can increase toxicity, reduce effectiveness, or create new harmful effects. Example: grapefruit juice interferes with the metabolism of simvastatin, raising drug levels and increasing toxicity risk." },
-      { term: "Hypersensitivity (Allergic Reaction)", def: "An immune response to a medication ranging from mild (itchy rash) to life-threatening (anaphylaxis with airway spasm, facial swelling, and severe blood pressure drop). Medication allergies must be reviewed, confirmed, and updated at every patient visit and before any medication is administered." },
-      { term: "Anaphylaxis", def: "A severe, potentially life-threatening allergic reaction characterized by airway spasm, facial and throat swelling, and a dangerous drop in blood pressure. Requires immediate administration of epinephrine and emergency medical care." },
-      { term: "Look-Alike / Sound-Alike (LASA) Medications", def: "Medications whose names or packaging are similar to other medications, creating a significant risk of administration errors. Examples: clonidine and Klonopin (clonazepam brand), hydroxyzine and hydralazine, hydrocodone and hydromorphone. Prevention strategies include tall-man lettering, separate storage, and triple label checks." },
-      { term: "Tall-Man Lettering", def: "A strategy for differentiating look-alike medication names by capitalizing the letters that differ between similar drug names. Example: hydrOXYzine vs. hydrALAzine. Recommended by the Institute for Safe Medication Practices (ISMP)." },
-    ],
-  },
-  {
-    name: "Dosage Calculations & Measurements", emoji: "📐", color: "#D4AC0D",
-    terms: [
-      { term: "Metric System", def: "The standard measurement system used in medicine for weight (kg, g, mg, mcg) and volume (L, mL). Units change by factors of 1,000 — moving from a larger to a smaller unit, multiply by 1,000 (or move the decimal three places right); moving to a larger unit, divide by 1,000. Example: 0.088 mg = 88 mcg." },
-      { term: "Standard (Household) Measurement System", def: "Common household measurement units used for oral liquid medications. Key equivalencies: 1 tsp = 5 mL; 1 tbsp = 15 mL; 1 fl oz = 30 mL; 1 cup = 240 mL; 2.2 lb = 1 kg." },
-      { term: "Ratio and Proportion Method", def: "A dosage calculation method that uses the known relationship between dose and unit (e.g., 25 mg per capsule) to calculate an unknown quantity. Set up as a proportion and cross-multiply to solve. Example: 25 mg/1 cap = 50 mg/x cap → x = 2 capsules." },
-      { term: "Desired-Over-Have Formula", def: "A dosage calculation formula: (Desired dose ÷ Dose on hand) × Quantity = Amount to give. Example: (50 mg ÷ 25 mg) × 1 capsule = 2 capsules." },
-      { term: "Pediatric Dosing by Weight", def: "The most accurate method for calculating pediatric medication doses. Steps: (1) convert weight from lb to kg (÷ 2.2); (2) multiply by the prescribed mg/kg/day; (3) divide by number of doses per day; (4) calculate the volume using the available concentration." },
-      { term: "Body Surface Area (BSA)", def: "A measure used to calculate the most accurate drug dose for children up to age 12. Determined using a nomogram based on the child's height and weight. Applied using the formula: (child's BSA ÷ 1.7 m²) × adult dose = child's dose." },
-      { term: "Half-Life", def: "The time it takes for the concentration of a drug in the body to be reduced by half through the combined processes of metabolism and excretion. Half-life determines dosing intervals — if the next dose is not given before the half-life expires, drug levels may fall below the therapeutic range." },
-    ],
-  },
-  {
-    name: "Pharmacokinetics & Medication Administration", emoji: "🧬", color: "#1E8449",
-    terms: [
-      { term: "Pharmacokinetics", def: "The study of how the body processes a medication — specifically, the four processes of absorption, distribution, metabolism, and excretion (ADME). Understanding pharmacokinetics helps predict when a drug will take effect, when its effects will peak, and how long they will last." },
-      { term: "Absorption", def: "The process by which a medication is converted into a form the body can use and moved into the bloodstream. Route of administration significantly affects absorption speed: IV is fastest (direct to bloodstream); oral tablets are slowest (must dissolve and move through the GI tract). Food can slow or inactivate some medications." },
-      { term: "Distribution", def: "The process by which the bloodstream carries an absorbed medication to the body's tissues and organs. Some barriers limit distribution — the blood-brain barrier protects the brain from many substances, and the placental barrier allows many medications to cross to the fetus, making medication safety in pregnancy a critical consideration." },
-      { term: "Metabolism", def: "The process by which the liver (primarily) and kidneys convert active medication into inactive metabolites ready for elimination. The rate of metabolism is affected by age (infants and older adults metabolize most slowly), organ health, other medications taken simultaneously, and genetic factors." },
-      { term: "Excretion", def: "The elimination of drug metabolites from the body, primarily through urine via the kidneys. Some medications are also eliminated through feces, saliva, sweat, bile, breast milk, or exhaled air. Patients with kidney or liver disease may require dose adjustments due to impaired excretion." },
-      { term: "Rights of Medication Administration", def: "A safety checklist performed every time medication is administered to a patient to prevent errors. The original five rights (patient, medication, dose, time, route) have expanded to seven: add right technique and right documentation. Skipping any right increases the risk of a medication error." },
-      { term: "Three Label Checks ('Three Befores')", def: "A medication safety practice requiring the MA to check the medication label against the prescription three times: (1) when removing the medication from storage; (2) when preparing the dose; (3) when returning the container to storage or discarding it. Also check the expiration date at each check." },
-      { term: "Intradermal (ID) Injection", def: "An injection administered into the superficial layers of the skin at a 10–15 degree angle. Used primarily for allergy testing and tuberculin (TB) skin tests. The most common sites are the inner forearm and upper chest." },
-      { term: "Subcutaneous (SQ / Sub-Q) Injection", def: "An injection administered into the fat layer beneath the skin at a 45-degree angle. Common sites include the upper arm, abdomen, buttocks, and upper outer thighs. Used for insulin, low-molecular-weight heparins, and certain vaccines." },
-      { term: "Intramuscular (IM) Injection", def: "An injection administered deep into muscle tissue at a 90-degree angle. Common sites: deltoid (shoulder), vastus lateralis (thigh), and ventrogluteal (hip). Used for many vaccines, antibiotics, and hormonal medications." },
-    ],
-  },
-  {
-    name: "Nutrition, Vitamins & Eating Disorders", emoji: "🥗", color: "#117A65",
-    terms: [
-      { term: "Macronutrients", def: "The three major calorie-containing nutrients: proteins (4 cal/g), carbohydrates (4 cal/g), and fats (9 cal/g). These provide the energy the body needs for all functions. Water, vitamins, and minerals are also essential nutrients but do not provide calories." },
-      { term: "Protein", def: "Large, complex molecules built from amino acids. The body uses protein to repair and build tissues, support immune function, maintain fluid balance, and — when carbohydrates and fats are unavailable — for energy. Essential during pregnancy, breastfeeding, infancy, adolescence, and recovery from surgery or illness." },
-      { term: "Carbohydrate", def: "The body's primary energy source, derived mainly from plant foods. Simple carbohydrates (sugars) provide quick energy; complex carbohydrates (fiber, whole grains, vegetables) provide more sustained energy and support digestive health. Excess carbohydrates are stored as glycogen, then body fat." },
-      { term: "Fat (Lipid)", def: "A concentrated energy source providing 9 calories per gram. Essential for fat-soluble vitamin absorption (A, D, E, K), hormone production, cell membrane structure, and organ protection. Unsaturated fats are healthier choices; saturated and trans fats raise LDL cholesterol and increase cardiovascular risk." },
-      { term: "Fat-Soluble Vitamins", def: "Vitamins A, D, E, and K — absorbed and stored in body fat and the liver. Because they accumulate, toxicity is possible with excessive supplementation. Vitamin A excess causes headaches and bone thickening; Vitamin D excess can cause kidney failure." },
-      { term: "Water-Soluble Vitamins", def: "The B vitamins (B1, B2, B3, B6, B12, folate, pantothenic acid, biotin) and Vitamin C. Excess is generally excreted in urine, reducing toxicity risk. However, very high supplemental doses of B3 and B6 can cause adverse effects." },
-      { term: "MyPlate", def: "A nutrition education tool developed by the U.S. Department of Agriculture (USDA) based on the current Dietary Guidelines for Americans. Available at myplate.gov — provides individualized recommendations based on age, sex, height, weight, and physical activity level." },
-      { term: "Food Label", def: "A required nutrition facts panel on packaged food products. Includes serving size, calories per serving, macronutrient amounts (fat, carbohydrates, protein), sodium, cholesterol, fiber, vitamins, and minerals. Teaching patients to check serving size first is critical — nutrient amounts listed are per serving, not per package." },
-      { term: "Dietary Supplement", def: "A product containing one or more dietary ingredients (vitamins, minerals, herbs, amino acids, or botanical substances) intended to supplement the diet. The FDA regulates supplements with much looser standards than prescription drugs. Patients should always disclose supplement use during intake, as interactions with medications are possible." },
-      { term: "Anorexia Nervosa", def: "A potentially life-threatening eating disorder characterized by self-starvation, extreme fear of weight gain, and a distorted body image. Warning signs include severe weight loss (≥15%), amenorrhea, ritualistic eating, and excessive exercise. Report suspected cases to the provider immediately. Treatment involves nutritional rehabilitation, psychotherapy, and medical monitoring." },
-      { term: "Bulimia Nervosa", def: "An eating disorder characterized by repeated cycles of binge eating followed by purging (self-induced vomiting, laxatives, or diuretics). Physical consequences include electrolyte imbalances, erosion of tooth enamel, and esophageal damage. Not typically life-threatening, but requires prompt treatment with psychotherapy, medication, and nutrition counseling." },
-      { term: "Binge Eating Disorder", def: "A condition in which a person repeatedly consumes unusually large amounts of food, eating quickly past the point of fullness, often due to shame or emotional distress, without purging. Leads to obesity and related comorbidities (hypertension, type 2 diabetes, sleep apnea). Treatment includes behavioral therapy, nutrition counseling, and, for some, medication." },
-    ],
-  }
+const CATEGORIES=[
+  {name:"Healthcare Systems",color:"#6B7B8D",terms:[
+    {term:"Scope of Practice",def:"Legally authorized duties based on education, credentials, and state regulations. Varies by state."},
+    {term:"Ambulatory / Outpatient Care",def:"Healthcare where the patient is not admitted overnight — offices, urgent care, clinics."},
+    {term:"Inpatient Care",def:"Healthcare provided while admitted to a hospital overnight for serious conditions."},
+    {term:"PCMH",def:"Patient-Centered Medical Home — PCP-led team coordinating all aspects of a patient's care."},
+    {term:"Hospice Care",def:"End-of-life care focused on comfort and dignity rather than curative treatment."},
+    {term:"Home Health",def:"Skilled healthcare delivered at home for patients with difficulty leaving. Must be provider-ordered."},
+    {term:"Mobile Health Unit",def:"Transportable healthcare bringing services to underserved communities."},
+    {term:"Telehealth",def:"Remote healthcare via technology. Good for follow-ups and chronic conditions, not physical exams."},
+    {term:"Patient Portal",def:"Secure web-based EHR feature for patients to view health info and message the care team."},
+    {term:"Fee-for-Service",def:"Payment model reimbursing each service, test, or procedure performed."},
+    {term:"Value-Based Care",def:"Payment model rewarding outcomes and cost reduction over volume. Quadruple Aim."},
+    {term:"HMO",def:"Managed care requiring PCP, referrals for specialists, and precertification for procedures."},
+    {term:"PPO",def:"Managed care with more flexibility — no PCP required, can self-refer to specialists."},
+    {term:"Patient Navigation",def:"Expanded MA role guiding patients through the healthcare system and identifying barriers."},
+  ]},
+  {name:"Credentials",color:"#4A90B8",terms:[
+    {term:"Medical Doctor (MD)",def:"Allopathic physician — diagnose, prescribe, perform surgery. 4 yr undergrad + 4 yr med school + residency."},
+    {term:"Doctor of Osteopathy (DO)",def:"Equivalent to MD with additional osteopathic manipulative therapy training. Holistic approach."},
+    {term:"Physician Assistant (PA)",def:"Midlevel provider practicing under MD/DO supervision. Can diagnose and prescribe."},
+    {term:"Nurse Practitioner (NP)",def:"Advanced practice RN with graduate training. Can diagnose and prescribe. May practice independently."},
+    {term:"LPN / LVN",def:"Licensed nurse with ~1 year training. Limited scope — vitals, basic wound care, some medications."},
+    {term:"Registered Nurse (RN)",def:"Licensed nurse with associate's or bachelor's degree. Broad clinical practice scope."},
+    {term:"Licensure",def:"Mandatory state-issued authorization to practice a regulated profession."},
+    {term:"Certification",def:"Voluntary credential from passing a national exam. Increases job placement and wages."},
+    {term:"Continuing Education",def:"Post-certification education to maintain knowledge. NHA requires 10 hrs or retest every 2 years."},
+    {term:"CMA / RMA",def:"Two most recognized MA credentials: CMA (AAMA) and RMA (AMT). National certification exams."},
+  ]},
+  {name:"Pharmacology",color:"#E05555",terms:[
+    {term:"Pharmacology",def:"Study of medications — classifications, mechanisms, therapeutic effects, side effects, interactions."},
+    {term:"Medication Classification",def:"Grouping drugs by therapeutic action. Some belong to multiple classes."},
+    {term:"Analgesic",def:"Relieves pain. OTC: acetaminophen, ibuprofen. Rx: hydrocodone, codeine, gabapentin."},
+    {term:"Antihypertensive",def:"Lowers blood pressure. ACE inhibitors, beta-blockers, ARBs, calcium channel blockers, diuretics."},
+    {term:"Diuretic",def:"Increases urine production to eliminate excess fluid. Furosemide, hydrochlorothiazide."},
+    {term:"Oral Hypoglycemic",def:"Lowers blood glucose in type 2 diabetes. First-line: metformin. Also glyburide, pioglitazone."},
+    {term:"Antibiotic",def:"Treats bacterial infections. Amoxicillin, ciprofloxacin. Ineffective against viruses."},
+    {term:"Anticoagulant",def:"Slows/prevents blood clotting. Warfarin, apixaban, heparin. Increased bleeding risk."},
+    {term:"Bronchodilator",def:"Relaxes airway muscles to improve airflow. Albuterol (rescue), theophylline (long-acting)."},
+    {term:"Antilipemic",def:"Lowers cholesterol/triglycerides. Atorvastatin (statin), fenofibrate, cholestyramine."},
+    {term:"OTC Medication",def:"Purchased without prescription. Still report during intake. Acetaminophen, ibuprofen, diphenhydramine."},
+  ]},
+  {name:"Controlled Substances",color:"#E74C6F",terms:[
+    {term:"Controlled Substances Act",def:"Federal law classifying substances into five schedules. Enforced by the DEA."},
+    {term:"Schedule I",def:"Highest abuse potential, no accepted medical use. Heroin, LSD, mescaline."},
+    {term:"Schedule II",def:"High abuse potential, accepted use. No refills. Morphine, oxycodone, fentanyl, amphetamine."},
+    {term:"Schedule III",def:"Moderate potential. 5 refills in 6 months. Ketamine, anabolic steroids, acetaminophen/codeine."},
+    {term:"Schedule IV",def:"Low potential. 5 refills in 6 months. Tramadol, benzodiazepines (diazepam, alprazolam)."},
+    {term:"Schedule V",def:"Lowest potential. Limited narcotic preparations. Diphenoxylate/atropine, pregabalin."},
+  ]},
+  {name:"Drug Safety",color:"#8B6AAE",terms:[
+    {term:"Therapeutic Effect",def:"The intended, beneficial action of a medication — the reason it was prescribed."},
+    {term:"Side Effect",def:"Predictable, unintended response. Nearly unavoidable at standard doses. Often subsides."},
+    {term:"Adverse Effect",def:"Unintended, harmful response that may require discontinuing the drug or emergency care."},
+    {term:"Indication",def:"The specific condition for which a medication is prescribed."},
+    {term:"Contraindication",def:"A condition making a medication inadvisable or dangerous. Most common: prior allergy."},
+    {term:"Drug Interaction",def:"A medication's effect changed by another drug, food, or supplement taken simultaneously."},
+    {term:"Hypersensitivity",def:"Immune response to a medication — mild (rash) to life-threatening (anaphylaxis)."},
+    {term:"Anaphylaxis",def:"Severe allergic reaction — airway spasm, swelling, BP drop. Requires immediate epinephrine."},
+    {term:"LASA Medications",def:"Look-Alike/Sound-Alike drugs with similar names creating administration error risk."},
+    {term:"Tall-Man Lettering",def:"Capitalizing differing letters in similar drug names: hydrOXYzine vs hydrALAzine."},
+  ]},
+  {name:"Dosage Calculations",color:"#E2B94C",terms:[
+    {term:"Metric System",def:"Standard medical measurement. Units change by factors of 1,000. kg, g, mg, mcg; L, mL."},
+    {term:"Household Measurements",def:"1 tsp = 5 mL; 1 tbsp = 15 mL; 1 fl oz = 30 mL; 1 cup = 240 mL; 2.2 lb = 1 kg."},
+    {term:"Ratio and Proportion",def:"Known relationship to solve unknown: 25 mg/1 cap = 50 mg/x cap → x = 2 capsules."},
+    {term:"Desired-Over-Have Formula",def:"(Desired ÷ On hand) × Quantity = Amount to give."},
+    {term:"Pediatric Dosing by Weight",def:"Convert lb to kg (÷ 2.2), multiply by mg/kg/day, divide by doses/day, calculate volume."},
+    {term:"Body Surface Area (BSA)",def:"Most accurate pediatric dose calculation using nomogram. (Child BSA ÷ 1.7) × adult dose."},
+    {term:"Half-Life",def:"Time for drug concentration to reduce by half. Determines dosing intervals."},
+  ]},
+  {name:"Pharmacokinetics",color:"#1A8A7D",terms:[
+    {term:"Pharmacokinetics",def:"How the body processes a drug: Absorption, Distribution, Metabolism, Excretion (ADME)."},
+    {term:"Absorption",def:"Drug converted to usable form and moved into bloodstream. IV = fastest; oral = slowest."},
+    {term:"Distribution",def:"Bloodstream carries drug to tissues/organs. Blood-brain and placental barriers limit some drugs."},
+    {term:"Metabolism",def:"Liver converts active drug to inactive metabolites. Affected by age, organ health, genetics."},
+    {term:"Excretion",def:"Elimination via kidneys (urine primarily). Also feces, sweat, breast milk, exhaled air."},
+    {term:"Rights of Medication Admin",def:"Seven rights: patient, medication, dose, time, route, technique, documentation."},
+    {term:"Three Label Checks",def:"Check label 3 times: (1) removing from storage, (2) preparing dose, (3) returning/discarding."},
+    {term:"Intradermal (ID) Injection",def:"Into superficial skin layers at 10–15°. Used for allergy and TB testing. Inner forearm."},
+    {term:"Subcutaneous (SQ) Injection",def:"Into fat layer at 45°. Upper arm, abdomen, buttocks, thighs. Insulin, heparin, some vaccines."},
+    {term:"Intramuscular (IM) Injection",def:"Deep into muscle at 90°. Deltoid, vastus lateralis, ventrogluteal. Vaccines, antibiotics."},
+  ]},
+  {name:"Nutrition",color:"#4CAF90",terms:[
+    {term:"Macronutrients",def:"Protein (4 cal/g), carbohydrates (4 cal/g), fats (9 cal/g). The three calorie-containing nutrients."},
+    {term:"Protein",def:"Amino acid molecules for tissue repair, immune function, fluid balance. Essential during growth/recovery."},
+    {term:"Carbohydrate",def:"Primary energy source. Simple = quick energy; Complex = sustained energy + digestive health."},
+    {term:"Fat (Lipid)",def:"9 cal/g. Essential for vitamin absorption (A,D,E,K), hormones, cell membranes. Unsaturated = healthier."},
+    {term:"Fat-Soluble Vitamins",def:"A, D, E, K — stored in fat/liver. Toxicity possible with excess. A = headaches; D = kidney failure."},
+    {term:"Water-Soluble Vitamins",def:"B vitamins and C. Excess excreted in urine. Very high B3/B6 doses can cause adverse effects."},
+    {term:"MyPlate",def:"USDA nutrition tool at myplate.gov. Individualized recommendations by age, sex, activity."},
+    {term:"Food Label",def:"Nutrition facts panel. Check serving size first — amounts listed are per serving, not per package."},
+    {term:"Dietary Supplement",def:"Vitamins, minerals, herbs, amino acids. FDA regulates loosely. Patients must disclose during intake."},
+    {term:"Anorexia Nervosa",def:"Self-starvation, extreme fear of weight gain. Life-threatening. Report to provider immediately."},
+    {term:"Bulimia Nervosa",def:"Binge-purge cycles. Electrolyte imbalances, tooth erosion, esophageal damage. Psychotherapy + nutrition."},
+    {term:"Binge Eating Disorder",def:"Repeated large food consumption without purging. Leads to obesity and comorbidities."},
+  ]},
 ];
 
-const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
-  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
-);
-let browseSearch = '';
-let browseOpenCat = null;
-let browseOpenTerm = null;
-document.getElementById('header-subtitle').textContent =
-  `Foundational Knowledge & Basic Science · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
-renderBrowse();
-function renderBrowse() {
-  const el = document.getElementById('browse-mode');
-  const query = browseSearch.trim().toLowerCase();
-  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
-  if (query) {
-    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
-    if (filtered.length === 0) {
-      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
-    } else {
-      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
-      filtered.forEach((t, i) => {
-        const isOpen = browseOpenTerm === `s-${i}`;
-        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
-      });
-      html += `</div>`;
-    }
-  } else {
-    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
-    CATEGORIES.forEach((cat, ci) => {
-      const isOpen = browseOpenCat === ci;
-      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
-      if (isOpen) {
-        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
-        cat.terms.forEach((t, ti) => {
-          const tKey = `${ci}-${ti}`;
-          const tOpen = browseOpenTerm === tKey;
-          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
-        });
-        html += `</div>`;
-      }
-      html += `</div>`;
-    });
-    html += `</div>`;
-  }
-  el.innerHTML = html;
-}
-function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+const glossary=[];const catNames=["All"];const catColors={};
+CATEGORIES.forEach(cat=>{catNames.push(cat.name);catColors[cat.name]=cat.color;cat.terms.forEach(t=>glossary.push({term:t.term,definition:t.def,category:cat.name}));});
+let filter="All",search="",openIdx=null,currentPage=0;const PER_PAGE=4;
+function renderFilters(){document.getElementById('filters').innerHTML=catNames.map(c=>{const col=c==="All"?"#7a7f90":(catColors[c]||"#888");const active=filter===c;return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}18;${active?`border-color:${col};color:${col};background:${col}18`:''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')">${c}</button>`;}).join('');}
+function getFiltered(){const s=search.toLowerCase();return glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));}
+function renderList(){const filtered=getFiltered();const totalPages=Math.max(1,Math.ceil(filtered.length/PER_PAGE));if(currentPage>=totalPages)currentPage=totalPages-1;if(currentPage<0)currentPage=0;const start=currentPage*PER_PAGE;const pageItems=filtered.slice(start,start+PER_PAGE);document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' · Page '+(currentPage+1)+' of '+totalPages;if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms match your search.</div>';document.getElementById('pager').innerHTML='';return;}document.getElementById('list').innerHTML=pageItems.map(g=>{const col=catColors[g.category]||"#888";const origIdx=glossary.indexOf(g);const isOpen=openIdx===origIdx;return `<div class="item ${isOpen?'open':''}" onclick="toggle(${origIdx})"><div class="item-head"><div class="item-left"><div class="item-bar" style="background:${col}"></div><span class="item-term">${g.term}</span></div><span class="item-cat" style="background:${col}18;color:${col}">${g.category}</span></div><div class="item-def" style="${isOpen?'display:block':''}">${g.definition}</div></div>`;}).join('');let ph=`<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>← Prev</button><div class="pg-dots">`;for(let p=0;p<totalPages;p++){ph+=`<div class="pg-dot ${p===currentPage?'active':''}" onclick="goPage(${p})"></div>`;}ph+=`</div><button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''}>Next →</button>`;document.getElementById('pager').innerHTML=ph;}
+function setFilter(c){filter=c;currentPage=0;openIdx=null;renderFilters();renderList();}
+function toggle(i){openIdx=openIdx===i?null:i;renderList();}
+function goPage(p){currentPage=p;openIdx=null;renderList();}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;currentPage=0;openIdx=null;renderList();});
+renderFilters();renderList();
 </script>
 </body>
 </html>

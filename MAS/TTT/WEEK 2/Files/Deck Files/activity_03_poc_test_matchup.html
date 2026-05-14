@@ -7,31 +7,42 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;background:linear-gradient(155deg,#0f1f17,#132419,#0d1a20);font-family:'DM Sans',sans-serif;padding:24px 16px;color:#e8f5ec}
-.wrap{max-width:760px;margin:0 auto}
-.header{text-align:center;margin-bottom:24px}
-.header .icon{font-size:44px}
-h1{font-weight:800;font-size:30px;margin:8px 0 4px}
-.sub{color:#7da98e;font-weight:600;font-size:15px}
-.badge{display:inline-block;margin-top:12px;background:#162a1f;padding:6px 20px;border-radius:20px;border:1px solid rgba(52,211,153,.2);color:#34d399;font-weight:800;font-size:15px}
-.cols{display:flex;gap:16px;flex-wrap:wrap}
-.col{flex:1 1 280px}
-.col-label{font-weight:800;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
-.col-label.tests{color:#34d399}
-.col-label.specs{color:#fbbf24}
-.card{padding:13px 16px;margin-bottom:7px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;border:2px solid transparent}
-.card.test{background:#162a1f}
-.card.test.selected{background:rgba(251,113,133,.13);border-color:#fb7185}
-.card.test.matched{background:rgba(34,197,94,.06);border-color:#22c55e;opacity:.5;cursor:default}
-.card.spec{background:#1e3a28;font-weight:600;font-size:14px}
-.card.spec.used{background:rgba(34,197,94,.06);border-color:#22c55e;opacity:.5;cursor:default}
-.card.spec.wrong{background:rgba(251,113,133,.15);border-color:#fb7185;animation:shake .35s}
-.done{text-align:center;background:#162a1f;border-radius:24px;padding:40px;border:2px solid rgba(34,197,94,.25)}
-.done .big{font-size:56px}
-.done h2{font-weight:800;font-size:28px;margin:12px 0 8px}
-.done p{color:#7da98e;font-weight:600;font-size:15px;margin-bottom:24px}
-.btn{padding:14px 36px;border:none;border-radius:14px;background:#34d399;color:#0f1f17;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
+body{height:100vh;overflow:hidden;background:#0B1D2C;font-family:'DM Sans',sans-serif;color:#FFFFFF}
+.wrap{max-width:760px;margin:0 auto;height:100vh;display:flex;flex-direction:column;padding:12px 16px 0}
+.header{text-align:center;margin-bottom:8px;flex-shrink:0}
+.header .icon{font-size:32px}
+h1{font-weight:800;font-size:22px;margin:4px 0 2px;color:#FFF}
+.sub{color:#94A3B8;font-weight:600;font-size:13px}
+.badge{display:inline-block;margin-top:6px;background:#132F42;padding:4px 14px;border-radius:20px;border:1px solid rgba(45,212,191,.25);color:#2DD4BF;font-weight:800;font-size:13px}
+.game-area{flex:1;min-height:0;display:flex;flex-direction:column}
+.cols{display:flex;gap:10px;flex-wrap:wrap;flex:1;min-height:0;overflow-y:auto;padding-bottom:8px}
+.col{flex:1 1 280px;display:flex;flex-direction:column}
+.col-label{font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;flex-shrink:0}
+.col-label.tests{color:#34D399}
+.col-label.specs{color:#FBBF24}
+.card{padding:9px 12px;margin-bottom:5px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:all .18s;border:2px solid transparent}
+.card.test{background:#132F42}
+.card.test:hover{background:#1A3A50}
+.card.test.selected{background:rgba(45,212,191,.12);border-color:#2DD4BF}
+.card.test.matched{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.25);opacity:.5;cursor:default}
+.card.spec{background:#1A3A50;font-weight:600;font-size:12px}
+.card.spec:hover{background:#1F4560}
+.card.spec.used{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.25);opacity:.5;cursor:default}
+.card.spec.wrong{background:rgba(248,113,113,.15);border-color:#F87171;animation:shake .35s}
+.card.spec.correct-flash{background:rgba(52,211,153,.15);border-color:#34D399;animation:pulse .4s}
+.fb-bar{text-align:center;padding:6px;margin-bottom:6px;border-radius:8px;font-weight:700;font-size:13px;flex-shrink:0}
+.fb-bar.ok{background:rgba(52,211,153,.15);color:#34D399}
+.fb-bar.no{background:rgba(248,113,113,.15);color:#FCA5A5}
+.done{text-align:center;background:#132F42;border-radius:18px;padding:28px;border:2px solid rgba(52,211,153,.25);margin:auto 0}
+.done .big{font-size:40px}
+.done h2{font-weight:800;font-size:24px;margin:8px 0 4px;color:#FFF}
+.done p{color:#E2E8F0;font-weight:600;font-size:13px;margin-bottom:16px;line-height:1.5}
+.btn{padding:10px 30px;border:none;border-radius:10px;background:linear-gradient(135deg,#14B8A6,#0D9488);color:white;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;transition:transform .12s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(20,184,166,0.4)}
+.btn-redo{padding:10px 28px;border:1.5px solid #5EEAD4;border-radius:10px;background:transparent;color:#5EEAD4;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;margin-top:8px;transition:transform .12s,background .12s}
+.btn-redo:hover{background:rgba(94,234,212,0.1);transform:translateY(-1px)}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(52,211,153,0.4)}100%{box-shadow:0 0 0 8px rgba(52,211,153,0)}}
 </style>
 </head>
 <body>
@@ -42,7 +53,8 @@ h1{font-weight:800;font-size:30px;margin:8px 0 4px}
     <p class="sub">Match each point-of-care test to its correct specimen type</p>
     <div class="badge" id="counter">0 / 10 matched</div>
   </div>
-  <div id="game">
+  <div id="game" class="game-area">
+    <div class="fb-bar" id="feedback" style="display:none"></div>
     <div class="cols">
       <div class="col" id="testsCol"><div class="col-label tests">🧪 Tests</div></div>
       <div class="col" id="specsCol"><div class="col-label specs">🎯 Specimen Types</div></div>
@@ -52,7 +64,7 @@ h1{font-weight:800;font-size:30px;margin:8px 0 4px}
     <div class="big">🎉</div>
     <h2>Perfect Match!</h2>
     <p>Knowing the correct specimen type for each POC test prevents collection errors.</p>
-    <button class="btn" onclick="resetGame()">🔄 Play Again</button>
+    <button class="btn" onclick="resetGame()">Play Again</button>
   </div>
 </div>
 <script>
@@ -68,45 +80,85 @@ const PAIRS=[
   {item:"Drug Testing",match:"Urine or blood (chain of custody)"},
   {item:"H. pylori Antibodies",match:"Whole blood sample"},
 ];
-let shuffled,selected=null,matched={},count=0;
+let shuffled,selected=null,matched={},count=0,mistakes=0,missedPairs={},ACTIVE_PAIRS=PAIRS.slice();
 function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
 function render(){
-  const tc=document.getElementById('testsCol'),sc=document.getElementById('specsCol');
+  var tc=document.getElementById('testsCol'),sc=document.getElementById('specsCol');
   tc.innerHTML='<div class="col-label tests">🧪 Tests</div>';
   sc.innerHTML='<div class="col-label specs">🎯 Specimen Types</div>';
-  PAIRS.forEach((p,i)=>{
-    const d=document.createElement('div');
+  ACTIVE_PAIRS.forEach(function(p,i){
+    var d=document.createElement('div');
     d.className='card test'+(matched[i]!==undefined?' matched':selected===i?' selected':'');
     d.textContent=(matched[i]!==undefined?'✅ ':'')+p.item;
-    if(matched[i]===undefined)d.onclick=()=>{selected=i;render()};
+    if(matched[i]===undefined)d.onclick=function(){selected=i;render()};
     tc.appendChild(d);
   });
-  shuffled.forEach((m,i)=>{
-    const d=document.createElement('div');
-    const used=Object.values(matched).includes(i);
+  shuffled.forEach(function(m,i){
+    var d=document.createElement('div');
+    var used=false;
+    for(var k in matched){if(matched[k]===i){used=true;break;}}
     d.className='card spec'+(used?' used':'');
     d.textContent=(used?'✅ ':'')+m.match;
     d.id='spec-'+i;
-    if(!used)d.onclick=()=>tryMatch(i);
+    if(!used)d.onclick=function(){tryMatch(i)};
     sc.appendChild(d);
   });
-  document.getElementById('counter').textContent=count+' / '+PAIRS.length+' matched';
+  document.getElementById('counter').textContent=count+' / '+ACTIVE_PAIRS.length+' matched';
 }
 function tryMatch(mi){
   if(selected===null)return;
-  if(PAIRS[selected].match===shuffled[mi].match){
-    matched[selected]=mi;count++;selected=null;render();
-    if(count===PAIRS.length){document.getElementById('game').style.display='none';document.getElementById('doneBox').style.display='block'}
+  var fb=document.getElementById('feedback');
+  if(ACTIVE_PAIRS[selected].match===shuffled[mi].match){
+    matched[selected]=mi;count++;
+    fb.style.display='block';fb.className='fb-bar ok';fb.textContent='✅ Correct! '+ACTIVE_PAIRS[selected].item+' → '+shuffled[mi].match;
+    selected=null;render();
+    if(count===ACTIVE_PAIRS.length){setTimeout(showDone,800)}
+    setTimeout(function(){fb.style.display='none'},1200);
   } else {
-    const el=document.getElementById('spec-'+mi);el.classList.add('wrong');
-    setTimeout(()=>el.classList.remove('wrong'),500);
+    missedPairs[selected]=true;
+    mistakes++;
+    fb.style.display='block';fb.className='fb-bar no';
+    fb.textContent='❌ Wrong — '+ACTIVE_PAIRS[selected].item+' → '+ACTIVE_PAIRS[selected].match;
+    var el=document.getElementById('spec-'+mi);el.classList.add('wrong');
+    // Flash the correct specimen
+    for(var si=0;si<shuffled.length;si++){
+      if(shuffled[si].match===ACTIVE_PAIRS[selected].match){
+        var correctEl=document.getElementById('spec-'+si);
+        if(correctEl)correctEl.classList.add('correct-flash');
+        break;
+      }
+    }
+    setTimeout(function(){
+      el.classList.remove('wrong');
+      var all=document.querySelectorAll('.correct-flash');
+      for(var j=0;j<all.length;j++)all[j].classList.remove('correct-flash');
+      fb.style.display='none';
+    },1500);
   }
 }
-function resetGame(){
-  selected=null;matched={};count=0;shuffled=shuffle(PAIRS);
-  document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';render();
+function showDone(){
+  document.getElementById('game').style.display='none';
+  var d=document.getElementById('doneBox');d.style.display='block';
+  var missedCount=Object.keys(missedPairs).length;
+  var html='<div class="big">'+(mistakes===0?'🎉':mistakes<=3?'⭐':'💪')+'</div><h2>'+(mistakes===0?'Perfect Match!':count+'/'+ACTIVE_PAIRS.length+' Matched')+'</h2><p>'+(mistakes===0?'No mistakes! ':'You had '+mistakes+' wrong attempt'+(mistakes>1?'s':'')+'. ')+'Knowing the correct specimen type for each POC test prevents collection errors.</p><button class="btn" onclick="resetGame()">Play Again</button>';
+  if(missedCount>0){
+    html+='<br><button class="btn-redo" onclick="redoMissed()">Redo Missed ('+missedCount+')</button>';
+  }
+  d.innerHTML=html;
 }
-shuffled=shuffle(PAIRS);render();
+function resetGame(){
+  ACTIVE_PAIRS=PAIRS.slice();
+  selected=null;matched={};count=0;mistakes=0;missedPairs={};shuffled=shuffle(ACTIVE_PAIRS);
+  document.getElementById('game').style.display='flex';document.getElementById('doneBox').style.display='none';render();
+}
+function redoMissed(){
+  var redo=[];
+  for(var k in missedPairs){redo.push(ACTIVE_PAIRS[parseInt(k)]);}
+  ACTIVE_PAIRS=redo;
+  selected=null;matched={};count=0;mistakes=0;missedPairs={};shuffled=shuffle(ACTIVE_PAIRS);
+  document.getElementById('game').style.display='flex';document.getElementById('doneBox').style.display='none';render();
+}
+shuffled=shuffle(ACTIVE_PAIRS);render();
 </script>
 </body>
 </html>

@@ -7,47 +7,48 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #111827;
-    --card-bg: #1F2937;
-    --border: #374151;
-    --text-primary: #F1F5F9;
-    --text-secondary: #CBD5E1;
-    --text-muted: #6B7280;
-    --accent: #0E7490;
-    --accent-dark: #0D4F5C;
-    --accent-hover: #0891b2;
-    --green: #10B981;
-    --green-bg: #ECFDF5;
-    --green-text: #059669;
-    --red: #EF4444;
-    --red-bg: #FEE2E2;
-    --red-text: #DC2626;
-    --amber: #F59E0B;
-    --amber-bg: #FEF3C7;
-    --amber-text: #D97706;
+    --bg: #0B1D2C;
+    --card-bg: #132F42;
+    --border: rgba(255,255,255,0.15);
+    --text-primary: #FFFFFF;
+    --text-secondary: #E2E8F0;
+    --text-muted: #94A3B8;
+    --accent: #2DD4BF;
+    --accent-dark: #14B8A6;
+    --accent-hover: #5EEAD4;
+    --green: #34D399;
+    --green-bg: rgba(52,211,153,0.18);
+    --green-text: #6EE7B7;
+    --red: #F87171;
+    --red-bg: rgba(248,113,113,0.18);
+    --red-text: #FCA5A5;
+    --amber: #FBBF24;
+    --amber-bg: rgba(251,191,36,0.18);
+    --amber-text: #FCD34D;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     background: var(--bg);
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
   }
 
   /* PLAY VIEW */
-  .play-view { padding: 28px 20px 48px; }
+  .play-view { padding: 12px 16px 16px; height: 100vh; overflow-y: auto; }
   .play-inner { max-width: 660px; margin: 0 auto; }
 
   .header-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
   }
   .header-label {
-    font-size: 11px;
+    font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     color: var(--accent-hover);
@@ -56,14 +57,14 @@
     margin-bottom: 5px;
   }
   .header-title {
-    font-size: 20px;
+    font-size: 17px;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 800;
     color: var(--text-primary);
     letter-spacing: -0.3px;
   }
   .header-score {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-secondary);
     font-family: 'Inter', sans-serif;
     font-weight: 600;
@@ -78,12 +79,12 @@
   /* Progress bar */
   .progress-bar {
     display: flex;
-    gap: 5px;
-    margin-bottom: 24px;
+    gap: 4px;
+    margin-bottom: 10px;
   }
   .progress-seg {
     flex: 1;
-    height: 4px;
+    height: 3px;
     border-radius: 2px;
     transition: background 0.3s;
   }
@@ -91,45 +92,45 @@
   /* Scenario box */
   .scenario-box {
     background: var(--card-bg);
-    border-radius: 14px;
-    padding: 22px 26px;
-    margin-bottom: 18px;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
     border: 1px solid var(--border);
   }
   .scenario-title {
-    font-size: 15px;
+    font-size: 13px;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 10px;
+    margin-bottom: 6px;
     display: flex;
     align-items: center;
     gap: 8px;
   }
   .scenario-title-badge {
-    font-size: 10px;
+    font-size: 9px;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--accent-hover);
-    background: rgba(14, 116, 144, 0.12);
+    background: rgba(45,212,191,0.12);
     padding: 3px 10px;
     border-radius: 20px;
   }
   .scenario-text {
-    font-size: 14px;
+    font-size: 12px;
     color: var(--text-secondary);
-    line-height: 1.7;
+    line-height: 1.55;
     font-family: 'Inter', sans-serif;
     font-weight: 400;
   }
 
   /* Instructions */
   .instructions {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-muted);
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     font-family: 'Inter', sans-serif;
     font-weight: 500;
   }
@@ -142,8 +143,8 @@
   .items-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
+    gap: 5px;
+    margin-bottom: 10px;
   }
 
   .item-wrapper { display: flex; flex-direction: column; }
@@ -151,12 +152,12 @@
   .item-btn {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
     width: 100%;
     text-align: left;
-    padding: 13px 16px;
+    padding: 9px 12px;
     background: var(--card-bg);
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
     font-family: 'Inter', sans-serif;
@@ -164,25 +165,25 @@
   }
   .item-btn:not(.locked):hover {
     border-color: var(--accent-hover);
-    background: rgba(14, 116, 144, 0.06);
+    background: rgba(45,212,191,0.08);
   }
-  .item-btn.selected { border-color: var(--accent); background: rgba(14, 116, 144, 0.08); }
+  .item-btn.selected { border-color: var(--accent); background: rgba(45,212,191,0.12); }
   .item-btn.locked { cursor: default; }
 
-  .item-btn.result-correct-hit { background: #ECFDF5; border-color: var(--green); }
-  .item-btn.result-missed-error { background: #FFFBEB; border-color: var(--amber); }
-  .item-btn.result-false-alarm { background: #FEE2E2; border-color: var(--red); }
-  .item-btn.result-correct-pass { background: var(--card-bg); border-color: var(--border); opacity: 0.7; }
+  .item-btn.result-correct-hit { background: var(--green-bg); border-color: var(--green); }
+  .item-btn.result-missed-error { background: var(--amber-bg); border-color: var(--amber); }
+  .item-btn.result-false-alarm { background: var(--red-bg); border-color: var(--red); }
+  .item-btn.result-correct-pass { background: var(--card-bg); border-color: var(--border); opacity: 0.6; }
 
   .item-check {
-    width: 26px;
-    height: 26px;
-    border-radius: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;
     border: 1.5px solid var(--border);
@@ -196,9 +197,9 @@
   .item-check.check-amber { border-color: var(--amber); background: var(--amber); }
 
   .item-text {
-    font-size: 14px;
-    color: var(--text-secondary);
-    line-height: 1.4;
+    font-size: 12px;
+    color: #F1F5F9;
+    line-height: 1.35;
     font-weight: 500;
     font-family: 'Inter', sans-serif;
   }
@@ -208,17 +209,18 @@
 
   /* Explanation */
   .explanation {
-    margin: 4px 0 2px 56px;
-    font-size: 12.5px;
+    margin: 2px 0 2px 44px;
+    font-size: 11px;
     color: var(--text-muted);
-    line-height: 1.55;
+    line-height: 1.45;
     font-family: 'Inter', sans-serif;
     font-weight: 400;
     animation: fadeSlideIn 0.25s ease;
   }
-  .explanation.exp-error { color: #92400E; }
-  .explanation.exp-missed { color: #92400E; }
-  .explanation.exp-ok { color: #4B5563; }
+  .explanation.exp-hit { color: var(--green-text); }
+  .explanation.exp-missed { color: var(--amber-text); }
+  .explanation.exp-false { color: var(--red-text); }
+  .explanation.exp-ok { color: var(--text-muted); }
 
   @keyframes fadeSlideIn {
     from { opacity: 0; transform: translateY(4px); }
@@ -228,10 +230,10 @@
   /* Submit button */
   .submit-btn {
     width: 100%;
-    padding: 14px;
-    border-radius: 10px;
+    padding: 11px;
+    border-radius: 8px;
     border: none;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -239,32 +241,33 @@
     letter-spacing: 0.2px;
   }
   .submit-btn.disabled {
-    background: var(--border);
-    color: var(--text-muted);
+    background: rgba(255,255,255,0.08);
+    color: #64748B;
     cursor: default;
   }
   .submit-btn.active {
-    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    background: linear-gradient(135deg, #14B8A6, #0D9488);
     color: white;
   }
   .submit-btn.active:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(14,116,144,0.4);
+    box-shadow: 0 6px 20px rgba(20,184,166,0.4);
   }
   .submit-btn.active:active { transform: translateY(0); }
 
   /* DONE SCREEN */
   .done-wrap {
-    min-height: 100vh;
+    height: 100vh;
+    overflow-y: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
+    padding: 16px;
   }
   .done-inner { max-width: 480px; width: 100%; text-align: center; }
-  .done-emoji { font-size: 52px; margin-bottom: 12px; }
+  .done-emoji { font-size: 40px; margin-bottom: 8px; }
   .done-title {
-    font-size: 26px;
+    font-size: 22px;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 800;
     color: var(--text-primary);
@@ -272,21 +275,21 @@
     letter-spacing: -0.4px;
   }
   .done-msg {
-    color: var(--text-muted);
-    font-size: 14px;
-    margin-bottom: 24px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin-bottom: 16px;
     font-family: 'Inter', sans-serif;
     line-height: 1.5;
   }
   .done-box {
     background: var(--card-bg);
-    border-radius: 16px;
-    padding: 28px;
+    border-radius: 14px;
+    padding: 20px;
     border: 1px solid var(--border);
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
   .done-pct {
-    font-size: 52px;
+    font-size: 44px;
     font-weight: 800;
     font-family: 'Plus Jakarta Sans', sans-serif;
     line-height: 1;
@@ -302,26 +305,26 @@
     margin-top: 6px;
   }
   .score-chips {
-    margin-top: 20px;
+    margin-top: 14px;
     display: flex;
-    gap: 8px;
+    gap: 6px;
     justify-content: center;
     flex-wrap: wrap;
   }
   .score-chip {
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
     font-weight: 700;
     font-family: 'Inter', sans-serif;
   }
   .btn-restart {
-    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    background: linear-gradient(135deg, #14B8A6, #0D9488);
     color: white;
     border: none;
-    padding: 14px 40px;
+    padding: 11px 36px;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     font-family: 'Plus Jakarta Sans', sans-serif;
@@ -329,7 +332,24 @@
   }
   .btn-restart:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(14,116,144,0.4);
+    box-shadow: 0 6px 20px rgba(20,184,166,0.4);
+  }
+  .btn-redo {
+    background: transparent;
+    color: var(--accent-hover);
+    border: 1.5px solid var(--accent-hover);
+    padding: 10px 30px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin-top: 10px;
+    transition: transform 0.12s, background 0.12s;
+  }
+  .btn-redo:hover {
+    background: rgba(94,234,212,0.12);
+    transform: translateY(-1px);
   }
 
   .hidden { display: none !important; }
@@ -378,6 +398,7 @@
       <div class="score-chips" id="scoreChips"></div>
     </div>
     <button class="btn-restart" onclick="restart()">Try Again</button>
+    <button class="btn-redo" id="btnRedo" onclick="redoMissed()" style="display:none">Redo Missed</button>
   </div>
 </div>
 
@@ -455,6 +476,8 @@ var sceneIdx = 0;
 var selected = {};
 var submitted = false;
 var scores = [];
+var missedScenes = [];
+var ORIG_SCENARIOS = SCENARIOS.slice();
 
 function getAllItems(sc) {
   var all = [];
@@ -502,7 +525,7 @@ function render() {
   for (var i = 0; i < SCENARIOS.length; i++) {
     var seg = document.createElement('div');
     seg.className = 'progress-seg';
-    seg.style.background = i < sceneIdx ? '#10B981' : i === sceneIdx ? 'var(--accent)' : 'var(--border)';
+    seg.style.background = i < sceneIdx ? '#34D399' : i === sceneIdx ? 'var(--accent)' : 'rgba(255,255,255,0.1)';
     bar.appendChild(seg);
   }
 
@@ -559,8 +582,13 @@ function render() {
 
         // Explanation
         var expl = document.createElement('div');
-        expl.className = 'explanation' + (item.isError ? ' exp-error' : ' exp-ok');
-        var prefix = item.isError && isSel ? '\u2713 Error: '
+        var expCls = 'explanation';
+        if (item.isError && isSel) expCls += ' exp-hit';
+        else if (item.isError && !isSel) expCls += ' exp-missed';
+        else if (!item.isError && isSel) expCls += ' exp-false';
+        else expCls += ' exp-ok';
+        expl.className = expCls;
+        var prefix = item.isError && isSel ? '\u2713 Caught: '
           : item.isError && !isSel ? '\u26a0 Missed: '
           : !item.isError && isSel ? '\u2717 Not an error: '
           : '\u2014 ';
@@ -605,6 +633,7 @@ function handleSubmit() {
     else if (!items[i].isError && !userSaid) pts++;
   }
   scores.push({ scene: sceneIdx, pts: pts, max: items.length });
+  if (pts < items.length) missedScenes.push(sceneIdx);
   submitted = true;
   render();
 }
@@ -631,7 +660,7 @@ function renderDone() {
     : pct >= 65 ? "Good awareness \u2014 review the tricky ones."
     : "Keep studying \u2014 attention to detail saves patients.";
   document.getElementById('donePct').textContent = pct + '%';
-  document.getElementById('donePct').style.color = pct >= 80 ? '#10B981' : '#F59E0B';
+  document.getElementById('donePct').style.color = pct >= 80 ? '#34D399' : '#FBBF24';
 
   var chips = document.getElementById('scoreChips');
   chips.innerHTML = '';
@@ -640,15 +669,28 @@ function renderDone() {
     var ratio = s.pts / s.max;
     var chip = document.createElement('div');
     chip.className = 'score-chip';
-    chip.style.background = ratio >= 1 ? '#D1FAE5' : ratio >= 0.7 ? '#FEF3C7' : '#FEE2E2';
-    chip.style.color = ratio >= 1 ? '#059669' : ratio >= 0.7 ? '#D97706' : '#DC2626';
+    chip.style.background = ratio >= 1 ? 'rgba(52,211,153,0.2)' : ratio >= 0.7 ? 'rgba(251,191,36,0.2)' : 'rgba(248,113,113,0.2)';
+    chip.style.color = ratio >= 1 ? '#6EE7B7' : ratio >= 0.7 ? '#FCD34D' : '#FCA5A5';
     chip.textContent = 'S' + (j + 1) + ': ' + s.pts + '/' + s.max;
     chips.appendChild(chip);
   }
+
+  document.getElementById('btnRedo').style.display = missedScenes.length > 0 ? 'inline-block' : 'none';
 }
 
 function restart() {
-  sceneIdx = 0; selected = {}; submitted = false; scores = [];
+  SCENARIOS = ORIG_SCENARIOS.slice();
+  sceneIdx = 0; selected = {}; submitted = false; scores = []; missedScenes = [];
+  render();
+}
+
+function redoMissed() {
+  var redo = [];
+  for (var i = 0; i < missedScenes.length; i++) {
+    redo.push(ORIG_SCENARIOS[missedScenes[i]]);
+  }
+  SCENARIOS = redo;
+  sceneIdx = 0; selected = {}; submitted = false; scores = []; missedScenes = [];
   render();
 }
 

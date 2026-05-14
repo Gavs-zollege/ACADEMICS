@@ -1,69 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Post-Procedure & Labeling</title>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{min-height:100vh;background:linear-gradient(160deg,#180a12,#26101c,#120816);font-family:'Manrope',sans-serif;padding:24px 16px;color:#ffe8f2}
-.wrap{max-width:600px;margin:0 auto}
-.header{text-align:center;margin-bottom:24px}
-.icon{font-size:44px}
-h1{font-weight:800;font-size:28px;margin:8px 0 4px}
-.sub{color:#b87090;font-weight:600;font-size:15px}
-.topbar{display:flex;justify-content:space-between;margin-bottom:12px}
-.topbar .ct{color:#b87090;font-weight:700;font-size:14px}
-.topbar .sc{color:#4ade80;font-weight:700;font-size:14px}
-.bar{height:6px;background:#301828;border-radius:10px;margin-bottom:24px;overflow:hidden}
-.bar-fill{height:100%;background:linear-gradient(90deg,#f472b6,#4ade80);border-radius:10px;transition:width .4s}
-.statement{background:#220e18;padding:24px 28px;border-radius:20px;margin-bottom:24px;border-left:4px solid #f472b6}
-.statement p{font-weight:700;font-size:19px;line-height:1.7}
-.blank{display:inline-block;padding:4px 18px;border-radius:10px;margin:0 4px;font-weight:700;min-width:50px;text-align:center}
-.blank.empty{background:rgba(244,114,182,.15);color:#fbbf24;border-bottom:3px solid #fbbf24}
-.blank.ok{background:rgba(74,222,128,.2);color:#4ade80;border-bottom:3px solid #4ade80}
-.blank.no{background:rgba(251,113,133,.2);color:#fb7185;border-bottom:3px solid #fb7185}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid button{padding:14px 18px;border-radius:14px;background:#301828;border:2px solid #301828;color:#ffe8f2;font-weight:700;font-size:17px;cursor:pointer;font-family:inherit;transition:all .2s}
-.grid button:hover{filter:brightness(1.15)}
-.grid button.ok{background:rgba(74,222,128,.13);border-color:#4ade80}
-.grid button.no{background:rgba(251,113,133,.13);border-color:#fb7185}
-.tip{margin-top:16px;padding:14px 20px;border-radius:14px;background:#220e18}
-.tip strong{font-size:16px;display:block;margin-bottom:6px}
-.tip strong.ok{color:#4ade80}
-.tip strong.no{color:#fb7185}
-.tip span{color:#b87090;font-weight:600;font-size:14px}
-.done{text-align:center;background:#220e18;border-radius:24px;padding:40px;border:2px solid rgba(74,222,128,.25)}
-.done .big{font-size:56px}
-.done h2{font-weight:800;font-size:28px;margin:12px 0}
-.done p{color:#b87090;font-weight:600;font-size:15px;margin-bottom:24px}
-.btn{padding:14px 36px;border:none;border-radius:14px;background:#f472b6;color:#180a12;font-weight:800;font-size:16px;cursor:pointer;font-family:inherit}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="header"><div class="icon">🏷️</div><h1>Post-Procedure & Labeling</h1><p class="sub">Fill in the blanks about aftercare, labeling & safety</p></div>
-  <div id="game"></div>
-  <div id="doneBox" class="done" style="display:none"></div>
-</div>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Post-Procedure & Labeling</title><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{height:100vh;overflow:hidden;background:#0B1D2C;font-family:'Inter',sans-serif;color:#FFF}
+.wrap{max-width:600px;margin:0 auto;height:100vh;display:flex;flex-direction:column;padding:12px 16px 0}
+.header{text-align:center;margin-bottom:8px;flex-shrink:0}
+.header .icon{font-size:32px}
+h1{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:22px;margin:4px 0 2px}
+.sub{color:#94A3B8;font-weight:600;font-size:13px}
+.game-area{flex:1;min-height:0;overflow-y:auto;padding-bottom:8px}
+.topbar{display:flex;justify-content:space-between;margin-bottom:8px}
+.topbar .ct{color:#94A3B8;font-weight:700;font-size:12px}
+.topbar .sc{color:#FBBF24;font-weight:700;font-size:12px}
+.bar{height:3px;background:rgba(255,255,255,0.1);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#F472B6,#34D399);border-radius:10px;transition:width .4s}
+.statement{background:#132F42;padding:14px 18px;border-radius:14px;margin-bottom:10px;border-left:3px solid #F472B6}
+.statement p{font-weight:700;font-size:15px;line-height:1.6;font-family:'Plus Jakarta Sans',sans-serif}
+.blank{display:inline-block;padding:2px 14px;border-radius:8px;margin:0 4px;font-weight:700;min-width:40px;text-align:center}
+.blank.empty{background:rgba(251,191,36,.12);color:#FBBF24;border-bottom:2px solid #FBBF24}
+.blank.ok{background:rgba(52,211,153,.2);color:#34D399;border-bottom:2px solid #34D399}
+.blank.no{background:rgba(248,113,113,.2);color:#F87171;border-bottom:2px solid #F87171}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid button{padding:12px 16px;border-radius:10px;background:#132F42;border:1.5px solid rgba(255,255,255,0.12);color:#F1F5F9;font-weight:700;font-size:15px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .18s}
+.grid button:hover{background:#1A3A50;border-color:rgba(255,255,255,0.22)}
+.grid button.ok{background:rgba(52,211,153,.15);border-color:#34D399;color:#34D399}
+.grid button.no{background:rgba(248,113,113,.15);border-color:#F87171;color:#FCA5A5}
+.grid button.dimmed{opacity:0.4;cursor:default}
+.grid button .tag{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:6px;text-transform:uppercase}
+.tag-c{background:rgba(52,211,153,0.15);color:#34D399}
+.tag-w{background:rgba(248,113,113,0.15);color:#F87171}
+.tip{margin-top:8px;padding:10px 14px;border-radius:10px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.15)}
+.tip strong{font-size:13px;display:block;margin-bottom:2px}
+.tip strong.ok{color:#34D399}
+.tip strong.no{color:#FCA5A5}
+.tip span{color:#E2E8F0;font-weight:500;font-size:12px}
+.next-btn{margin-top:8px;width:100%;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#14B8A6,#0D9488);color:white;font-weight:700;font-size:14px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:transform .12s}
+.next-btn:hover{transform:translateY(-1px)}
+.done{text-align:center;background:#132F42;border-radius:18px;padding:28px;border:2px solid rgba(52,211,153,.25);margin:auto 0}
+.done .big{font-size:40px}
+.done h2{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:24px;margin:8px 0 4px}
+.done p{color:#E2E8F0;font-weight:500;font-size:13px;margin-bottom:16px;line-height:1.5}
+.btn{padding:10px 30px;border:none;border-radius:10px;background:linear-gradient(135deg,#14B8A6,#0D9488);color:white;font-weight:800;font-size:14px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(20,184,166,0.4)}
+.btn-redo{padding:10px 28px;border:1.5px solid #5EEAD4;border-radius:10px;background:transparent;color:#5EEAD4;font-weight:800;font-size:14px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:8px}
+.btn-redo:hover{background:rgba(94,234,212,0.1);transform:translateY(-1px)}
+</style></head>
+<body><div class="wrap"><div class="header"><div class="icon">🏷️</div><h1>Post-Procedure & Labeling</h1><p class="sub">Fill in the blanks about aftercare, labeling & safety</p></div><div id="game" class="game-area"></div><div id="doneBox" class="done" style="display:none"></div></div>
 <script>
-const ITEMS=[
-  {text:"Instruct the patient to leave the bandage in place for a minimum of |___| minutes.",answer:"15",opts:["5","10","15","30"],tip:"15 minutes minimum. Also advise against heavy lifting with that arm."},
-  {text:"The most common adverse reaction after a blood draw is |___|.",answer:"fainting",opts:["infection","fainting","hemolysis","bruising"],tip:"Vasovagal syncope (fainting) is the most common reaction. Check before standing."},
-  {text:"Label tubes must include: full name, DOB, date/time of collection, and |___|.",answer:"MA initials",opts:["diagnosis","MA initials","tube color","insurance ID"],tip:"Full name, DOB, date/time, and MA initials — on every tube, every time."},
-  {text:"Tubes should be labeled |___| — never after moving away from the patient.",answer:"immediately at the draw site",opts:["at the front desk","in the lab","immediately at the draw site","before the draw"],tip:"Mislabeling is the #1 preventable lab error. Label right there, right then."},
-  {text:"Each patient's specimens go in |___| biohazard transport bag(s).",answer:"their own separate",opts:["a shared","their own separate","the same daily","any available"],tip:"Never mix patients. One bag per patient, specimen + matching requisition together."},
-  {text:"Apply gauze over the site but do NOT press until the |___| is fully removed.",answer:"needle",opts:["tourniquet","bandage","needle","gloves"],tip:"Pressing before full needle removal risks needlestick injury and hematoma formation."},
-  {text:"The safety guard on the needle should be activated |___| after withdrawal.",answer:"immediately",opts:["after labeling","within 5 minutes","immediately","when convenient"],tip:"Activate the safety device immediately — before anything else. Then dispose in sharps."},
-  {text:"If the patient shows concerning symptoms after the draw, keep them |___| and involve the provider.",answer:"seated",opts:["standing","walking","seated","lying flat"],tip:"Keep them seated and safe. Don't let a symptomatic patient stand or leave."},
-];
-let ci=0,score=0,chosen=null;
-function renderQ(){const g=document.getElementById('game'),it=ITEMS[ci];const parts=it.text.split('|___|');let blankCls='blank empty',blankText='???';if(chosen!==null){blankCls='blank '+(chosen===it.answer?'ok':'no');blankText=chosen}let h='<div class="topbar"><span class="ct">'+(ci+1)+'/'+ITEMS.length+'</span><span class="sc">Score: '+score+'</span></div>';h+='<div class="bar"><div class="bar-fill" style="width:'+(ci/ITEMS.length*100)+'%"></div></div>';h+='<div class="statement"><p>'+parts[0]+'<span class="'+blankCls+'">'+blankText+'</span>'+parts[1]+'</p></div>';h+='<div class="grid">';it.opts.forEach(o=>{let cls='';if(chosen===o)cls=o===it.answer?'ok':'no';h+='<button class="'+cls+'" '+(chosen===null?"onclick=\"pick('"+o.replace(/'/g,"\\'")+"')\"":'')+'>'+o+'</button>'});h+='</div>';if(chosen!==null){const ok=chosen===it.answer;h+='<div class="tip"><strong class="'+(ok?'ok':'no')+'">'+(ok?'✅ Correct!':'❌ Answer: '+it.answer)+'</strong><span>'+it.tip+'</span></div>'}g.innerHTML=h}
-function pick(o){if(chosen!==null)return;chosen=o;if(o===ITEMS[ci].answer)score++;renderQ();setTimeout(()=>{if(ci+1<ITEMS.length){ci++;chosen=null;renderQ()}else showDone()},1800)}
-function showDone(){document.getElementById('game').style.display='none';const d=document.getElementById('doneBox');d.style.display='block';d.innerHTML='<div class="big">'+(score>=7?'🏆':'💪')+'</div><h2>'+score+'/'+ITEMS.length+' Correct!</h2><p>Post-procedure care and proper labeling protect both the patient and the specimen.</p><button class="btn" onclick="reset()">🔄 Try Again</button>'}
-function reset(){ci=0;score=0;chosen=null;document.getElementById('game').style.display='block';document.getElementById('doneBox').style.display='none';renderQ()}
+var ORIG = [{"text": "Instruct the patient to leave the bandage in place for a minimum of |___| minutes.", "answer": "15", "opts": ["5", "10", "15", "30"], "tip": "15 minutes minimum. Also advise against heavy lifting with that arm."}, {"text": "The most common adverse reaction after a blood draw is |___|.", "answer": "fainting", "opts": ["infection", "fainting", "hemolysis", "bruising"], "tip": "Vasovagal syncope (fainting) is the most common reaction. Check before standing."}, {"text": "Label tubes must include: full name, DOB, date/time of collection, and |___|.", "answer": "MA initials", "opts": ["diagnosis", "MA initials", "tube color", "insurance ID"], "tip": "Full name, DOB, date/time, and MA initials — on every tube, every time."}, {"text": "Tubes should be labeled |___| — never after moving away from the patient.", "answer": "immediately at the draw site", "opts": ["at the front desk", "in the lab", "immediately at the draw site", "before the draw"], "tip": "Mislabeling is the #1 preventable lab error. Label right there, right then."}, {"text": "Each patient’s specimens go in |___| biohazard transport bag(s).", "answer": "their own separate", "opts": ["a shared", "their own separate", "the same daily", "any available"], "tip": "Never mix patients. One bag per patient, specimen + matching requisition together."}, {"text": "Apply gauze over the site but do NOT press until the |___| is fully removed.", "answer": "needle", "opts": ["tourniquet", "bandage", "needle", "gloves"], "tip": "Pressing before full needle removal risks needlestick injury and hematoma formation."}, {"text": "The safety guard on the needle should be activated |___| after withdrawal.", "answer": "immediately", "opts": ["after labeling", "within 5 minutes", "immediately", "when convenient"], "tip": "Activate the safety device immediately — before anything else. Then dispose in sharps."}, {"text": "If the patient shows concerning symptoms after the draw, keep them |___| and involve the provider.", "answer": "seated", "opts": ["standing", "walking", "seated", "lying flat"], "tip": "Keep them seated and safe. Do not let a symptomatic patient stand or leave."}];
+var ITEMS = ORIG.slice(), ci = 0, score = 0, chosen = null, missedIdx = [];
+
+function renderQ() {
+  var g = document.getElementById("game"), it = ITEMS[ci];
+  var parts = it.text.split("|___|");
+  var bCls = "blank empty", bTxt = "???";
+  if (chosen !== null) { bCls = "blank " + (chosen === it.answer ? "ok" : "no"); bTxt = chosen; }
+  var h = '<div class="topbar"><span class="ct">' + (ci+1) + '/' + ITEMS.length + '</span><span class="sc">Score: ' + score + '</span></div>';
+  h += '<div class="bar"><div class="bar-fill" style="width:' + (ci/ITEMS.length*100) + '%"></div></div>';
+  h += '<div class="statement"><p>' + parts[0] + '<span class="' + bCls + '">' + bTxt + '</span>' + parts[1] + '</p></div>';
+  h += '<div class="grid">';
+  it.opts.forEach(function(o) {
+    var cls = "", tag = "";
+    if (chosen !== null) {
+      if (o === it.answer) { cls = "ok"; tag = '<span class="tag tag-c">' + (chosen === o ? "✓" : "✓ Answer") + "</span>"; }
+      else if (chosen === o) { cls = "no"; tag = '<span class="tag tag-w">✗</span>'; }
+      else cls = "dimmed";
+    }
+    h += '<button class="' + cls + '" ' + (chosen === null ? "onclick=\"pick('" + o.replace(/'/g, "\u2019") + "')\"" : "") + '>' + o + tag + '</button>';
+  });
+  h += '</div>';
+  if (chosen !== null) {
+    var ok = chosen === it.answer;
+    h += '<div class="tip"><strong class="' + (ok ? "ok" : "no") + '">' + (ok ? "✅ Correct!" : "❌ Answer: " + it.answer) + '</strong><span>' + it.tip + '</span></div>';
+    h += '<button class="next-btn" onclick="nextQ()">Next →</button>';
+  }
+  g.innerHTML = h;
+}
+
+function pick(o) { if (chosen !== null) return; chosen = o; if (o === ITEMS[ci].answer) score++; else missedIdx.push(ci); renderQ(); }
+function nextQ() { if (ci+1 < ITEMS.length) { ci++; chosen = null; renderQ(); } else showDone(); }
+
+function showDone() {
+  document.getElementById("game").style.display = "none";
+  var d = document.getElementById("doneBox"); d.style.display = "block";
+  var html = '<div class="big">' + (score >= 7 ? "🏆" : "💪") + "</div>";
+  html += "<h2>" + score + "/" + ITEMS.length + " Correct!</h2>";
+  html += "<p>Post-procedure care and proper labeling protect both the patient and the specimen.</p>";
+  html += '<button class="btn" onclick="reset()">Play Again</button>';
+  if (missedIdx.length > 0) html += '<br><button class="btn-redo" onclick="redo()">Redo Missed (' + missedIdx.length + ")</button>";
+  d.innerHTML = html;
+}
+
+function reset() { ITEMS = ORIG.slice(); ci = 0; score = 0; chosen = null; missedIdx = []; document.getElementById("game").style.display = "block"; document.getElementById("doneBox").style.display = "none"; renderQ(); }
+function redo() { var r = []; for (var i = 0; i < missedIdx.length; i++) r.push(ITEMS[missedIdx[i]]); ITEMS = r; ci = 0; score = 0; chosen = null; missedIdx = []; document.getElementById("game").style.display = "block"; document.getElementById("doneBox").style.display = "none"; renderQ(); }
 renderQ();
-</script>
-</body>
-</html>
+</script></body></html>

@@ -4,205 +4,136 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Week 12 Glossary — Medical Assistant Program</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
-  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
-  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
-  .header{text-align:center;margin-bottom:28px}
-  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
-  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
-  .header p{font-size:13px;color:var(--text-secondary)}
-  .search-wrap{position:relative;margin-bottom:20px}
-  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
-  .search-wrap input:focus{border-color:#C0392B}
-  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
-  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
-  .cat-btn:hover{border-color:#aaa}
-  .cat-btn .emoji{font-size:22px}
-  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
-  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
-  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
-  .cat-btn.open .arrow{transform:rotate(180deg)}
-  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
-  .term-card:hover{border-color:var(--border)}
-  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
-  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
-  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
-  .result-card .row{display:flex;align-items:center;gap:10px}
-  .result-card .r-emoji{font-size:20px}
-  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
-  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
-  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
-  .hidden{display:none!important}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;}
+html,body{height:100%;overflow:hidden !important;font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:680px;margin:0 auto;padding:16px 20px 12px;display:flex;flex-direction:column;height:100dvh;overflow:hidden !important;}
+.tag{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--red-light);font-weight:700;margin-bottom:4px;}
+h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px;}
+.sub{font-size:13px;color:var(--dim);margin-bottom:10px;}
+.search-wrap{position:relative;margin-bottom:10px}.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--muted)}.search-wrap input{width:100%;padding:12px 16px 12px 44px;border-radius:10px;font-size:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none;font-family:inherit}.search-wrap input:focus{border-color:var(--red)}.search-wrap input::placeholder{color:var(--muted)}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}.cat-btn{padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}.cat-btn:hover{opacity:.85}.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.count{font-size:13px;color:var(--dim)}
+.list-wrap{border-radius:10px;border:1px solid var(--border);overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface)}.items{flex:1;overflow:hidden;padding:4px 0}
+.item{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:all .25s}.item:last-child{border-bottom:none}.item:hover{background:var(--surface2)}.item.open{background:var(--surface2);box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.item-head{display:flex;justify-content:space-between;align-items:center}.item-left{display:flex;align-items:center;gap:10px}.item-bar{width:4px;height:22px;border-radius:2px;opacity:.3;transition:opacity .2s}.item.open .item-bar{opacity:1}.item-term{font-size:20px;font-weight:700;color:#fff}.item-cat{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.item-def{margin-top:8px;margin-left:14px;padding-top:8px;border-top:1px solid var(--border);font-size:15px;color:var(--dim);line-height:1.6;font-style:italic;display:none}.item.open .item-def{display:block}.item.open .item-term{color:var(--red-light)}.empty{text-align:center;padding:30px;color:var(--muted);font-size:15px}
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:var(--bg)}.pg-btn{padding:6px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;transition:all .2s}.pg-btn:hover:not(:disabled){border-color:var(--red-light);color:var(--red-light)}.pg-btn:disabled{opacity:.3;cursor:default}.pg-dots{display:flex;gap:4px;justify-content:center;align-items:center;flex-wrap:wrap;max-width:200px}.pg-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}.pg-dot.active{background:var(--red-light);transform:scale(1.3)}.pg-dot:hover:not(.active){background:var(--dim)}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="header">
-    <div class="header-tag">Medical Assistant Program</div>
-    <h1>Week 12 Glossary</h1>
-    <p id="header-subtitle"></p>
+<div class="grain"></div>
+<div class="wrap">
+  <div class="tag">Medical Assistant Program</div>
+  <h1>Week 12 Glossary</h1>
+  <p class="sub">Law & Ethics in Healthcare</p>
+  <div class="search-wrap"><span>⌕</span><input type="text" id="search" placeholder="Search terms or definitions..."></div>
+  <div class="filters" id="filters"></div>
+  <div class="top-bar"><div class="count" id="count"></div></div>
+  <div class="list-wrap">
+    <div class="items" id="list"></div>
+    <div class="pager" id="pager"></div>
   </div>
-  <div id="browse-mode"></div>
 </div>
 <script>
-const CATEGORIES = [
-  {
-    name: "Patient Rights & Healthcare Law", emoji: "⚖️", color: "#2C3E50",
-    terms: [
-      { term: "Patient's Bill of Rights", def: "A set of guarantees developed by the American Hospital Association (AHA) in 1973 and now adopted in various forms by hospitals, medical practices, insurance companies, and governments. It establishes the rights and responsibilities of patients and healthcare providers, including the right to respectful treatment, understandable information, privacy, access to records, and informed decision-making." },
-      { term: "Affordable Care Act (ACA)", def: "A federal law signed in 2010 that represents a major healthcare reform effort — expanding access to affordable health insurance, strengthening consumer protections, emphasizing prevention and wellness, and working to reduce the overall cost of healthcare in the United States. Also informally known as 'Obamacare.'" },
-      { term: "Health Insurance Portability and Accountability Act (HIPAA)", def: "A federal law enacted in 1996 that gives patients rights over their health information and sets strict rules and limits on who may access or receive protected health information (PHI). HIPAA applies to PHI in all forms — electronic, written, and oral. Covered entities (health plans, clearinghouses, and providers) must comply." },
-      { term: "Protected Health Information (PHI)", def: "Any individually identifiable health information held or transmitted by a covered entity — in any format, including electronic, paper, or spoken. Examples include a patient's name combined with their diagnosis, treatment records, billing records, or test results. PHI is protected under HIPAA from unauthorized disclosure." },
-      { term: "HITECH Act", def: "The Health Information Technology for Economic and Clinical Health Act, which extends and strengthens HIPAA's enforcement in the digital space. It holds business associates and vendors directly liable for HIPAA compliance, prohibits the sale of PHI, and established a tiered civil and criminal penalty system for violations involving electronic health information." },
-      { term: "Emergency Medical Treatment and Active Labor Act (EMTALA)", def: "A federal law enacted in 1986 requiring any hospital emergency department that receives Medicare or Medicaid funding to provide an appropriate medical screening and stabilizing treatment to any patient who presents — regardless of their ability to pay or insurance status. Enacted to eliminate 'patient dumping,' in which facilities refused care based on diagnosis cost or financial status." },
-      { term: "Clinical Laboratory Improvement Act (CLIA)", def: "A federal law enacted in 1988 that establishes quality standards for all laboratory testing performed on human specimens — including physician office labs — to ensure accuracy, reliability, and timeliness of results. Administered by the FDA, which determines test complexity categories and certification requirements." },
-      { term: "Americans with Disabilities Act (ADA)", def: "A federal law enacted in 1990 that prohibits discrimination against qualified individuals with disabilities in employment, public accommodations, and services. Requires employers to provide 'reasonable accommodations' to enable employees with disabilities to perform their job successfully, unless doing so would impose undue hardship." },
-      { term: "No Surprises Act (NSA)", def: "A federal law protecting patients who have group health plan or individual insurance coverage from unexpected out-of-network medical bills — particularly for emergency services from out-of-network providers or facilities. Bans surprise bills when the patient had no opportunity to choose an in-network provider in advance." },
-      { term: "Genetic Information Nondiscrimination Act (GINA)", def: "A federal law enacted in 2008 that prohibits discrimination based on genetic information in the context of health insurance and employment. Protects individuals from being denied coverage or jobs based on genetic test results or family medical history." },
-      { term: "Good Samaritan Act", def: "State laws that protect bystanders who provide reasonable emergency assistance to an injured or ill person from civil liability — even if their actions inadvertently contribute to further injury or death. Designed to encourage people to help in emergencies without fear of lawsuits." },
-    ],
-  },
-  {
-    name: "Privacy, Confidentiality & Medical Records", emoji: "🔒", color: "#922B21",
-    terms: [
-      { term: "Administrative Safeguards (HIPAA)", def: "Written policies, procedures, and training programs that document how a covered entity complies with HIPAA privacy and security requirements. The foundation of a HIPAA compliance program — must be documented in writing and regularly reviewed and updated." },
-      { term: "Physical Safeguards (HIPAA)", def: "Controls over the physical environment where protected health information is stored or accessed — including locked file rooms, controlled access to workstations, screen positioning to prevent unauthorized viewing, visitor sign-in logs, and secure disposal of paper records." },
-      { term: "Technical Safeguards (HIPAA)", def: "Digital security measures used to protect electronic PHI — including password-protected systems, data encryption, user access controls, automatic log-out on idle workstations, audit logs that track who accessed patient information and when." },
-      { term: "Medical Record Ownership", def: "The legal distinction between who owns the physical medical record versus who owns the information within it. The healthcare facility or provider owns the medical record as a legal document — it must remain with the facility. However, the patient owns their health data and has the right to inspect, copy, and request corrections to their information." },
-      { term: "Release of Information (ROI)", def: "The process by which a patient's medical records are shared with another party. Requires a signed authorization form from the patient in most circumstances. Exceptions exist for court orders, criminal investigations, communicable disease reporting, and workers' compensation mandated examinations." },
-      { term: "Subpoena Duces Tecum", def: "A legal court order requiring a person to appear in court and bring specific documents — such as medical records — as evidence. When a medical record is legally ordered through this process, the record may be released without the patient's written authorization." },
-      { term: "Breach of Confidentiality", def: "The unauthorized disclosure of protected health information to a party who does not have a legal right to access it. May result in HIPAA penalties, civil liability, and damage to the patient-provider relationship. Both intentional and unintentional disclosures can constitute a breach." },
-      { term: "Covered Entity", def: "An organization or individual required to comply with HIPAA regulations — specifically health insurance companies (health plans), healthcare clearinghouses, and healthcare providers who transmit health information electronically. Employers who maintain employee health records are generally not considered covered entities under HIPAA." },
-    ],
-  },
-  {
-    name: "Consent", emoji: "✍️", color: "#7D3C98",
-    terms: [
-      { term: "Consent", def: "A patient's voluntary, informed agreement to receive a proposed medical examination, treatment, or procedure. Valid consent must be free of force or fraud, given by a person with sufficient mental capacity, and based on adequate information about what is being agreed to." },
-      { term: "Implied Consent", def: "Consent inferred from a patient's actions, conduct, or circumstances rather than explicit verbal or written communication. Example: a patient opens their mouth when the MA asks about taking a temperature. Implied consent also applies in emergencies — the law assumes a reasonable person would consent to life-saving treatment if they were conscious and able to." },
-      { term: "Expressed Consent", def: "Consent given directly through spoken words or a written document. Example: a patient verbally agrees to receive an injection and specifies which arm. Expressed consent is the most common form used in routine clinical practice." },
-      { term: "Informed Consent", def: "The most legally significant type of consent — a clear, voluntary agreement made by a competent adult after the provider has fully disclosed the nature of the procedure, all risks and benefits, expected outcomes, available alternatives, and the consequences of refusing treatment. Failure to obtain informed consent may constitute medical negligence. Signed informed consent documents are legally required before non-emergency procedures." },
-      { term: "Patient Autonomy", def: "The right of a competent adult patient to make their own healthcare decisions — including the right to refuse treatment — free from coercion, pressure, or undue influence. Healthcare providers are obligated to respect patient autonomy even when they disagree with the patient's choice." },
-      { term: "Competency (Consent Context)", def: "The legal and cognitive capacity of a patient to understand and make their own healthcare decisions. A competent adult must be oriented to time and place, able to understand the information provided, and capable of communicating a decision. Competency may be affected by mental illness, intoxication, severe pain, or altered consciousness." },
-      { term: "Emancipated Minor", def: "A person under the age of 18 who has been granted legal adult status by a court — enabling them to make their own medical, financial, and housing decisions without parental consent. Courts grant emancipated status on the basis of military enlistment, financial self-sufficiency, independent living, or legal marriage." },
-    ],
-  },
-  {
-    name: "Advance Directives", emoji: "📜", color: "#C0392B",
-    terms: [
-      { term: "Advance Directive", def: "A legal document in which a person records their healthcare wishes and/or designates a representative to make decisions on their behalf — to be used when they are no longer able to communicate or make decisions independently. Advance directives are legally valid throughout the United States and do not expire until officially revoked or changed by the patient." },
-      { term: "Living Will", def: "A type of advance directive in which the patient specifies in writing which medical treatments they want and which they do not want — and under what conditions those decisions apply. Common decisions addressed include CPR, mechanical ventilation, dialysis, artificial nutrition and hydration, organ donation, and pain management." },
-      { term: "Durable Power of Attorney for Healthcare (DPOA)", def: "A legal document that designates a healthcare agent or proxy — a trusted person — to make medical decisions on the patient's behalf when they are unable to do so. More flexible than a living will; the agent can make decisions not specifically addressed in the document, including hospital admissions, treatment choices, record access, and post-death arrangements." },
-      { term: "Healthcare Agent (Healthcare Proxy)", def: "The individual designated in a durable power of attorney for healthcare to make medical decisions on behalf of the patient when the patient is incapacitated. The agent is expected to make the decisions the patient would have made, not the decisions the agent would personally prefer. Must communicate with the same authority as the patient regarding treatment acceptance or refusal." },
-      { term: "Do-Not-Resuscitate Order (DNR)", def: "A legal medical order instructing healthcare providers not to perform CPR or advanced cardiac life support (ACLS) if the patient's heart stops or they stop breathing. A DNR does not affect any other treatment — the patient can continue to receive chemotherapy, antibiotics, dialysis, pain management, or any other ongoing care." },
-      { term: "POLST (Physician Orders for Life-Sustaining Treatment)", def: "A set of actionable medical orders — not simply a patient preference document — that translates a patient's advance care wishes into immediate clinical orders. POLST forms travel with the patient across care settings (home, hospital, nursing facility) and can be acted on by any healthcare provider. Typically used for patients with serious illness or advanced age." },
-    ],
-  },
-  {
-    name: "Law Types, Torts & Malpractice", emoji: "🏛️", color: "#1A5276",
-    terms: [
-      { term: "Criminal Law", def: "The body of law concerned with offenses against society — violations of state or federal criminal statutes or codes. Remedies include monetary fines, imprisonment, and in severe cases, capital punishment. Healthcare professionals may face criminal prosecution for practicing without a license, falsifying credentials, or performing procedures without consent." },
-      { term: "Misdemeanor", def: "A lesser criminal offense typically punishable by monetary fines and/or imprisonment of one year or less. In healthcare, misdemeanors might include minor violations of licensure or documentation rules." },
-      { term: "Felony", def: "A serious criminal offense punishable by fines and/or imprisonment for more than one year. For healthcare professionals, a felony conviction may also result in permanent revocation of their professional license. Examples include fraud, practicing medicine without a license, or battery." },
-      { term: "Civil Law", def: "The body of law that protects the private rights of individuals — including contracts, property, privacy, labor, and family matters. A person harmed by a civil wrong (tort) may sue the responsible party for monetary damages. Civil law penalties are almost exclusively financial." },
-      { term: "Tort", def: "A wrongful act that causes harm to another person but is not a criminal offense — it is a civil wrong. Torts may be intentional (deliberately harmful) or unintentional (negligent). Healthcare professionals are most commonly involved in unintentional torts, or negligence." },
-      { term: "Intentional Tort", def: "A deliberate act that violates the legal rights of another person. Healthcare examples include assault (threatening a patient), battery (performing a procedure without consent), defamation of character (making false damaging statements), and invasion of privacy (unauthorized disclosure of patient information)." },
-      { term: "Negligence", def: "An unintentional tort in which a person fails to act with the level of care that a reasonable person would have exercised under similar circumstances — resulting in harm to another. In healthcare, negligence does not require intent to harm; it is the result of failing to meet the expected standard of care." },
-      { term: "Malpractice", def: "A form of negligence committed by a licensed professional — in healthcare, this means a provider caused patient injury through improper diagnosis, treatment, or postoperative care, or through a breach of patient confidentiality. Malpractice requires proof that a standard of care was breached and that the breach directly caused measurable harm." },
-      { term: "Standard of Care", def: "The level and type of care that a reasonably competent healthcare professional with equivalent training and experience would provide under the same or similar circumstances. The central question in any malpractice case: 'Would a similarly qualified provider have done the same thing under the same conditions?'" },
-      { term: "Four Ds of Negligence", def: "The four elements that must all be proven for a successful negligence (malpractice) claim: (1) Duty of Care — a legal obligation existed; (2) Dereliction — the provider failed to meet that duty; (3) Direct Cause — the breach directly caused the harm; (4) Damages — the patient suffered measurable harm that can be compensated financially. All four must be present." },
-      { term: "Battery (Healthcare Context)", def: "An intentional tort — and potentially a criminal offense — that occurs when a healthcare provider makes unconsented physical contact with a patient. Performing any procedure without the patient's consent, even if the procedure itself is clinically appropriate, may constitute battery." },
-      { term: "Assault (Healthcare Context)", def: "An intentional tort in which a person is threatened or placed in fear of immediate unconsented physical contact — even if no actual contact occurs. In healthcare, verbally threatening a patient with a procedure they have not agreed to may constitute assault." },
-    ],
-  },
-  {
-    name: "Mandatory Reporting & Abuse", emoji: "🚨", color: "#1E8449",
-    terms: [
-      { term: "Mandatory Reporting", def: "A legal obligation requiring specific professionals — including healthcare providers — to report defined events or conditions to appropriate authorities, regardless of patient consent. Mandatory reporting is designed to protect patients, vulnerable populations, and the general public. Failure to report when required is itself a legal violation." },
-      { term: "Notifiable Disease", def: "A disease or condition that healthcare providers are legally required to report to local, state, or federal health authorities when diagnosed. The CDC maintains a national list of more than 120 notifiable diseases, including tuberculosis, HIV/AIDS, meningitis, sexually transmitted infections, COVID-19, E. coli, and foodborne illness. Timely reporting supports outbreak detection and public health response." },
-      { term: "Mandated Reporter", def: "A person who is legally required by state law to report suspected abuse or neglect to the appropriate authorities. In healthcare, mandated reporters typically include physicians, nurses, nurse practitioners, physician assistants, dentists, and medical assistants. Mandated reporters are legally protected from civil liability when they report in good faith." },
-      { term: "Child Abuse", def: "Physical, emotional, psychological, or sexual maltreatment or neglect of a person under the age of 18. Every state has mandatory reporting laws requiring healthcare professionals to report suspected child abuse — not just confirmed abuse. Signs include unexplained injuries, inconsistent explanations, repeated emergency visits, poor hygiene, and developmental delays." },
-      { term: "Elder Abuse", def: "The mistreatment or neglect of an older adult — typically defined as age 60 or 65 and older, depending on state law. May be physical, emotional, psychological, sexual, or financial in nature. All states have mandatory reporting requirements for elder abuse; healthcare professionals are commonly named as required reporters." },
-      { term: "Intimate Partner Violence (IPV)", def: "A pattern of behavior in which one partner uses physical, sexual, emotional, or economic abuse to control the other. Many states require or encourage healthcare providers to screen for and report intimate partner violence. Covers all genders and all types of intimate relationships." },
-      { term: "Good Faith Reporting", def: "The legal protection extended to mandated reporters who report suspected abuse in good faith — meaning they had reasonable suspicion based on their observations, not malicious intent. A good-faith report made without proof of abuse will not result in civil or criminal liability for the reporter, even if the report is ultimately unsubstantiated." },
-    ],
-  },
-  {
-    name: "Ethics & Professional Codes", emoji: "🤝", color: "#D4AC0D",
-    terms: [
-      { term: "Ethics", def: "The principles, rules, and moral standards that govern a person's or group's behavior — defining what is right and wrong, what is appropriate conduct, and what obligations are owed to others. In healthcare, ethics guide clinical decisions, professional interactions, and organizational policies." },
-      { term: "Medical Ethics", def: "A branch of ethics specifically focused on the moral principles and obligations of healthcare professionals in their care of patients. Uses moral analysis alongside clinical facts to determine the ethically appropriate course of action in complex patient care situations." },
-      { term: "Autonomy (Ethics)", def: "The principle that competent patients have the right to make their own healthcare decisions — free from coercion, pressure, or manipulation. Healthcare providers must ensure patients have complete and understandable information to make informed choices, then respect those choices even when they disagree." },
-      { term: "Justice (Ethics)", def: "The ethical principle that healthcare decisions should be consistent and fair — that patients in similar situations should have access to the same care and that limited resources should be distributed equitably. Requires consideration of fair distribution, competing needs, individual rights, and existing legislation." },
-      { term: "Beneficence", def: "The ethical principle of actively doing good — acting in the patient's best interest. In clinical practice, this means considering the patient's pain, mental and physical suffering, risk of disability, and quality of life when making treatment decisions. What is 'best' should reflect the patient's own values, not solely the provider's judgment." },
-      { term: "Nonmaleficence", def: "The ethical principle of 'first, do no harm' — the obligation to avoid causing unnecessary pain, injury, or suffering to a patient. Because most treatments carry some risk or adverse effects, nonmaleficence requires careful weighing of potential benefits against potential harm." },
-      { term: "Personal Ethics", def: "An individual's own moral beliefs about right and wrong — shaped by family upbringing, life experience, culture, religion, and education. Personal ethics influence a person's behavior in all areas of life, including the workplace, and may change over time as experiences and perspectives evolve." },
-      { term: "Professional Ethics", def: "The standards of conduct and moral obligations specific to a profession — established through education, training, certification codes, organizational policies, and legal requirements. Professional ethics govern how MAs should act toward patients, employers, and colleagues. Examples include certification codes of conduct and employee handbooks." },
-    ],
-  },
-  {
-    name: "Cultural Competency & Bias", emoji: "🌍", color: "#117A65",
-    terms: [
-      { term: "Cultural Competence", def: "The ability of a healthcare provider or organization to effectively deliver services that meet the social, cultural, and linguistic needs of a diverse patient population. Cultural competence is an ongoing, active learning process — not a one-time training — and requires self-awareness, knowledge, and practical skills for interacting with patients from backgrounds different from one's own." },
-      { term: "Culture", def: "The shared beliefs, values, practices, norms, language, and worldview of a group or community — often learned and passed down across generations. Culture shapes how patients understand illness, make health decisions, communicate with providers, and relate to the healthcare system. It includes race, ethnicity, national origin, religion, language, gender, and many other shared identities." },
-      { term: "Explicit Bias (Conscious Bias)", def: "A known prejudice or preference that a person is aware they hold — a deliberate attitude toward a particular group. Explicit bias is easier to address than implicit bias because the person can recognize and examine it. In healthcare, explicit bias can directly affect the quality of care a patient receives." },
-      { term: "Implicit Bias (Unconscious Bias)", def: "A hidden preference, attitude, or stereotype that operates below conscious awareness — influencing judgments and behavior without the person realizing it. Often more dangerous in healthcare than explicit bias because the provider does not recognize that their behavior is being shaped by it. Regular self-reflection and ongoing training are essential to identifying and reducing implicit bias." },
-      { term: "Health Disparities", def: "Preventable differences in health outcomes and access to care experienced by socially disadvantaged groups — including differences based on race, ethnicity, income, education, gender, disability, geographic location, or sexual orientation. Bias in healthcare — both explicit and implicit — contributes to health disparities." },
-      { term: "Diversity", def: "The range of human differences within a population or group — including race, ethnicity, national origin, age, sex, gender identity, sexual orientation, religion, language, education, disability, and socioeconomic status. Providing equitable care to a diverse patient population requires awareness of and respect for these differences." },
-    ],
-  }
+const CATEGORIES=[
+  {name:"Patient Rights",color:"#E05555",terms:[
+    {term:"Patient's Bill of Rights",def:"A set of guarantees developed by the American Hospital Association (AHA) in 1973 and now adopted in various forms by hospitals."},
+    {term:"Affordable Care Act (ACA)",def:"A federal law signed in 2010 that represents a major healthcare reform effort — expanding access to affordable health insurance."},
+    {term:"Health Insurance Portability and Accountability Act (HIPAA)",def:"A federal law enacted in 1996 that gives patients rights over their health information and sets strict rules and limits on who ..."},
+    {term:"Protected Health Information (PHI)",def:"Any individually identifiable health information held or transmitted by a covered entity — in any format, including electronic."},
+    {term:"HITECH Act",def:"The Health Information Technology for Economic and Clinical Health Act."},
+    {term:"Emergency Medical Treatment and Active Labor Act (EMTALA)",def:"A federal law enacted in 1986 requiring any hospital emergency department that receives Medicare or Medicaid funding to provide..."},
+    {term:"Clinical Laboratory Improvement Act (CLIA)",def:"A federal law enacted in 1988 that establishes quality standards for all laboratory testing performed on human specimens — incl..."},
+    {term:"Americans with Disabilities Act (ADA)",def:"A federal law enacted in 1990 that prohibits discrimination against qualified individuals with disabilities in employment."},
+    {term:"No Surprises Act (NSA)",def:"A federal law protecting patients who have group health plan or individual insurance coverage from unexpected out-of-network me..."},
+    {term:"Genetic Information Nondiscrimination Act (GINA)",def:"A federal law enacted in 2008 that prohibits discrimination based on genetic information in the context of health insurance and..."},
+    {term:"Good Samaritan Act",def:"State laws that protect bystanders who provide reasonable emergency assistance to an injured or ill person from civil liability..."}
+  ]},
+  {name:"Privacy & Records",color:"#6B7B8D",terms:[
+    {term:"Administrative Safeguards (HIPAA)",def:"Written policies, procedures, and training programs that document how a covered entity complies with HIPAA privacy and security..."},
+    {term:"Physical Safeguards (HIPAA)",def:"Controls over the physical environment where protected health information is stored or accessed — including locked file rooms."},
+    {term:"Technical Safeguards (HIPAA)",def:"Digital security measures used to protect electronic PHI — including password-protected systems, data encryption."},
+    {term:"Medical Record Ownership",def:"The legal distinction between who owns the physical medical record versus who owns the information within it."},
+    {term:"Release of Information (ROI)",def:"The process by which a patient's medical records are shared with another party."},
+    {term:"Subpoena Duces Tecum",def:"A legal court order requiring a person to appear in court and bring specific documents — such as medical records — as evidence."},
+    {term:"Breach of Confidentiality",def:"The unauthorized disclosure of protected health information to a party who does not have a legal right to access it."},
+    {term:"Covered Entity",def:"An organization or individual required to comply with HIPAA regulations — specifically health insurance companies (health plans)."}
+  ]},
+  {name:"Consent",color:"#8B6AAE",terms:[
+    {term:"Consent",def:"A patient's voluntary, informed agreement to receive a proposed medical examination, treatment, or procedure."},
+    {term:"Implied Consent",def:"Consent inferred from a patient's actions, conduct, or circumstances rather than explicit verbal or written communication."},
+    {term:"Expressed Consent",def:"Consent given directly through spoken words or a written document."},
+    {term:"Informed Consent",def:"The most legally significant type of consent — a clear."},
+    {term:"Patient Autonomy",def:"The right of a competent adult patient to make their own healthcare decisions — including the right to refuse treatment — free ..."},
+    {term:"Competency (Consent Context)",def:"The legal and cognitive capacity of a patient to understand and make their own healthcare decisions."},
+    {term:"Emancipated Minor",def:"A person under the age of 18 who has been granted legal adult status by a court — enabling them to make their own medical."}
+  ]},
+  {name:"Advance Directives",color:"#E74C6F",terms:[
+    {term:"Advance Directive",def:"A legal document in which a person records their healthcare wishes and/or designates a representative to make decisions on thei..."},
+    {term:"Living Will",def:"A type of advance directive in which the patient specifies in writing which medical treatments they want and which they do not ..."},
+    {term:"Durable Power of Attorney for Healthcare (DPOA)",def:"A legal document that designates a healthcare agent or proxy — a trusted person — to make medical decisions on the patient's be..."},
+    {term:"Healthcare Agent (Healthcare Proxy)",def:"The individual designated in a durable power of attorney for healthcare to make medical decisions on behalf of the patient when..."},
+    {term:"Do-Not-Resuscitate Order (DNR)",def:"A legal medical order instructing healthcare providers not to perform CPR or advanced cardiac life support (ACLS) if the patien..."},
+    {term:"POLST (Physician Orders for Life-Sustaining Treatment)",def:"A set of actionable medical orders — not simply a patient preference document — that translates a patient's advance care wishes..."}
+  ]},
+  {name:"Law & Malpractice",color:"#4A90B8",terms:[
+    {term:"Criminal Law",def:"The body of law concerned with offenses against society — violations of state or federal criminal statutes or codes."},
+    {term:"Misdemeanor",def:"A lesser criminal offense typically punishable by monetary fines and/or imprisonment of one year or less."},
+    {term:"Felony",def:"A serious criminal offense punishable by fines and/or imprisonment for more than one year."},
+    {term:"Civil Law",def:"The body of law that protects the private rights of individuals — including contracts, property, privacy, labor."},
+    {term:"Tort",def:"A wrongful act that causes harm to another person but is not a criminal offense — it is a civil wrong."},
+    {term:"Intentional Tort",def:"A deliberate act that violates the legal rights of another person."},
+    {term:"Negligence",def:"An unintentional tort in which a person fails to act with the level of care that a reasonable person would have exercised under..."},
+    {term:"Malpractice",def:"A form of negligence committed by a licensed professional — in healthcare."},
+    {term:"Standard of Care",def:"The level and type of care that a reasonably competent healthcare professional with equivalent training and experience would pr..."},
+    {term:"Four Ds of Negligence",def:"The four elements that must all be proven for a successful negligence (malpractice) claim: (1) Duty of Care — a legal obligatio..."},
+    {term:"Battery (Healthcare Context)",def:"An intentional tort — and potentially a criminal offense — that occurs when a healthcare provider makes unconsented physical co..."},
+    {term:"Assault (Healthcare Context)",def:"An intentional tort in which a person is threatened or placed in fear of immediate unconsented physical contact — even if no ac..."}
+  ]},
+  {name:"Reporting & Abuse",color:"#1A8A7D",terms:[
+    {term:"Mandatory Reporting",def:"A legal obligation requiring specific professionals — including healthcare providers — to report defined events or conditions t..."},
+    {term:"Notifiable Disease",def:"A disease or condition that healthcare providers are legally required to report to local, state."},
+    {term:"Mandated Reporter",def:"A person who is legally required by state law to report suspected abuse or neglect to the appropriate authorities."},
+    {term:"Child Abuse",def:"Physical, emotional, psychological, or sexual maltreatment or neglect of a person under the age of 18."},
+    {term:"Elder Abuse",def:"The mistreatment or neglect of an older adult — typically defined as age 60 or 65 and older, depending on state law."},
+    {term:"Intimate Partner Violence (IPV)",def:"A pattern of behavior in which one partner uses physical, sexual, emotional, or economic abuse to control the other."},
+    {term:"Good Faith Reporting",def:"The legal protection extended to mandated reporters who report suspected abuse in good faith — meaning they had reasonable susp..."}
+  ]},
+  {name:"Ethics & Codes",color:"#E2B94C",terms:[
+    {term:"Ethics",def:"The principles, rules, and moral standards that govern a person's or group's behavior — defining what is right and wrong."},
+    {term:"Medical Ethics",def:"A branch of ethics specifically focused on the moral principles and obligations of healthcare professionals in their care of pa..."},
+    {term:"Autonomy (Ethics)",def:"The principle that competent patients have the right to make their own healthcare decisions — free from coercion, pressure."},
+    {term:"Justice (Ethics)",def:"The ethical principle that healthcare decisions should be consistent and fair — that patients in similar situations should have..."},
+    {term:"Beneficence",def:"The ethical principle of actively doing good — acting in the patient's best interest."},
+    {term:"Nonmaleficence",def:"The ethical principle of 'first, do no harm' — the obligation to avoid causing unnecessary pain, injury."},
+    {term:"Personal Ethics",def:"An individual's own moral beliefs about right and wrong — shaped by family upbringing, life experience, culture, religion."},
+    {term:"Professional Ethics",def:"The standards of conduct and moral obligations specific to a profession — established through education, training."}
+  ]},
+  {name:"Cultural Competency",color:"#4CAF90",terms:[
+    {term:"Cultural Competence",def:"The ability of a healthcare provider or organization to effectively deliver services that meet the social, cultural."},
+    {term:"Culture",def:"The shared beliefs, values, practices, norms, language."},
+    {term:"Explicit Bias (Conscious Bias)",def:"A known prejudice or preference that a person is aware they hold — a deliberate attitude toward a particular group."},
+    {term:"Implicit Bias (Unconscious Bias)",def:"A hidden preference, attitude, or stereotype that operates below conscious awareness — influencing judgments and behavior witho..."},
+    {term:"Health Disparities",def:"Preventable differences in health outcomes and access to care experienced by socially disadvantaged groups — including differen..."},
+    {term:"Diversity",def:"The range of human differences within a population or group — including race, ethnicity, national origin, age, sex."}
+  ]}
 ];
 
-const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
-  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
-);
-let browseSearch = '';
-let browseOpenCat = null;
-let browseOpenTerm = null;
-document.getElementById('header-subtitle').textContent =
-  `Doing the Right Thing — Law & Ethics in Healthcare · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
-renderBrowse();
-function renderBrowse() {
-  const el = document.getElementById('browse-mode');
-  const query = browseSearch.trim().toLowerCase();
-  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
-  if (query) {
-    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
-    if (filtered.length === 0) {
-      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
-    } else {
-      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
-      filtered.forEach((t, i) => {
-        const isOpen = browseOpenTerm === `s-${i}`;
-        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
-      });
-      html += `</div>`;
-    }
-  } else {
-    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
-    CATEGORIES.forEach((cat, ci) => {
-      const isOpen = browseOpenCat === ci;
-      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
-      if (isOpen) {
-        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
-        cat.terms.forEach((t, ti) => {
-          const tKey = `${ci}-${ti}`;
-          const tOpen = browseOpenTerm === tKey;
-          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
-        });
-        html += `</div>`;
-      }
-      html += `</div>`;
-    });
-    html += `</div>`;
-  }
-  el.innerHTML = html;
-}
-function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+const glossary=[];const catNames=["All"];const catColors={};
+CATEGORIES.forEach(cat=>{catNames.push(cat.name);catColors[cat.name]=cat.color;cat.terms.forEach(t=>glossary.push({term:t.term,definition:t.def,category:cat.name}));});
+let filter="All",search="",openIdx=null,currentPage=0;const PER_PAGE=4;
+function renderFilters(){document.getElementById('filters').innerHTML=catNames.map(c=>{const col=c==="All"?"#7a7f90":(catColors[c]||"#888");const active=filter===c;return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}18;${active?`border-color:${col};color:${col};background:${col}18`:''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')">${c}</button>`;}).join('');}
+function getFiltered(){const s=search.toLowerCase();return glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));}
+function renderList(){const filtered=getFiltered();const totalPages=Math.max(1,Math.ceil(filtered.length/PER_PAGE));if(currentPage>=totalPages)currentPage=totalPages-1;if(currentPage<0)currentPage=0;const start=currentPage*PER_PAGE;const pageItems=filtered.slice(start,start+PER_PAGE);document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' · Page '+(currentPage+1)+' of '+totalPages;if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms match your search.</div>';document.getElementById('pager').innerHTML='';return;}document.getElementById('list').innerHTML=pageItems.map(g=>{const col=catColors[g.category]||"#888";const origIdx=glossary.indexOf(g);const isOpen=openIdx===origIdx;return `<div class="item ${isOpen?'open':''}" onclick="toggle(${origIdx})"><div class="item-head"><div class="item-left"><div class="item-bar" style="background:${col}"></div><span class="item-term">${g.term}</span></div><span class="item-cat" style="background:${col}18;color:${col}">${g.category}</span></div><div class="item-def" style="${isOpen?'display:block':''}">${g.definition}</div></div>`;}).join('');let ph=`<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>← Prev</button><div class="pg-dots">`;for(let p=0;p<totalPages;p++){ph+=`<div class="pg-dot ${p===currentPage?'active':''}" onclick="goPage(${p})"></div>`;}ph+=`</div><button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''}>Next →</button>`;document.getElementById('pager').innerHTML=ph;}
+function setFilter(c){filter=c;currentPage=0;openIdx=null;renderFilters();renderList();}
+function toggle(i){openIdx=openIdx===i?null:i;renderList();}
+function goPage(p){currentPage=p;openIdx=null;renderList();}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;currentPage=0;openIdx=null;renderList();});
+renderFilters();renderList();
 </script>
 </body>
 </html>

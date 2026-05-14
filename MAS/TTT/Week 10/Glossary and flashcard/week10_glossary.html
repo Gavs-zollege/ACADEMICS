@@ -4,216 +4,171 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Week 10 Glossary — Medical Assistant Program</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
-  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
-  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
-  .header{text-align:center;margin-bottom:28px}
-  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
-  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
-  .header p{font-size:13px;color:var(--text-secondary)}
-  .search-wrap{position:relative;margin-bottom:20px}
-  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
-  .search-wrap input:focus{border-color:#C0392B}
-  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
-  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
-  .cat-btn:hover{border-color:#aaa}
-  .cat-btn .emoji{font-size:22px}
-  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
-  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
-  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
-  .cat-btn.open .arrow{transform:rotate(180deg)}
-  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
-  .term-card:hover{border-color:var(--border)}
-  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
-  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
-  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
-  .result-card .row{display:flex;align-items:center;gap:10px}
-  .result-card .r-emoji{font-size:20px}
-  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
-  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
-  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
-  .hidden{display:none!important}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;}
+html,body{height:100%;overflow:hidden !important;font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:680px;margin:0 auto;padding:16px 20px 12px;display:flex;flex-direction:column;height:100dvh;overflow:hidden !important;}
+.tag{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--red-light);font-weight:700;margin-bottom:4px;}
+h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px;}
+.sub{font-size:13px;color:var(--dim);margin-bottom:10px;}
+.search-wrap{position:relative;margin-bottom:10px}
+.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--muted)}
+.search-wrap input{width:100%;padding:12px 16px 12px 44px;border-radius:10px;font-size:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none;font-family:inherit}
+.search-wrap input:focus{border-color:var(--red)}
+.search-wrap input::placeholder{color:var(--muted)}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.cat-btn{padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.cat-btn:hover{opacity:.85}
+.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.count{font-size:13px;color:var(--dim)}
+.list-wrap{border-radius:10px;border:1px solid var(--border);overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface)}
+.items{flex:1;overflow:hidden;padding:4px 0}
+.item{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:all .25s}
+.item:last-child{border-bottom:none}
+.item:hover{background:var(--surface2)}
+.item.open{background:var(--surface2);box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.item-head{display:flex;justify-content:space-between;align-items:center}
+.item-left{display:flex;align-items:center;gap:10px}
+.item-bar{width:4px;height:22px;border-radius:2px;opacity:.3;transition:opacity .2s}
+.item.open .item-bar{opacity:1}
+.item-term{font-size:20px;font-weight:700;color:#fff}
+.item-cat{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.item-def{margin-top:8px;margin-left:14px;padding-top:8px;border-top:1px solid var(--border);font-size:15px;color:var(--dim);line-height:1.6;font-style:italic;display:none}
+.item.open .item-def{display:block}
+.item.open .item-term{color:var(--red-light)}
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:15px}
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:var(--bg)}
+.pg-btn{padding:6px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;transition:all .2s}
+.pg-btn:hover:not(:disabled){border-color:var(--red-light);color:var(--red-light)}
+.pg-btn:disabled{opacity:.3;cursor:default}
+.pg-dots{display:flex;gap:4px;justify-content:center;align-items:center;flex-wrap:wrap;max-width:200px}
+.pg-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+.pg-dot.active{background:var(--red-light);transform:scale(1.3)}
+.pg-dot:hover:not(.active){background:var(--dim)}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="header">
-    <div class="header-tag">Medical Assistant Program</div>
-    <h1>Week 10 Glossary</h1>
-    <p id="header-subtitle"></p>
+<div class="grain"></div>
+<div class="wrap">
+  <div class="tag">Medical Assistant Program</div>
+  <h1>Week 10 Glossary</h1>
+  <p class="sub">General Patient Care — Applied Skills</p>
+  <div class="search-wrap"><span>⌕</span><input type="text" id="search" placeholder="Search terms or definitions..."></div>
+  <div class="filters" id="filters"></div>
+  <div class="top-bar"><div class="count" id="count"></div></div>
+  <div class="list-wrap">
+    <div class="items" id="list"></div>
+    <div class="pager" id="pager"></div>
   </div>
-  <div id="browse-mode"></div>
 </div>
 <script>
-const CATEGORIES = [
-  {
-    name: "Sterile Technique & Field Maintenance", emoji: "🧤", color: "#2C3E50",
-    terms: [
-      { term: "Surgical Asepsis (Sterile Technique)", def: "The set of practices used to maintain a completely microorganism-free environment during invasive procedures. Required any time the body is entered — through a surgical incision, an open wound, or any procedure that breaks the skin or enters a body cavity. Includes surgical handwashing, sterile gloves, and strict management of the sterile field." },
-      { term: "Sterile Field", def: "A designated area — typically the surface of a Mayo stand covered with a sterile drape — that has been established and maintained completely free of microorganisms. Used as the work surface during surgical and invasive procedures. An item is either sterile or non-sterile; there is no in-between. If any doubt exists, treat the item as non-sterile." },
-      { term: "Mayo Stand", def: "A movable, height-adjustable stainless steel tray on a stand used as the sterile field surface during minor office procedures and surgical setups. Must be disinfected and allowed to fully dry before use. Positioned slightly above waist height and at least 12 inches from the MA's body." },
-      { term: "Autoclave", def: "The primary sterilization method for reusable surgical instruments and equipment. Uses high-temperature steam under pressure to destroy all microorganisms, including spores. All autoclaved items must be packaged with sterilization indicator tape and labeled with the date of sterilization." },
-      { term: "Sterilization Indicator (Autoclave Tape)", def: "Chemical indicator tape applied to surgical instrument packets before autoclaving. Changes color when the item has been properly sterilized. Before opening any sterile packet, confirm the indicator has changed color and the sterilization date is current. If either condition is not met, the item is considered non-sterile and must not be used." },
-      { term: "1-Inch Sterile Border Rule", def: "The outermost one inch around the edge of a sterile drape is considered non-sterile, regardless of how the drape was handled. No instruments, supplies, or any other items may be placed in this border zone. Items in this area would be considered contaminated." },
-      { term: "Sterile Packet Opening Technique", def: "The correct sequence for opening a sterile package to avoid contaminating its contents: open the flap farthest from the body first, then the sides, and finally the flap closest to the body — never reaching over the field. Items may be dropped carefully onto the sterile field or grasped directly by a sterile-gloved hand." },
-    ],
-  },
-  {
-    name: "Wound Closure & Removal", emoji: "🪡", color: "#7D3C98",
-    terms: [
-      { term: "Suture", def: "Specialized thread or material used to close and hold tissue together after surgery or injury, allowing the body to heal in proper alignment. Sutures may be absorbable (dissolved by body enzymes over 5–20 days) or nonabsorbable (must be physically removed after 5–6 days). Size is measured in gauge: the more zeros, the finer the suture (e.g., 6-0 is finer than 2-0)." },
-      { term: "Absorbable Suture", def: "Suture material that is broken down and eliminated by the body's own tissue enzymes — no removal required. Used for internal tissue layers that cannot be accessed without reopening the wound. Absorption typically occurs within 5 to 20 days after insertion." },
-      { term: "Nonabsorbable Suture", def: "Suture material that the body cannot break down and that must be physically removed once the wound has healed sufficiently. Materials include nylon, silk, polyester, and stainless steel. Must be removed within the timeframe appropriate for the wound site — typically 5 to 14 days. If left too long, they cause skin irritation and risk of infection." },
-      { term: "Surgical Staples", def: "Stainless steel fasteners applied with a surgical stapler to rapidly close wounds under high tension — such as on the scalp, trunk, and extremities. Not used for delicate tissue, finely contoured areas, or highly mobile joints. Must be removed within 4 to 14 days using a specialized staple remover." },
-      { term: "Suture Removal Technique", def: "The correct method for removing nonabsorbable sutures: cut the suture with suture scissors below the knot and as close to the skin surface as possible; remove every other suture first while observing the wound line; return to remove the remaining sutures. Critical rule: never pull suture material that was outside the skin back through the skin — this drags surface contaminants into the tissue." },
-      { term: "Staple Removal Technique", def: "Staples are removed using a sterile staple remover. Begin with the second staple — not the first — to protect wound edges. Place the lower jaw of the remover under the staple and squeeze the handles fully closed without lifting the device. This bends the staple and pulls the legs free from the skin. Remove alternating staples while monitoring the wound line. Removed staples are discarded in the sharps container." },
-      { term: "Butterfly Closure (Steri-Strip)", def: "A narrow adhesive strip used to reinforce a wound after suture or staple removal, or as an alternative to sutures for small, low-tension wounds. Applied across the wound to hold the edges in alignment. Particularly useful on the face where minimal scarring is desired." },
-      { term: "Skin Adhesive", def: "A cyanoacrylate-based topical adhesive that reacts with skin moisture to create a strong, flexible, waterproof bond over a wound. Used for small, low-tension lacerations. Provides a barrier to microorganisms and eliminates the need for suture removal." },
-      { term: "Wound Dehiscence", def: "Separation of the wound edges after closure — a complication that may indicate wound infection, excessive tension on the closure, or inadequate healing. If gaping is noticed during suture or staple removal, stop immediately and notify the provider before continuing." },
-    ],
-  },
-  {
-    name: "Minor Office Surgical Procedures", emoji: "🔪", color: "#C0392B",
-    terms: [
-      { term: "Biopsy", def: "The surgical removal of a small tissue sample from the body for microscopic examination in a laboratory. Used to diagnose cancer, skin conditions, infections, and other diseases. A key MA responsibility is preparing the specimen container and labeling it correctly before sending it to the lab." },
-      { term: "Incision and Drainage (I & D)", def: "A minor surgical procedure to relieve a buildup of pus (purulent material) beneath the skin — most commonly from an abscess. The provider makes an incision to allow drainage. The discharge may be cultured to identify the causative microorganism and guide antibiotic selection." },
-      { term: "Cryosurgery", def: "Destruction of abnormal tissue using the application of intense cold — typically liquid nitrogen delivered via a cryoprobe. Used to remove abnormal skin lesions, plantar warts, and cervical tissue changes. Often performed in conjunction with colposcopy." },
-      { term: "Colposcopy", def: "A magnified examination of the vagina and cervix performed using a colposcope — a specialized endoscope with a light source and magnifying lens. Conducted with the patient in the lithotomy position. Used when a Pap smear result is abnormal to identify and biopsy suspicious tissue for cancer screening." },
-      { term: "Endoscopy", def: "A procedure using an endoscope — a flexible, lighted tube with a camera — to view the inside of a hollow organ or body cavity. Common types include colonoscopy (colon), esophagogastroduodenoscopy (stomach), and cystoscopy (bladder)." },
-      { term: "Foreign Body Removal", def: "The surgical removal of an object embedded in body tissue — such as a splinter, piece of glass, or fragment of metal. Commonly performed using splinter forceps or hemostatic forceps. Removing a foreign body prevents infection and relieves pain. A sterile field is required." },
-    ],
-  },
-  {
-    name: "Wounds, Bleeding & Dressing Care", emoji: "🩹", color: "#922B21",
-    terms: [
-      { term: "Abrasion", def: "A wound in which the outer layers of skin are rubbed or scraped away — typically caused by friction against a rough surface. Generally heals without scarring if kept clean and protected. Examples: road rash, rug burn." },
-      { term: "Incision", def: "A clean, smooth wound made by a sharp instrument such as a scalpel or broken glass. Can result in significant bleeding and scarring if deep. Surgical incisions are intentional incised wounds made under controlled, sterile conditions." },
-      { term: "Laceration", def: "A wound with jagged, irregular, torn edges — caused by blunt force or a tearing mechanism rather than a clean cut. Can cause profuse bleeding and significant scarring. May require suturing to properly approximate the wound edges." },
-      { term: "Puncture Wound", def: "A wound made by a sharp, pointed object — such as a needle, nail, bullet, or splinter — that penetrates deeply with minimal skin surface disruption. External bleeding is usually minimal, but the infection risk is high because the deep, narrow channel traps contaminants and may not drain freely." },
-      { term: "Hemorrhage", def: "Excessive, uncontrolled bleeding from a wound or injury. Classified by the blood vessel type affected: arterial (bright red, high-pressure spurting — most severe), venous (dark red, steady flow), or capillary (minimal, usually self-limiting)." },
-      { term: "Arterial Bleeding", def: "Bleeding from a damaged artery — characterized by bright red blood that spurts in rhythm with the heartbeat due to the high pressure in the arterial system. The most dangerous type of hemorrhage. First aid: apply firm, direct pressure with sterile gauze and elevate the injured area. A tourniquet applied above the wound site may be necessary if pressure does not control the bleeding." },
-      { term: "Tourniquet", def: "A tight constricting band applied above a bleeding site on an extremity to completely stop blood flow and control life-threatening arterial hemorrhage when direct pressure fails. Applied only on the direction of the provider or per emergency protocol. Document the time of application." },
-      { term: "Dressing", def: "A sterile covering applied directly over a wound to protect it from contamination, absorb drainage, and promote healing. Dressings must always be sterile — they are in direct contact with open tissue. Dressings cover wounds; bandages cover dressings." },
-      { term: "Bandage", def: "A non-sterile wrap or covering applied over a sterile dressing to hold it in place, apply pressure, and protect the wound from the external environment. Materials include gauze rolls, elastic wrap (ACE bandage), and tube gauze. Should be applied firmly but not so tightly that it restricts circulation." },
-      { term: "Evisceration", def: "A severe wound complication in which the wound edges separate (dehisce) and the underlying abdominal organs protrude through the opening. A surgical emergency — cover the exposed organs with a sterile, moist dressing and call 911 immediately. Do not attempt to push the organs back in." },
-    ],
-  },
-  {
-    name: "Wound Healing & Infection Signs", emoji: "🦠", color: "#1A5276",
-    terms: [
-      { term: "Inflammatory Phase (Wound Healing)", def: "The first phase of wound healing, lasting approximately 3 to 4 days after injury. Characterized by pain, swelling, redness, and warmth at the wound site. During this phase, the body's immune response activates, blood flow increases to the area, and a blood clot forms to stop bleeding and seal the wound." },
-      { term: "Proliferative Phase (Wound Healing)", def: "The second phase of wound healing, lasting from approximately day 4 to day 21. Fibrin threads extend across the wound and draw the edges together; new cells multiply to rebuild the tissue; and a scab (eschar) forms over the surface to prevent microorganism entry." },
-      { term: "Maturation Phase (Wound Healing)", def: "The final phase of wound healing, lasting from approximately day 21 through up to two years. New collagen fibers strengthen and tighten the wound closure, forming a scar. Over time, the scar gradually fades and thins as the collagen remodels." },
-      { term: "Inflammation", def: "The body's protective response to tissue trauma or microbial invasion — characterized by the classic signs of redness (erythema), swelling (edema), warmth, and pain at the affected site. While some inflammation is a normal and necessary part of wound healing, excessive or persistent inflammation suggests infection." },
-      { term: "Signs of Wound Infection", def: "Key indicators that a wound may be infected include: increased redness or discoloration beyond the immediate wound edges, increasing swelling, purulent (pus-like) drainage or unusual discharge, foul odor from the wound, fever of 100°F (37.7°C) or higher, and increasing rather than decreasing pain at the site. Any of these findings should be reported to the provider promptly." },
-      { term: "Eschar", def: "A dry, thick, dark crust or scab that forms over a healing wound during the proliferative phase. It serves as a protective barrier that keeps out microorganisms while the underlying tissue regenerates. In burn care, eschar refers specifically to the hard, black, dead tissue that forms over a deep burn." },
-      { term: "Dehiscence", def: "The partial or complete separation of wound edges following closure — a wound complication that may result from infection, excessive tension on the suture line, poor tissue perfusion, or inadequate healing. If noticed during suture or staple removal, immediately stop the procedure and notify the provider." },
-    ],
-  },
-  {
-    name: "First Aid, Emergency Response & Common Emergencies", emoji: "🚑", color: "#1E8449",
-    terms: [
-      { term: "Golden Hour", def: "The concept that the first hour after a traumatic injury or sudden critical illness is the most critical period for patient survival. Rapid, organized, and competent emergency response during this window significantly improves outcomes. Every medical office must have a practiced emergency action plan so that no time is wasted during a real event." },
-      { term: "Shock", def: "A life-threatening condition in which the cardiovascular system fails to deliver adequate blood flow to body tissues. Causes include hemorrhage, severe allergic reaction, cardiac events, and severe dehydration. Early signs: pale and clammy skin, weakness, rapid pulse and breathing. Late signs: apathy, dilated pupils, mottled skin, and loss of consciousness. Always a 911 emergency." },
-      { term: "Anaphylactic Shock", def: "A severe, systemic, potentially fatal allergic reaction triggered by an allergen — most commonly medications, insect stings, or foods. Characterized by rapidly progressing symptoms including hives, facial swelling, difficulty breathing, hypotension, and loss of consciousness. First-line treatment: epinephrine (EpiPen) administered as an IM injection into the upper thigh, followed immediately by calling 911." },
-      { term: "Seizure", def: "Uncontrolled, abnormal electrical activity in the brain causing involuntary muscle contractions or movements. Causes include epilepsy, fever, head injury, and drug toxicity. During a seizure: lower the patient to the floor, do not restrain them, move objects away, and turn them on their side to prevent aspiration. After the seizure (postictal phase): allow the patient to rest; confusion, headache, and exhaustion are expected and normal." },
-      { term: "Postictal Phase", def: "The period of recovery immediately following a seizure, during which the patient typically experiences confusion, extreme fatigue, headache, and disorientation. The postictal phase is a normal part of seizure progression, not a separate emergency. Allow the patient to rest and remain with them throughout this period." },
-      { term: "Syncope", def: "A brief, sudden loss of consciousness caused by an insufficient supply of blood to the brain — commonly called fainting. The patient typically becomes pale, sweaty, nauseated, or dizzy immediately before losing consciousness. Management: lower to the floor, elevate the legs, and wave aromatic ammonia capsules (not under, but about 6 inches from the nose) to stimulate arousal." },
-      { term: "Hypoglycemia (Severe)", def: "Dangerously low blood glucose levels — called insulin shock or insulin reaction when caused by excess insulin. Mild symptoms: irritability, sweating, rapid heart rate, hunger. Severe symptoms: fainting, seizures, confusion, and coma. Mild to moderate: give sugar by mouth (juice, glucose tablets). Severe (unconscious): administer glucagon by injection — do not give anything by mouth to an unconscious patient." },
-      { term: "Glucagon", def: "A prescription medication used to treat severe hypoglycemia in patients with diabetes who cannot safely receive oral glucose. Administered as an injection when the patient is unconscious or seizing. Stimulates the liver to release stored glucose into the bloodstream, raising blood sugar levels." },
-      { term: "First-Degree Burn (Superficial)", def: "A burn that affects only the outermost layer of skin (epidermis). Presents as redness and mild swelling — similar to a sunburn. Heals relatively quickly. Treatment: cool running water for 10 minutes, then apply aloe vera or moisturizer; cover loosely." },
-      { term: "Second-Degree Burn (Partial-Thickness)", def: "A burn that destroys the epidermis and extends into the dermis. Characterized by blisters, red or mottled skin, and significant pain. Treatment: cool running water, do not break blisters (increases infection risk), loose sterile dressing. May require medical evaluation." },
-      { term: "Third-Degree Burn (Full-Thickness)", def: "A burn that extends through all layers of skin and damages the underlying nerves and tissues. The wound appears charred or white; the area may be painless because nerve endings are destroyed. Always requires emergency medical care — call 911." },
-      { term: "Fourth-Degree Burn", def: "The most severe burn classification — extends through both layers of skin and into the underlying structures including muscle and bone. All nerve endings are destroyed; the area is painless. Caused by prolonged exposure to flames, electricity, or chemicals. A life-threatening emergency." },
-    ],
-  },
-  {
-    name: "Musculoskeletal Injuries", emoji: "🦴", color: "#D4AC0D",
-    terms: [
-      { term: "Sprain", def: "An injury to a ligament — the fibrous tissue that connects bones at a joint — caused by overstretching or tearing. Commonly affects the ankles and wrists. Symptoms include pain, swelling, bruising, and reduced range of motion. A pop or tear sensation may occur at the moment of injury. Treatment: RICE (Rest, Ice, Compression, Elevation) and anti-inflammatory medication." },
-      { term: "Strain", def: "An injury to a muscle or tendon — the tissue connecting muscle to bone — caused by excessive stretching or tearing. Can be sudden (acute) or develop gradually from repetitive use. Common sites: lower back and hamstrings. Symptoms: pain, muscle spasms, swelling, and reduced movement. Treatment: RICE and anti-inflammatory medication; physical therapy for severe cases." },
-      { term: "RICE (Treatment Protocol)", def: "The standard first aid approach for sprains and strains: Rest (stop the activity and protect the injured area), Ice (apply cold for 20 minutes at a time to reduce swelling), Compression (elastic bandage to control swelling), and Elevation (raise the injured area above heart level when possible to reduce fluid buildup)." },
-      { term: "Dislocation", def: "The displacement of a bone end out of its normal position within a joint socket — or the stretching and tearing of the joint capsule surrounding a joint. The shoulder is the most commonly dislocated joint. Symptoms include visible deformity, severe pain, swelling, and loss of motion. A dislocated joint is a medical emergency — do not attempt to reposition it in the field." },
-      { term: "Fracture", def: "A break in the continuity of a bone. Closed (simple) fractures: bone does not break through the skin. Open (compound) fractures: bone pierces through the skin and is exposed — carries a high risk of infection and requires immediate medical care. First aid for any suspected fracture: control bleeding, immobilize the injured area, and apply ice wrapped in cloth to reduce swelling." },
-      { term: "Open (Compound) Fracture", def: "A fracture in which the broken bone penetrates through the skin and is exposed to the external environment. Carries a significantly higher risk of infection than a closed fracture. Always requires emergency medical care. Do not attempt to clean or push the bone back under the skin." },
-    ],
-  },
-  {
-    name: "Emergency Preparedness & Crash Cart", emoji: "🧰", color: "#117A65",
-    terms: [
-      { term: "Emergency Action Plan", def: "A written protocol that details the specific steps to be followed in the event of a medical or other emergency in the medical office. Identifies who contacts 911, where emergency equipment is located, evacuation routes, and each staff member's assigned role. Every staff member must be familiar with the plan before an emergency occurs." },
-      { term: "Crash Cart (Emergency Kit)", def: "A portable cart or bag stocked with all equipment and medications needed to respond to a medical emergency in the office. Must be accessible within 3 minutes from any location in the facility. Contents vary by practice specialty and patient population. Must be checked monthly for completeness, equipment function, and medication expiration dates." },
-      { term: "Automated External Defibrillator (AED)", def: "A lightweight, battery-operated, portable device that analyzes the heart's rhythm and delivers an electrical shock (defibrillation) to restore normal cardiac rhythm in patients experiencing ventricular fibrillation or pulseless ventricular tachycardia. Designed to be used by trained lay responders. AED pads and battery must be checked regularly for expiration and charge." },
-      { term: "Naloxone (Narcan)", def: "A medication that rapidly reverses an opioid overdose by blocking opioid receptors in the brain. Administered as an IM injection, nasal spray, or IV. Included in most emergency kits, especially in practices serving populations at risk for opioid use. The effects are temporary — 911 must be called immediately after administration, as a second dose may be needed." },
-      { term: "Emergency Simulation / Drill", def: "A practice exercise in which the healthcare team simulates a medical emergency scenario to practice their response roles, test their knowledge of the emergency action plan, and identify gaps in equipment, supplies, or protocol before a real emergency occurs." },
-      { term: "Cardiopulmonary Resuscitation (CPR)", def: "An emergency life-saving procedure combining chest compressions and rescue breaths to maintain blood circulation and oxygen delivery in a patient who has stopped breathing and lost their pulse. All MAs should be trained and currently certified in CPR. Must be initiated immediately if a patient stops breathing or has no pulse while awaiting EMS." },
-    ],
-  },
-  {
-    name: "DMEPOS & Prior Authorization", emoji: "📋", color: "#6C3483",
-    terms: [
-      { term: "Durable Medical Equipment (DME)", def: "Medical devices and supplies that are designed for repeated use, serve a medical purpose, are prescribed by a provider, and are intended for use in the patient's home. Must have an expected useful lifetime of at least three years. Examples: wheelchairs, CPAP machines, oxygen concentrators, hospital beds, and dialysis machines." },
-      { term: "DMEPOS", def: "An acronym for Durable Medical Equipment, Prosthetics, Orthotics, and Supplies. Encompasses a broad range of items prescribed by providers for patients with injuries or disabilities who require them for home use. Medicare and Medicaid coverage and prior authorization requirements for DMEPOS are defined and administered by CMS." },
-      { term: "Prosthetics", def: "Artificial devices designed to replace a missing body part — most commonly a limb — that has been lost due to injury, disease, or congenital absence. Prosthetics are included in the DMEPOS category and may require prior authorization for insurance coverage." },
-      { term: "Orthotics", def: "Externally applied devices designed to support, align, prevent, or correct the function of movable body parts — such as braces, splints, and orthopedic insoles. Orthotics are included in the DMEPOS category and are prescribed by a provider for a specific medical condition." },
-      { term: "Prior Authorization (DMEPOS)", def: "A process in which a request for provisional insurance coverage approval is submitted and reviewed before a DMEPOS item is provided to the patient and before a claim is submitted for payment. Required by CMS for items on the 'Required Prior Authorization List' — including power wheelchairs and powered air mattresses. Submitted to the DME MAC for review." },
-      { term: "DME MAC (Durable Medical Equipment Medicare Administrative Contractor)", def: "The entity designated by CMS to review and process DMEPOS prior authorization requests and claims. If the DME MAC denies a prior authorization, the provider may appeal by submitting additional clinical documentation supporting the medical necessity of the item for the patient." },
-      { term: "Medical Necessity Documentation", def: "The clinical documentation required to justify a DMEPOS order for insurance coverage purposes. Must include the patient's diagnosis, how the condition requires the use of the DMEPOS item, that the item is for home use, and for some items, documentation of a face-to-face visit with the provider within 6 months of the order." },
-      { term: "Face-to-Face Encounter (DMEPOS)", def: "A required in-person visit between the patient and the ordering provider that must occur within 6 months before the DMEPOS order for certain high-cost items — such as power wheelchairs. The encounter must be documented in the patient's medical record with subjective and objective findings supporting the need for the equipment." },
-    ],
-  }
+const CATEGORIES=[
+  {name:"Sterile Technique",color:"#6B7B8D",terms:[
+    {term:"Surgical Asepsis",def:"Practices maintaining a microorganism-free environment during invasive procedures. Sterile handwashing, gloves, strict field management."},
+    {term:"Sterile Field",def:"Area completely free of microorganisms — typically a Mayo stand with sterile drape. If any doubt, treat as non-sterile."},
+    {term:"Mayo Stand",def:"Movable stainless steel tray used as sterile field surface. Disinfected, dried, positioned above waist height."},
+    {term:"Autoclave",def:"Primary sterilization method — high-temperature steam under pressure destroys all microorganisms including spores."},
+    {term:"Sterilization Indicator",def:"Chemical tape that changes color when properly sterilized. Check color and date before opening any sterile packet."},
+    {term:"1-Inch Border Rule",def:"The outermost 1 inch of a sterile drape is considered non-sterile. No items may be placed in this zone."},
+    {term:"Sterile Packet Opening",def:"Open flap farthest from body first, then sides, then closest flap. Never reach over the field."},
+  ]},
+  {name:"Wound Closure",color:"#8B6AAE",terms:[
+    {term:"Suture",def:"Thread closing tissue after surgery/injury. Absorbable (dissolves 5–20 days) or nonabsorbable (must be removed 5–6 days)."},
+    {term:"Absorbable Suture",def:"Broken down by body enzymes — no removal needed. Used for internal tissue layers."},
+    {term:"Nonabsorbable Suture",def:"Must be physically removed. Nylon, silk, polyester, stainless steel. Remove within 5–14 days."},
+    {term:"Surgical Staples",def:"Stainless steel fasteners for high-tension wounds. Removed with specialized remover within 4–14 days."},
+    {term:"Suture Removal",def:"Cut below knot close to skin. Remove every other first, then remaining. Never pull outside material through skin."},
+    {term:"Staple Removal",def:"Start with second staple, not first. Squeeze remover to bend staple and free legs. Discard in sharps container."},
+    {term:"Butterfly Closure",def:"Adhesive strip reinforcing wounds after suture/staple removal or for small, low-tension wounds."},
+    {term:"Skin Adhesive",def:"Cyanoacrylate adhesive creating waterproof bond over small lacerations. No removal needed."},
+    {term:"Wound Dehiscence",def:"Separation of wound edges after closure. Stop removal immediately and notify provider if noticed."},
+  ]},
+  {name:"Office Procedures",color:"#E05555",terms:[
+    {term:"Biopsy",def:"Tissue sample removal for microscopic exam. MA prepares and labels specimen container correctly."},
+    {term:"Incision and Drainage",def:"Procedure to relieve pus buildup from an abscess. Discharge may be cultured for antibiotic selection."},
+    {term:"Cryosurgery",def:"Destroying abnormal tissue with intense cold (liquid nitrogen). Removes warts, skin lesions, cervical changes."},
+    {term:"Colposcopy",def:"Magnified exam of vagina/cervix using colposcope. Lithotomy position. Used when Pap smear is abnormal."},
+    {term:"Endoscopy",def:"Flexible lighted tube with camera views inside hollow organs. Colonoscopy, EGD, cystoscopy."},
+    {term:"Foreign Body Removal",def:"Surgical removal of embedded objects using forceps. Sterile field required. Prevents infection."},
+  ]},
+  {name:"Wounds & Bleeding",color:"#E74C6F",terms:[
+    {term:"Abrasion",def:"Skin rubbed/scraped away by friction. Generally heals without scarring. Road rash, rug burn."},
+    {term:"Incision",def:"Clean smooth wound from sharp instrument. Can cause significant bleeding and scarring."},
+    {term:"Laceration",def:"Jagged, torn edges from blunt force. Profuse bleeding, may require suturing."},
+    {term:"Puncture Wound",def:"Deep narrow wound from pointed object. Minimal external bleeding but high infection risk."},
+    {term:"Hemorrhage",def:"Excessive uncontrolled bleeding. Arterial (bright red, spurting), venous (dark, steady), capillary (minimal)."},
+    {term:"Arterial Bleeding",def:"Most dangerous — bright red, spurting with heartbeat. Apply firm direct pressure, elevate. Tourniquet if needed."},
+    {term:"Tourniquet",def:"Tight band above bleeding site to stop arterial hemorrhage when direct pressure fails. Document time applied."},
+    {term:"Dressing",def:"Sterile covering applied directly over wound. Protects, absorbs drainage, promotes healing."},
+    {term:"Bandage",def:"Non-sterile wrap over a dressing. Holds it in place, applies pressure. Firm but not circulation-restricting."},
+    {term:"Evisceration",def:"Organs protrude through separated wound. Cover with sterile moist dressing. Call 911. Do not push back in."},
+  ]},
+  {name:"Wound Healing",color:"#4A90B8",terms:[
+    {term:"Inflammatory Phase",def:"Days 1–4. Pain, swelling, redness, warmth. Immune response activates, blood clot forms to seal wound."},
+    {term:"Proliferative Phase",def:"Days 4–21. Fibrin threads draw edges together, new cells rebuild tissue, scab (eschar) forms."},
+    {term:"Maturation Phase",def:"Day 21 to 2 years. Collagen strengthens closure forming scar. Scar gradually fades and thins."},
+    {term:"Inflammation",def:"Protective response — redness, swelling, warmth, pain. Normal in healing; excessive = possible infection."},
+    {term:"Signs of Infection",def:"Increased redness, swelling, purulent drainage, foul odor, fever ≥100°F, increasing pain. Report to provider."},
+    {term:"Eschar",def:"Dry dark crust/scab over healing wound. Protective barrier. In burns = hard black dead tissue."},
+    {term:"Dehiscence",def:"Wound edges separate after closure. May indicate infection, excessive tension, or poor healing."},
+  ]},
+  {name:"Emergency Response",color:"#1A8A7D",terms:[
+    {term:"Golden Hour",def:"First hour after trauma is most critical for survival. Rapid organized response improves outcomes."},
+    {term:"Shock",def:"Cardiovascular failure to deliver adequate blood flow. Pale, clammy, rapid pulse. Always call 911."},
+    {term:"Anaphylactic Shock",def:"Severe systemic allergic reaction. Hives, swelling, breathing difficulty. Epinephrine IM, then 911."},
+    {term:"Seizure",def:"Uncontrolled brain electrical activity. Lower to floor, don't restrain, move objects, turn on side."},
+    {term:"Postictal Phase",def:"Recovery after seizure — confusion, fatigue, headache. Normal part of seizure, not separate emergency."},
+    {term:"Syncope",def:"Brief loss of consciousness (fainting). Lower to floor, elevate legs, aromatic ammonia ~6 inches from nose."},
+    {term:"Severe Hypoglycemia",def:"Dangerously low glucose. Conscious: give sugar by mouth. Unconscious: glucagon injection, never oral."},
+    {term:"Glucagon",def:"Injectable medication for severe hypoglycemia when patient can't take oral glucose. Stimulates liver glucose release."},
+    {term:"First-Degree Burn",def:"Epidermis only — redness like sunburn. Cool water 10 min, aloe vera, loose cover."},
+    {term:"Second-Degree Burn",def:"Through epidermis into dermis — blisters, red/mottled. Cool water, don't break blisters, sterile dressing."},
+    {term:"Third-Degree Burn",def:"All skin layers + nerves. Charred or white, painless. Always call 911."},
+    {term:"Fourth-Degree Burn",def:"Through skin into muscle/bone. Painless, life-threatening. Prolonged flame/electricity/chemical exposure."},
+  ]},
+  {name:"MSK Injuries",color:"#E2B94C",terms:[
+    {term:"Sprain",def:"Ligament injury from overstretching/tearing. Ankles, wrists common. Pain, swelling, bruising. RICE treatment."},
+    {term:"Strain",def:"Muscle or tendon injury. Acute or gradual. Lower back, hamstrings common. Pain, spasms. RICE treatment."},
+    {term:"RICE Protocol",def:"Rest, Ice (20 min), Compression (elastic bandage), Elevation (above heart level). Standard sprain/strain first aid."},
+    {term:"Dislocation",def:"Bone displaced from joint socket. Shoulder most common. Visible deformity, severe pain. Don't reposition — emergency."},
+    {term:"Fracture",def:"Bone break. Closed = skin intact. Open (compound) = bone through skin, high infection risk. Immobilize, ice, control bleeding."},
+    {term:"Open Fracture",def:"Broken bone penetrates through skin. High infection risk. Emergency care required. Don't clean or push bone back."},
+  ]},
+  {name:"Emergency Prep",color:"#4CAF90",terms:[
+    {term:"Emergency Action Plan",def:"Written protocol for office emergencies. Who calls 911, equipment locations, evacuation routes, staff roles."},
+    {term:"Crash Cart",def:"Portable emergency equipment/medications. Accessible within 3 min. Checked monthly for completeness and expiration."},
+    {term:"AED",def:"Automated External Defibrillator — analyzes rhythm and delivers shock for V-fib/pulseless V-tach. Check pads/battery regularly."},
+    {term:"Naloxone (Narcan)",def:"Reverses opioid overdose by blocking opioid receptors. IM, nasal, or IV. Effects temporary — always call 911."},
+    {term:"Emergency Drill",def:"Practice simulation of emergency scenarios to test team response and identify protocol gaps."},
+    {term:"CPR",def:"Chest compressions + rescue breaths maintaining circulation/oxygen. All MAs should be certified. Initiate immediately if no pulse."},
+  ]},
+  {name:"DMEPOS",color:"#C4A84D",terms:[
+    {term:"DME",def:"Durable Medical Equipment — reusable, prescribed, for home use, ≥3 year lifespan. Wheelchairs, CPAP, oxygen."},
+    {term:"DMEPOS",def:"DME + Prosthetics, Orthotics, Supplies. Coverage defined by CMS. May require prior authorization."},
+    {term:"Prosthetics",def:"Artificial devices replacing missing body parts — most commonly limbs. May require prior auth for coverage."},
+    {term:"Orthotics",def:"External devices supporting/aligning movable body parts — braces, splints, orthopedic insoles."},
+    {term:"Prior Authorization (DMEPOS)",def:"Insurance approval request before providing DMEPOS item. Required for items on CMS required list."},
+    {term:"DME MAC",def:"Medicare Administrative Contractor reviewing DMEPOS prior auth requests and claims. Denials can be appealed."},
+    {term:"Medical Necessity Docs",def:"Clinical documentation justifying DMEPOS order — diagnosis, condition requiring item, home use confirmation."},
+    {term:"Face-to-Face Encounter",def:"Required in-person visit within 6 months before certain high-cost DMEPOS orders like power wheelchairs."},
+  ]},
 ];
 
-const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
-  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
-);
-let browseSearch = '';
-let browseOpenCat = null;
-let browseOpenTerm = null;
-document.getElementById('header-subtitle').textContent =
-  `General Patient Care — Applied Skills · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
-renderBrowse();
-function renderBrowse() {
-  const el = document.getElementById('browse-mode');
-  const query = browseSearch.trim().toLowerCase();
-  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
-  if (query) {
-    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
-    if (filtered.length === 0) {
-      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
-    } else {
-      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
-      filtered.forEach((t, i) => {
-        const isOpen = browseOpenTerm === `s-${i}`;
-        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
-      });
-      html += `</div>`;
-    }
-  } else {
-    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
-    CATEGORIES.forEach((cat, ci) => {
-      const isOpen = browseOpenCat === ci;
-      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
-      if (isOpen) {
-        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
-        cat.terms.forEach((t, ti) => {
-          const tKey = `${ci}-${ti}`;
-          const tOpen = browseOpenTerm === tKey;
-          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
-        });
-        html += `</div>`;
-      }
-      html += `</div>`;
-    });
-    html += `</div>`;
-  }
-  el.innerHTML = html;
-}
-function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+const glossary=[];const catNames=["All"];const catColors={};
+CATEGORIES.forEach(cat=>{catNames.push(cat.name);catColors[cat.name]=cat.color;cat.terms.forEach(t=>glossary.push({term:t.term,definition:t.def,category:cat.name}));});
+let filter="All",search="",openIdx=null,currentPage=0;const PER_PAGE=4;
+function renderFilters(){document.getElementById('filters').innerHTML=catNames.map(c=>{const col=c==="All"?"#7a7f90":(catColors[c]||"#888");const active=filter===c;return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}18;${active?`border-color:${col};color:${col};background:${col}18`:''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')">${c}</button>`;}).join('');}
+function getFiltered(){const s=search.toLowerCase();return glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));}
+function renderList(){const filtered=getFiltered();const totalPages=Math.max(1,Math.ceil(filtered.length/PER_PAGE));if(currentPage>=totalPages)currentPage=totalPages-1;if(currentPage<0)currentPage=0;const start=currentPage*PER_PAGE;const pageItems=filtered.slice(start,start+PER_PAGE);document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' · Page '+(currentPage+1)+' of '+totalPages;if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms match your search.</div>';document.getElementById('pager').innerHTML='';return;}document.getElementById('list').innerHTML=pageItems.map(g=>{const col=catColors[g.category]||"#888";const origIdx=glossary.indexOf(g);const isOpen=openIdx===origIdx;return `<div class="item ${isOpen?'open':''}" onclick="toggle(${origIdx})"><div class="item-head"><div class="item-left"><div class="item-bar" style="background:${col}"></div><span class="item-term">${g.term}</span></div><span class="item-cat" style="background:${col}18;color:${col}">${g.category}</span></div><div class="item-def" style="${isOpen?'display:block':''}">${g.definition}</div></div>`;}).join('');let ph=`<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>← Prev</button><div class="pg-dots">`;for(let p=0;p<totalPages;p++){ph+=`<div class="pg-dot ${p===currentPage?'active':''}" onclick="goPage(${p})"></div>`;}ph+=`</div><button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''}>Next →</button>`;document.getElementById('pager').innerHTML=ph;}
+function setFilter(c){filter=c;currentPage=0;openIdx=null;renderFilters();renderList();}
+function toggle(i){openIdx=openIdx===i?null:i;renderList();}
+function goPage(p){currentPage=p;openIdx=null;renderList();}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;currentPage=0;openIdx=null;renderList();});
+renderFilters();renderList();
 </script>
 </body>
 </html>

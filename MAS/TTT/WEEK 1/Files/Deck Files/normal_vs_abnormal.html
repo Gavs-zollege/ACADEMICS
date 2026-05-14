@@ -9,23 +9,23 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg-start: #0F2B3C;
-    --bg-mid: #0D4F5C;
-    --bg-end: #0E7490;
-    --teal: #0E7490;
-    --teal-dark: #0D4F5C;
-    --teal-bright: #22A6B3;
-    --green: #10B981;
-    --green-dark: #059669;
-    --red: #EF4444;
-    --amber: #F59E0B;
-    --blue: #3B82F6;
-    --purple: #8B5CF6;
-    --text-primary: #F1F5F9;
-    --text-secondary: #CBD5E1;
-    --text-muted: #64748B;
-    --card-border: rgba(255,255,255,0.08);
-    --card-bg: rgba(255,255,255,0.05);
+    --bg-start: #0B1D2C;
+    --bg-mid: #0F2D3D;
+    --bg-end: #0B1D2C;
+    --teal: #2DD4BF;
+    --teal-dark: #14B8A6;
+    --teal-bright: #5EEAD4;
+    --green: #34D399;
+    --green-dark: #10B981;
+    --red: #F87171;
+    --amber: #FBBF24;
+    --blue: #60A5FA;
+    --purple: #A78BFA;
+    --text-primary: #FFFFFF;
+    --text-secondary: #E2E8F0;
+    --text-muted: #94A3B8;
+    --card-border: rgba(255,255,255,0.15);
+    --card-bg: rgba(255,255,255,0.08);
   }
 
   body {
@@ -69,7 +69,7 @@
   }
 
   .btn-go {
-    background: linear-gradient(135deg, var(--green), var(--green-dark));
+    background: linear-gradient(135deg, #34D399, #10B981);
     color: white;
     border: none;
     padding: 15px 52px;
@@ -78,13 +78,13 @@
     font-weight: 700;
     cursor: pointer;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    box-shadow: 0 8px 28px rgba(16,185,129,0.3);
+    box-shadow: 0 8px 28px rgba(52,211,153,0.3);
     transition: transform 0.12s, box-shadow 0.12s;
     letter-spacing: 0.2px;
   }
   .btn-go:hover {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(16,185,129,0.4);
+    box-shadow: 0 12px 32px rgba(52,211,153,0.4);
   }
   .btn-go:active { transform: translateY(0); }
 
@@ -245,7 +245,7 @@
   }
   .review-item {
     padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
   }
   .review-item:last-child { border-bottom: none; }
   .review-label {
@@ -263,6 +263,57 @@
   }
 
   .done-emoji { font-size: 52px; margin-bottom: 14px; }
+
+  .btn-next {
+    display: none;
+    margin: 16px auto 0;
+    background: linear-gradient(135deg, #14B8A6, #0D9488);
+    color: white;
+    border: none;
+    padding: 12px 44px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .btn-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(20,184,166,0.45);
+  }
+  .btn-next:active { transform: translateY(0); }
+
+  .explain-bar {
+    display: none;
+    margin-top: 14px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .btn-redo {
+    background: transparent;
+    color: var(--teal-bright);
+    border: 1.5px solid var(--teal-bright);
+    padding: 12px 36px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin-top: 10px;
+    transition: transform 0.12s, background 0.12s;
+  }
+  .btn-redo:hover {
+    background: rgba(94,234,212,0.12);
+    transform: translateY(-2px);
+  }
+  .btn-redo:active { transform: translateY(0); }
 </style>
 </head>
 <body>
@@ -272,7 +323,7 @@
   <div class="center-wrap">
     <div class="emoji-big">⚡</div>
     <h1 class="start-title">Normal or Abnormal?</h1>
-    <p class="start-desc">A vital sign reading flashes on screen. Tap <strong style="color:#10B981">Normal</strong> or <strong style="color:#EF4444">Abnormal</strong> as fast as you can!</p>
+    <p class="start-desc">A vital sign reading flashes on screen. Tap <strong style="color:#34D399">Normal</strong> or <strong style="color:#F87171">Abnormal</strong> as fast as you can!</p>
     <p class="start-sub">Includes adult AND pediatric ranges &mdash; 45 seconds on the clock.</p>
     <button class="btn-go" onclick="startGame()">Let's Go!</button>
   </div>
@@ -304,6 +355,8 @@
     <button class="answer-btn" id="btnNormal" onclick="answer(true)">&#10003; Normal</button>
     <button class="answer-btn" id="btnAbnormal" onclick="answer(false)">&#10007; Abnormal</button>
   </div>
+  <div class="explain-bar" id="explainBar"></div>
+  <button class="btn-next" id="btnNext" onclick="advanceRound()">Next →</button>
 </div>
 
 <!-- DONE SCREEN -->
@@ -314,16 +367,17 @@
     <div class="results-grid" id="resultsGrid"></div>
     <div id="reviewSection"></div>
     <button class="btn-go" onclick="startGame()">Play Again</button>
+    <button class="btn-redo" id="btnRedo" onclick="redoMissed()" style="display:none">Redo Missed</button>
   </div>
 </div>
 
 <script>
 var catColors = {
-  "Pulse": "#EF4444",
-  "BP": "#3B82F6",
-  "Resp": "#10B981",
-  "Temp": "#F97316",
-  "SpO\u2082": "#8B5CF6"
+  "Pulse": "#F87171",
+  "BP": "#60A5FA",
+  "Resp": "#34D399",
+  "Temp": "#FB923C",
+  "SpO\u2082": "#A78BFA"
 };
 
 var vital = null;
@@ -335,6 +389,8 @@ var best = 0;
 var time = 45;
 var gameHistory = [];
 var timer = null;
+var missedVitals = [];
+var paused = false;
 
 function genVital() {
   var types = [
@@ -400,12 +456,15 @@ function showScreen(id) {
 }
 
 function startGame() {
-  score = 0; total = 0; streak = 0; best = 0; time = 45; gameHistory = []; userPicked = null;
+  score = 0; total = 0; streak = 0; best = 0; time = 45; gameHistory = []; userPicked = null; missedVitals = []; paused = false;
   if (timer) clearInterval(timer);
   vital = genVital();
+  document.getElementById('btnNext').style.display = 'none';
+  document.getElementById('explainBar').style.display = 'none';
   renderPlay();
   showScreen('playScreen');
   timer = setInterval(function() {
+    if (paused) return;
     time--;
     updateTimer();
     if (time <= 0) { clearInterval(timer); showDone(); }
@@ -413,7 +472,7 @@ function startGame() {
 }
 
 function updateTimer() {
-  var color = time > 15 ? '#10B981' : time > 6 ? '#F59E0B' : '#EF4444';
+  var color = time > 15 ? '#34D399' : time > 6 ? '#FBBF24' : '#F87171';
   var el = document.getElementById('timerVal');
   el.textContent = time + 's';
   el.style.color = color;
@@ -440,12 +499,14 @@ function renderPlay() {
   var bn = document.getElementById('btnNormal');
   var ba = document.getElementById('btnAbnormal');
   bn.disabled = false; ba.disabled = false;
-  bn.style.background = 'rgba(16,185,129,0.08)';
-  bn.style.border = '2px solid rgba(16,185,129,0.3)';
-  bn.style.color = '#10B981';
-  ba.style.background = 'rgba(239,68,68,0.08)';
-  ba.style.border = '2px solid rgba(239,68,68,0.3)';
-  ba.style.color = '#EF4444';
+  bn.style.background = 'rgba(52,211,153,0.12)';
+  bn.style.border = '2px solid rgba(52,211,153,0.4)';
+  bn.style.color = '#34D399';
+  ba.style.background = 'rgba(248,113,113,0.12)';
+  ba.style.border = '2px solid rgba(248,113,113,0.4)';
+  ba.style.color = '#F87171';
+  bn.textContent = '\u2713 Normal';
+  ba.textContent = '\u2717 Abnormal';
   bn.style.cursor = 'pointer';
   ba.style.cursor = 'pointer';
 }
@@ -453,10 +514,11 @@ function renderPlay() {
 function answer(isNormal) {
   if (userPicked !== null) return;
   userPicked = isNormal;
+  paused = true;
   var correct = isNormal === vital.normal;
   total++;
   if (correct) { score++; streak++; best = Math.max(best, streak); }
-  else streak = 0;
+  else { streak = 0; missedVitals.push(vital); }
   gameHistory.push({ label: vital.label, normal: vital.normal, explain: vital.explain, userSaid: isNormal, correct: correct });
 
   var bn = document.getElementById('btnNormal');
@@ -464,22 +526,61 @@ function answer(isNormal) {
   bn.disabled = true; ba.disabled = true;
   bn.style.cursor = 'default'; ba.style.cursor = 'default';
 
-  if (vital.normal) {
-    bn.style.background = 'rgba(16,185,129,0.2)'; bn.style.border = '2px solid #10B981'; bn.style.color = '#10B981';
-    ba.style.background = 'rgba(255,255,255,0.02)'; ba.style.border = '2px solid rgba(255,255,255,0.06)'; ba.style.color = '#475569';
+  var explainBar = document.getElementById('explainBar');
+
+  if (correct) {
+    // Highlight the correct choice
+    if (vital.normal) {
+      bn.style.background = 'rgba(52,211,153,0.25)'; bn.style.border = '2.5px solid #34D399'; bn.style.color = '#34D399';
+      bn.textContent = '\u2713 Normal — Correct!';
+      ba.style.background = 'rgba(255,255,255,0.03)'; ba.style.border = '2px solid rgba(255,255,255,0.06)'; ba.style.color = '#64748B';
+    } else {
+      ba.style.background = 'rgba(248,113,113,0.25)'; ba.style.border = '2.5px solid #F87171'; ba.style.color = '#F87171';
+      ba.textContent = '\u2717 Abnormal — Correct!';
+      bn.style.background = 'rgba(255,255,255,0.03)'; bn.style.border = '2px solid rgba(255,255,255,0.06)'; bn.style.color = '#64748B';
+    }
+    explainBar.style.display = 'none';
   } else {
-    ba.style.background = 'rgba(239,68,68,0.2)'; ba.style.border = '2px solid #EF4444'; ba.style.color = '#EF4444';
-    bn.style.background = 'rgba(255,255,255,0.02)'; bn.style.border = '2px solid rgba(255,255,255,0.06)'; bn.style.color = '#475569';
+    // Wrong pick: mark it red, highlight the correct answer prominently
+    if (isNormal) {
+      // User said Normal, but it's Abnormal
+      bn.style.background = 'rgba(248,113,113,0.18)'; bn.style.border = '2px solid #F87171'; bn.style.color = '#FCA5A5';
+      bn.textContent = '\u2717 Normal — Wrong';
+      ba.style.background = 'rgba(248,113,113,0.25)'; ba.style.border = '2.5px solid #F87171'; ba.style.color = '#F87171';
+      ba.style.fontWeight = '800'; ba.style.fontSize = '18px';
+      ba.textContent = '\u2713 Abnormal — Correct Answer';
+    } else {
+      // User said Abnormal, but it's Normal
+      ba.style.background = 'rgba(248,113,113,0.18)'; ba.style.border = '2px solid #F87171'; ba.style.color = '#FCA5A5';
+      ba.textContent = '\u2717 Abnormal — Wrong';
+      bn.style.background = 'rgba(52,211,153,0.25)'; bn.style.border = '2.5px solid #34D399'; bn.style.color = '#34D399';
+      bn.style.fontWeight = '800'; bn.style.fontSize = '18px';
+      bn.textContent = '\u2713 Normal — Correct Answer';
+    }
+    // Show explanation
+    explainBar.style.display = 'block';
+    explainBar.style.background = 'rgba(251,191,36,0.12)';
+    explainBar.style.border = '1px solid rgba(251,191,36,0.3)';
+    explainBar.style.color = '#FBBF24';
+    explainBar.textContent = vital.explain;
   }
 
   document.getElementById('playScore').textContent = score;
   document.getElementById('playTotal').textContent = total;
+  document.getElementById('btnNext').style.display = 'block';
+}
 
-  setTimeout(function() {
-    userPicked = null;
-    vital = genVital();
-    renderPlay();
-  }, 850);
+function advanceRound() {
+  paused = false;
+  userPicked = null;
+  vital = genVital();
+  document.getElementById('btnNext').style.display = 'none';
+  document.getElementById('explainBar').style.display = 'none';
+  var bn = document.getElementById('btnNormal');
+  var ba = document.getElementById('btnAbnormal');
+  bn.style.fontWeight = '700'; bn.style.fontSize = '17px';
+  ba.style.fontWeight = '700'; ba.style.fontSize = '17px';
+  renderPlay();
 }
 
 function showDone() {
@@ -488,9 +589,9 @@ function showDone() {
   document.getElementById('doneEmoji').textContent = pct >= 80 ? '\uD83C\uDFAF' : '\uD83D\uDCDA';
 
   var stats = [
-    { l: 'Score', v: score + '/' + total, c: '#10B981' },
-    { l: 'Accuracy', v: pct + '%', c: '#3B82F6' },
-    { l: 'Best Streak', v: best + ' \uD83D\uDD25', c: '#F59E0B' }
+    { l: 'Score', v: score + '/' + total, c: '#34D399' },
+    { l: 'Accuracy', v: pct + '%', c: '#60A5FA' },
+    { l: 'Best Streak', v: best + ' \uD83D\uDD25', c: '#FBBF24' }
   ];
   var gridHTML = '';
   for (var i = 0; i < stats.length; i++) {
@@ -513,8 +614,37 @@ function showDone() {
     reviewHTML += '</div>';
     sec.innerHTML = reviewHTML;
   } else {
-    sec.innerHTML = '<p style="color:#10B981;font-size:14px;font-family:Inter,sans-serif;margin-bottom:20px;font-weight:500">Perfect round \u2014 no misses!</p>';
+    sec.innerHTML = '<p style="color:#34D399;font-size:14px;font-family:Inter,sans-serif;margin-bottom:20px;font-weight:500">Perfect round \u2014 no misses!</p>';
   }
+
+  document.getElementById('btnRedo').style.display = missed.length > 0 ? 'inline-block' : 'none';
+}
+
+function redoMissed() {
+  var redoList = missedVitals.slice();
+  score = 0; total = 0; streak = 0; best = 0; time = 45; gameHistory = []; userPicked = null; missedVitals = []; paused = false;
+  var redoIdx = 0;
+  if (timer) clearInterval(timer);
+
+  // Override genVital to serve missed vitals
+  var origGen = genVital;
+  genVital = function() {
+    if (redoIdx < redoList.length) return redoList[redoIdx++];
+    genVital = origGen;
+    return origGen();
+  };
+
+  vital = genVital();
+  document.getElementById('btnNext').style.display = 'none';
+  document.getElementById('explainBar').style.display = 'none';
+  renderPlay();
+  showScreen('playScreen');
+  timer = setInterval(function() {
+    if (paused) return;
+    time--;
+    updateTimer();
+    if (time <= 0) { clearInterval(timer); genVital = origGen; showDone(); }
+  }, 1000);
 }
 </script>
 </body>

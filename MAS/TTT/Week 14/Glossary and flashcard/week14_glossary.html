@@ -4,198 +4,129 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Week 14 Glossary — Medical Assistant Program</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
-  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
-  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
-  .header{text-align:center;margin-bottom:28px}
-  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
-  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
-  .header p{font-size:13px;color:var(--text-secondary)}
-  .search-wrap{position:relative;margin-bottom:20px}
-  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
-  .search-wrap input:focus{border-color:#C0392B}
-  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
-  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
-  .cat-btn:hover{border-color:#aaa}
-  .cat-btn .emoji{font-size:22px}
-  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
-  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
-  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
-  .cat-btn.open .arrow{transform:rotate(180deg)}
-  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
-  .term-card:hover{border-color:var(--border)}
-  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
-  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
-  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
-  .result-card .row{display:flex;align-items:center;gap:10px}
-  .result-card .r-emoji{font-size:20px}
-  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
-  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
-  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
-  .hidden{display:none!important}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;}
+html,body{height:100%;overflow:hidden !important;font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:680px;margin:0 auto;padding:16px 20px 12px;display:flex;flex-direction:column;height:100dvh;overflow:hidden !important;}
+.tag{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--red-light);font-weight:700;margin-bottom:4px;}
+h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px;}
+.sub{font-size:13px;color:var(--dim);margin-bottom:10px;}
+.search-wrap{position:relative;margin-bottom:10px}.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--muted)}.search-wrap input{width:100%;padding:12px 16px 12px 44px;border-radius:10px;font-size:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none;font-family:inherit}.search-wrap input:focus{border-color:var(--red)}.search-wrap input::placeholder{color:var(--muted)}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}.cat-btn{padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}.cat-btn:hover{opacity:.85}.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.count{font-size:13px;color:var(--dim)}
+.list-wrap{border-radius:10px;border:1px solid var(--border);overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface)}.items{flex:1;overflow:hidden;padding:4px 0}
+.item{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:all .25s}.item:last-child{border-bottom:none}.item:hover{background:var(--surface2)}.item.open{background:var(--surface2);box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.item-head{display:flex;justify-content:space-between;align-items:center}.item-left{display:flex;align-items:center;gap:10px}.item-bar{width:4px;height:22px;border-radius:2px;opacity:.3;transition:opacity .2s}.item.open .item-bar{opacity:1}.item-term{font-size:20px;font-weight:700;color:#fff}.item-cat{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.item-def{margin-top:8px;margin-left:14px;padding-top:8px;border-top:1px solid var(--border);font-size:15px;color:var(--dim);line-height:1.6;font-style:italic;display:none}.item.open .item-def{display:block}.item.open .item-term{color:var(--red-light)}.empty{text-align:center;padding:30px;color:var(--muted);font-size:15px}
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:var(--bg)}.pg-btn{padding:6px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;transition:all .2s}.pg-btn:hover:not(:disabled){border-color:var(--red-light);color:var(--red-light)}.pg-btn:disabled{opacity:.3;cursor:default}.pg-dots{display:flex;gap:4px;justify-content:center;align-items:center;flex-wrap:wrap;max-width:200px}.pg-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}.pg-dot.active{background:var(--red-light);transform:scale(1.3)}.pg-dot:hover:not(.active){background:var(--dim)}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="header">
-    <div class="header-tag">Medical Assistant Program</div>
-    <h1>Week 14 Glossary</h1>
-    <p id="header-subtitle"></p>
+<div class="grain"></div>
+<div class="wrap">
+  <div class="tag">Medical Assistant Program</div>
+  <h1>Week 14 Glossary</h1>
+  <p class="sub">Infection Control Practices</p>
+  <div class="search-wrap"><span>⌕</span><input type="text" id="search" placeholder="Search terms or definitions..."></div>
+  <div class="filters" id="filters"></div>
+  <div class="top-bar"><div class="count" id="count"></div></div>
+  <div class="list-wrap">
+    <div class="items" id="list"></div>
+    <div class="pager" id="pager"></div>
   </div>
-  <div id="browse-mode"></div>
 </div>
 <script>
-const CATEGORIES = [
-  {
-    name: "Chain of Infection & Transmission", emoji: "🦠", color: "#922B21",
-    terms: [
-      { term: "Pathogen", def: "A microorganism — virus, bacterium, fungus, or parasite — capable of causing disease in a susceptible host. Not all microorganisms are pathogenic; those that do not cause disease are called nonpathogens. Common pathogens encountered in the medical office include rhinovirus, influenza, E. coli, Candida albicans, and MRSA." },
-      { term: "Chain of Infection", def: "The six-link sequence that must be fully connected for a communicable disease to spread: (1) infectious agent, (2) reservoir, (3) portal of exit, (4) mode of transmission, (5) portal of entry, and (6) susceptible host. Breaking any single link in the chain stops transmission and halts the infectious process." },
-      { term: "Reservoir", def: "The environment in which a pathogen lives, multiplies, and survives long enough to be transmitted to a new host. In a clinical setting, the reservoir is most often the patient but can also be contaminated equipment, exam tables, door handles, or other inanimate surfaces (fomites)." },
-      { term: "Portal of Exit", def: "The route by which a pathogen leaves its reservoir. Common portals of exit from the human body include respiratory secretions (coughing, sneezing), blood and body fluids, feces, skin lesions, and reproductive secretions." },
-      { term: "Mode of Transmission", def: "The mechanism by which a pathogen travels from the reservoir to a new host. Direct transmission involves immediate physical contact with the source. Indirect transmission involves an intermediate step — a contaminated surface, object, or vector — between the source and the new host." },
-      { term: "Portal of Entry", def: "The route by which a pathogen enters a new host. Common portals of entry include the mouth (ingestion), nose (inhalation), eyes (mucous membrane contact), broken skin or open wounds, and the urinary or reproductive tracts." },
-      { term: "Susceptible Host", def: "A person who lacks adequate resistance to a specific pathogen and may develop infection if exposed. Factors that increase susceptibility include compromised immunity, chronic illness, advanced age, malnutrition, stress, and recent surgery or invasive procedures." },
-      { term: "Communicable Disease", def: "An infectious illness that can be transmitted from one person or source to another — directly or indirectly. Examples include influenza, tuberculosis, chickenpox, strep throat, pertussis, and COVID-19. Certain communicable diseases are legally reportable to public health authorities." },
-      { term: "Sign vs. Symptom", def: "A sign is an objective, observable manifestation of illness that can be perceived and measured by others — fever, swollen lymph nodes, skin eruptions, tachycardia. A symptom is a subjective experience that only the patient can perceive or report — chills, fatigue, headache, sore throat, chest tightness." },
-    ],
-  },
-  {
-    name: "Standard, Universal & Transmission-Based Precautions", emoji: "🛡️", color: "#2C3E50",
-    terms: [
-      { term: "Universal Precautions", def: "A set of infection control practices that treat every patient's blood and certain body fluids as potentially infectious for bloodborne pathogens — regardless of the patient's known or suspected diagnosis. Applies to blood, human tissue, cerebrospinal fluid, amniotic fluid, pleural fluid, vaginal secretions, semen, and any body fluid visibly contaminated with blood." },
-      { term: "Standard Precautions", def: "The current CDC baseline for infection prevention — an expansion of universal precautions that applies to blood, all body fluids (regardless of visible blood), non-intact skin, and mucous membranes. Applied to every patient during every encounter, regardless of infection status. Includes hand hygiene, appropriate PPE use, safe handling of sharps, and respiratory hygiene." },
-      { term: "Contact Precautions", def: "Transmission-based precautions used when a patient is known or suspected to have an infection that spreads through direct or indirect physical contact. Requires gloves and gown upon room entry. Examples: MRSA, C. difficile, wound infections with multi-drug-resistant organisms. The exam room must be disinfected after use." },
-      { term: "Droplet Precautions", def: "Transmission-based precautions for pathogens that spread through large respiratory droplets produced by coughing, sneezing, or talking — typically within 3 feet of the source. Requires a surgical mask and gloves. Examples: influenza, pertussis, strep throat. Patient should be masked and moved to an exam room immediately upon arrival." },
-      { term: "Airborne Precautions", def: "The most restrictive transmission-based precautions — used when a pathogen can remain suspended in the air and spread across longer distances. Requires an N95 respirator (not a surgical mask), gloves, gown, and an airborne infection isolation room (negative pressure). Examples: tuberculosis, measles, varicella (chickenpox)." },
-      { term: "Exposure Categories (I, II, III)", def: "OSHA's classification of job tasks by risk of bloodborne pathogen exposure. Category I: tasks that likely involve blood or body fluid contact (e.g., minor surgical procedures, venipuncture). Category II: tasks that do not normally involve exposure but may (e.g., CPR) — precautions still required. Category III: tasks with no expected exposure risk (e.g., taking vital signs) — no PPE required." },
-    ],
-  },
-  {
-    name: "Personal Protective Equipment (PPE)", emoji: "🧤", color: "#C0392B",
-    terms: [
-      { term: "Personal Protective Equipment (PPE)", def: "Specialized clothing and equipment worn by healthcare professionals to protect themselves from exposure to blood, body fluids, infectious materials, and hazardous chemicals. Employers are required by OSHA to provide PPE at no cost to employees who have occupational exposure risk. Includes gloves, gowns, masks, respirators, goggles, and face shields." },
-      { term: "Donning", def: "The process of correctly putting on personal protective equipment before potential exposure. The standard order for donning full PPE is: gown → mask or respirator → goggles or face shield → gloves. Proper donning technique prevents self-contamination before the task begins." },
-      { term: "Doffing", def: "The process of safely removing contaminated personal protective equipment after completing a task. The critical principle is that the outside of contaminated PPE must never touch bare skin. Standard doffing order: gloves → goggles/face shield → gown → mask/respirator. Hands must be washed or sanitized immediately after doffing." },
-      { term: "Non-Sterile Glove Doffing Technique", def: "Grasp the palm of the non-dominant glove with the dominant gloved hand and pull it off inside-out. Hold the removed glove in the dominant hand. Slide two fingers of the ungloved hand under the cuff of the dominant glove — never touching the outer contaminated surface. Pull the dominant glove off inside-out over the first glove. Discard and wash hands." },
-      { term: "N95 Respirator", def: "A tight-fitting face mask that filters at least 95% of airborne particles. Required for airborne precautions (tuberculosis, measles, varicella) — a standard surgical mask does not provide equivalent protection. Must be fit-tested for each individual user before use to ensure an adequate seal." },
-      { term: "Exposure Control Plan", def: "A written document, required by OSHA, detailing an employer's plan to protect employees from occupational exposure to bloodborne pathogens. Must be updated annually and reviewed with all employees upon hire and yearly. Includes engineering controls, workplace practice controls, PPE requirements, hepatitis B vaccination protocols, and post-exposure follow-up procedures." },
-    ],
-  },
-  {
-    name: "Hand Hygiene", emoji: "🧼", color: "#1A5276",
-    terms: [
-      { term: "Hand Hygiene", def: "The single most important and evidence-based practice for preventing the transmission of infectious diseases in healthcare settings. Includes both handwashing with soap and water and the use of alcohol-based hand sanitizer. Performed before and after every patient contact, after removing gloves, and whenever hands may be contaminated." },
-      { term: "Medical Handwashing Technique", def: "Remove all jewelry except a plain band. Wet hands with lukewarm water, apply 3 mL (approximately 3 pumps) of soap, and lather with friction for a minimum of 15–20 seconds. Keep fingertips pointed downward, interlace fingers, scrub around the wrists, and pay particular attention to the nail area. Rinse wrist to fingertip. Dry with a paper towel and turn off non-foot-operated faucets with the paper towel." },
-      { term: "Alcohol-Based Hand Sanitizer", def: "A hand hygiene product containing a minimum of 60% alcohol that can be used as an alternative to handwashing when hands are not visibly soiled. Effective for routine decontamination before and after patient contact, after touching contaminated surfaces, and between contact with clean and dirty body sites. Cannot replace soap and water when hands are visibly contaminated or after contact with C. difficile spores." },
-      { term: "When Soap and Water Is Required", def: "Soap and water must be used — alcohol-based sanitizer is not sufficient — after contact with blood or body fluids, before performing aseptic procedures such as blood draws or medication administration, after glove removal, when hands are visibly soiled, after using the restroom, and before and after eating." },
-      { term: "Artificial Nails (Clinical Setting)", def: "Prohibited for healthcare professionals working in clinical settings. Research consistently shows that individuals with artificial nails harbor significantly more bacteria under and around their nails than those with natural nails — even after proper handwashing. Represent an infection control risk particularly during procedures involving patient contact or sterile technique." },
-    ],
-  },
-  {
-    name: "Medical Asepsis, Sanitization & Disinfection", emoji: "🧹", color: "#7D3C98",
-    terms: [
-      { term: "Asepsis", def: "The state of being free from pathogenic microorganisms. The goal of infection control practices — ranging from handwashing to sterilization — is to achieve and maintain asepsis in the clinical environment. There are two levels: medical (clean) asepsis and surgical (sterile) asepsis." },
-      { term: "Medical Asepsis (Clean Technique)", def: "A set of practices designed to reduce the number of pathogenic microorganisms in the environment and prevent their growth and spread. Does not create a completely pathogen-free environment but significantly breaks the chain of infection. Used in daily clinical practice — handwashing, surface disinfection between patients, glove use, and laboratory clean/dirty separation." },
-      { term: "Surgical Asepsis (Sterile Technique)", def: "The complete elimination of all microorganisms and their spores from instruments, equipment, and the immediate environment during invasive procedures. Required for wound care, surgical procedures, endoscopy, and catheter insertion. All instruments and PPE must be sterile, and the sterile field must be maintained without compromise throughout the procedure." },
-      { term: "Sanitization", def: "The first step in instrument processing — the mechanical removal of visible debris (blood, body fluids, tissue) from instruments and equipment using detergent and water. Does not kill all microorganisms but reduces their number and removes organic material that would interfere with disinfection or sterilization. Always performed before disinfection or sterilization." },
-      { term: "Ultrasonic Sanitization", def: "A method of instrument cleaning that uses high-frequency sound waves to loosen and remove debris from instruments — rather than friction. Preferred for delicate instruments that could be damaged by manual scrubbing and reduces the risk of sharps injuries during cleaning. Items are still disinfected or sterilized after ultrasonic sanitization." },
-      { term: "Disinfection", def: "The process of destroying most pathogenic microorganisms on inanimate surfaces and instruments — but not bacterial spores. Less thorough than sterilization. Three levels: low-level (exam tables, countertops — example: hydrogen peroxide), intermediate-level (stethoscopes, BP cuffs — example: isopropyl alcohol), and high-level (endoscopes — example: Cidex OPA)." },
-      { term: "Low-Level Disinfection", def: "Destroys most vegetative bacteria and some viruses and fungi. Used on non-critical items that contact intact skin but not mucous membranes — exam tables, countertops, blood pressure cuffs, stethoscopes. Example disinfectant: hydrogen peroxide or quaternary ammonium compounds." },
-      { term: "Intermediate-Level Disinfection", def: "Destroys vegetative bacteria, most viruses, and fungi — but does not reliably kill bacterial spores. Used on semi-critical items that contact mucous membranes or non-intact skin. Examples: stethoscopes, thermometers, percussion hammers. Example disinfectant: isopropyl alcohol (70%)." },
-      { term: "High-Level Disinfection", def: "Destroys all microorganisms except a small number of bacterial spores. Required for semi-critical instruments that contact mucous membranes and cannot be sterilized by heat — most commonly flexible endoscopes. Example disinfectant: Cidex OPA (glutaraldehyde-based solution). Instruments must be fully submerged for the required contact time." },
-      { term: "Safety Data Sheet (SDS)", def: "A standardized document, required by OSHA for every chemical used in the workplace, providing information on hazard identification, safe handling and storage, first-aid measures for accidental exposure, required PPE, spill response, and emergency procedures. All employees must know where SDS documents are stored and how to locate them quickly." },
-    ],
-  },
-  {
-    name: "Sterilization", emoji: "♨️", color: "#1E8449",
-    terms: [
-      { term: "Sterilization", def: "The complete destruction of all living microorganisms — including resistant bacterial endospores — using physical or chemical methods. The highest level of microbial control. Required for all instruments that penetrate the skin or enter sterile body cavities. Must be preceded by sanitization and disinfection to be fully effective." },
-      { term: "Autoclave", def: "The primary sterilization method used in ambulatory healthcare settings. Uses pressurized, high-temperature steam (250–270°F) to destroy all microorganisms and their spores. Unwrapped items require 20 minutes; wrapped items require 30 minutes. The most widely accepted and cost-effective method for sterilizing heat-tolerant instruments." },
-      { term: "Chemical Indicator Tape", def: "Autoclave tape applied to the outside of instrument packages before sterilization. Contains a chemical that changes color (lines turn black) only when the correct temperature and time are reached, confirming sterilization was achieved. Must be checked along with the sterilization date before every packaged instrument is opened or used." },
-      { term: "Internal Indicator Strip", def: "A chemical indicator strip placed inside the instrument package before autoclaving. Confirms that steam actually penetrated to the interior of the package — not just the outer surface — and reached the required conditions. Both an external indicator tape and an internal strip should be used together for reliable verification." },
-      { term: "Biological Indicator", def: "The most stringent and definitive sterilization test — contains known quantities of viable bacterial spores (typically Geobacillus stearothermophilus). If the spores are killed, sterilization was achieved. Used for routine quality control testing of autoclave function, typically on a weekly basis or per facility protocol." },
-      { term: "Sterilization Wrapping", def: "The packaging used to maintain sterility of instruments after autoclaving. May be disposable double-layer autoclave paper or peel-apart polypropylene pouches. Must be free of tears or holes before use. All packages must be labeled with the sterilization date, time, MA initials, and the instrument contained." },
-      { term: "Sterile Package Shelf Life", def: "The period during which an autoclaved item is considered sterile. Most facilities follow the guideline that double-layer wrapped packages are sterile for 30 days if stored in a dry, covered area and the packaging remains intact. Any package with watermarks, tears, or punctures — regardless of the sterilization date — must be rewrapped and resterilized before use." },
-      { term: "Chemical Sterilization", def: "A sterilization method using chemical solutions for instruments that cannot tolerate autoclave heat — such as flexible endoscopes. Instruments are fully submerged in a precisely measured chemical bath (such as activated glutaraldehyde) for 8 hours with a closed lid, then removed with forceps and thoroughly rinsed. Once removed from the solution, items are no longer considered sterile." },
-    ],
-  },
-  {
-    name: "Biohazard Disposal & OSHA Compliance", emoji: "⚠️", color: "#D4AC0D",
-    terms: [
-      { term: "Biohazardous Waste", def: "Any waste material that contains or may contain infectious agents capable of causing disease — including blood, body fluids, contaminated instruments, used PPE, sharps, and materials from procedures on infected patients. Must be identified with the biohazard symbol and disposed of in OSHA-compliant containers. Cannot be disposed of in regular trash." },
-      { term: "Sharps Container", def: "A rigid, puncture-proof, leak-proof, closable container specifically designed for the disposal of needles, lancets, scalpel blades, and any other sharp objects used in patient care. Must be clearly labeled with the biohazard symbol. Items must be dropped in — never pushed or forced. Sealed and replaced when two-thirds full." },
-      { term: "Biohazard Bag", def: "A leak-proof, labeled bag made of impermeable polyethylene or polypropylene used to dispose of soft contaminated waste — gloves, gauze, bandages, dressings, and disposable gowns that have contacted blood or body fluids. If the outside of the bag is contaminated or the bag's integrity is compromised, it must be placed inside a second biohazard bag (double-bagged)." },
-      { term: "Biohazard Box", def: "A larger, rigid biohazard-labeled container for bulkier contaminated items such as table covers, large disposable gowns, and other waste that does not fit in a standard biohazard bag. Must have a lid that is replaced after each use. Disposed of by a licensed biohazard waste management company." },
-      { term: "Needle Safety and Prevention Act (2000)", def: "A federal law requiring healthcare facilities to use safety-engineered sharp devices that help prevent needlestick injuries, and to maintain a detailed sharps injury log documenting every needlestick and sharps-related injury involving contaminated instruments. Facilities must also implement work practice controls to reduce exposure risk." },
-      { term: "Biohazard Symbol", def: "The internationally recognized warning symbol — a trefoil symbol in orange or red-orange — required on all containers, bags, and equipment holding potentially infectious materials. Required by OSHA on sharps containers, biohazard bags, refrigerators or freezers storing blood products, and any equipment that could expose individuals to infectious material." },
-      { term: "OSHA Bloodborne Pathogens Standard (1991)", def: "A federal regulation establishing legal requirements for protecting healthcare workers from occupational exposure to bloodborne pathogens including HIV and hepatitis B and C. Requires employers to provide PPE, maintain an exposure control plan, offer hepatitis B vaccination, provide post-exposure follow-up, maintain exposure logs, and train employees annually." },
-    ],
-  },
-  {
-    name: "Post-Exposure & Quality Control", emoji: "🔬", color: "#117A65",
-    terms: [
-      { term: "Exposure Incident", def: "A specific eye, mouth, mucous membrane, or non-intact skin contact — or a needlestick or sharps injury — involving blood, body fluids, or other potentially infectious materials. Triggers mandatory immediate response: wash or irrigate the affected area, report to the supervisor immediately, complete an incident exposure form, and receive a medical evaluation." },
-      { term: "Post-Exposure Follow-Up", def: "The employer-funded response required after an exposure incident. Includes a confidential medical evaluation, laboratory testing as indicated, hepatitis B vaccination offer (if not already immune), post-exposure prophylaxis (PEP) for potential HIV exposure if indicated, counseling, and a written medical opinion provided to the employee within 15 days." },
-      { term: "Eyewash Station", def: "Emergency equipment providing a continuous, low-pressure stream of water for irrigating the eyes and face after a chemical or biological splash. Must be accessible in all laboratory areas. All staff must know the location before an emergency occurs. Must be inspected and flushed monthly to ensure proper working order and remove stagnant water." },
-      { term: "Sharps Injury Log", def: "A confidential record required by OSHA documenting each needlestick or sharps injury involving contaminated instruments. Must include the type and brand of device involved, location of the incident, and a description of how the exposure occurred. Retained for 5 years. Used to identify patterns and improve workplace safety controls." },
-      { term: "Temperature Log", def: "A daily record of refrigerator and freezer temperatures in areas where vaccines, medications, blood specimens, and test kits are stored. Refrigerators must be maintained between 36°F and 46°F. Required for CLIA compliance. Deviations from acceptable temperature ranges must be documented and acted upon to protect the integrity of stored materials." },
-      { term: "Quality Control (QC)", def: "The systematic process of monitoring and verifying the accuracy and reliability of laboratory testing. Includes running control samples before patient specimens, calibrating equipment per manufacturer guidelines, checking reagent expiration dates, and logging all results. Required for CLIA compliance. Ensures that results reported to providers and patients are accurate." },
-      { term: "Autoclave / Sterilization Log", def: "A record documenting each autoclave cycle — including the date, load contents, temperature reached, exposure time, and operator initials. Confirms that sterilization conditions were achieved and provides a traceable record for quality assurance. Required as part of the facility's sterilization quality control program." },
-    ],
-  }
+const CATEGORIES=[
+  {name:"Chain of Infection",color:"#E05555",terms:[
+    {term:"Pathogen",def:"A microorganism — virus, bacterium, fungus, or parasite — capable of causing disease in a susceptible host."},
+    {term:"Chain of Infection",def:"The six-link sequence that must be fully connected for a communicable disease to spread: (1) infectious agent, (2) reservoir."},
+    {term:"Reservoir",def:"The environment in which a pathogen lives, multiplies, and survives long enough to be transmitted to a new host."},
+    {term:"Portal of Exit",def:"The route by which a pathogen leaves its reservoir. Common portals of exit from the human body include respiratory secretions (..."},
+    {term:"Mode of Transmission",def:"The mechanism by which a pathogen travels from the reservoir to a new host."},
+    {term:"Portal of Entry",def:"The route by which a pathogen enters a new host. Common portals of entry include the mouth (ingestion), nose (inhalation)."},
+    {term:"Susceptible Host",def:"A person who lacks adequate resistance to a specific pathogen and may develop infection if exposed."},
+    {term:"Communicable Disease",def:"An infectious illness that can be transmitted from one person or source to another — directly or indirectly."},
+    {term:"Sign vs. Symptom",def:"A sign is an objective, observable manifestation of illness that can be perceived and measured by others — fever."}
+  ]},
+  {name:"Standard, Universal & Trans-Based Precautions",color:"#6B7B8D",terms:[
+    {term:"Universal Precautions",def:"A set of infection control practices that treat every patient's blood and certain body fluids as potentially infectious for blo..."},
+    {term:"Standard Precautions",def:"The current CDC baseline for infection prevention — an expansion of universal precautions that applies to blood."},
+    {term:"Contact Precautions",def:"Transmission-based precautions used when a patient is known or suspected to have an infection that spreads through direct or in..."},
+    {term:"Droplet Precautions",def:"Transmission-based precautions for pathogens that spread through large respiratory droplets produced by coughing, sneezing."},
+    {term:"Airborne Precautions",def:"The most restrictive transmission-based precautions — used when a pathogen can remain suspended in the air and spread across lo..."},
+    {term:"Exposure Categories (I, II, III)",def:"OSHA's classification of job tasks by risk of bloodborne pathogen exposure."}
+  ]},
+  {name:"PPE (PPE)",color:"#8B6AAE",terms:[
+    {term:"Personal Protective Equipment (PPE)",def:"Specialized clothing and equipment worn by healthcare professionals to protect themselves from exposure to blood, body fluids."},
+    {term:"Donning",def:"The process of correctly putting on personal protective equipment before potential exposure."},
+    {term:"Doffing",def:"The process of safely removing contaminated personal protective equipment after completing a task."},
+    {term:"Non-Sterile Glove Doffing Technique",def:"Grasp the palm of the non-dominant glove with the dominant gloved hand and pull it off inside-out."},
+    {term:"N95 Respirator",def:"A tight-fitting face mask that filters at least 95% of airborne particles."},
+    {term:"Exposure Control Plan",def:"A written document, required by OSHA, detailing an employer's plan to protect employees from occupational exposure to bloodborn..."}
+  ]},
+  {name:"Hand Hygiene",color:"#E74C6F",terms:[
+    {term:"Hand Hygiene",def:"The single most important and evidence-based practice for preventing the transmission of infectious diseases in healthcare sett..."},
+    {term:"Medical Handwashing Technique",def:"Remove all jewelry except a plain band. Wet hands with lukewarm water, apply 3 mL (approximately 3 pumps) of soap."},
+    {term:"Alcohol-Based Hand Sanitizer",def:"A hand hygiene product containing a minimum of 60% alcohol that can be used as an alternative to handwashing when hands are not..."},
+    {term:"When Soap and Water Is Required",def:"Soap and water must be used — alcohol-based sanitizer is not sufficient — after contact with blood or body fluids."},
+    {term:"Artificial Nails (Clinical Setting)",def:"Prohibited for healthcare professionals working in clinical settings."}
+  ]},
+  {name:"Asepsis & Disinfection",color:"#4A90B8",terms:[
+    {term:"Asepsis",def:"The state of being free from pathogenic microorganisms."},
+    {term:"Medical Asepsis (Clean Technique)",def:"A set of practices designed to reduce the number of pathogenic microorganisms in the environment and prevent their growth and s..."},
+    {term:"Surgical Asepsis (Sterile Technique)",def:"The complete elimination of all microorganisms and their spores from instruments, equipment."},
+    {term:"Sanitization",def:"The first step in instrument processing — the mechanical removal of visible debris (blood, body fluids."},
+    {term:"Ultrasonic Sanitization",def:"A method of instrument cleaning that uses high-frequency sound waves to loosen and remove debris from instruments — rather than..."},
+    {term:"Disinfection",def:"The process of destroying most pathogenic microorganisms on inanimate surfaces and instruments — but not bacterial spores."},
+    {term:"Low-Level Disinfection",def:"Destroys most vegetative bacteria and some viruses and fungi."},
+    {term:"Intermediate-Level Disinfection",def:"Destroys vegetative bacteria, most viruses, and fungi — but does not reliably kill bacterial spores."},
+    {term:"High-Level Disinfection",def:"Destroys all microorganisms except a small number of bacterial spores."},
+    {term:"Safety Data Sheet (SDS)",def:"A standardized document, required by OSHA for every chemical used in the workplace."}
+  ]},
+  {name:"Sterilization",color:"#1A8A7D",terms:[
+    {term:"Sterilization",def:"The complete destruction of all living microorganisms — including resistant bacterial endospores — using physical or chemical m..."},
+    {term:"Autoclave",def:"The primary sterilization method used in ambulatory healthcare settings."},
+    {term:"Chemical Indicator Tape",def:"Autoclave tape applied to the outside of instrument packages before sterilization."},
+    {term:"Internal Indicator Strip",def:"A chemical indicator strip placed inside the instrument package before autoclaving."},
+    {term:"Biological Indicator",def:"The most stringent and definitive sterilization test — contains known quantities of viable bacterial spores (typically Geobacil..."},
+    {term:"Sterilization Wrapping",def:"The packaging used to maintain sterility of instruments after autoclaving."},
+    {term:"Sterile Package Shelf Life",def:"The period during which an autoclaved item is considered sterile."},
+    {term:"Chemical Sterilization",def:"A sterilization method using chemical solutions for instruments that cannot tolerate autoclave heat — such as flexible endoscopes."}
+  ]},
+  {name:"Biohazard & OSHA",color:"#E2B94C",terms:[
+    {term:"Biohazardous Waste",def:"Any waste material that contains or may contain infectious agents capable of causing disease — including blood, body fluids."},
+    {term:"Sharps Container",def:"A rigid, puncture-proof, leak-proof, closable container specifically designed for the disposal of needles, lancets."},
+    {term:"Biohazard Bag",def:"A leak-proof, labeled bag made of impermeable polyethylene or polypropylene used to dispose of soft contaminated waste — gloves."},
+    {term:"Biohazard Box",def:"A larger, rigid biohazard-labeled container for bulkier contaminated items such as table covers, large disposable gowns."},
+    {term:"Needle Safety and Prevention Act (2000)",def:"A federal law requiring healthcare facilities to use safety-engineered sharp devices that help prevent needlestick injuries."},
+    {term:"Biohazard Symbol",def:"The internationally recognized warning symbol — a trefoil symbol in orange or red-orange — required on all containers, bags."},
+    {term:"OSHA Bloodborne Pathogens Standard (1991)",def:"A federal regulation establishing legal requirements for protecting healthcare workers from occupational exposure to bloodborne..."}
+  ]},
+  {name:"Post-Exposure & QC",color:"#4CAF90",terms:[
+    {term:"Exposure Incident",def:"A specific eye, mouth, mucous membrane, or non-intact skin contact — or a needlestick or sharps injury — involving blood."},
+    {term:"Post-Exposure Follow-Up",def:"The employer-funded response required after an exposure incident."},
+    {term:"Eyewash Station",def:"Emergency equipment providing a continuous, low-pressure stream of water for irrigating the eyes and face after a chemical or b..."},
+    {term:"Sharps Injury Log",def:"A confidential record required by OSHA documenting each needlestick or sharps injury involving contaminated instruments."},
+    {term:"Temperature Log",def:"A daily record of refrigerator and freezer temperatures in areas where vaccines, medications, blood specimens."},
+    {term:"Quality Control (QC)",def:"The systematic process of monitoring and verifying the accuracy and reliability of laboratory testing."},
+    {term:"Autoclave / Sterilization Log",def:"A record documenting each autoclave cycle — including the date, load contents, temperature reached, exposure time."}
+  ]}
 ];
 
-const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
-  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
-);
-let browseSearch = '';
-let browseOpenCat = null;
-let browseOpenTerm = null;
-document.getElementById('header-subtitle').textContent =
-  `Keeping Patients Safe — Infection Control Practices · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
-renderBrowse();
-function renderBrowse() {
-  const el = document.getElementById('browse-mode');
-  const query = browseSearch.trim().toLowerCase();
-  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
-  if (query) {
-    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
-    if (filtered.length === 0) {
-      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
-    } else {
-      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
-      filtered.forEach((t, i) => {
-        const isOpen = browseOpenTerm === `s-${i}`;
-        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
-      });
-      html += `</div>`;
-    }
-  } else {
-    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
-    CATEGORIES.forEach((cat, ci) => {
-      const isOpen = browseOpenCat === ci;
-      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
-      if (isOpen) {
-        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
-        cat.terms.forEach((t, ti) => {
-          const tKey = `${ci}-${ti}`;
-          const tOpen = browseOpenTerm === tKey;
-          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
-        });
-        html += `</div>`;
-      }
-      html += `</div>`;
-    });
-    html += `</div>`;
-  }
-  el.innerHTML = html;
-}
-function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+const glossary=[];const catNames=["All"];const catColors={};
+CATEGORIES.forEach(cat=>{catNames.push(cat.name);catColors[cat.name]=cat.color;cat.terms.forEach(t=>glossary.push({term:t.term,definition:t.def,category:cat.name}));});
+let filter="All",search="",openIdx=null,currentPage=0;const PER_PAGE=4;
+function renderFilters(){document.getElementById('filters').innerHTML=catNames.map(c=>{const col=c==="All"?"#7a7f90":(catColors[c]||"#888");const active=filter===c;return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}18;${active?`border-color:${col};color:${col};background:${col}18`:''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')">${c}</button>`;}).join('');}
+function getFiltered(){const s=search.toLowerCase();return glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));}
+function renderList(){const filtered=getFiltered();const totalPages=Math.max(1,Math.ceil(filtered.length/PER_PAGE));if(currentPage>=totalPages)currentPage=totalPages-1;if(currentPage<0)currentPage=0;const start=currentPage*PER_PAGE;const pageItems=filtered.slice(start,start+PER_PAGE);document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' · Page '+(currentPage+1)+' of '+totalPages;if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms match your search.</div>';document.getElementById('pager').innerHTML='';return;}document.getElementById('list').innerHTML=pageItems.map(g=>{const col=catColors[g.category]||"#888";const origIdx=glossary.indexOf(g);const isOpen=openIdx===origIdx;return `<div class="item ${isOpen?'open':''}" onclick="toggle(${origIdx})"><div class="item-head"><div class="item-left"><div class="item-bar" style="background:${col}"></div><span class="item-term">${g.term}</span></div><span class="item-cat" style="background:${col}18;color:${col}">${g.category}</span></div><div class="item-def" style="${isOpen?'display:block':''}">${g.definition}</div></div>`;}).join('');let ph=`<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>← Prev</button><div class="pg-dots">`;for(let p=0;p<totalPages;p++){ph+=`<div class="pg-dot ${p===currentPage?'active':''}" onclick="goPage(${p})"></div>`;}ph+=`</div><button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''}>Next →</button>`;document.getElementById('pager').innerHTML=ph;}
+function setFilter(c){filter=c;currentPage=0;openIdx=null;renderFilters();renderList();}
+function toggle(i){openIdx=openIdx===i?null:i;renderList();}
+function goPage(p){currentPage=p;openIdx=null;renderList();}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;currentPage=0;openIdx=null;renderList();});
+renderFilters();renderList();
 </script>
 </body>
 </html>

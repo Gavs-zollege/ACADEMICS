@@ -30,111 +30,207 @@
   .header {
     flex-shrink: 0;
     text-align: center;
-    padding: 16px 24px 12px;
+    padding: 14px 24px 10px;
   }
   .header h1 {
-    font-size: 26px; font-weight: 800;
+    font-size: 24px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .header p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
   .main {
     flex: 1; overflow: hidden;
-    display: flex; gap: 16px;
-    padding: 0 24px 16px;
+    display: flex; gap: 14px;
+    padding: 0 20px 14px;
   }
+
+  /* Sidebar */
   .sidebar {
-    width: 250px; flex-shrink: 0;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 4px;
-    padding-right: 6px;
+    width: 240px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .sidebar::-webkit-scrollbar { width: 3px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .sidebar-pages {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 3px;
+    overflow: hidden;
+  }
+  .sidebar-page {
+    display: none;
+    flex-direction: column; gap: 3px;
+    flex: 1;
+  }
+  .sidebar-page.active { display: flex; }
+  .sidebar-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 6px 0 0;
+  }
+  .sidebar-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
+  .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .sidebar-nav .page-info {
+    font-size: 11px; color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 40px; text-align: center;
+  }
   .topic-btn {
     display: flex; align-items: center; gap: 9px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 8px 11px;
+    border-radius: 10px; padding: 7px 10px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
   }
   .topic-btn:hover { transform: translateX(2px); }
-  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .icon { font-size: 16px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 13px; font-weight: 500; flex: 1;
+    font-size: 12.5px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 4px 0; flex-shrink: 0;
-  }
+
+  /* Content */
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px;
+    border-radius: 16px; padding: 18px;
     display: flex; flex-direction: column;
   }
   .content-header {
     flex-shrink: 0;
     display: flex; align-items: center; gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
-  .content-header .icon { font-size: 30px; }
+  .content-header .icon { font-size: 28px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 18px; font-weight: 700;
+    font-size: 17px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
-  .content-scroll {
-    flex: 1; overflow-y: auto; padding-right: 6px;
+  .content-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .content-scroll::-webkit-scrollbar { width: 3px; }
-  .content-scroll::-webkit-scrollbar-track { background: transparent; }
-  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .content-points {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .content-footer {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+  }
+  .content-footer .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .content-footer .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  .content-footer .page-dots {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .content-footer .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.25s;
+  }
+  .content-footer .dot.active {
+    width: 20px; border-radius: 4px;
+  }
   .point {
     display: flex; gap: 10px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px; border: 1px solid transparent;
+    border-radius: 10px; padding: 9px 12px;
+    border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .point p { font-size: 13.5px; line-height: 1.5; color: var(--text); }
   .takeaway-item {
     display: flex; gap: 10px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px;
+    border-radius: 10px; padding: 9px 12px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item p { font-size: 13.5px; line-height: 1.5; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
-  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  .welcome .big-icon { font-size: 48px; margin-bottom: 14px; }
+  .welcome p { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+
+  /* Overview grid */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+    flex: 1;
+  }
+  .overview-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .overview-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.04);
+  }
+  .overview-card .card-icon { font-size: 20px; }
+  .overview-card .card-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; font-weight: 700;
+  }
+  .overview-card .card-title {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-bright); line-height: 1.2;
+  }
+
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -152,7 +248,10 @@
     <p>Patient Intake and Vital Signs</p>
   </div>
   <div class="main">
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-pages" id="sidebarPages"></div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
     <div class="content" id="content">
       <div class="welcome">
         <div class="big-icon">📚</div>
@@ -166,7 +265,7 @@ var TOPICS = [
   { id:1, num:"01", icon:"🔍", title:"Identifying Your Patient", color:"#E63946",
     points:["Use at least two identifiers at every visit","Full name + date of birth (most common)","Medical record number","Last 4 digits of Social Security number","Never read the name aloud and ask the patient to confirm it"] },
   { id:2, num:"02", icon:"🧰", title:"Patient Health Background", color:"#457B9D",
-    points:["Medical history — past illnesses, surgeries, diagnoses","Surgical history — procedures the patient has had","Family history — conditions that run in the family","Social history — lifestyle, tobacco, alcohol, drug use, occupation","Chief complaint — the reason for today\'s visit, in the patient\'s own words"] },
+    points:["Medical history — past illnesses, surgeries, diagnoses","Surgical history — procedures the patient has had","Family history — conditions that run in the family","Social history — lifestyle, tobacco, alcohol, drug use, occupation","Chief complaint — the reason for today's visit, in the patient's own words"] },
   { id:3, num:"03", icon:"🌈", title:"Menstrual History (LMP)", color:"#2A9D8F",
     points:["Ask at every visit for patients who menstruate","LMP = Last Menstrual Period — the first day of their most recent period","Determines potential for pregnancy before ordering tests","Used to calculate an estimated due date if pregnant","Document whether the patient is currently menstruating"] },
   { id:4, num:"04", icon:"🧪", title:"Vital Signs — The Basics", color:"#8338EC",
@@ -184,18 +283,18 @@ var TOPICS = [
   { id:10, num:"10", icon:"🏷️", title:"Pulse Oximetry", color:"#FF6B35",
     points:["Measures oxygen saturation in the blood (SpO₂)","Normal result: 95% or higher","Report to provider if below 90%","Clip goes on the fingertip; earlobe is an alternate site","Nail polish, artificial nails, and dark skin at low O₂ can affect accuracy"] },
   { id:11, num:"11", icon:"⚙️", title:"Pain Assessment", color:"#E63946",
-    points:["Use the 0–10 numeric scale (0 = no pain, 10 = worst pain)","Wong-Baker Faces Scale for children or those who can\'t use numbers","Also observe nonverbal cues: grimacing, guarding, posture","Ask about location, onset, duration, and what makes it better or worse","Document all verbal and nonverbal pain responses"] },
-  { id:12, num:"12", icon:"🔬", title:"Height, Weight, BMI & Waist Circumference", color:"#457B9D",
+    points:["Use the 0–10 numeric scale (0 = no pain, 10 = worst pain)","Wong-Baker Faces Scale for children or those who can't use numbers","Also observe nonverbal cues: grimacing, guarding, posture","Ask about location, onset, duration, and what makes it better or worse","Document all verbal and nonverbal pain responses"] },
+  { id:12, num:"12", icon:"🔬", title:"Height, Weight, BMI & Waist", color:"#457B9D",
     points:["Remove shoes and heavy outerwear before measuring","Weight may vary by age and mobility — use appropriate equipment","BMI = weight (kg) ÷ height² (m²) — or use the lb/in² × 703 formula","BMI 18.5–24.9 = normal; ≥ 30 = obese","Waist circumference assesses metabolic and cardiovascular risk"] },
   { id:13, num:"13", icon:"⭐", title:"Unit Conversions", color:"#2A9D8F",
     points:["°F to °C: (°F − 32) ÷ 1.8","°C to °F: (°C × 1.8) + 32","Pounds to kilograms: lb ÷ 2.2","Kilograms to pounds: kg × 2.2","Inches to feet: divide by 12 (remainder = inches)"] },
   { id:14, num:"14", icon:"📦", title:"Factors That Affect Vital Signs", color:"#8338EC",
     points:["Age: infants fluctuate more; older adults run cooler","Medications: beta-blockers lower BP and heart rate","Stress and anxiety: raise BP and pulse","Smoking or caffeine within 30 min: raise BP","Always note any relevant factors when reporting results"] },
   { id:15, num:"15", icon:"💊", title:"Routine Health Screenings", color:"#FF6B35",
-    points:["Tobacco use — assess for cessation support","Alcohol use — frequency and quantity","HIV screening — recommended for all adults ages 15–65","Document \'patient declined to answer\' if they refuse","These screenings are part of every complete patient intake"] },
+    points:["Tobacco use — assess for cessation support","Alcohol use — frequency and quantity","HIV screening — recommended for all adults ages 15–65","Document 'patient declined to answer' if they refuse","These screenings are part of every complete patient intake"] },
   { id:16, num:"16", icon:"🫀", title:"Mental Health Screening Tools", color:"#E63946",
     points:["PHQ-2: quick 2-question depression screen","PHQ-9: full depression assessment if PHQ-2 is positive","GAD-7: screens for generalized anxiety","Mini-Mental State Exam (MMSE): cognitive screening for older adults","Report all positive screens to the provider"] },
-  { id:17, num:"17", icon:"📡", title:"Pediatric Measurements & Growth Charts", color:"#457B9D",
+  { id:17, num:"17", icon:"📡", title:"Pediatric Measurements", color:"#457B9D",
     points:["Measure height, weight, and head circumference at well-child visits","Plot on CDC growth charts — sex-specific, birth through age 20","Results reported as a percentile compared to same-age peers","< 5th percentile = underweight; ≥ 95th percentile = obese","Head circumference tracked from birth to 36 months"] },
 ];
 
@@ -209,43 +308,99 @@ var TAKEAWAYS = [
 ];
 
 var activeId = null;
-var sidebar = document.getElementById('sidebar');
+var contentPage = 0;
+var contentPages = [];
+var sidebarPage = 0;
+var sidebarTotalPages = 1;
+var ITEMS_PER_SIDEBAR_PAGE = 9;
+
+var sidebarPagesEl = document.getElementById('sidebarPages');
+var sidebarNavEl = document.getElementById('sidebarNav');
 var content = document.getElementById('content');
 
+/* ── Sidebar ── */
 function buildSidebar() {
-  TOPICS.forEach(function(t) {
-    var btn = document.createElement('button');
-    btn.className = 'topic-btn';
-    btn.dataset.id = t.id;
-    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
-    btn.addEventListener('click', function() { selectTopic(t.id); });
-    btn.addEventListener('mouseenter', function() {
-      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+  sidebarPagesEl.innerHTML = '';
+  // Topics + takeaways = allItems
+  var allItems = TOPICS.map(function(t) { return { type: 'topic', data: t }; });
+  allItems.push({ type: 'takeaway' });
+
+  sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
+
+  for (var p = 0; p < sidebarTotalPages; p++) {
+    var pageDiv = document.createElement('div');
+    pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
+    pageDiv.dataset.page = p;
+
+    var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p + 1) * ITEMS_PER_SIDEBAR_PAGE);
+    slice.forEach(function(item) {
+      if (item.type === 'topic') {
+        var t = item.data;
+        var btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.dataset.id = t.id;
+        btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+        btn.addEventListener('click', function() { selectTopic(t.id); });
+        btn.addEventListener('mouseenter', function() {
+          if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+        });
+        btn.addEventListener('mouseleave', function() {
+          if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(btn);
+      } else {
+        var tkBtn = document.createElement('button');
+        tkBtn.className = 'topic-btn';
+        tkBtn.dataset.id = 'takeaways';
+        tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+        tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+        tkBtn.addEventListener('mouseenter', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+        });
+        tkBtn.addEventListener('mouseleave', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(tkBtn);
+      }
     });
-    btn.addEventListener('mouseleave', function() {
-      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-    });
-    sidebar.appendChild(btn);
-  });
-  var divider = document.createElement('div');
-  divider.className = 'sidebar-divider';
-  sidebar.appendChild(divider);
-  var tkBtn = document.createElement('button');
-  tkBtn.className = 'topic-btn';
-  tkBtn.dataset.id = 'takeaways';
-  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
-  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
-  tkBtn.addEventListener('mouseenter', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
-  });
-  tkBtn.addEventListener('mouseleave', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-  });
-  sidebar.appendChild(tkBtn);
+    sidebarPagesEl.appendChild(pageDiv);
+  }
+
+  // Nav
+  if (sidebarTotalPages > 1) {
+    sidebarNavEl.innerHTML =
+      '<button id="sbPrev" onclick="changeSidebarPage(-1)">◀</button>' +
+      '<span class="page-info" id="sbInfo"></span>' +
+      '<button id="sbNext" onclick="changeSidebarPage(1)">▶</button>';
+    updateSidebarNav();
+  } else {
+    sidebarNavEl.innerHTML = '';
+  }
+}
+
+function changeSidebarPage(dir) {
+  var next = sidebarPage + dir;
+  if (next < 0 || next >= sidebarTotalPages) return;
+  sidebarPage = next;
+  var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  pages[sidebarPage].classList.add('active');
+  updateSidebarNav();
+  updateSidebarActive();
+}
+
+function updateSidebarNav() {
+  var info = document.getElementById('sbInfo');
+  var prev = document.getElementById('sbPrev');
+  var nxt = document.getElementById('sbNext');
+  if (!info) return;
+  info.textContent = (sidebarPage + 1) + '/' + sidebarTotalPages;
+  prev.disabled = sidebarPage === 0;
+  nxt.disabled = sidebarPage === sidebarTotalPages - 1;
 }
 
 function updateSidebarActive() {
-  var btns = sidebar.querySelectorAll('.topic-btn');
+  var btns = sidebarPagesEl.querySelectorAll('.topic-btn');
   btns.forEach(function(btn) {
     var id = btn.dataset.id;
     var topic = TOPICS.find(function(t) { return t.id == id; });
@@ -264,47 +419,147 @@ function updateSidebarActive() {
   });
 }
 
-function renderTopic(t) {
+/* ── Content Pages ── */
+function renderTopicPaged(t) {
+  // Each topic has 5 points — show all on one page (they're small)
+  // But we'll split if needed. For now 5 points fits fine.
+  contentPages = [t.points];
+  contentPage = 0;
+  showContentPage(t);
+}
+
+function showContentPage(t) {
+  var points = contentPages[contentPage];
+  var globalOffset = 0;
+  for (var i = 0; i < contentPage; i++) globalOffset += contentPages[i].length;
+
   var html = '<div class="content-header">' +
     '<span class="icon">' + t.icon + '</span>' +
     '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
     '<div class="title">' + t.title + '</div></div></div>' +
-    '<div class="content-scroll">';
-  t.points.forEach(function(p, i) {
+    '<div class="content-body"><div class="content-points">';
+
+  points.forEach(function(p, i) {
     html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<div class="num" style="background:' + t.color + '">' + (globalOffset + i + 1) + '</div>' +
       '<p>' + p + '</p></div>';
   });
-  html += '</div>';
-  return html;
-}
 
-function renderTakeaways() {
-  var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:30px">🎯</span>' +
-    '<div><div class="title">Key Takeaways</div></div></div>' +
-    '<div class="content-scroll">';
-  TAKEAWAYS.forEach(function(t, i) {
-    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
+  html += '</div>';
+
+  // Footer nav between topics
+  var topicIdx = TOPICS.findIndex(function(x) { return x.id === t.id; });
+  var prevTopic = topicIdx > 0 ? TOPICS[topicIdx - 1] : null;
+  var nextTopic = topicIdx < TOPICS.length - 1 ? TOPICS[topicIdx + 1] : null;
+
+  html += '<div class="content-footer">';
+  if (prevTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">← ' + prevTopic.title + '</button>';
+  } else {
+    html += '<div></div>';
+  }
+
+  // Dots
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function(x) {
+    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '" title="' + x.title + '"></div>';
   });
   html += '</div>';
-  return html;
-}
 
-function selectTopic(id) {
-  activeId = id;
-  updateSidebarActive();
-  if (id === 'takeaways') {
-    content.innerHTML = renderTakeaways();
+  if (nextTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' →</button>';
   } else {
-    var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) content.innerHTML = renderTopic(topic);
+    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways →</button>';
   }
+
+  html += '</div></div>';
+  content.innerHTML = html;
   content.style.animation = 'none';
   void content.offsetHeight;
   content.style.animation = 'fadeIn 0.25s ease';
 }
+
+function renderTakeaways() {
+  var html = '<div class="content-header">' +
+    '<span class="icon" style="font-size:28px">🎯</span>' +
+    '<div><div class="title">Key Takeaways</div></div></div>' +
+    '<div class="content-body"><div class="content-points">';
+
+  TAKEAWAYS.forEach(function(t, i) {
+    html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
+      '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
+  });
+
+  html += '</div>';
+  html += '<div class="content-footer">';
+  var lastTopic = TOPICS[TOPICS.length - 1];
+  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">← ' + lastTopic.title + '</button>';
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function() {
+    html += '<div class="dot"></div>';
+  });
+  html += '<div class="dot active" style="background: linear-gradient(135deg, #E63946, #FF6B35)"></div>';
+  html += '</div>';
+  html += '<div></div>';
+  html += '</div></div>';
+
+  content.innerHTML = html;
+  content.style.animation = 'none';
+  void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
+}
+
+function selectTopic(id) {
+  activeId = id;
+  // Switch sidebar page to show the active topic
+  if (id !== 'takeaways') {
+    var idx = TOPICS.findIndex(function(t) { return t.id === id; });
+    var targetPage = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
+    if (targetPage !== sidebarPage) {
+      sidebarPage = targetPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
+  } else {
+    // Takeaways is on the last page
+    var tkPage = sidebarTotalPages - 1;
+    if (tkPage !== sidebarPage) {
+      sidebarPage = tkPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
+  }
+  updateSidebarActive();
+
+  if (id === 'takeaways') {
+    renderTakeaways();
+  } else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) renderTopicPaged(topic);
+  }
+}
+
+/* Keyboard nav */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (activeId === null) { selectTopic(1); return; }
+    if (activeId === 'takeaways') return;
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx < TOPICS.length - 1) selectTopic(TOPICS[idx + 1].id);
+    else selectTopic('takeaways');
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (activeId === null) return;
+    if (activeId === 'takeaways') { selectTopic(TOPICS[TOPICS.length - 1].id); return; }
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx > 0) selectTopic(TOPICS[idx - 1].id);
+  }
+});
 
 buildSidebar();
 </script>

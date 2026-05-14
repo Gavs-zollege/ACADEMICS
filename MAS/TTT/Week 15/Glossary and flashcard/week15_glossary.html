@@ -4,281 +4,197 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Week 15 Glossary — Medical Assistant Program</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
-  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
-  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
-  .header{text-align:center;margin-bottom:28px}
-  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
-  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
-  .header p{font-size:13px;color:var(--text-secondary)}
-  .search-wrap{position:relative;margin-bottom:20px}
-  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
-  .search-wrap input:focus{border-color:#C0392B}
-  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
-  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
-  .cat-btn:hover{border-color:#aaa}
-  .cat-btn .emoji{font-size:22px}
-  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
-  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
-  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
-  .cat-btn.open .arrow{transform:rotate(180deg)}
-  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
-  .term-card:hover{border-color:var(--border)}
-  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
-  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
-  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
-  .result-card .row{display:flex;align-items:center;gap:10px}
-  .result-card .r-emoji{font-size:20px}
-  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
-  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
-  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
-  .hidden{display:none!important}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;}
+html,body{height:100%;overflow:hidden !important;font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:680px;margin:0 auto;padding:16px 20px 12px;display:flex;flex-direction:column;height:100dvh;overflow:hidden !important;}
+.tag{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--red-light);font-weight:700;margin-bottom:4px;}
+h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px;}
+.sub{font-size:13px;color:var(--dim);margin-bottom:10px;}
+.search-wrap{position:relative;margin-bottom:10px}.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--muted)}.search-wrap input{width:100%;padding:12px 16px 12px 44px;border-radius:10px;font-size:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none;font-family:inherit}.search-wrap input:focus{border-color:var(--red)}.search-wrap input::placeholder{color:var(--muted)}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}.cat-btn{padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}.cat-btn:hover{opacity:.85}.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.count{font-size:13px;color:var(--dim)}
+.list-wrap{border-radius:10px;border:1px solid var(--border);overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface)}.items{flex:1;overflow:hidden;padding:4px 0}
+.item{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:all .25s}.item:last-child{border-bottom:none}.item:hover{background:var(--surface2)}.item.open{background:var(--surface2);box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.item-head{display:flex;justify-content:space-between;align-items:center}.item-left{display:flex;align-items:center;gap:10px}.item-bar{width:4px;height:22px;border-radius:2px;opacity:.3;transition:opacity .2s}.item.open .item-bar{opacity:1}.item-term{font-size:20px;font-weight:700;color:#fff}.item-cat{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.item-def{margin-top:8px;margin-left:14px;padding-top:8px;border-top:1px solid var(--border);font-size:15px;color:var(--dim);line-height:1.6;font-style:italic;display:none}.item.open .item-def{display:block}.item.open .item-term{color:var(--red-light)}.empty{text-align:center;padding:30px;color:var(--muted);font-size:15px}
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:var(--bg)}.pg-btn{padding:6px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;transition:all .2s}.pg-btn:hover:not(:disabled){border-color:var(--red-light);color:var(--red-light)}.pg-btn:disabled{opacity:.3;cursor:default}.pg-dots{display:flex;gap:4px;justify-content:center;align-items:center;flex-wrap:wrap;max-width:200px}.pg-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}.pg-dot.active{background:var(--red-light);transform:scale(1.3)}.pg-dot:hover:not(.active){background:var(--dim)}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="header">
-    <div class="header-tag">Medical Assistant Program</div>
-    <h1>Week 15 Glossary</h1>
-    <p id="header-subtitle"></p>
+<div class="grain"></div>
+<div class="wrap">
+  <div class="tag">Medical Assistant Program</div>
+  <h1>Week 15 Glossary</h1>
+  <p class="sub">CCMA Exam Readiness & Review</p>
+  <div class="search-wrap"><span>⌕</span><input type="text" id="search" placeholder="Search terms or definitions..."></div>
+  <div class="filters" id="filters"></div>
+  <div class="top-bar"><div class="count" id="count"></div></div>
+  <div class="list-wrap">
+    <div class="items" id="list"></div>
+    <div class="pager" id="pager"></div>
   </div>
-  <div id="browse-mode"></div>
 </div>
 <script>
-const CATEGORIES = [
-  {
-    name: "Vital Signs & Clinical Measurements", emoji: "❤️", color: "#C0392B",
-    terms: [
-      { term: "Vital Signs", def: "The four primary physiologic measurements that indicate the basic functioning of the body: heart rate (pulse), blood pressure, respiratory rate, and body temperature. Oxygen saturation (SpO2) and pain are widely considered the fifth and sixth vital signs. Vital signs provide essential baseline data and identify changes in a patient's condition over time." },
-      { term: "Heart Rate (Pulse)", def: "The number of times the heart beats per minute, typically measured at the radial artery on the wrist. Normal adult range: 60–100 beats per minute. Bradycardia = below 60 bpm. Tachycardia = above 100 bpm. Always document rate, rhythm (regular or irregular), and strength (strong, weak, or thready). Use the apical site when a radial pulse is irregular." },
-      { term: "Bradycardia", def: "A resting heart rate below 60 beats per minute in an adult. May be normal in well-trained athletes. In clinical settings, bradycardia may indicate cardiac dysfunction, medication effects, or vagal stimulation. The prefix brady- means slow." },
-      { term: "Tachycardia", def: "A resting heart rate above 100 beats per minute in an adult. May result from fever, pain, dehydration, anxiety, medications, or cardiac conditions. The prefix tachy- means fast. A pulse of 130 bpm is tachycardia, not a normal finding." },
-      { term: "Blood Pressure", def: "The force of blood against arterial walls. Recorded as systolic (heart contracting) over diastolic (heart relaxing), expressed in mmHg. Normal adult: less than 120/80 mmHg. Stage 1 HTN: 130–139/80–89. Stage 2 HTN: ≥140/90. Hypotension: systolic below 90 mmHg. The first Korotkoff sound heard = systolic; the last sound heard = diastolic." },
-      { term: "Korotkoff Sounds", def: "The sounds heard through a stethoscope while measuring blood pressure with a sphygmomanometer. Five phases: Phase 1 = first sound heard (sharp tapping) = systolic pressure. Phase 5 = sound disappears completely = diastolic pressure. Produced by turbulent blood flow as the cuff is slowly deflated." },
-      { term: "Respiratory Rate", def: "The number of breaths taken per minute. Normal adult range: 12–20 breaths per minute. Tachypnea = above 20. Bradypnea = below 12. Apnea = cessation of breathing. Always count without telling the patient — announcing the count causes the patient to consciously alter their breathing pattern, producing inaccurate results." },
-      { term: "Body Temperature", def: "The measurement of the body's heat. Normal oral average: 98.6°F (37°C). Normal range: 97.0–99.0°F. Accuracy order (most to least accurate): rectal > temporal artery > tympanic > oral > axillary. Fever (pyrexia) = temperature above 100.4°F. Hypothermia = temperature below 95°F." },
-      { term: "Pulse Oximetry (SpO2)", def: "A noninvasive measurement of blood oxygen saturation using a pulse oximeter sensor typically placed on the finger or toe. Normal adult range: 95–100%. Below 95% warrants intervention; below 90% is a critical value requiring immediate action. Factors that reduce accuracy include nail polish, cold extremities, poor perfusion, and carbon monoxide poisoning." },
-      { term: "Pain Scale", def: "A standardized tool used to assess and document a patient's subjective pain experience. The numeric scale (0–10) is most commonly used in adult care — 0 = no pain, 10 = worst possible pain. The Wong-Baker FACES scale uses illustrated faces and is appropriate for children or patients who cannot communicate numerically. Pain is considered the fifth vital sign." },
-    ],
-  },
-  {
-    name: "EKG & Cardiovascular Testing", emoji: "📈", color: "#7D3C98",
-    terms: [
-      { term: "12-Lead EKG (Electrocardiogram)", def: "A diagnostic test that records the heart's electrical activity from 12 different perspectives using 10 electrodes placed on the skin (4 limb leads and 6 chest/precordial leads). Produces 12 distinct views of the heart's electrical conduction system. Used to detect arrhythmias, myocardial infarction, and conduction abnormalities." },
-      { term: "Precordial (Chest) Leads", def: "The six chest electrodes placed in specific anatomical positions to record the heart's electrical activity in the horizontal plane. V1: right of the sternum, 4th intercostal space. V2: left of the sternum, 4th ICS. V3: between V2 and V4. V4: left midclavicular line, 5th ICS. V5: anterior axillary line, 5th ICS. V6: midaxillary line, 5th ICS." },
-      { term: "Limb Leads", def: "The four electrodes placed on the extremities for a 12-lead EKG. RA: right arm. LA: left arm. RL: right leg (ground electrode). LL: left leg. These four electrodes produce 6 of the 12 leads (I, II, III, aVR, aVL, aVF). The right leg electrode is the ground and does not generate a lead on its own." },
-      { term: "Intercostal Space (ICS)", def: "The space between two adjacent ribs, numbered by the rib above it. Used as anatomical landmarks for placing precordial EKG electrodes. The 4th and 5th intercostal spaces along the left chest are the primary reference points for V1 through V6 lead placement." },
-      { term: "EKG Artifact", def: "Unwanted interference or noise in an EKG tracing that makes interpretation difficult or impossible. Common causes: patient movement or shivering, loose or poorly attached electrodes, dry electrode gel, electrical interference from nearby equipment, and incorrect lead placement. Prevented by ensuring good skin contact, correct placement, and instructing the patient to lie still." },
-      { term: "Cardiac Conduction System", def: "The specialized electrical system that coordinates the heartbeat. SA node (sinoatrial node) = the heart's natural pacemaker, located in the right atrium. AV node = delays the signal before it passes to the ventricles. Bundle of His, left and right bundle branches, and Purkinje fibers complete transmission to the ventricular muscle." },
-      { term: "Myocardial Infarction (MI)", def: "The medical term for a heart attack — complete or near-complete blockage of a coronary artery causing death of heart muscle tissue due to oxygen deprivation. NOT the same as myocarditis (inflammation of the heart muscle). Key distinction: -itis means inflammation; infarction means tissue death from loss of blood supply." },
-    ],
-  },
-  {
-    name: "Phlebotomy & Specimen Collection", emoji: "🩸", color: "#922B21",
-    terms: [
-      { term: "Venipuncture", def: "The clinical procedure of puncturing a vein with a needle to obtain a blood sample for laboratory testing. The median cubital vein in the antecubital fossa (elbow crease) is the vein of choice for most adults. The cephalic and basilic veins are acceptable alternatives. The patient should be seated with the arm fully extended and supported on a flat surface." },
-      { term: "Order of Draw", def: "The required sequence in which blood collection tubes must be filled during venipuncture to prevent cross-contamination of additives between tubes. Standard order: sterile (blood cultures) → light blue (sodium citrate, coagulation) → red/gold SST (serum separator) → green (heparin) → lavender/purple (EDTA, CBC) → gray (sodium fluoride, glucose). Mnemonic: Stop Looking Right Now Later." },
-      { term: "Antecubital Fossa", def: "The triangular hollow at the bend of the elbow, which contains the median cubital vein, cephalic vein, and basilic vein. This is the preferred site for venipuncture in adults due to the accessibility, size, and stability of these veins. Also called the elbow crease." },
-      { term: "Capillary Blood Draw (Fingerstick)", def: "A method of obtaining a small blood sample by puncturing the capillaries in the fingertip with a lancet. Performed on the side of the fingertip in adults. The heel is used for infants. The first drop of blood must be wiped away — it may be diluted with tissue fluid and give inaccurate results. Clean the site with alcohol and allow it to dry completely before lancing." },
-      { term: "Clean-Catch Midstream Urine (CCMU)", def: "A method of collecting a urine specimen that minimizes contamination from bacteria on the skin. Procedure: clean the genital area with a sterile wipe → void a small amount into the toilet to flush out urethral bacteria → collect the middle portion of the urinary stream in the sterile container → seal and label the container immediately." },
-      { term: "24-Hour Urine Collection", def: "A method of collecting all urine produced over a 24-hour period to measure total output of a substance (such as creatinine, protein, or hormones). Instructions: discard the very first morning void → collect ALL urine for the next 24 hours → keep the container refrigerated throughout → return the entire container for testing at the end of the collection period." },
-      { term: "Fasting Blood Glucose (FBG)", def: "A blood glucose test performed after the patient has fasted for 8–12 hours. Water is permitted; all caloric food and beverages must be avoided. A fasting glucose level above 126 mg/dL on two separate occasions meets the diagnostic criteria for diabetes mellitus. Different from HbA1c, which does not require fasting." },
-      { term: "Hemoglobin A1c (HbA1c)", def: "A blood test that reflects the average blood glucose level over the preceding 2–3 months by measuring the percentage of hemoglobin that has glucose attached to it. Used to monitor long-term glucose control in patients with diabetes. Does NOT require fasting. An HbA1c of 6.5% or above on two occasions meets the diagnostic threshold for diabetes." },
-      { term: "Throat Culture", def: "A diagnostic specimen collected by swabbing the posterior pharynx and tonsillar pillars to detect the presence of Group A Streptococcus bacteria (the cause of strep throat). The swab must contact the back of the throat — avoid the tongue, teeth, lips, and inner cheeks, which would contaminate the specimen with normal oral flora." },
-    ],
-  },
-  {
-    name: "Injections & Medication Administration", emoji: "💉", color: "#2C3E50",
-    terms: [
-      { term: "Intradermal (ID) Injection", def: "An injection administered into the superficial layers of the dermis (skin). Technique: bevel up, 10–15° angle. Needle: 25–27 gauge, ¼–½ inch. Volume: ≤0.1 mL. A raised wheal (bleb) must form to confirm correct placement. Used for TB skin testing (Mantoux test) and allergy testing. Do NOT massage after — this disperses the antigen and invalidates the test." },
-      { term: "Subcutaneous (SC/SQ) Injection", def: "An injection administered into the fatty tissue layer beneath the skin. Technique: 45° angle, pinch 1 inch of skin before inserting. Needle: 23–25 gauge, 5/8 inch. Volume: ≤1.5 mL. Common sites: upper outer arm, abdomen, and upper thigh. Used for insulin, low-molecular-weight heparins, and some vaccines. Rotate insulin injection sites within the same region to prevent lipodystrophy." },
-      { term: "Intramuscular (IM) Injection", def: "An injection administered deep into muscle tissue to allow rapid absorption of the medication into the bloodstream. Technique: 90° angle, stretch the skin taut, insert in a smooth dart-like motion. Needle: 22–25 gauge, 1–1½ inch. Volume: up to 3 mL. Deltoid (adults ≤1 mL); vastus lateralis (preferred for infants and children under 3, ≤3 mL); ventrogluteal (adults, ≤3 mL)." },
-      { term: "Needle Gauge", def: "The size of the needle's interior opening (lumen), expressed as a number. Higher gauge number = smaller opening. 18 gauge is larger than 25 gauge. Gauge is selected based on the viscosity of the medication and the type of injection. Thicker medications (such as some vaccines and hormonal injections) require a larger-bore (lower gauge number) needle." },
-      { term: "Nine Rights of Medication Administration", def: "A safety checklist performed before every medication administration: (1) Right Patient — two identifiers (name and date of birth). (2) Right Medication — three label checks. (3) Right Form — tablet, liquid, injectable. (4) Right Dose — calculate and verify. (5) Right Route — oral, IM, SQ, etc. (6) Right Time. (7) Right Technique. (8) Right Education — explain the medication to the patient. (9) Right Documentation — always document AFTER administration, never before." },
-      { term: "Three Label Checks", def: "A medication safety practice requiring the MA to verify the medication label against the prescription three times: (1) when removing the medication from storage, (2) when preparing the dose, and (3) when returning the container to storage or discarding it. Also check the expiration date at every check. Never administer expired medication." },
-      { term: "Medication Administration Record (MAR)", def: "The legal, permanent record of all medications administered to a patient. Must be completed every time a medication is given and must include: date, time, drug name, dose, route, provider's name, frequency, and patient allergies. Document any adverse reactions. If a medication was not given, document the reason. Always document AFTER giving the medication — never in advance." },
-      { term: "Look-Alike/Sound-Alike (LASA) Medications", def: "Medications with names or packaging that closely resemble other medications, creating a significant risk of administration errors. High-risk pairs: clonidine ↔ KlonoPIN (clonazepam brand), hydroxyzine ↔ hydralazine, hydrocodone ↔ hydromorphone. Prevention: use tall-man lettering (hydrOXYzine vs. hydrALAzine), perform triple label checks, store LASA drugs in separate locations, and never abbreviate medication names." },
-      { term: "Transdermal Patch", def: "A drug delivery system in which medication is absorbed through the skin over an extended period. Apply to clean, dry, hair-free skin — avoid bony prominences, skin folds, and areas of friction. Rotate application sites with each new patch. Remove the old patch before applying a new one. Wash hands before and after application. Used for hormone therapy, pain management, nicotine replacement, and cardiac medications." },
-    ],
-  },
-  {
-    name: "Pharmacology & Dosage Calculations", emoji: "💊", color: "#1A5276",
-    terms: [
-      { term: "Pharmacokinetics (ADME)", def: "The study of how the body processes a medication through four phases: Absorption (drug moves from administration site into bloodstream — IV is fastest, oral is slowest), Distribution (bloodstream carries drug to tissues — blood-brain and placental barriers may limit delivery), Metabolism (liver converts active drug to metabolites — rate is affected by age, organ health, and genetics), and Excretion (kidneys eliminate metabolites through urine — impaired kidney function may require dose adjustment)." },
-      { term: "Controlled Substances Act (CSA)", def: "A federal law that classifies substances with potential for abuse into five schedules based on their medical use and abuse potential. Enforced by the Drug Enforcement Administration (DEA). Schedule I has the highest abuse potential and no accepted medical use (heroin, LSD). Schedule II has high abuse risk with accepted medical use and requires hand-signed prescriptions, locked storage, and no refills (oxycodone, fentanyl, amphetamine)." },
-      { term: "Desired-Over-Have Formula", def: "A dosage calculation method: (Desired dose ÷ Dose on hand) × Quantity = Amount to give. Example: ordered 50 mg; on hand is 25 mg per capsule → (50 ÷ 25) × 1 = 2 capsules. This formula works for oral solids and liquids. Always verify the calculation before preparing the medication and never estimate or round without a provider order to do so." },
-      { term: "Metric System (Medication)", def: "The standard measurement system used for medications. Weight units: kg (kilogram) → g (gram) → mg (milligram) → mcg (microgram). Each step is a factor of 1,000. To convert to a smaller unit, multiply by 1,000 (move decimal right three places). To convert to a larger unit, divide by 1,000 (move decimal left three places). Volume units: L (liter) → mL (milliliter). 1 L = 1,000 mL." },
-      { term: "Standard (Household) Conversions", def: "Common measurement equivalencies used for oral liquid medications: 1 teaspoon (tsp) = 5 mL │ 1 tablespoon (tbsp) = 15 mL │ 1 fluid ounce = 30 mL │ 1 cup = 240 mL │ 2.2 pounds = 1 kilogram. Memorize these for the exam — they appear frequently in dosage calculation questions." },
-      { term: "Side Effect", def: "A predictable, unintended — but not necessarily harmful — response to a medication at standard therapeutic doses. Side effects are nearly unavoidable and are distinct from adverse effects. Example: sedation caused by diphenhydramine (Benadryl) is a side effect. Most side effects decrease as the body adjusts to the medication." },
-      { term: "Adverse Effect", def: "An unintended, harmful response to a medication that may require discontinuing the drug or seeking immediate medical care. More serious than a side effect. Example: angioedema (severe facial and throat swelling) from lisinopril is a rare but potentially fatal adverse effect. Adverse effects must be documented and reported to the provider." },
-      { term: "Contraindication", def: "A condition, disease, or circumstance that makes a particular medication or treatment inadvisable or potentially dangerous. The most common contraindication is a prior hypersensitivity (allergic) reaction to the medication or a component of it. Always review the patient's allergy history before administering any medication." },
-      { term: "Half-Life", def: "The time required for the concentration of a drug in the body to be reduced by 50% through metabolism and excretion. Half-life determines how frequently a medication must be dosed to maintain therapeutic blood levels. A medication with a long half-life may accumulate in the body; a short half-life may require more frequent dosing." },
-    ],
-  },
-  {
-    name: "Patient Positioning & Clinical Procedures", emoji: "🛏️", color: "#1E8449",
-    terms: [
-      { term: "Supine Position", def: "The patient lies flat on their back with arms at the sides. Used for head, neck, chest, and abdominal exams; anterior x-rays; CPR; and many surgical procedures. The most anatomically neutral position for a patient at rest. Draping covers from the chest to the feet; expose only the area being examined." },
-      { term: "Prone Position", def: "The patient lies face down with the head turned to one side. Used for back exams, spine assessments, and certain surgical procedures. Draping covers from the upper back to the feet. Not appropriate for patients with respiratory difficulty, late pregnancy, or recent abdominal surgery." },
-      { term: "Dorsal Recumbent Position", def: "The patient lies on their back with knees bent and feet flat on the table. Used for head, neck, chest, abdominal, vaginal, rectal, and perineal examinations. Similar to supine but with bent knees. Draping covers from the neck to the feet." },
-      { term: "Lithotomy Position", def: "The patient lies on their back with legs elevated and feet placed in stirrups at the end of the table. Used for vaginal exams, Pap tests, pelvic procedures, cystoscopy, and some rectal exams. The most anatomically exposed position — always use thorough draping and explain the position clearly before asking the patient to assume it. The patient slides to the edge of the table before placing feet in stirrups." },
-      { term: "Fowler's Position", def: "The patient sits upright at 90 degrees. Used for head, neck, and upper body exams; patients with dyspnea or heart failure; and patients who must not lie flat. Semi-Fowler's is a modified version at approximately 45 degrees, used for post-surgical care, breathing problems, and lower back injuries. Draping covers the lap and legs." },
-      { term: "Left Lateral (Sims) Position", def: "The patient lies on their left side with the right knee drawn forward. Used for rectal exams, enemas, rectal temperature measurement, and certain pelvic exams. Draping is positioned diagonally from the shoulder to below the knees, with a corner that the provider can lift to access the perianal area while maintaining maximum privacy." },
-      { term: "Knee-Chest Position", def: "The patient kneels on the exam table with the chest flat against the table surface and the hips elevated. The thighs are perpendicular to the table. Used for proctologic exams, sigmoidoscopy, and some rectal and vaginal examinations. This position requires good mobility — always assess patient ability before requesting this position and never leave the patient alone." },
-      { term: "Pap Test (Pap Smear)", def: "A cervical cancer screening procedure in which cells are collected from the cervix using a brush and/or spatula during a pelvic exam in the lithotomy position. Equipment: speculum, collection device (brush/spatula or liquid-based collection tool). Do not apply lubricant to the speculum before collecting — it may interfere with the specimen. Label the slide or vial immediately after collection." },
-    ],
-  },
-  {
-    name: "Emergency Response & Wound Care", emoji: "🚑", color: "#D4AC0D",
-    terms: [
-      { term: "Anaphylaxis", def: "A severe, potentially life-threatening systemic allergic reaction that can occur within minutes of exposure to an allergen. Signs: hives, facial and throat swelling (angioedema), difficulty breathing, rapid drop in blood pressure. Response: administer epinephrine injection (if available per facility protocol) AND call 911 immediately. Keep the patient supine with legs elevated if tolerated. Do not delay the epinephrine — anaphylaxis can be fatal within minutes." },
-      { term: "Seizure Management", def: "Steps to follow when a patient experiences a seizure: move nearby objects away from the patient to prevent injury → do NOT restrain the patient → do NOT place anything in the mouth (this does not prevent biting and can cause injury to the patient or the provider) → protect the head → position the patient on their side after the seizure ends to prevent aspiration → call for help → never leave the patient alone → document the duration and characteristics of the episode." },
-      { term: "R.A.C.E. (Fire Response)", def: "The standard emergency sequence for responding to a fire in a healthcare setting. R = Rescue: remove people in immediate danger from the area. A = Alarm: activate the fire alarm. C = Confine: close all doors and windows to contain the fire and smoke. E = Extinguish: use a fire extinguisher only if trained and it is safe to do so, or Evacuate. Use P.A.S.S. for the fire extinguisher: Pull pin, Aim low, Squeeze handle, Sweep side to side." },
-      { term: "Wound Healing Phases", def: "The four stages of tissue repair: (1) Hemostasis — immediate vasoconstriction and clot formation to stop bleeding. (2) Inflammation — increased blood flow, redness, swelling, and warmth as immune cells arrive to clean the wound (days 1–4). (3) Proliferation — fibroblasts lay down collagen, new blood vessels form, and the wound contracts (days 4–21). (4) Remodeling (Maturation) — scar tissue matures and strengthens over weeks to years." },
-      { term: "Burn Classification", def: "Burns are classified by depth of tissue involvement. First degree (superficial): epidermis only — redness, pain, no blisters (sunburn). Second degree (partial thickness): epidermis and dermis — blisters, moist surface, intense pain. Third degree (full thickness): destroys all skin layers — no pain (nerve destruction), white, leathery, or charred appearance; requires skin grafting. Fourth degree: involves underlying muscle, fascia, or bone." },
-      { term: "Direct Pressure (Bleeding Control)", def: "The first and most effective intervention for controlling active bleeding from a laceration or wound. Apply firm, continuous direct pressure with a sterile dressing. Do not lift the dressing to check — adding more gauze on top if the original becomes saturated maintains the clotting process. Elevate the extremity above heart level if no fracture is suspected. Call for emergency assistance while maintaining pressure." },
-    ],
-  },
-  {
-    name: "Laboratory Tests & Diagnostics", emoji: "🧪", color: "#117A65",
-    terms: [
-      { term: "Complete Blood Count (CBC)", def: "A comprehensive blood test that evaluates all major blood cell lines: red blood cells (RBCs), white blood cells (WBCs), hemoglobin, hematocrit, and platelets. Used to screen for anemia, infection, immune disorders, clotting problems, and leukemia. Does not require fasting. Collected in a lavender/purple (EDTA) tube." },
-      { term: "Basic Metabolic Panel (BMP)", def: "A panel of 8 blood tests measuring kidney function (BUN and creatinine), electrolytes (sodium, potassium, chloride, and carbon dioxide/bicarbonate), blood glucose, and calcium. Used to evaluate kidney function, electrolyte balance, and acid-base status. Ordered for routine health screening, hospital admission, and monitoring of chronic conditions." },
-      { term: "Comprehensive Metabolic Panel (CMP)", def: "An expanded version of the BMP that includes all BMP components plus liver function tests: ALT, AST, alkaline phosphatase, bilirubin, albumin, and total protein. Used to assess both kidney and liver function simultaneously. Ordered for routine health screening and monitoring of patients on hepatotoxic medications such as statins or acetaminophen." },
-      { term: "Lipid Panel", def: "A blood test measuring total cholesterol, LDL (low-density lipoprotein — 'bad' cholesterol), HDL (high-density lipoprotein — 'good' cholesterol), and triglycerides. Used to assess cardiovascular risk. Requires 9–12 hours of fasting before the draw. Collected in a gold SST or red tube." },
-      { term: "Liver Function Tests (LFTs)", def: "A panel of blood tests evaluating liver health and function, including ALT (alanine aminotransferase), AST (aspartate aminotransferase), alkaline phosphatase, total and direct bilirubin, albumin, and total protein. Used to detect liver disease, monitor patients on hepatotoxic medications, and evaluate jaundice." },
-      { term: "Thyroid Stimulating Hormone (TSH)", def: "A blood test that measures the level of TSH produced by the pituitary gland, which controls the thyroid gland's production of T3 and T4. Elevated TSH indicates hypothyroidism (underactive thyroid). Suppressed TSH indicates hyperthyroidism (overactive thyroid). It is the most sensitive test for detecting thyroid dysfunction." },
-      { term: "X-Ray (Radiograph)", def: "A diagnostic imaging technique that uses radiation to create images of dense internal structures. Best for detecting bone fractures, joint abnormalities, lung pathology (pneumonia, pneumothorax), and foreign objects. The fastest and most widely available imaging modality in ambulatory care. Patients should remove metal objects and jewelry before the exam. Contraindicated in pregnancy when non-urgent." },
-      { term: "Magnetic Resonance Imaging (MRI)", def: "A diagnostic imaging technique using magnetic fields and radio waves to produce detailed images of soft tissue. No ionizing radiation. Best for brain, spinal cord, ligaments, tendons, cartilage, and internal organs. Contraindicated for patients with metal implants, pacemakers, or cochlear implants. Patients undergoing MRI must be screened for all metallic items." },
-      { term: "Ultrasound (Sonography)", def: "A diagnostic imaging technique using high-frequency sound waves to produce real-time images of soft tissue and organ structures. No ionizing radiation. Used for pregnancy (fetal development and anatomy), abdominal organs (gallbladder, liver, kidneys), cardiac function (echocardiography), and vascular assessment. Requires preparation instructions such as a full bladder for pelvic ultrasounds." },
-    ],
-  },
-  {
-    name: "HIPAA, Law & Patient Rights", emoji: "🔒", color: "#6C3483",
-    terms: [
-      { term: "HIPAA (Health Insurance Portability and Accountability Act)", def: "A federal law enacted in 1996 establishing national standards for protecting the privacy and security of patient health information. The Privacy Rule governs use and disclosure of PHI. The Security Rule governs electronic PHI (ePHI). HITECH (2009) strengthened HIPAA by extending requirements to business associates and increasing penalties for breaches." },
-      { term: "Protected Health Information (PHI)", def: "Any individually identifiable health information in any format — electronic, paper, or verbal — that is created, received, maintained, or transmitted by a covered entity. Includes name, date of birth, address, phone number, email, Social Security number, diagnosis, treatment information, and any other data that could identify a patient." },
-      { term: "HIPAA Violation", def: "Any action that results in the unauthorized use or disclosure of PHI. Violations include: discussing patient details in public areas, accessing records without authorization, leaving records unsecured, sharing PHI without consent, and sending PHI to the wrong recipient. Not violations: filing records securely, sharing PHI for treatment with authorized care team members, or disclosing with a signed patient release." },
-      { term: "Minimum Necessary Standard", def: "A HIPAA principle requiring that only the minimum amount of PHI necessary to accomplish the intended purpose is used, disclosed, or requested. Applies to all disclosures except those to treating providers. MAs should share only the information relevant to the specific clinical or administrative need — not an entire medical record when a single data point will do." },
-      { term: "Mandatory Reporting", def: "A legal obligation to report certain events to public health or law enforcement authorities, regardless of patient consent. Reportable events include: suspected child or elder abuse or neglect (suspicion alone is sufficient — do not wait for confirmed evidence), communicable disease diagnoses (TB, HIV, gonorrhea, COVID-19), gunshot or stab wounds, and court-ordered situations." },
-      { term: "Informed Consent", def: "A legal and ethical process in which a competent patient voluntarily agrees to a procedure or treatment after receiving complete information about its risks, benefits, alternatives, and the right to refuse. Three requirements: (1) the patient must be mentally and legally competent, (2) complete information must be provided, and (3) consent must be truly voluntary and free from coercion. Written documentation is required for procedures." },
-      { term: "Advance Directive", def: "A legal document in which a competent adult specifies their healthcare wishes in advance, in case they become unable to communicate those wishes. Types: Living will (written treatment preferences); Durable Power of Attorney for Healthcare/DPOA (names a healthcare agent to decide on the patient's behalf); DNR (do not resuscitate); POLST (Physician Orders for Life-Sustaining Treatment — actionable medical orders). None expire unless officially revoked." },
-      { term: "Durable Power of Attorney (DPOA)", def: "An advance directive that designates a specific person (healthcare agent or proxy) to make medical decisions on the patient's behalf if they become incapacitated. More flexible than a living will because the agent can respond to circumstances that the patient may not have anticipated. The DPOA names WHO decides; the living will specifies WHAT the decisions are." },
-      { term: "Patient Autonomy", def: "The ethical and legal right of a competent adult patient to make their own informed healthcare decisions, including the right to refuse recommended treatments. MAs must respect and document the patient's decision without judgment or coercion. A patient may refuse treatment even when the provider strongly recommends it. Document refusals completely in the medical record and notify the physician immediately." },
-    ],
-  },
-  {
-    name: "Medical Ethics & Professionalism", emoji: "⚖️", color: "#B7950B",
-    terms: [
-      { term: "Non-Maleficence", def: "The foundational bioethical principle meaning 'do no harm.' Every clinical action — including withholding unnecessary or harmful treatments — must be evaluated against its potential to cause harm. MAs uphold this principle by following correct technique, adhering to scope of practice, verifying medications and doses, and reporting errors or concerns immediately." },
-      { term: "Beneficence", def: "The bioethical principle of acting in the patient's best interest — not simply avoiding harm, but taking positive steps to promote well-being. In MA practice: providing accurate health education, offering preventive care reminders, administering medications correctly, and advocating for the patient's needs within the care team." },
-      { term: "Justice (Medical Ethics)", def: "The bioethical principle of treating all patients fairly and equitably regardless of socioeconomic status, race, religion, gender, age, sexual orientation, or disability. Healthcare resources and quality of care should be allocated without discrimination. MAs demonstrate justice by providing the same level of professional, compassionate care to every patient they encounter." },
-      { term: "Scope of Practice", def: "The specific actions, tasks, and procedures a healthcare professional is legally authorized and competent to perform, as defined by state law, employer policy, and professional standards. MAs work under physician supervision and may only perform tasks they are trained, authorized, and state-approved to do. When unsure: consult the supervising provider. Never guess or proceed without guidance." },
-      { term: "Professionalism", def: "The consistent demonstration of a standard of conduct expected of all healthcare workers, encompassing appearance, communication, behavior, work ethic, relationships, and ethical decision-making. Professionalism is not situational — it applies in every interaction, with every patient and colleague, regardless of the circumstances. Includes punctuality, respectful communication, appropriate dress, and maintaining confidentiality." },
-      { term: "Therapeutic Communication", def: "A structured, purposeful approach to communication in healthcare that builds trust, comfort, and a therapeutic relationship between the MA and the patient. Core techniques: active listening, paraphrasing, open-ended questions, probing questions, empathy, and silence. Directly impacts patient satisfaction, adherence to treatment, and health outcomes." },
-      { term: "Teach-Back Method", def: "A health literacy verification technique in which the MA asks the patient to explain or demonstrate what they just learned, in their own words. Example: 'Can you walk me through how you would take this medication at home?' Used to confirm understanding rather than assuming comprehension based on a nod or 'yes.' Effective for medication instructions, discharge teaching, and procedure preparation." },
-    ],
-  },
-  {
-    name: "Administrative Functions & Insurance", emoji: "💳", color: "#148F77",
-    terms: [
-      { term: "Preauthorization (Precertification)", def: "A process in which the healthcare provider obtains approval from the patient's insurance company before performing a procedure, ordering a diagnostic test, or admitting a patient. Confirms that the planned service is covered under the patient's insurance policy. Does NOT guarantee zero cost to the patient. Failing to obtain required preauthorization may result in denial of the claim." },
-      { term: "Primary Insurance", def: "The insurance plan that is billed first when a patient has more than one insurance policy. The primary insurer processes the claim and pays its portion first. The remaining balance is then submitted to the secondary insurer. In a two-insurer situation, primary insurance is always billed before secondary insurance, regardless of the amount each covers." },
-      { term: "Explanation of Benefits (EOB)", def: "A document sent by the insurance company to the subscriber (and often the provider) after a claim is processed. Shows: the services billed, the amount the insurer allowed, the amount the insurer paid, and the amount the patient is responsible for paying. If a partial payment is received, the MA should contact the insurance company to determine the reason before writing off any balance." },
-      { term: "Third-Party Payer", def: "Any entity other than the patient or the healthcare provider that pays for medical services — most commonly a health insurance company, Medicare, Medicaid, or an employer-sponsored plan. The patient is the first party; the provider is the second party; the insurer is the third party." },
-      { term: "EHR (Electronic Health Record)", def: "A digital record of a patient's health information that extends across multiple healthcare organizations and providers — including specialists, hospitals, and laboratories. Allows authorized providers to view and update a shared record, improving care coordination and reducing duplicate testing. Distinct from an EMR (Electronic Medical Record), which is used only within a single organization." },
-      { term: "CPOE (Computerized Provider Order Entry)", def: "A technology system that allows providers to enter medical orders electronically — including medications, laboratory tests, radiology orders, and referrals. Eliminates handwriting errors and integrates clinical decision support tools that flag drug interactions, allergies, and out-of-range dosages. MAs may enter order information into CPOE for the provider to review and authorize." },
-      { term: "Medical Record Documentation Standards", def: "Rules that govern how entries are made in the patient's medical record: use black or dark blue ink; date and time every entry; never use correction fluid — draw one line through errors, write 'error,' initial, and enter the correction; leave no blank lines between entries; late entries must be labeled as such with the current date and time of entry; 'if it isn't documented, it didn't happen.'" },
-    ],
-  },
-  {
-    name: "Infection Control & Safety", emoji: "🧹", color: "#2874A6",
-    terms: [
-      { term: "Chain of Infection", def: "The six-step sequence that must remain intact for a communicable disease to spread: (1) infectious agent (pathogen), (2) reservoir (where the pathogen lives and multiplies), (3) portal of exit (how the pathogen leaves the reservoir), (4) mode of transmission (how it travels to a new host — contact, droplet, or airborne), (5) portal of entry (how it enters the new host), (6) susceptible host. Breaking any one link stops transmission." },
-      { term: "Standard Precautions", def: "The current baseline infection prevention protocol applied to every patient, every encounter, regardless of diagnosis or known infection status. Treats all blood, body fluids, non-intact skin, and mucous membranes as potentially infectious. Includes hand hygiene, appropriate PPE selection, safe sharps handling, and respiratory hygiene/cough etiquette." },
-      { term: "Transmission-Based Precautions", def: "Additional infection control measures used when a patient has a known or suspected infection spread by a specific route. Contact precautions: gown and gloves for direct/indirect contact transmission (MRSA, C. difficile). Droplet precautions: surgical mask for respiratory droplet transmission (influenza, pertussis). Airborne precautions: N95 respirator and negative pressure room for airborne transmission (TB, measles, varicella)." },
-      { term: "Autoclave", def: "The primary sterilization method used in ambulatory healthcare settings. Uses pressurized steam at 250–270°F to destroy all living microorganisms including resistant endospores. Unwrapped items: 20 minutes. Wrapped items: 30 minutes. Verify sterilization with chemical indicator tape (lines turn black), internal indicator strips, and periodic biological indicators (spore tests — the most rigorous QC test). Sterile packages are valid for 30 days if dry and intact." },
-      { term: "Disinfection Levels", def: "Three levels of disinfection based on the microorganisms destroyed. Low-level: kills most bacteria, some viruses and fungi — used on exam tables and countertops (example: hydrogen peroxide). Intermediate-level: kills bacteria, most viruses, and fungi but not spores — used on stethoscopes and BP cuffs (example: isopropyl alcohol 70%). High-level: kills all microorganisms except a small number of spores — used on endoscopes (example: Cidex OPA)." },
-      { term: "Post-Exposure Protocol", def: "The immediate steps required after a needlestick, sharps injury, or splash exposure to potentially infectious material. Immediately wash the wound with soap and water (or flush eyes/mucous membranes with water). Report to the supervisor right away. Complete an incident exposure form. Receive a confidential medical evaluation (provided at no cost to the employee). Hepatitis B vaccination and post-exposure prophylaxis (PEP) may be initiated based on the assessment." },
-      { term: "Sharps Container", def: "A rigid, puncture-proof, leak-proof, closable container specifically designed for the safe disposal of needles, lancets, scalpel blades, broken glass, and any other sharp objects used in patient care. Must be labeled with the biohazard symbol. NEVER recap a used needle — drop it directly into the sharps container at the point of use. Seal and replace when two-thirds full." },
-    ],
-  },
-  {
-    name: "Medical Terminology", emoji: "🔤", color: "#884EA0",
-    terms: [
-      { term: "brady- (prefix)", def: "Means slow. Clinical examples: bradycardia (slow heart rate, below 60 bpm); bradypnea (slow respiratory rate, below 12 breaths/min). The prefix brady- is one of the most commonly tested medical terminology items on the CCMA exam — never confuse it with tachy- (fast)." },
-      { term: "tachy- (prefix)", def: "Means fast. Clinical examples: tachycardia (fast heart rate, above 100 bpm); tachypnea (fast respiratory rate, above 20 breaths/min). The opposite of brady-. Both prefixes are applied across multiple body systems to indicate abnormal rate changes." },
-      { term: "hypo- (prefix)", def: "Means below, beneath, or deficient. Clinical examples: hypoglycemia (low blood sugar); hypotension (low blood pressure); hypothyroidism (underactive thyroid — low thyroid hormone production); hypothermia (dangerously low body temperature). The opposite of hyper-." },
-      { term: "hyper- (prefix)", def: "Means above, excessive, or elevated. Clinical examples: hyperglycemia (high blood sugar); hypertension (high blood pressure — the most common chronic condition in adults); hyperthyroidism (overactive thyroid — excessive hormone production). The opposite of hypo-." },
-      { term: "-itis (suffix)", def: "Means inflammation. Clinical examples: appendicitis (inflammation of the appendix); pericarditis (inflammation of the pericardium — the tissue around the heart); arthritis (inflammation of the joints); myocarditis (inflammation of the heart muscle — distinct from myocardial infarction, which is tissue death from blocked blood supply)." },
-      { term: "-ectomy (suffix)", def: "Means surgical removal of a structure. Clinical examples: appendectomy (surgical removal of the appendix); tonsillectomy (surgical removal of the tonsils); thyroidectomy (surgical removal of the thyroid gland); hysterectomy (surgical removal of the uterus). Always implies a surgical intervention." },
-      { term: "-pathy (suffix)", def: "Means disease or disorder of a body part or system. Clinical examples: neuropathy (disease of the nervous system — often causing numbness or tingling, commonly seen in diabetes); cardiomyopathy (disease of the heart muscle); nephropathy (kidney disease); retinopathy (disease of the retina)." },
-      { term: "-scope (suffix)", def: "Means an instrument used for visual examination of a body cavity or structure. Clinical examples: otoscope (instrument for examining the ear canal); ophthalmoscope (instrument for examining the interior of the eye); endoscope (instrument for examining internal body cavities); stethoscope (instrument for auscultating heart and lung sounds)." },
-      { term: "-ology (suffix)", def: "Means the study of a field or body system. Clinical examples: cardiology (study of the heart); neurology (study of the nervous system — NOT bones or muscles); dermatology (study of the skin); gastroenterology (study of the GI tract); hematology (study of blood); oncology (study of cancer). Used to describe both the medical specialty and the field of scientific study." },
-      { term: "Myocardial Infarction vs. Myocarditis", def: "Two frequently confused terms. Myocardial infarction (MI) = a heart attack — death of heart muscle tissue caused by complete or near-complete blockage of a coronary artery. The suffix -infarction indicates tissue death from loss of blood supply. Myocarditis = inflammation (-itis) of the heart muscle, most commonly caused by a viral infection. These are two distinct conditions with different causes, presentations, and treatments." },
-      { term: "Dyspnea", def: "Difficulty or labored breathing, often described by the patient as 'shortness of breath' or 'trouble breathing.' A subjective symptom that must be reported to the provider. Common causes: asthma, COPD, heart failure, pulmonary embolism, anxiety, and anemia. Distinguished from apnea (cessation of breathing) and tachypnea (rapid but not necessarily difficult breathing)." },
-      { term: "Dysphagia", def: "Difficulty swallowing. A symptom, not a diagnosis, that may indicate esophageal obstruction, neurologic conditions (stroke, ALS), or structural abnormalities. Must be reported to the provider. Patients with dysphagia may be at risk for aspiration — the entry of food or liquid into the airway. Distinguished from dysphonia (difficulty speaking) and dysphasia (impaired language processing)." },
-      { term: "Vital Sign", def: "Normal Adult Range | Abnormal Values | Assessment Method/Notes |" },
-      { term: "Heart Rate", def: "60–100 bpm | Bradycardia <60; Tachycardia >100 | Radial artery (1 min) |" },
-      { term: "Blood Pressure", def: "<120/80 mmHg | Stage 1 HTN ≥130/80; Stage 2 ≥140/90 | Brachial artery, seated |" },
-      { term: "Respiratory Rate", def: "12–20 breaths/min | Tachypnea >20; Bradypnea <12 | Count 1 min (unannounced) |" },
-      { term: "Temperature", def: "97–99°F (oral avg 98.6) | Fever >100.4°F; Hypothermia <95°F | Rectal = most accurate |" },
-      { term: "SpO2 (Pulse Ox)", def: "95–100% | <95% warrants action; <90% critical | Finger or toe sensor |" },
-      { term: "Pain Scale", def: "Patient-rated 0–10 | Document exact patient rating | Numeric or FACES scale |" },
-    ],
-  }
+const CATEGORIES=[
+  {name:"Vital Signs",color:"#E05555",terms:[
+    {term:"Vital Signs",def:"The four primary physiologic measurements that indicate the basic functioning of the body: heart rate (pulse), blood pressure."},
+    {term:"Heart Rate (Pulse)",def:"The number of times the heart beats per minute, typically measured at the radial artery on the wrist."},
+    {term:"Bradycardia",def:"A resting heart rate below 60 beats per minute in an adult. May be normal in well-trained athletes."},
+    {term:"Tachycardia",def:"A resting heart rate above 100 beats per minute in an adult."},
+    {term:"Blood Pressure",def:"The force of blood against arterial walls. Recorded as systolic (heart contracting) over diastolic (heart relaxing)."},
+    {term:"Korotkoff Sounds",def:"The sounds heard through a stethoscope while measuring blood pressure with a sphygmomanometer."},
+    {term:"Respiratory Rate",def:"The number of breaths taken per minute. Normal adult range: 12–20 breaths per minute. Tachypnea = above 20. Bradypnea = below 12."},
+    {term:"Body Temperature",def:"The measurement of the body's heat. Normal oral average: 98.6°F (37°C). Normal range: 97.0–99.0°F."},
+    {term:"Pulse Oximetry (SpO2)",def:"A noninvasive measurement of blood oxygen saturation using a pulse oximeter sensor typically placed on the finger or toe."},
+    {term:"Pain Scale",def:"A standardized tool used to assess and document a patient's subjective pain experience."}
+  ]},
+  {name:"EKG & Cardio",color:"#6B7B8D",terms:[
+    {term:"12-Lead EKG (Electrocardiogram)",def:"A diagnostic test that records the heart's electrical activity from 12 different perspectives using 10 electrodes placed on the..."},
+    {term:"Precordial (Chest) Leads",def:"The six chest electrodes placed in specific anatomical positions to record the heart's electrical activity in the horizontal pl..."},
+    {term:"Limb Leads",def:"The four electrodes placed on the extremities for a 12-lead EKG. RA: right arm. LA: left arm. RL: right leg (ground electrode)."},
+    {term:"Intercostal Space (ICS)",def:"The space between two adjacent ribs, numbered by the rib above it."},
+    {term:"EKG Artifact",def:"Unwanted interference or noise in an EKG tracing that makes interpretation difficult or impossible."},
+    {term:"Cardiac Conduction System",def:"The specialized electrical system that coordinates the heartbeat."},
+    {term:"Myocardial Infarction (MI)",def:"The medical term for a heart attack — complete or near-complete blockage of a coronary artery causing death of heart muscle tis..."}
+  ]},
+  {name:"Phlebotomy",color:"#8B6AAE",terms:[
+    {term:"Venipuncture",def:"The clinical procedure of puncturing a vein with a needle to obtain a blood sample for laboratory testing."},
+    {term:"Order of Draw",def:"The required sequence in which blood collection tubes must be filled during venipuncture to prevent cross-contamination of addi..."},
+    {term:"Antecubital Fossa",def:"The triangular hollow at the bend of the elbow, which contains the median cubital vein, cephalic vein, and basilic vein."},
+    {term:"Capillary Blood Draw (Fingerstick)",def:"A method of obtaining a small blood sample by puncturing the capillaries in the fingertip with a lancet."},
+    {term:"Clean-Catch Midstream Urine (CCMU)",def:"A method of collecting a urine specimen that minimizes contamination from bacteria on the skin."},
+    {term:"24-Hour Urine Collection",def:"A method of collecting all urine produced over a 24-hour period to measure total output of a substance (such as creatinine."},
+    {term:"Fasting Blood Glucose (FBG)",def:"A blood glucose test performed after the patient has fasted for 8–12 hours."},
+    {term:"Hemoglobin A1c (HbA1c)",def:"A blood test that reflects the average blood glucose level over the preceding 2–3 months by measuring the percentage of hemoglo..."},
+    {term:"Throat Culture",def:"A diagnostic specimen collected by swabbing the posterior pharynx and tonsillar pillars to detect the presence of Group A Strep..."}
+  ]},
+  {name:"Injections & Meds",color:"#E74C6F",terms:[
+    {term:"Intradermal (ID) Injection",def:"An injection administered into the superficial layers of the dermis (skin). Technique: bevel up, 10–15° angle."},
+    {term:"Subcutaneous (SC/SQ) Injection",def:"An injection administered into the fatty tissue layer beneath the skin."},
+    {term:"Intramuscular (IM) Injection",def:"An injection administered deep into muscle tissue to allow rapid absorption of the medication into the bloodstream."},
+    {term:"Needle Gauge",def:"The size of the needle's interior opening (lumen), expressed as a number. Higher gauge number = smaller opening."},
+    {term:"Nine Rights of Medication Administration",def:"A safety checklist performed before every medication administration: (1) Right Patient — two identifiers (name and date of birth)."},
+    {term:"Three Label Checks",def:"A medication safety practice requiring the MA to verify the medication label against the prescription three times: (1) when rem..."},
+    {term:"Medication Administration Record (MAR)",def:"The legal, permanent record of all medications administered to a patient."},
+    {term:"Look-Alike/Sound-Alike (LASA) Medications",def:"Medications with names or packaging that closely resemble other medications, creating a significant risk of administration errors."},
+    {term:"Transdermal Patch",def:"A drug delivery system in which medication is absorbed through the skin over an extended period."}
+  ]},
+  {name:"Pharmacology",color:"#4A90B8",terms:[
+    {term:"Pharmacokinetics (ADME)",def:"The study of how the body processes a medication through four phases: Absorption (drug moves from administration site into bloo..."},
+    {term:"Controlled Substances Act (CSA)",def:"A federal law that classifies substances with potential for abuse into five schedules based on their medical use and abuse pote..."},
+    {term:"Desired-Over-Have Formula",def:"A dosage calculation method: (Desired dose ÷ Dose on hand) × Quantity = Amount to give."},
+    {term:"Metric System (Medication)",def:"The standard measurement system used for medications. Weight units: kg (kilogram) → g (gram) → mg (milligram) → mcg (microgram)."},
+    {term:"Standard (Household) Conversions",def:"Common measurement equivalencies used for oral liquid medications: 1 teaspoon (tsp) = 5 mL │ 1 tablespoon (tbsp) = 15 mL │ 1 fl..."},
+    {term:"Side Effect",def:"A predictable, unintended — but not necessarily harmful — response to a medication at standard therapeutic doses."},
+    {term:"Adverse Effect",def:"An unintended, harmful response to a medication that may require discontinuing the drug or seeking immediate medical care."},
+    {term:"Contraindication",def:"A condition, disease, or circumstance that makes a particular medication or treatment inadvisable or potentially dangerous."},
+    {term:"Half-Life",def:"The time required for the concentration of a drug in the body to be reduced by 50% through metabolism and excretion."}
+  ]},
+  {name:"Positioning & Procedures",color:"#1A8A7D",terms:[
+    {term:"Supine Position",def:"The patient lies flat on their back with arms at the sides."},
+    {term:"Prone Position",def:"The patient lies face down with the head turned to one side."},
+    {term:"Dorsal Recumbent Position",def:"The patient lies on their back with knees bent and feet flat on the table."},
+    {term:"Lithotomy Position",def:"The patient lies on their back with legs elevated and feet placed in stirrups at the end of the table."},
+    {term:"Fowler's Position",def:"The patient sits upright at 90 degrees. Used for head, neck."},
+    {term:"Left Lateral (Sims) Position",def:"The patient lies on their left side with the right knee drawn forward."},
+    {term:"Knee-Chest Position",def:"The patient kneels on the exam table with the chest flat against the table surface and the hips elevated."},
+    {term:"Pap Test (Pap Smear)",def:"A cervical cancer screening procedure in which cells are collected from the cervix using a brush and/or spatula during a pelvic..."}
+  ]},
+  {name:"Emergency & Wounds",color:"#E2B94C",terms:[
+    {term:"Anaphylaxis",def:"A severe, potentially life-threatening systemic allergic reaction that can occur within minutes of exposure to an allergen."},
+    {term:"Seizure Management",def:"Steps to follow when a patient experiences a seizure: move nearby objects away from the patient to prevent injury → do NOT rest..."},
+    {term:"R.A.C.E. (Fire Response)",def:"The standard emergency sequence for responding to a fire in a healthcare setting."},
+    {term:"Wound Healing Phases",def:"The four stages of tissue repair: (1) Hemostasis — immediate vasoconstriction and clot formation to stop bleeding."},
+    {term:"Burn Classification",def:"Burns are classified by depth of tissue involvement."},
+    {term:"Direct Pressure (Bleeding Control)",def:"The first and most effective intervention for controlling active bleeding from a laceration or wound."}
+  ]},
+  {name:"Lab & Diagnostics",color:"#4CAF90",terms:[
+    {term:"Complete Blood Count (CBC)",def:"A comprehensive blood test that evaluates all major blood cell lines: red blood cells (RBCs), white blood cells (WBCs)."},
+    {term:"Basic Metabolic Panel (BMP)",def:"A panel of 8 blood tests measuring kidney function (BUN and creatinine), electrolytes (sodium, potassium, chloride."},
+    {term:"Comprehensive Metabolic Panel (CMP)",def:"An expanded version of the BMP that includes all BMP components plus liver function tests: ALT, AST, alkaline phosphatase."},
+    {term:"Lipid Panel",def:"A blood test measuring total cholesterol, LDL (low-density lipoprotein — 'bad' cholesterol)."},
+    {term:"Liver Function Tests (LFTs)",def:"A panel of blood tests evaluating liver health and function, including ALT (alanine aminotransferase)."},
+    {term:"Thyroid Stimulating Hormone (TSH)",def:"A blood test that measures the level of TSH produced by the pituitary gland."},
+    {term:"X-Ray (Radiograph)",def:"A diagnostic imaging technique that uses radiation to create images of dense internal structures."},
+    {term:"Magnetic Resonance Imaging (MRI)",def:"A diagnostic imaging technique using magnetic fields and radio waves to produce detailed images of soft tissue."},
+    {term:"Ultrasound (Sonography)",def:"A diagnostic imaging technique using high-frequency sound waves to produce real-time images of soft tissue and organ structures."}
+  ]},
+  {name:"HIPAA & Law",color:"#E8976A",terms:[
+    {term:"HIPAA (Health Insurance Portability and Accountability Act)",def:"A federal law enacted in 1996 establishing national standards for protecting the privacy and security of patient health informa..."},
+    {term:"Protected Health Information (PHI)",def:"Any individually identifiable health information in any format — electronic, paper, or verbal — that is created, received."},
+    {term:"HIPAA Violation",def:"Any action that results in the unauthorized use or disclosure of PHI."},
+    {term:"Minimum Necessary Standard",def:"A HIPAA principle requiring that only the minimum amount of PHI necessary to accomplish the intended purpose is used, disclosed."},
+    {term:"Mandatory Reporting",def:"A legal obligation to report certain events to public health or law enforcement authorities, regardless of patient consent."},
+    {term:"Informed Consent",def:"A legal and ethical process in which a competent patient voluntarily agrees to a procedure or treatment after receiving complet..."},
+    {term:"Advance Directive",def:"A legal document in which a competent adult specifies their healthcare wishes in advance."},
+    {term:"Durable Power of Attorney (DPOA)",def:"An advance directive that designates a specific person (healthcare agent or proxy) to make medical decisions on the patient's b..."},
+    {term:"Patient Autonomy",def:"The ethical and legal right of a competent adult patient to make their own informed healthcare decisions."}
+  ]},
+  {name:"Ethics & Professionalism",color:"#C4A84D",terms:[
+    {term:"Non-Maleficence",def:"The foundational bioethical principle meaning 'do no harm."},
+    {term:"Beneficence",def:"The bioethical principle of acting in the patient's best interest — not simply avoiding harm."},
+    {term:"Justice (Medical Ethics)",def:"The bioethical principle of treating all patients fairly and equitably regardless of socioeconomic status, race, religion, gender."},
+    {term:"Scope of Practice",def:"The specific actions, tasks, and procedures a healthcare professional is legally authorized and competent to perform."},
+    {term:"Professionalism",def:"The consistent demonstration of a standard of conduct expected of all healthcare workers, encompassing appearance, communication."},
+    {term:"Therapeutic Communication",def:"A structured, purposeful approach to communication in healthcare that builds trust, comfort."},
+    {term:"Teach-Back Method",def:"A health literacy verification technique in which the MA asks the patient to explain or demonstrate what they just learned."}
+  ]},
+  {name:"Admin & Insurance",color:"#5B8CDB",terms:[
+    {term:"Preauthorization (Precertification)",def:"A process in which the healthcare provider obtains approval from the patient's insurance company before performing a procedure."},
+    {term:"Primary Insurance",def:"The insurance plan that is billed first when a patient has more than one insurance policy."},
+    {term:"Explanation of Benefits (EOB)",def:"A document sent by the insurance company to the subscriber (and often the provider) after a claim is processed."},
+    {term:"Third-Party Payer",def:"Any entity other than the patient or the healthcare provider that pays for medical services — most commonly a health insurance ..."},
+    {term:"EHR (Electronic Health Record)",def:"A digital record of a patient's health information that extends across multiple healthcare organizations and providers — includ..."},
+    {term:"CPOE (Computerized Provider Order Entry)",def:"A technology system that allows providers to enter medical orders electronically — including medications, laboratory tests."},
+    {term:"Medical Record Documentation Standards",def:"Rules that govern how entries are made in the patient's medical record: use black or dark blue ink; date and time every entry; ..."}
+  ]},
+  {name:"Infection Control",color:"#7D6AAE",terms:[
+    {term:"Chain of Infection",def:"The six-step sequence that must remain intact for a communicable disease to spread: (1) infectious agent (pathogen)."},
+    {term:"Standard Precautions",def:"The current baseline infection prevention protocol applied to every patient, every encounter."},
+    {term:"Transmission-Based Precautions",def:"Additional infection control measures used when a patient has a known or suspected infection spread by a specific route."},
+    {term:"Autoclave",def:"The primary sterilization method used in ambulatory healthcare settings."},
+    {term:"Disinfection Levels",def:"Three levels of disinfection based on the microorganisms destroyed."},
+    {term:"Post-Exposure Protocol",def:"The immediate steps required after a needlestick, sharps injury, or splash exposure to potentially infectious material."},
+    {term:"Sharps Container",def:"A rigid, puncture-proof, leak-proof, closable container specifically designed for the safe disposal of needles, lancets."}
+  ]},
+  {name:"Medical Terminology",color:"#3A9E8F",terms:[
+    {term:"brady- (prefix)",def:"Means slow. Clinical examples: bradycardia (slow heart rate, below 60 bpm); bradypnea (slow respiratory rate."},
+    {term:"tachy- (prefix)",def:"Means fast. Clinical examples: tachycardia (fast heart rate, above 100 bpm); tachypnea (fast respiratory rate."},
+    {term:"hypo- (prefix)",def:"Means below, beneath, or deficient. Clinical examples: hypoglycemia (low blood sugar); hypotension (low blood pressure); hypoth..."},
+    {term:"hyper- (prefix)",def:"Means above, excessive, or elevated. Clinical examples: hyperglycemia (high blood sugar); hypertension (high blood pressure — t..."},
+    {term:"-itis (suffix)",def:"Means inflammation. Clinical examples: appendicitis (inflammation of the appendix); pericarditis (inflammation of the pericardi..."},
+    {term:"-ectomy (suffix)",def:"Means surgical removal of a structure. Clinical examples: appendectomy (surgical removal of the appendix); tonsillectomy (surgi..."},
+    {term:"-pathy (suffix)",def:"Means disease or disorder of a body part or system. Clinical examples: neuropathy (disease of the nervous system — often causin..."},
+    {term:"-scope (suffix)",def:"Means an instrument used for visual examination of a body cavity or structure."},
+    {term:"-ology (suffix)",def:"Means the study of a field or body system. Clinical examples: cardiology (study of the heart); neurology (study of the nervous ..."},
+    {term:"Myocardial Infarction vs. Myocarditis",def:"Two frequently confused terms. Myocardial infarction (MI) = a heart attack — death of heart muscle tissue caused by complete or..."},
+    {term:"Dyspnea",def:"Difficulty or labored breathing, often described by the patient as 'shortness of breath' or 'trouble breathing."},
+    {term:"Dysphagia",def:"Difficulty swallowing. A symptom, not a diagnosis, that may indicate esophageal obstruction, neurologic conditions (stroke, ALS)."},
+    {term:"Vital Sign",def:"Normal Adult Range | Abnormal Values | Assessment Method/Notes |"},
+    {term:"Heart Rate",def:"60–100 bpm | Bradycardia <60; Tachycardia >100 | Radial artery (1 min) |"},
+    {term:"Blood Pressure",def:"<120/80 mmHg | Stage 1 HTN ≥130/80; Stage 2 ≥140/90 | Brachial artery, seated |"},
+    {term:"Respiratory Rate",def:"12–20 breaths/min | Tachypnea >20; Bradypnea <12 | Count 1 min (unannounced) |"},
+    {term:"Temperature",def:"97–99°F (oral avg 98.6) | Fever >100.4°F; Hypothermia <95°F | Rectal = most accurate |"},
+    {term:"SpO2 (Pulse Ox)",def:"95–100% | <95% warrants action; <90% critical | Finger or toe sensor |"},
+    {term:"Pain Scale",def:"Patient-rated 0–10 | Document exact patient rating | Numeric or FACES scale |"}
+  ]}
 ];
 
-const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
-  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
-);
-let browseSearch = '';
-let browseOpenCat = null;
-let browseOpenTerm = null;
-document.getElementById('header-subtitle').textContent =
-  `CCMA Exam Readiness & Review · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
-renderBrowse();
-function renderBrowse() {
-  const el = document.getElementById('browse-mode');
-  const query = browseSearch.trim().toLowerCase();
-  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
-  if (query) {
-    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
-    if (filtered.length === 0) {
-      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
-    } else {
-      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
-      filtered.forEach((t, i) => {
-        const isOpen = browseOpenTerm === `s-${i}`;
-        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
-      });
-      html += `</div>`;
-    }
-  } else {
-    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
-    CATEGORIES.forEach((cat, ci) => {
-      const isOpen = browseOpenCat === ci;
-      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
-      if (isOpen) {
-        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
-        cat.terms.forEach((t, ti) => {
-          const tKey = `${ci}-${ti}`;
-          const tOpen = browseOpenTerm === tKey;
-          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
-        });
-        html += `</div>`;
-      }
-      html += `</div>`;
-    });
-    html += `</div>`;
-  }
-  el.innerHTML = html;
-}
-function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+const glossary=[];const catNames=["All"];const catColors={};
+CATEGORIES.forEach(cat=>{catNames.push(cat.name);catColors[cat.name]=cat.color;cat.terms.forEach(t=>glossary.push({term:t.term,definition:t.def,category:cat.name}));});
+let filter="All",search="",openIdx=null,currentPage=0;const PER_PAGE=4;
+function renderFilters(){document.getElementById('filters').innerHTML=catNames.map(c=>{const col=c==="All"?"#7a7f90":(catColors[c]||"#888");const active=filter===c;return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}18;${active?`border-color:${col};color:${col};background:${col}18`:''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')">${c}</button>`;}).join('');}
+function getFiltered(){const s=search.toLowerCase();return glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));}
+function renderList(){const filtered=getFiltered();const totalPages=Math.max(1,Math.ceil(filtered.length/PER_PAGE));if(currentPage>=totalPages)currentPage=totalPages-1;if(currentPage<0)currentPage=0;const start=currentPage*PER_PAGE;const pageItems=filtered.slice(start,start+PER_PAGE);document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' · Page '+(currentPage+1)+' of '+totalPages;if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms match your search.</div>';document.getElementById('pager').innerHTML='';return;}document.getElementById('list').innerHTML=pageItems.map(g=>{const col=catColors[g.category]||"#888";const origIdx=glossary.indexOf(g);const isOpen=openIdx===origIdx;return `<div class="item ${isOpen?'open':''}" onclick="toggle(${origIdx})"><div class="item-head"><div class="item-left"><div class="item-bar" style="background:${col}"></div><span class="item-term">${g.term}</span></div><span class="item-cat" style="background:${col}18;color:${col}">${g.category}</span></div><div class="item-def" style="${isOpen?'display:block':''}">${g.definition}</div></div>`;}).join('');let ph=`<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>← Prev</button><div class="pg-dots">`;for(let p=0;p<totalPages;p++){ph+=`<div class="pg-dot ${p===currentPage?'active':''}" onclick="goPage(${p})"></div>`;}ph+=`</div><button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''}>Next →</button>`;document.getElementById('pager').innerHTML=ph;}
+function setFilter(c){filter=c;currentPage=0;openIdx=null;renderFilters();renderList();}
+function toggle(i){openIdx=openIdx===i?null:i;renderList();}
+function goPage(p){currentPage=p;openIdx=null;renderList();}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;currentPage=0;openIdx=null;renderList();});
+renderFilters();renderList();
 </script>
 </body>
 </html>

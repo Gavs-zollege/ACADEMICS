@@ -31,39 +31,61 @@
     flex-shrink: 0;
     text-align: center;
     padding: 14px 24px 10px;
+    position: relative;
   }
   .header h1 {
-    font-size: 24px; font-weight: 800;
+    font-size: 28px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  .header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Fullscreen button */
+  .fs-btn {
+    position: absolute;
+    top: 14px; right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 18px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .fs-btn:hover {
+    color: var(--text-bright);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+  }
+  .fs-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
   .main {
     flex: 1; overflow: hidden;
     display: flex; gap: 14px;
     padding: 0 20px 14px;
   }
-
-  /* Sidebar */
   .sidebar {
-    width: 240px; flex-shrink: 0;
+    width: 260px; flex-shrink: 0;
     display: flex; flex-direction: column;
     overflow: hidden;
   }
   .sidebar-pages {
     flex: 1;
-    display: flex; flex-direction: column; gap: 3px;
+    display: flex; flex-direction: column; gap: 4px;
     overflow: hidden;
   }
   .sidebar-page {
     display: none;
-    flex-direction: column; gap: 3px;
+    flex-direction: column; gap: 4px;
     flex: 1;
   }
   .sidebar-page.active { display: flex; }
   .sidebar-nav {
     flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    gap: 6px; padding: 6px 0 0;
+    gap: 6px; padding: 8px 0 0;
   }
   .sidebar-nav button {
     background: var(--surface);
@@ -71,56 +93,54 @@
     border-radius: 6px;
     color: var(--text-muted);
     font-family: 'DM Sans', sans-serif;
-    font-size: 11px; font-weight: 600;
-    padding: 4px 10px;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 12px;
     cursor: pointer;
     transition: all 0.2s;
   }
   .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
   .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
   .sidebar-nav .page-info {
-    font-size: 11px; color: var(--text-muted);
+    font-size: 12px; color: var(--text-muted);
     font-family: 'IBM Plex Mono', monospace;
-    min-width: 40px; text-align: center;
+    min-width: 44px; text-align: center;
   }
   .topic-btn {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 7px 10px;
+    border-radius: 10px; padding: 8px 12px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
   }
   .topic-btn:hover { transform: translateX(2px); }
-  .topic-btn .icon { font-size: 16px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 12.5px; font-weight: 500; flex: 1;
+    font-size: 14px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-
-  /* Content */
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 18px;
+    border-radius: 16px; padding: 22px;
     display: flex; flex-direction: column;
   }
   .content-header {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 14px;
   }
-  .content-header .icon { font-size: 28px; }
+  .content-header .icon { font-size: 32px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 17px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
   .content-body {
@@ -130,14 +150,14 @@
   }
   .content-points {
     flex: 1;
-    display: flex; flex-direction: column; gap: 6px;
+    display: flex; flex-direction: column; gap: 7px;
   }
   .content-footer {
     flex-shrink: 0;
     display: flex; align-items: center; justify-content: space-between;
-    padding-top: 10px;
+    padding-top: 12px;
     border-top: 1px solid var(--border);
-    margin-top: 10px;
+    margin-top: 12px;
   }
   .content-footer .nav-btn {
     background: var(--surface);
@@ -145,11 +165,13 @@
     border-radius: 8px;
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    font-size: 12px; font-weight: 600;
-    padding: 6px 14px;
+    font-size: 13px; font-weight: 600;
+    padding: 7px 16px;
     cursor: pointer;
     transition: all 0.2s;
     display: flex; align-items: center; gap: 6px;
+    max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
   .content-footer .nav-btn:disabled { opacity: 0.25; cursor: default; }
@@ -165,72 +187,40 @@
     width: 20px; border-radius: 4px;
   }
   .point {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 9px 12px;
+    border-radius: 10px; padding: 11px 14px;
     border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 13.5px; line-height: 1.5; color: var(--text); }
+  .point p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .takeaway-item {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 9px 12px;
+    border-radius: 10px; padding: 11px 14px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
+    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 13.5px; line-height: 1.5; color: var(--text); }
+  .takeaway-item p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 48px; margin-bottom: 14px; }
-  .welcome p { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
-
-  /* Overview grid */
-  .overview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 8px;
-    flex: 1;
-  }
-  .overview-card {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; gap: 9px;
-  }
-  .overview-card:hover {
-    transform: translateY(-1px);
-    border-color: rgba(255,255,255,0.15);
-    background: rgba(255,255,255,0.04);
-  }
-  .overview-card .card-icon { font-size: 20px; }
-  .overview-card .card-num {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 700;
-  }
-  .overview-card .card-title {
-    font-size: 12px; font-weight: 600;
-    color: var(--text-bright); line-height: 1.2;
-  }
-
+  .welcome .big-icon { font-size: 52px; margin-bottom: 16px; }
+  .welcome p { font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -246,6 +236,9 @@
   <div class="header">
     <h1>Completing Patient Intake and Recording Vital Signs</h1>
     <p>Patient Intake and Vital Signs</p>
+    <button class="fs-btn" id="fsBtn" title="Toggle fullscreen">
+      <svg id="fsIcon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
   </div>
   <div class="main">
     <div class="sidebar" id="sidebar">
@@ -261,51 +254,8 @@
   </div>
 </div>
 <script>
-var TOPICS = [
-  { id:1, num:"01", icon:"🔍", title:"Identifying Your Patient", color:"#E63946",
-    points:["Use at least two identifiers at every visit","Full name + date of birth (most common)","Medical record number","Last 4 digits of Social Security number","Never read the name aloud and ask the patient to confirm it"] },
-  { id:2, num:"02", icon:"🧰", title:"Patient Health Background", color:"#457B9D",
-    points:["Medical history — past illnesses, surgeries, diagnoses","Surgical history — procedures the patient has had","Family history — conditions that run in the family","Social history — lifestyle, tobacco, alcohol, drug use, occupation","Chief complaint — the reason for today's visit, in the patient's own words"] },
-  { id:3, num:"03", icon:"🌈", title:"Menstrual History (LMP)", color:"#2A9D8F",
-    points:["Ask at every visit for patients who menstruate","LMP = Last Menstrual Period — the first day of their most recent period","Determines potential for pregnancy before ordering tests","Used to calculate an estimated due date if pregnant","Document whether the patient is currently menstruating"] },
-  { id:4, num:"04", icon:"🧪", title:"Vital Signs — The Basics", color:"#8338EC",
-    points:["Taken at every patient encounter","Key indicators of overall health (homeostasis)","Five main vital signs: blood pressure, pulse, temperature, respiration, pulse oximetry","Age, medications, stress, and activity can all affect readings","Always report abnormal values to the provider"] },
-  { id:5, num:"05", icon:"📏", title:"Blood Pressure", color:"#FF6B35",
-    points:["Manual method: sphygmomanometer + stethoscope","Electronic method: machine reads without auscultation","Palpatory method: used in emergencies — feel the radial pulse instead","Normal adult: systolic < 120, diastolic < 80 mmHg","Common errors: wrong cuff size, arm position, legs crossed, recent caffeine/smoking"] },
-  { id:6, num:"06", icon:"💉", title:"Orthostatic Blood Pressure", color:"#E63946",
-    points:["Tests for a significant drop in BP when changing positions","Lie down 5 min → stand → measure at 1 min and 3 min","Positive finding: BP drops ≥ 20 mmHg OR pulse rises ≥ 10 bpm","Keep arm supported — a hanging arm gives a falsely high reading","Watch for dizziness; stop and assist patient if unsafe"] },
-  { id:7, num:"07", icon:"🩸", title:"Pulse", color:"#457B9D",
-    points:["Normal adult range: 60–100 beats per minute","Most common site: radial pulse (thumb side of wrist)","Brachial: used for children and blood pressure","Apical: stethoscope over the heart — used for irregular rhythms","Assess rate, rhythm, and strength; report any irregularities"] },
-  { id:8, num:"08", icon:"📋", title:"Body Temperature", color:"#2A9D8F",
-    points:["Oral: 98.6°F / 37°C — standard baseline","Axillary (Ax): ~1°F lower than oral","Rectal (R), Tympanic (T), Temporal (TA): ~1°F higher than oral","No hot/cold drinks, gum, or smoking 15 min before oral temp","Document site if not oral: Ax, R, T/AU, or TA"] },
-  { id:9, num:"09", icon:"🩹", title:"Respiratory Rate", color:"#8338EC",
-    points:["Normal adult range: 12–20 breaths per minute","One breath = one full inhale + one full exhale","Count without telling the patient — they may alter their breathing","Abnormal patterns: apnea, tachypnea, bradypnea, dyspnea, wheezing","Note rate, rhythm, and depth"] },
-  { id:10, num:"10", icon:"🏷️", title:"Pulse Oximetry", color:"#FF6B35",
-    points:["Measures oxygen saturation in the blood (SpO₂)","Normal result: 95% or higher","Report to provider if below 90%","Clip goes on the fingertip; earlobe is an alternate site","Nail polish, artificial nails, and dark skin at low O₂ can affect accuracy"] },
-  { id:11, num:"11", icon:"⚙️", title:"Pain Assessment", color:"#E63946",
-    points:["Use the 0–10 numeric scale (0 = no pain, 10 = worst pain)","Wong-Baker Faces Scale for children or those who can't use numbers","Also observe nonverbal cues: grimacing, guarding, posture","Ask about location, onset, duration, and what makes it better or worse","Document all verbal and nonverbal pain responses"] },
-  { id:12, num:"12", icon:"🔬", title:"Height, Weight, BMI & Waist", color:"#457B9D",
-    points:["Remove shoes and heavy outerwear before measuring","Weight may vary by age and mobility — use appropriate equipment","BMI = weight (kg) ÷ height² (m²) — or use the lb/in² × 703 formula","BMI 18.5–24.9 = normal; ≥ 30 = obese","Waist circumference assesses metabolic and cardiovascular risk"] },
-  { id:13, num:"13", icon:"⭐", title:"Unit Conversions", color:"#2A9D8F",
-    points:["°F to °C: (°F − 32) ÷ 1.8","°C to °F: (°C × 1.8) + 32","Pounds to kilograms: lb ÷ 2.2","Kilograms to pounds: kg × 2.2","Inches to feet: divide by 12 (remainder = inches)"] },
-  { id:14, num:"14", icon:"📦", title:"Factors That Affect Vital Signs", color:"#8338EC",
-    points:["Age: infants fluctuate more; older adults run cooler","Medications: beta-blockers lower BP and heart rate","Stress and anxiety: raise BP and pulse","Smoking or caffeine within 30 min: raise BP","Always note any relevant factors when reporting results"] },
-  { id:15, num:"15", icon:"💊", title:"Routine Health Screenings", color:"#FF6B35",
-    points:["Tobacco use — assess for cessation support","Alcohol use — frequency and quantity","HIV screening — recommended for all adults ages 15–65","Document 'patient declined to answer' if they refuse","These screenings are part of every complete patient intake"] },
-  { id:16, num:"16", icon:"🫀", title:"Mental Health Screening Tools", color:"#E63946",
-    points:["PHQ-2: quick 2-question depression screen","PHQ-9: full depression assessment if PHQ-2 is positive","GAD-7: screens for generalized anxiety","Mini-Mental State Exam (MMSE): cognitive screening for older adults","Report all positive screens to the provider"] },
-  { id:17, num:"17", icon:"📡", title:"Pediatric Measurements", color:"#457B9D",
-    points:["Measure height, weight, and head circumference at well-child visits","Plot on CDC growth charts — sex-specific, birth through age 20","Results reported as a percentile compared to same-age peers","< 5th percentile = underweight; ≥ 95th percentile = obese","Head circumference tracked from birth to 36 months"] },
-];
-
-var TAKEAWAYS = [
-  "Always use two identifiers before providing any care",
-  "Vital signs are taken every visit — accuracy and consistency matter",
-  "Know normal ranges for every age group, not just adults",
-  "Factors like age, medications, and recent activity affect readings",
-  "Document everything — the health record is a legal document",
-  "Report abnormal findings to the provider immediately"
-];
+var TOPICS = [{"id": 1, "num": "01", "icon": "🔍", "title": "Identifying Your Patient", "color": "#E63946", "points": ["Use at least two identifiers at every visit", "Full name + date of birth (most common)", "Medical record number", "Last 4 digits of Social Security number", "Never read the name aloud and ask the patient to confirm it"]}, {"id": 2, "num": "02", "icon": "🧰", "title": "Patient Health Background", "color": "#457B9D", "points": ["Medical history — past illnesses, surgeries, diagnoses", "Surgical history — procedures the patient has had", "Family history — conditions that run in the family", "Social history — lifestyle, tobacco, alcohol, drug use, occupation", "Chief complaint — the reason for today's visit, in the patient's own words"]}, {"id": 3, "num": "03", "icon": "🌈", "title": "Menstrual History (LMP)", "color": "#2A9D8F", "points": ["Ask at every visit for patients who menstruate", "LMP = Last Menstrual Period — the first day of their most recent period", "Determines potential for pregnancy before ordering tests", "Used to calculate an estimated due date if pregnant", "Document whether the patient is currently menstruating"]}, {"id": 4, "num": "04", "icon": "🧪", "title": "Vital Signs — The Basics", "color": "#8338EC", "points": ["Taken at every patient encounter", "Key indicators of overall health (homeostasis)", "Five main vital signs: blood pressure, pulse, temperature, respiration, pulse oximetry", "Age, medications, stress, and activity can all affect readings", "Always report abnormal values to the provider"]}, {"id": 5, "num": "05", "icon": "📏", "title": "Blood Pressure", "color": "#FF6B35", "points": ["Manual method: sphygmomanometer + stethoscope", "Electronic method: machine reads without auscultation", "Palpatory method: used in emergencies — feel the radial pulse instead", "Normal adult: systolic < 120, diastolic < 80 mmHg", "Common errors: wrong cuff size, arm position, legs crossed, recent caffeine/smoking"]}, {"id": 6, "num": "06", "icon": "💉", "title": "Orthostatic Blood Pressure", "color": "#E63946", "points": ["Tests for a significant drop in BP when changing positions", "Lie down 5 min → stand → measure at 1 min and 3 min", "Positive finding: BP drops ≥ 20 mmHg OR pulse rises ≥ 10 bpm", "Keep arm supported — a hanging arm gives a falsely high reading", "Watch for dizziness; stop and assist patient if unsafe"]}, {"id": 7, "num": "07", "icon": "🩸", "title": "Pulse", "color": "#457B9D", "points": ["Normal adult range: 60–100 beats per minute", "Most common site: radial pulse (thumb side of wrist)", "Brachial: used for children and blood pressure", "Apical: stethoscope over the heart — used for irregular rhythms", "Assess rate, rhythm, and strength; report any irregularities"]}, {"id": 8, "num": "08", "icon": "📋", "title": "Body Temperature", "color": "#2A9D8F", "points": ["Oral: 98.6°F / 37°C — standard baseline", "Axillary (Ax): ~1°F lower than oral", "Rectal (R), Tympanic (T), Temporal (TA): ~1°F higher than oral", "No hot/cold drinks, gum, or smoking 15 min before oral temp", "Document site if not oral: Ax, R, T/AU, or TA"]}, {"id": 9, "num": "09", "icon": "🩹", "title": "Respiratory Rate", "color": "#8338EC", "points": ["Normal adult range: 12–20 breaths per minute", "One breath = one full inhale + one full exhale", "Count without telling the patient — they may alter their breathing", "Abnormal patterns: apnea, tachypnea, bradypnea, dyspnea, wheezing", "Note rate, rhythm, and depth"]}, {"id": 10, "num": "10", "icon": "🏷️", "title": "Pulse Oximetry", "color": "#FF6B35", "points": ["Measures oxygen saturation in the blood (SpO₂)", "Normal result: 95% or higher", "Report to provider if below 90%", "Clip goes on the fingertip; earlobe is an alternate site", "Nail polish, artificial nails, and dark skin at low O₂ can affect accuracy"]}, {"id": 11, "num": "11", "icon": "⚙️", "title": "Pain Assessment", "color": "#E63946", "points": ["Use the 0–10 numeric scale (0 = no pain, 10 = worst pain)", "Wong-Baker Faces Scale for children or those who can't use numbers", "Also observe nonverbal cues: grimacing, guarding, posture", "Ask about location, onset, duration, and what makes it better or worse", "Document all verbal and nonverbal pain responses"]}, {"id": 12, "num": "12", "icon": "🔬", "title": "Height, Weight, BMI & Waist", "color": "#457B9D", "points": ["Remove shoes and heavy outerwear before measuring", "Weight may vary by age and mobility — use appropriate equipment", "BMI = weight (kg) ÷ height² (m²) — or use the lb/in² × 703 formula", "BMI 18.5–24.9 = normal; ≥ 30 = obese", "Waist circumference assesses metabolic and cardiovascular risk"]}, {"id": 13, "num": "13", "icon": "⭐", "title": "Unit Conversions", "color": "#2A9D8F", "points": ["°F to °C: (°F − 32) ÷ 1.8", "°C to °F: (°C × 1.8) + 32", "Pounds to kilograms: lb ÷ 2.2", "Kilograms to pounds: kg × 2.2", "Inches to feet: divide by 12 (remainder = inches)"]}, {"id": 14, "num": "14", "icon": "📦", "title": "Factors That Affect Vital Signs", "color": "#8338EC", "points": ["Age: infants fluctuate more; older adults run cooler", "Medications: beta-blockers lower BP and heart rate", "Stress and anxiety: raise BP and pulse", "Smoking or caffeine within 30 min: raise BP", "Always note any relevant factors when reporting results"]}, {"id": 15, "num": "15", "icon": "💊", "title": "Routine Health Screenings", "color": "#FF6B35", "points": ["Tobacco use — assess for cessation support", "Alcohol use — frequency and quantity", "HIV screening — recommended for all adults ages 15–65", "Document 'patient declined to answer' if they refuse", "These screenings are part of every complete patient intake"]}, {"id": 16, "num": "16", "icon": "🫀", "title": "Mental Health Screening Tools", "color": "#E63946", "points": ["PHQ-2: quick 2-question depression screen", "PHQ-9: full depression assessment if PHQ-2 is positive", "GAD-7: screens for generalized anxiety", "Mini-Mental State Exam (MMSE): cognitive screening for older adults", "Report all positive screens to the provider"]}, {"id": 17, "num": "17", "icon": "📡", "title": "Pediatric Measurements", "color": "#457B9D", "points": ["Measure height, weight, and head circumference at well-child visits", "Plot on CDC growth charts — sex-specific, birth through age 20", "Results reported as a percentile compared to same-age peers", "< 5th percentile = underweight; ≥ 95th percentile = obese", "Head circumference tracked from birth to 36 months"]}];
+var TAKEAWAYS = ["Always use two identifiers before providing any care", "Vital signs are taken every visit — accuracy and consistency matter", "Know normal ranges for every age group, not just adults", "Factors like age, medications, and recent activity affect readings", "Document everything — the health record is a legal document", "Report abnormal findings to the provider immediately"];
 
 var activeId = null;
 var contentPage = 0;
@@ -318,20 +268,37 @@ var sidebarPagesEl = document.getElementById('sidebarPages');
 var sidebarNavEl = document.getElementById('sidebarNav');
 var content = document.getElementById('content');
 
+/* ── Fullscreen ── */
+var fsBtn = document.getElementById('fsBtn');
+var fsIcon = document.getElementById('fsIcon');
+var expandPath = 'M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3';
+var shrinkPath = 'M4 14h2a2 2 0 0 1 2 2v2m8-16v2a2 2 0 0 0 2 2h2M4 10h2a2 2 0 0 0 2-2V6m8 16v-2a2 2 0 0 1 2-2h2';
+
+function updateFsIcon() {
+  var isFs = !!document.fullscreenElement;
+  fsIcon.innerHTML = '<path d="' + (isFs ? shrinkPath : expandPath) + '"/>';
+  fsBtn.title = isFs ? 'Exit fullscreen' : 'Toggle fullscreen';
+}
+
+fsBtn.addEventListener('click', function() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(function(){});
+  } else {
+    document.exitFullscreen().catch(function(){});
+  }
+});
+document.addEventListener('fullscreenchange', updateFsIcon);
+
 /* ── Sidebar ── */
 function buildSidebar() {
   sidebarPagesEl.innerHTML = '';
-  // Topics + takeaways = allItems
   var allItems = TOPICS.map(function(t) { return { type: 'topic', data: t }; });
   allItems.push({ type: 'takeaway' });
-
   sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
-
   for (var p = 0; p < sidebarTotalPages; p++) {
     var pageDiv = document.createElement('div');
     pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
     pageDiv.dataset.page = p;
-
     var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p + 1) * ITEMS_PER_SIDEBAR_PAGE);
     slice.forEach(function(item) {
       if (item.type === 'topic') {
@@ -365,17 +332,13 @@ function buildSidebar() {
     });
     sidebarPagesEl.appendChild(pageDiv);
   }
-
-  // Nav
   if (sidebarTotalPages > 1) {
     sidebarNavEl.innerHTML =
-      '<button id="sbPrev" onclick="changeSidebarPage(-1)">◀</button>' +
+      '<button id="sbPrev" onclick="changeSidebarPage(-1)">\u25C0</button>' +
       '<span class="page-info" id="sbInfo"></span>' +
-      '<button id="sbNext" onclick="changeSidebarPage(1)">▶</button>';
+      '<button id="sbNext" onclick="changeSidebarPage(1)">\u25B6</button>';
     updateSidebarNav();
-  } else {
-    sidebarNavEl.innerHTML = '';
-  }
+  } else { sidebarNavEl.innerHTML = ''; }
 }
 
 function changeSidebarPage(dir) {
@@ -385,8 +348,7 @@ function changeSidebarPage(dir) {
   var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
   pages.forEach(function(p) { p.classList.remove('active'); });
   pages[sidebarPage].classList.add('active');
-  updateSidebarNav();
-  updateSidebarActive();
+  updateSidebarNav(); updateSidebarActive();
 }
 
 function updateSidebarNav() {
@@ -407,111 +369,78 @@ function updateSidebarActive() {
     var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
     if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
     if (isActive && topic) {
-      btn.style.background = topic.color + '20';
-      btn.style.borderColor = topic.color;
+      btn.style.background = topic.color + '20'; btn.style.borderColor = topic.color;
     } else if (isActive && id === 'takeaways') {
-      btn.style.background = 'rgba(255,255,255,0.08)';
-      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+      btn.style.background = 'rgba(255,255,255,0.08)'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
     } else {
-      btn.style.background = 'var(--surface)';
-      btn.style.borderColor = 'var(--border)';
+      btn.style.background = 'var(--surface)'; btn.style.borderColor = 'var(--border)';
     }
   });
 }
 
-/* ── Content Pages ── */
-function renderTopicPaged(t) {
-  // Each topic has 5 points — show all on one page (they're small)
-  // But we'll split if needed. For now 5 points fits fine.
-  contentPages = [t.points];
-  contentPage = 0;
-  showContentPage(t);
-}
-
+/* ── Content ── */
 function showContentPage(t) {
   var points = contentPages[contentPage];
   var globalOffset = 0;
   for (var i = 0; i < contentPage; i++) globalOffset += contentPages[i].length;
-
   var html = '<div class="content-header">' +
     '<span class="icon">' + t.icon + '</span>' +
     '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
     '<div class="title">' + t.title + '</div></div></div>' +
     '<div class="content-body"><div class="content-points">';
-
   points.forEach(function(p, i) {
     html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
       '<div class="num" style="background:' + t.color + '">' + (globalOffset + i + 1) + '</div>' +
       '<p>' + p + '</p></div>';
   });
-
   html += '</div>';
-
-  // Footer nav between topics
   var topicIdx = TOPICS.findIndex(function(x) { return x.id === t.id; });
   var prevTopic = topicIdx > 0 ? TOPICS[topicIdx - 1] : null;
   var nextTopic = topicIdx < TOPICS.length - 1 ? TOPICS[topicIdx + 1] : null;
-
   html += '<div class="content-footer">';
   if (prevTopic) {
-    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">← ' + prevTopic.title + '</button>';
-  } else {
-    html += '<div></div>';
-  }
-
-  // Dots
+    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">\u2190 ' + prevTopic.title + '</button>';
+  } else { html += '<div></div>'; }
   html += '<div class="page-dots">';
   TOPICS.forEach(function(x) {
-    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '" title="' + x.title + '"></div>';
+    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '"></div>';
   });
   html += '</div>';
-
   if (nextTopic) {
-    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' →</button>';
+    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' \u2192</button>';
   } else {
-    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways →</button>';
+    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways \u2192</button>';
   }
-
   html += '</div></div>';
   content.innerHTML = html;
-  content.style.animation = 'none';
-  void content.offsetHeight;
+  content.style.animation = 'none'; void content.offsetHeight;
   content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function renderTakeaways() {
   var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:28px">🎯</span>' +
+    '<span class="icon" style="font-size:32px">\uD83C\uDFAF</span>' +
     '<div><div class="title">Key Takeaways</div></div></div>' +
     '<div class="content-body"><div class="content-points">';
-
   TAKEAWAYS.forEach(function(t, i) {
     html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
       '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
   });
-
   html += '</div>';
-  html += '<div class="content-footer">';
   var lastTopic = TOPICS[TOPICS.length - 1];
-  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">← ' + lastTopic.title + '</button>';
+  html += '<div class="content-footer">';
+  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">\u2190 ' + lastTopic.title + '</button>';
   html += '<div class="page-dots">';
-  TOPICS.forEach(function() {
-    html += '<div class="dot"></div>';
-  });
+  TOPICS.forEach(function() { html += '<div class="dot"></div>'; });
   html += '<div class="dot active" style="background: linear-gradient(135deg, #E63946, #FF6B35)"></div>';
-  html += '</div>';
-  html += '<div></div>';
-  html += '</div></div>';
-
+  html += '</div><div></div></div></div>';
   content.innerHTML = html;
-  content.style.animation = 'none';
-  void content.offsetHeight;
+  content.style.animation = 'none'; void content.offsetHeight;
   content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function selectTopic(id) {
   activeId = id;
-  // Switch sidebar page to show the active topic
   if (id !== 'takeaways') {
     var idx = TOPICS.findIndex(function(t) { return t.id === id; });
     var targetPage = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
@@ -523,7 +452,6 @@ function selectTopic(id) {
       updateSidebarNav();
     }
   } else {
-    // Takeaways is on the last page
     var tkPage = sidebarTotalPages - 1;
     if (tkPage !== sidebarPage) {
       sidebarPage = tkPage;
@@ -534,17 +462,15 @@ function selectTopic(id) {
     }
   }
   updateSidebarActive();
-
-  if (id === 'takeaways') {
-    renderTakeaways();
-  } else {
+  if (id === 'takeaways') { renderTakeaways(); }
+  else {
     var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) renderTopicPaged(topic);
+    if (topic) { contentPages = [topic.points]; contentPage = 0; showContentPage(topic); }
   }
 }
 
-/* Keyboard nav */
 document.addEventListener('keydown', function(e) {
+  if (e.key === 'F11') { e.preventDefault(); fsBtn.click(); return; }
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
     e.preventDefault();
     if (activeId === null) { selectTopic(1); return; }

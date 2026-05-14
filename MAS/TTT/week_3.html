@@ -30,111 +30,173 @@
   .header {
     flex-shrink: 0;
     text-align: center;
-    padding: 16px 24px 12px;
+    padding: 14px 24px 10px;
   }
   .header h1 {
-    font-size: 26px; font-weight: 800;
+    font-size: 24px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .header p { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
   .main {
     flex: 1; overflow: hidden;
-    display: flex; gap: 16px;
-    padding: 0 24px 16px;
+    display: flex; gap: 14px;
+    padding: 0 20px 14px;
   }
   .sidebar {
-    width: 250px; flex-shrink: 0;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 4px;
-    padding-right: 6px;
+    width: 240px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .sidebar::-webkit-scrollbar { width: 3px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .sidebar-pages {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 3px;
+    overflow: hidden;
+  }
+  .sidebar-page {
+    display: none;
+    flex-direction: column; gap: 3px;
+    flex: 1;
+  }
+  .sidebar-page.active { display: flex; }
+  .sidebar-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 6px 0 0;
+  }
+  .sidebar-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 600;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
+  .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .sidebar-nav .page-info {
+    font-size: 11px; color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 40px; text-align: center;
+  }
   .topic-btn {
     display: flex; align-items: center; gap: 9px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 8px 11px;
+    border-radius: 10px; padding: 7px 10px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
   }
   .topic-btn:hover { transform: translateX(2px); }
-  .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .topic-btn .icon { font-size: 16px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 13px; font-weight: 500; flex: 1;
+    font-size: 12.5px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 4px 0; flex-shrink: 0;
-  }
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px;
+    border-radius: 16px; padding: 18px;
     display: flex; flex-direction: column;
   }
   .content-header {
     flex-shrink: 0;
     display: flex; align-items: center; gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
-  .content-header .icon { font-size: 30px; }
+  .content-header .icon { font-size: 28px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 18px; font-weight: 700;
+    font-size: 17px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
-  .content-scroll {
-    flex: 1; overflow-y: auto; padding-right: 6px;
+  .content-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .content-scroll::-webkit-scrollbar { width: 3px; }
-  .content-scroll::-webkit-scrollbar-track { background: transparent; }
-  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .content-points {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .content-footer {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    margin-top: 10px;
+  }
+  .content-footer .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    max-width: 180px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .content-footer .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  .content-footer .page-dots {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .content-footer .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.25s;
+  }
+  .content-footer .dot.active {
+    width: 20px; border-radius: 4px;
+  }
   .point {
     display: flex; gap: 10px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px; border: 1px solid transparent;
+    border-radius: 10px; padding: 9px 12px;
+    border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .point p { font-size: 13.5px; line-height: 1.5; color: var(--text); }
   .takeaway-item {
     display: flex; gap: 10px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px;
+    border-radius: 10px; padding: 9px 12px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 22px; height: 22px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+    font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item p { font-size: 13.5px; line-height: 1.5; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
-  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  .welcome .big-icon { font-size: 48px; margin-bottom: 14px; }
+  .welcome p { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -152,7 +214,10 @@
     <p>Administrative Assisting</p>
   </div>
   <div class="main">
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-pages" id="sidebarPages"></div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
     <div class="content" id="content">
       <div class="welcome">
         <div class="big-icon">📚</div>
@@ -162,92 +227,97 @@
   </div>
 </div>
 <script>
-var TOPICS = [
-  { id:1, num:"01", icon:"🔍", title:"Scheduling Patient Appointments", color:"#E63946",
-    points:["Electronic scheduling: done in the EHR or practice management system","Paper scheduling: used as a backup during downtime or power outages","Common methods: specific time, wave, double-booking, and cluster scheduling","Block the schedule matrix for rounds, lunch, meetings, and days off","Always ask the reason for the visit to determine the right appointment type and length"] },
-  { id:2, num:"02", icon:"🧰", title:"Determining Appointment Type & Duration", color:"#457B9D",
-    points:["New patient: 60 min — established/follow-up: 15 min","Comprehensive or preventive care: 45–60 min","Urgent visit: 20 min — non-patient (meetings, reps): 30 min","Ask screening questions to clarify the reason for the visit","Also ask if the patient prefers an in-person or telehealth visit"] },
-  { id:3, num:"03", icon:"🌈", title:"Prioritizing Appointment Needs", color:"#2A9D8F",
-    points:["Emergency: life-threatening — direct to 911 or ER immediately","Urgent: needs to be seen within 24 hours — work into the schedule as soon as possible","Use the organization\'s screening protocol and decision tree for every call","The MA cannot diagnose — only screen and route appropriately","Get the patient\'s name, phone number, and location at the start of every call"] },
-  { id:4, num:"04", icon:"🧪", title:"Patient Check-In & Check-Out", color:"#8338EC",
-    points:["Verify photo ID and confirm it matches the insurance card and health record","Ask if demographics or insurance have changed — update before the visit","Collect copayment or any known patient financial responsibility before the appointment","New patients: review and collect NPP, Bill of Rights, and consent forms","Check-out: review the after-visit summary, schedule follow-ups, answer questions"] },
-  { id:5, num:"05", icon:"📏", title:"Verifying Insurance & Financial Eligibility", color:"#FF6B35",
-    points:["Verify eligibility at scheduling AND again on the date of service","Confirm the plan is active and the requested service is a covered benefit","Identify the patient\'s financial responsibility: copay, deductible, coinsurance","Communicate cost estimates to the patient before the visit","Use the EHR eligibility tool, payer website, or a phone call to verify"] },
-  { id:6, num:"06", icon:"💉", title:"Patient Flow Sheets, Superbill & Encounter Forms", color:"#E63946",
-    points:["Flow sheet: tracks ongoing health data such as vitals and lab results over time","Superbill/encounter form: records diagnoses and procedures from the current visit","Diagnosis codes (ICD-10-CM) explain why the patient came in","Procedure codes (CPT/HCPCS) describe what the provider did","Both codes must link together to demonstrate medical necessity"] },
-  { id:7, num:"07", icon:"🩸", title:"Confirming Diagnostic & Procedural Codes", color:"#457B9D",
-    points:["ICD-10-CM: 3–7 alphanumeric characters — the reason for the visit","CPT®: 5-digit numeric codes — the services and procedures provided","HCPCS: alphanumeric codes — supplies, equipment, and non-CPT services","Review documentation to confirm codes are complete, correct, and sequenced properly","Query the provider if any code does not match the documentation"] },
-  { id:8, num:"08", icon:"📋", title:"Prior Authorizations & Precertifications", color:"#2A9D8F",
-    points:["Preauthorization: payer approval confirming a service is medically necessary","Precertification: confirms a benefit exists — does not guarantee payment","Required for: specialist consults, elective surgery, imaging, therapies, some prescriptions","Include diagnosis codes, procedure codes, and supporting clinical documentation","Submit electronically when possible — faster response time"] },
-  { id:9, num:"09", icon:"🩹", title:"Facilitating Referrals", color:"#8338EC",
-    points:["Needed when a patient requires services outside the primary care provider\'s scope","Submit via phone, EHR, payer portal, or formal written process depending on payer rules","Referrals fall under HIPAA TPO — a separate signed release is usually not required","Electronic referrals must be sent through a secure, encrypted system","Follow up to confirm the referral was received and the patient has an appointment"] },
-  { id:10, num:"10", icon:"🏷️", title:"Documentation & Billing Compliance", color:"#FF6B35",
-    points:["Documentation must accurately support every code submitted on a claim","Follow CMS guidelines — incomplete notes, missing signatures, and unsupported codes are common errors","Government programs like MACRA tie reimbursement to quality metrics and documentation accuracy","MA documentation scope: vitals, chief complaint, history, patient communication, preauth requests","Always follow state scope-of-practice laws and organizational policy"] },
-  { id:11, num:"11", icon:"⚙️", title:"Charge Reconciliation & the Revenue Cycle", color:"#E63946",
-    points:["Post all charges, payments, and adjustments to the correct patient account","Contractual adjustments = the difference between billed and allowed amounts","A/R aging reports track outstanding balances and prioritize collection follow-up","Reconcile accounts routinely to ensure balances are accurate and up to date","The revenue cycle begins with eligibility verification and ends with final payment"] },
-  { id:12, num:"12", icon:"🔬", title:"Billing Patients, Insurers & Third-Party Payers", color:"#457B9D",
-    points:["Submit clean claims electronically within the payer\'s timely filing deadline","Use a clearinghouse to scrub claims for errors before final submission","Collect copayments and known balances at the time of service","Generate patient statements for any remaining financial responsibility","ABN required for Medicare patients when a service may not be covered"] },
-  { id:13, num:"13", icon:"⭐", title:"Resolving Billing Issues & Appeals", color:"#2A9D8F",
-    points:["Identify the denial reason — coding error, eligibility, medical necessity, or missing auth","Correct the error and resubmit, or attach supporting documentation and file an appeal","Contact the payer for clarification if the denial reason is unclear","Track all denied claims and follow up promptly — delayed action can forfeit reimbursement","Document all corrective actions taken in the patient account"] },
-  { id:14, num:"14", icon:"📦", title:"Managing Medical Records", color:"#8338EC",
-    points:["EHR: stored in the cloud — backed up in real time, accessible to authorized staff","Paper records: filed alphabetically; most recent document on top","Corrections: single line through the error, correction written above, date and initials added","Retain records per state law — never destroy before the required minimum period","All records must remain confidential and comply with HIPAA at all times"] },
-  { id:15, num:"15", icon:"💊", title:"Mail, Faxes & Data Entry", color:"#FF6B35",
-    points:["Route incoming mail and faxes to the appropriate staff member or department","Scan correspondence and responses into the patient\'s record — it becomes part of the legal chart","Written communications must be HIPAA-compliant, free of errors, and professionally worded","Enter all data accurately into the EHR — errors affect patient care and billing","Keep databases and fee schedules current — outdated codes cause claim denials"] },
-  { id:16, num:"16", icon:"🫀", title:"Follow-Up Calls & Appointment Confirmations", color:"#E63946",
-    points:["Open the patient\'s record and have all information ready before placing the call","Identify yourself and the practice name, and confirm it\'s a good time to speak","Only share information with the patient or an authorized person on the privacy agreement","Voicemail: state name, practice name, callback number, and hours — no clinical details","Appointment reminders reduce no-show rates — use calls, texts, portal messages, or cards"] },
-  { id:17, num:"17", icon:"📡", title:"Patient Portals & Telehealth", color:"#457B9D",
-    points:["Portal: patients access notes, results, medications, billing, and secure messaging","Provide login credentials and walk patients through the portal at their first visit","Telehealth: secure video or phone visit — provider and patient in separate locations","Confirm the patient has a device, internet access, and any needed documents before the visit","Assist with app downloads, camera/mic setup, and portal login troubleshooting"] },
-  { id:18, num:"18", icon:"🗣️", title:"Inventory Management & Safety", color:"#2A9D8F",
-    points:["Reorder supplies when they reach the par level — the minimum quantity set by the practice","Check deliveries promptly — refrigerated items like vaccines must be stored immediately","Remove items from shipping boxes before storing; rotate stock so newer items go in the back","Document all equipment inspections and calibrations in the inspection log","Report all safety concerns to the appropriate staff member — OSHA standards always apply"] },
-];
+var TOPICS = [{"id": 1, "num": "01", "icon": "🔍", "title": "Scheduling Patient Appointments", "color": "#E63946", "points": ["Electronic scheduling: done in the EHR or practice management system", "Paper scheduling: used as a backup during downtime or power outages", "Common methods: specific time, wave, double-booking, and cluster scheduling", "Block the schedule matrix for rounds, lunch, meetings, and days off", "Always ask the reason for the visit to determine the right appointment type and length"]}, {"id": 2, "num": "02", "icon": "🧰", "title": "Appointment Type & Duration", "color": "#457B9D", "points": ["New patient: 60 min — established/follow-up: 15 min", "Comprehensive or preventive care: 45–60 min", "Urgent visit: 20 min — non-patient (meetings, reps): 30 min", "Ask screening questions to clarify the reason for the visit", "Also ask if the patient prefers an in-person or telehealth visit"]}, {"id": 3, "num": "03", "icon": "🌈", "title": "Prioritizing Appointment Needs", "color": "#2A9D8F", "points": ["Emergency: life-threatening — direct to 911 or ER immediately", "Urgent: needs to be seen within 24 hours — work into the schedule as soon as possible", "Use the organization's screening protocol and decision tree for every call", "The MA cannot diagnose — only screen and route appropriately", "Get the patient's name, phone number, and location at the start of every call"]}, {"id": 4, "num": "04", "icon": "🧪", "title": "Patient Check-In & Check-Out", "color": "#8338EC", "points": ["Verify photo ID and confirm it matches the insurance card and health record", "Ask if demographics or insurance have changed — update before the visit", "Collect copayment or any known patient financial responsibility before the appointment", "New patients: review and collect NPP, Bill of Rights, and consent forms", "Check-out: review the after-visit summary, schedule follow-ups, answer questions"]}, {"id": 5, "num": "05", "icon": "📏", "title": "Verifying Insurance & Eligibility", "color": "#FF6B35", "points": ["Verify eligibility at scheduling AND again on the date of service", "Confirm the plan is active and the requested service is a covered benefit", "Identify the patient's financial responsibility: copay, deductible, coinsurance", "Communicate cost estimates to the patient before the visit", "Use the EHR eligibility tool, payer website, or a phone call to verify"]}, {"id": 6, "num": "06", "icon": "💉", "title": "Superbill & Encounter Forms", "color": "#E63946", "points": ["Flow sheet: tracks ongoing health data such as vitals and lab results over time", "Superbill/encounter form: records diagnoses and procedures from the current visit", "Diagnosis codes (ICD-10-CM) explain why the patient came in", "Procedure codes (CPT/HCPCS) describe what the provider did", "Both codes must link together to demonstrate medical necessity"]}, {"id": 7, "num": "07", "icon": "🩸", "title": "Diagnostic & Procedural Codes", "color": "#457B9D", "points": ["ICD-10-CM: 3–7 alphanumeric characters — the reason for the visit", "CPT®: 5-digit numeric codes — the services and procedures provided", "HCPCS: alphanumeric codes — supplies, equipment, and non-CPT services", "Review documentation to confirm codes are complete, correct, and sequenced properly", "Query the provider if any code does not match the documentation"]}, {"id": 8, "num": "08", "icon": "📋", "title": "Prior Authorizations", "color": "#2A9D8F", "points": ["Preauthorization: payer approval confirming a service is medically necessary", "Precertification: confirms a benefit exists — does not guarantee payment", "Required for: specialist consults, elective surgery, imaging, therapies, some prescriptions", "Include diagnosis codes, procedure codes, and supporting clinical documentation", "Submit electronically when possible — faster response time"]}, {"id": 9, "num": "09", "icon": "🩹", "title": "Facilitating Referrals", "color": "#8338EC", "points": ["Needed when a patient requires services outside the primary care provider's scope", "Submit via phone, EHR, payer portal, or formal written process depending on payer rules", "Referrals fall under HIPAA TPO — a separate signed release is usually not required", "Electronic referrals must be sent through a secure, encrypted system", "Follow up to confirm the referral was received and the patient has an appointment"]}, {"id": 10, "num": "10", "icon": "🏷️", "title": "Documentation & Billing Compliance", "color": "#FF6B35", "points": ["Documentation must accurately support every code submitted on a claim", "Follow CMS guidelines — incomplete notes, missing signatures, and unsupported codes are common errors", "Government programs like MACRA tie reimbursement to quality metrics and documentation accuracy", "MA documentation scope: vitals, chief complaint, history, patient communication, preauth requests", "Always follow state scope-of-practice laws and organizational policy"]}, {"id": 11, "num": "11", "icon": "⚙️", "title": "Charge Reconciliation & Revenue Cycle", "color": "#E63946", "points": ["Post all charges, payments, and adjustments to the correct patient account", "Contractual adjustments = the difference between billed and allowed amounts", "A/R aging reports track outstanding balances and prioritize collection follow-up", "Reconcile accounts routinely to ensure balances are accurate and up to date", "The revenue cycle begins with eligibility verification and ends with final payment"]}, {"id": 12, "num": "12", "icon": "🔬", "title": "Billing Patients & Insurers", "color": "#457B9D", "points": ["Submit clean claims electronically within the payer's timely filing deadline", "Use a clearinghouse to scrub claims for errors before final submission", "Collect copayments and known balances at the time of service", "Generate patient statements for any remaining financial responsibility", "ABN required for Medicare patients when a service may not be covered"]}, {"id": 13, "num": "13", "icon": "⭐", "title": "Resolving Billing Issues & Appeals", "color": "#2A9D8F", "points": ["Identify the denial reason — coding error, eligibility, medical necessity, or missing auth", "Correct the error and resubmit, or attach supporting documentation and file an appeal", "Contact the payer for clarification if the denial reason is unclear", "Track all denied claims and follow up promptly — delayed action can forfeit reimbursement", "Document all corrective actions taken in the patient account"]}, {"id": 14, "num": "14", "icon": "📦", "title": "Managing Medical Records", "color": "#8338EC", "points": ["EHR: stored in the cloud — backed up in real time, accessible to authorized staff", "Paper records: filed alphabetically; most recent document on top", "Corrections: single line through the error, correction written above, date and initials added", "Retain records per state law — never destroy before the required minimum period", "All records must remain confidential and comply with HIPAA at all times"]}, {"id": 15, "num": "15", "icon": "💊", "title": "Mail, Faxes & Data Entry", "color": "#FF6B35", "points": ["Route incoming mail and faxes to the appropriate staff member or department", "Scan correspondence and responses into the patient's record — it becomes part of the legal chart", "Written communications must be HIPAA-compliant, free of errors, and professionally worded", "Enter all data accurately into the EHR — errors affect patient care and billing", "Keep databases and fee schedules current — outdated codes cause claim denials"]}, {"id": 16, "num": "16", "icon": "🫀", "title": "Follow-Up Calls & Confirmations", "color": "#E63946", "points": ["Open the patient's record and have all information ready before placing the call", "Identify yourself and the practice name, and confirm it's a good time to speak", "Only share information with the patient or an authorized person on the privacy agreement", "Voicemail: state name, practice name, callback number, and hours — no clinical details", "Appointment reminders reduce no-show rates — use calls, texts, portal messages, or cards"]}, {"id": 17, "num": "17", "icon": "📡", "title": "Patient Portals & Telehealth", "color": "#457B9D", "points": ["Portal: patients access notes, results, medications, billing, and secure messaging", "Provide login credentials and walk patients through the portal at their first visit", "Telehealth: secure video or phone visit — provider and patient in separate locations", "Confirm the patient has a device, internet access, and any needed documents before the visit", "Assist with app downloads, camera/mic setup, and portal login troubleshooting"]}, {"id": 18, "num": "18", "icon": "🗣️", "title": "Inventory Management & Safety", "color": "#2A9D8F", "points": ["Reorder supplies when they reach the par level — the minimum quantity set by the practice", "Check deliveries promptly — refrigerated items like vaccines must be stored immediately", "Remove items from shipping boxes before storing; rotate stock so newer items go in the back", "Document all equipment inspections and calibrations in the inspection log", "Report all safety concerns to the appropriate staff member — OSHA standards always apply"]}];
 
-var TAKEAWAYS = [
-  "Every step of the patient encounter — from scheduling to final payment — is part of the revenue cycle",
-  "Insurance eligibility must be verified at scheduling and again on the date of service",
-  "Diagnosis and procedure codes must link together to support medical necessity",
-  "Documentation is a legal record — accuracy matters for both patient care and reimbursement",
-  "Most claim denials can be resolved — identify the reason, correct it, and resubmit",
-  "Patient communication, records, and financial transactions all require HIPAA compliance"
-];
+var TAKEAWAYS = ["Every step of the patient encounter — from scheduling to final payment — is part of the revenue cycle", "Insurance eligibility must be verified at scheduling and again on the date of service", "Diagnosis and procedure codes must link together to support medical necessity", "Documentation is a legal record — accuracy matters for both patient care and reimbursement", "Most claim denials can be resolved — identify the reason, correct it, and resubmit", "Patient communication, records, and financial transactions all require HIPAA compliance"];
 
 var activeId = null;
-var sidebar = document.getElementById('sidebar');
+var contentPage = 0;
+var contentPages = [];
+var sidebarPage = 0;
+var sidebarTotalPages = 1;
+var ITEMS_PER_SIDEBAR_PAGE = 9;
+
+var sidebarPagesEl = document.getElementById('sidebarPages');
+var sidebarNavEl = document.getElementById('sidebarNav');
 var content = document.getElementById('content');
 
 function buildSidebar() {
-  TOPICS.forEach(function(t) {
-    var btn = document.createElement('button');
-    btn.className = 'topic-btn';
-    btn.dataset.id = t.id;
-    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
-    btn.addEventListener('click', function() { selectTopic(t.id); });
-    btn.addEventListener('mouseenter', function() {
-      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+  sidebarPagesEl.innerHTML = '';
+  var allItems = TOPICS.map(function(t) { return { type: 'topic', data: t }; });
+  allItems.push({ type: 'takeaway' });
+  sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
+  for (var p = 0; p < sidebarTotalPages; p++) {
+    var pageDiv = document.createElement('div');
+    pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
+    pageDiv.dataset.page = p;
+    var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p + 1) * ITEMS_PER_SIDEBAR_PAGE);
+    slice.forEach(function(item) {
+      if (item.type === 'topic') {
+        var t = item.data;
+        var btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.dataset.id = t.id;
+        btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+        btn.addEventListener('click', function() { selectTopic(t.id); });
+        btn.addEventListener('mouseenter', function() {
+          if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+        });
+        btn.addEventListener('mouseleave', function() {
+          if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(btn);
+      } else {
+        var tkBtn = document.createElement('button');
+        tkBtn.className = 'topic-btn';
+        tkBtn.dataset.id = 'takeaways';
+        tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+        tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+        tkBtn.addEventListener('mouseenter', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+        });
+        tkBtn.addEventListener('mouseleave', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(tkBtn);
+      }
     });
-    btn.addEventListener('mouseleave', function() {
-      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-    });
-    sidebar.appendChild(btn);
-  });
-  var divider = document.createElement('div');
-  divider.className = 'sidebar-divider';
-  sidebar.appendChild(divider);
-  var tkBtn = document.createElement('button');
-  tkBtn.className = 'topic-btn';
-  tkBtn.dataset.id = 'takeaways';
-  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
-  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
-  tkBtn.addEventListener('mouseenter', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
-  });
-  tkBtn.addEventListener('mouseleave', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-  });
-  sidebar.appendChild(tkBtn);
+    sidebarPagesEl.appendChild(pageDiv);
+  }
+  if (sidebarTotalPages > 1) {
+    sidebarNavEl.innerHTML =
+      '<button id="sbPrev" onclick="changeSidebarPage(-1)">◀</button>' +
+      '<span class="page-info" id="sbInfo"></span>' +
+      '<button id="sbNext" onclick="changeSidebarPage(1)">▶</button>';
+    updateSidebarNav();
+  } else {
+    sidebarNavEl.innerHTML = '';
+  }
+}
+
+function changeSidebarPage(dir) {
+  var next = sidebarPage + dir;
+  if (next < 0 || next >= sidebarTotalPages) return;
+  sidebarPage = next;
+  var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  pages[sidebarPage].classList.add('active');
+  updateSidebarNav();
+  updateSidebarActive();
+}
+
+function updateSidebarNav() {
+  var info = document.getElementById('sbInfo');
+  var prev = document.getElementById('sbPrev');
+  var nxt = document.getElementById('sbNext');
+  if (!info) return;
+  info.textContent = (sidebarPage + 1) + '/' + sidebarTotalPages;
+  prev.disabled = sidebarPage === 0;
+  nxt.disabled = sidebarPage === sidebarTotalPages - 1;
 }
 
 function updateSidebarActive() {
-  var btns = sidebar.querySelectorAll('.topic-btn');
+  var btns = sidebarPagesEl.querySelectorAll('.topic-btn');
   btns.forEach(function(btn) {
     var id = btn.dataset.id;
     var topic = TOPICS.find(function(t) { return t.id == id; });
@@ -266,47 +336,121 @@ function updateSidebarActive() {
   });
 }
 
-function renderTopic(t) {
+function showContentPage(t) {
+  var points = contentPages[contentPage];
+  var globalOffset = 0;
+  for (var i = 0; i < contentPage; i++) globalOffset += contentPages[i].length;
   var html = '<div class="content-header">' +
     '<span class="icon">' + t.icon + '</span>' +
     '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
     '<div class="title">' + t.title + '</div></div></div>' +
-    '<div class="content-scroll">';
-  t.points.forEach(function(p, i) {
+    '<div class="content-body"><div class="content-points">';
+  points.forEach(function(p, i) {
     html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<div class="num" style="background:' + t.color + '">' + (globalOffset + i + 1) + '</div>' +
       '<p>' + p + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var topicIdx = TOPICS.findIndex(function(x) { return x.id === t.id; });
+  var prevTopic = topicIdx > 0 ? TOPICS[topicIdx - 1] : null;
+  var nextTopic = topicIdx < TOPICS.length - 1 ? TOPICS[topicIdx + 1] : null;
+  html += '<div class="content-footer">';
+  if (prevTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">\u2190 ' + prevTopic.title + '</button>';
+  } else { html += '<div></div>'; }
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function(x) {
+    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '"></div>';
+  });
+  html += '</div>';
+  if (nextTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' \u2192</button>';
+  } else {
+    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways \u2192</button>';
+  }
+  html += '</div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none';
+  void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function renderTakeaways() {
   var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<span class="icon" style="font-size:28px">🎯</span>' +
     '<div><div class="title">Key Takeaways</div></div></div>' +
-    '<div class="content-scroll">';
+    '<div class="content-body"><div class="content-points">';
   TAKEAWAYS.forEach(function(t, i) {
     html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
       '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
   });
   html += '</div>';
-  return html;
-}
-
-function selectTopic(id) {
-  activeId = id;
-  updateSidebarActive();
-  if (id === 'takeaways') {
-    content.innerHTML = renderTakeaways();
-  } else {
-    var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) content.innerHTML = renderTopic(topic);
-  }
+  var lastTopic = TOPICS[TOPICS.length - 1];
+  html += '<div class="content-footer">';
+  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">\u2190 ' + lastTopic.title + '</button>';
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function() { html += '<div class="dot"></div>'; });
+  html += '<div class="dot active" style="background: linear-gradient(135deg, #E63946, #FF6B35)"></div>';
+  html += '</div>';
+  html += '<div></div>';
+  html += '</div></div>';
+  content.innerHTML = html;
   content.style.animation = 'none';
   void content.offsetHeight;
   content.style.animation = 'fadeIn 0.25s ease';
 }
+
+function selectTopic(id) {
+  activeId = id;
+  if (id !== 'takeaways') {
+    var idx = TOPICS.findIndex(function(t) { return t.id === id; });
+    var targetPage = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
+    if (targetPage !== sidebarPage) {
+      sidebarPage = targetPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
+  } else {
+    var tkPage = sidebarTotalPages - 1;
+    if (tkPage !== sidebarPage) {
+      sidebarPage = tkPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
+  }
+  updateSidebarActive();
+  if (id === 'takeaways') {
+    renderTakeaways();
+  } else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) {
+      contentPages = [topic.points];
+      contentPage = 0;
+      showContentPage(topic);
+    }
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (activeId === null) { selectTopic(1); return; }
+    if (activeId === 'takeaways') return;
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx < TOPICS.length - 1) selectTopic(TOPICS[idx + 1].id);
+    else selectTopic('takeaways');
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (activeId === null) return;
+    if (activeId === 'takeaways') { selectTopic(TOPICS[TOPICS.length - 1].id); return; }
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx > 0) selectTopic(TOPICS[idx - 1].id);
+  }
+});
 
 buildSidebar();
 </script>

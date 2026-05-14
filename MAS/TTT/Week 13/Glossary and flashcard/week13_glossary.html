@@ -4,194 +4,125 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Week 13 Glossary — Medical Assistant Program</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {--text:#0e0e1a;--text-secondary:#3a3a50;--surface-1:#e0e0ec;--surface-2:#d0d0dd;--border:#c0c0cc;--bg:#d8d8e4;--card-shadow:0 2px 12px rgba(26,26,46,0.06);--font-body:'DM Sans',-apple-system,sans-serif;--font-display:'Playfair Display',Georgia,serif}
-  @media(prefers-color-scheme:dark){:root{--text:#e4e4f0;--text-secondary:#9898b0;--surface-1:#1c1c2e;--surface-2:#282840;--border:#363650;--bg:#111122;--card-shadow:0 2px 12px rgba(0,0,0,0.3)}}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-weight:600}
-  .app{max-width:640px;margin:0 auto;padding:28px 18px 60px}
-  .header{text-align:center;margin-bottom:28px}
-  .header-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C0392B;margin-bottom:6px}
-  .header h1{font-family:var(--font-display);font-size:32px;font-weight:900;letter-spacing:-1px;margin-bottom:6px;line-height:1.1}
-  .header p{font-size:13px;color:var(--text-secondary)}
-  .search-wrap{position:relative;margin-bottom:20px}
-  .search-wrap input{width:100%;padding:14px 18px 14px 46px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);color:var(--text);font-size:15px;outline:none;font-family:var(--font-body);transition:border-color .2s}
-  .search-wrap input:focus{border-color:#C0392B}
-  .search-wrap .icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;opacity:.4}
-  .cat-btn{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--border);background:var(--surface-1);cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .2s;font-family:var(--font-body)}
-  .cat-btn:hover{border-color:#aaa}
-  .cat-btn .emoji{font-size:22px}
-  .cat-btn .name{font-weight:700;color:var(--text);font-size:15px}
-  .cat-btn .count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
-  .cat-btn .arrow{font-size:14px;color:var(--text-secondary);transition:transform .25s}
-  .cat-btn.open .arrow{transform:rotate(180deg)}
-  .term-card{padding:13px 16px;border-radius:11px;background:var(--surface-1);border:2px solid transparent;cursor:pointer;transition:all .15s}
-  .term-card:hover{border-color:var(--border)}
-  .term-card .term-name{font-weight:800;font-size:14px;color:var(--text)}
-  .term-card .term-def{margin:10px 0 4px;font-size:13px;line-height:1.65;color:var(--text-secondary);font-weight:600}
-  .result-card{padding:14px 18px;border-radius:12px;background:var(--surface-1);cursor:pointer;border:2px solid var(--border);transition:all .2s}
-  .result-card .row{display:flex;align-items:center;gap:10px}
-  .result-card .r-emoji{font-size:20px}
-  .result-card .r-term{font-weight:700;color:var(--text);font-size:15px}
-  .result-card .r-cat{margin-left:auto;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
-  .result-card .r-def{margin:12px 0 4px 30px;font-size:14px;line-height:1.6;color:var(--text-secondary)}
-  .hidden{display:none!important}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0b0e14;--surface:#131720;--surface2:#1a1f2e;--border:#252b3b;--red:#c0392b;--red-light:#e74c3c;--text:#e4e2df;--dim:#7a7f90;--muted:#484d5e;}
+html,body{height:100%;overflow:hidden !important;font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);}
+.grain{position:fixed;inset:0;pointer-events:none;opacity:.035;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+.wrap{max-width:680px;margin:0 auto;padding:16px 20px 12px;display:flex;flex-direction:column;height:100dvh;overflow:hidden !important;}
+.tag{font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--red-light);font-weight:700;margin-bottom:4px;}
+h1{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--red-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:2px;}
+.sub{font-size:13px;color:var(--dim);margin-bottom:10px;}
+.search-wrap{position:relative;margin-bottom:10px}.search-wrap span{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--muted)}.search-wrap input{width:100%;padding:12px 16px 12px 44px;border-radius:10px;font-size:16px;border:1px solid var(--border);background:var(--surface);color:var(--text);outline:none;font-family:inherit}.search-wrap input:focus{border-color:var(--red)}.search-wrap input::placeholder{color:var(--muted)}
+.filters{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}.cat-btn{padding:3px 9px;border-radius:14px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}.cat-btn:hover{opacity:.85}.cat-btn.active{background:var(--cat-bg);border-color:var(--cat-col);color:var(--cat-col)}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.count{font-size:13px;color:var(--dim)}
+.list-wrap{border-radius:10px;border:1px solid var(--border);overflow:hidden;flex:1;min-height:0;display:flex;flex-direction:column;background:var(--surface)}.items{flex:1;overflow:hidden;padding:4px 0}
+.item{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);transition:all .25s}.item:last-child{border-bottom:none}.item:hover{background:var(--surface2)}.item.open{background:var(--surface2);box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.item-head{display:flex;justify-content:space-between;align-items:center}.item-left{display:flex;align-items:center;gap:10px}.item-bar{width:4px;height:22px;border-radius:2px;opacity:.3;transition:opacity .2s}.item.open .item-bar{opacity:1}.item-term{font-size:20px;font-weight:700;color:#fff}.item-cat{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+.item-def{margin-top:8px;margin-left:14px;padding-top:8px;border-top:1px solid var(--border);font-size:15px;color:var(--dim);line-height:1.6;font-style:italic;display:none}.item.open .item-def{display:block}.item.open .item-term{color:var(--red-light)}.empty{text-align:center;padding:30px;color:var(--muted);font-size:15px}
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border-top:1px solid var(--border);background:var(--bg)}.pg-btn{padding:6px 18px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--dim);font-family:inherit;transition:all .2s}.pg-btn:hover:not(:disabled){border-color:var(--red-light);color:var(--red-light)}.pg-btn:disabled{opacity:.3;cursor:default}.pg-dots{display:flex;gap:4px;justify-content:center;align-items:center;flex-wrap:wrap;max-width:200px}.pg-dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}.pg-dot.active{background:var(--red-light);transform:scale(1.3)}.pg-dot:hover:not(.active){background:var(--dim)}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <div class="header">
-    <div class="header-tag">Medical Assistant Program</div>
-    <h1>Week 13 Glossary</h1>
-    <p id="header-subtitle"></p>
+<div class="grain"></div>
+<div class="wrap">
+  <div class="tag">Medical Assistant Program</div>
+  <h1>Week 13 Glossary</h1>
+  <p class="sub">Minor Surgical Skills & Job Readiness</p>
+  <div class="search-wrap"><span>⌕</span><input type="text" id="search" placeholder="Search terms or definitions..."></div>
+  <div class="filters" id="filters"></div>
+  <div class="top-bar"><div class="count" id="count"></div></div>
+  <div class="list-wrap">
+    <div class="items" id="list"></div>
+    <div class="pager" id="pager"></div>
   </div>
-  <div id="browse-mode"></div>
 </div>
 <script>
-const CATEGORIES = [
-  {
-    name: "Surgical Instruments & Sterile Technique", emoji: "🔧", color: "#C0392B",
-    terms: [
-      { term: "Surgical Asepsis", def: "The practice of maintaining a completely microorganism-free environment during any invasive procedure. Required whenever the skin is broken, or a body cavity is entered — including minor office surgeries. Demands strict adherence to sterile technique at every step, including instrument handling, field setup, and personal protective practices." },
-      { term: "Sterile Field", def: "A microorganism-free work surface — typically a draped Mayo stand — used during surgical and invasive procedures. Established before the procedure and maintained throughout. Any item that contacts a non-sterile surface, falls below waist level, or is left unattended must be considered contaminated and replaced." },
-      { term: "Mayo Stand", def: "A height-adjustable, movable stainless steel instrument tray used as the sterile field surface during minor office procedures. Must be disinfected and allowed to fully dry before setup. Positioned slightly above the MA's waist and at least 12 inches from the body." },
-      { term: "Autoclave", def: "The primary sterilization method for reusable surgical instruments. Uses pressurized, high-temperature steam to kill all microorganisms, including resistant spores. All autoclaved instrument packets must include sterilization indicator tape and a labeled sterilization date." },
-      { term: "Sterilization Indicator Tape", def: "Chemical indicator tape is applied to sterile instrument packets before autoclaving. Changes color when the item has been properly sterilized at the correct temperature and pressure. Must be checked — along with the sterilization date — before opening any packet. If either condition is not met, the item must not be used." },
-      { term: "Scalpel", def: "A small, sharp surgical knife used by the provider to make precise incisions through skin and tissue. Consists of a reusable handle and a disposable blade. The MA must never handle a scalpel blade with bare hands — use forceps to attach and remove blades. Blades are discarded in the sharps container." },
-      { term: "Tissue Forceps", def: "Tweezers-like surgical instruments used to grasp, hold, or manipulate tissue during a procedure. Come in various tip designs — smooth for delicate tissue, toothed for firmer grip. Also used to move instruments within the sterile field without contaminating sterile gloves." },
-      { term: "Hemostatic Forceps", def: "Locking clamp instruments used to control bleeding by clamping blood vessels. The most common types in the medical office are the Kelly clamp (larger, for larger vessels) and the mosquito clamp (smaller, for delicate tissue). The locking ratchet mechanism holds the clamp closed without continuous hand pressure." },
-      { term: "Needle Holder", def: "A locking surgical instrument used by the provider to grasp and drive a suture needle through tissue during wound closure. Has a shorter, wider jaw than standard hemostatic forceps to provide a secure grip on the curved needle without damaging it." },
-      { term: "Retractor", def: "A surgical instrument used to hold back tissue, skin, or organs to expose the operative site and give the provider a clear view. May be handheld (requires the MA to maintain position during the procedure) or self-retaining (locks in place independently)." },
-    ],
-  },
-  {
-    name: "Wound Closure & Suture/Staple Removal", emoji: "🪡", color: "#7D3C98",
-    terms: [
-      { term: "Wound Closure", def: "The process of bringing the edges of an open wound together to prevent infection, control bleeding, promote healing, and minimize scarring. Method selection depends on wound location, size, tension, and cleanliness. Options include sutures (thread), surgical staples, sterile tapes, and skin adhesives." },
-      { term: "Suture", def: "Sterile thread or other material used to close and hold tissue together during healing. May be absorbable (broken down by body enzymes over 5–20 days — no removal needed) or nonabsorbable (must be physically removed after 5–6 days). Size is measured in zeros — the more zeros, the finer the suture (e.g., 6-0 is finer than 2-0)." },
-      { term: "Suture Removal Technique", def: "Cut each suture below the knot and as close to the skin surface as possible using suture scissors, then remove every other suture first while observing the wound line for gaping or separation. Return to remove remaining sutures. Critical rule: never pull the portion of suture that was exposed outside the skin back through the skin — this drags surface contaminants into the tissue." },
-      { term: "Surgical Staples", def: "Stainless steel fasteners applied with a surgical stapler to close wounds under high tension, such as on the scalp, trunk, or extremities. Not appropriate for delicate or highly mobile tissue. Must be removed within 4–14 days using a specialized staple remover. Removed staples are discarded in the sharps container." },
-      { term: "Staple Removal Technique", def: "Place the lower jaw of the sterile staple remover beneath the staple to be removed and squeeze the handles fully closed without lifting the device. This bends the staple and pulls the legs free from the skin cleanly. Remove every other staple first while watching the wound line; then return for the rest. Begin with the second staple, not the first, to protect wound edges at both ends." },
-      { term: "Wound Dehiscence", def: "Partial or complete separation of wound edges after closure — a complication that may indicate infection, excessive tension, or inadequate healing. If gaping is observed during suture or staple removal, stop immediately and notify the provider before continuing. Document all findings." },
-      { term: "Butterfly Closure (Steri-Strip)", def: "A narrow adhesive strip used to reinforce wound edges after suture or staple removal, or as a primary closure for small, low-tension wounds. Applied across the wound to hold edges together. Particularly useful on the face where suture tracks would leave visible scars." },
-      { term: "Wound Irrigation", def: "The process of flushing a wound with sterile saline or an antiseptic solution to remove debris, bacteria, and foreign material before closure or dressing. Performed before applying a sterile dressing. The MA should cleanse from the center outward using a new swab for each pass." },
-    ],
-  },
-  {
-    name: "Minor Office Surgical Procedures", emoji: "🔬", color: "#2C3E50",
-    terms: [
-      { term: "Biopsy", def: "The surgical removal of a small tissue sample for microscopic laboratory examination — used to diagnose cancer, skin conditions, infections, and other diseases. The MA's responsibilities include assembling the sterile field, preparing a labeled specimen container with formalin, and completing the laboratory requisition form." },
-      { term: "Punch Biopsy", def: "A type of skin biopsy that uses a circular cutting tool (punch) to remove a cylindrical core of skin tissue for examination. Common for diagnosing moles, rashes, and suspicious lesions. The MA sets up a sterile field with the punch biopsy kit, specimen container, gauze, and closure supplies." },
-      { term: "Incision and Drainage (I & D)", def: "A minor surgical procedure in which the provider makes an incision into an abscess to release accumulated pus and relieve pressure and pain. The MA sets up a sterile field with a scalpel, forceps, packing material, culture swab (if ordered), gauze, and dressing supplies. The discharge may be cultured to identify the causative organism and guide antibiotic therapy." },
-      { term: "Cryosurgery", def: "The destruction of abnormal tissue using intense cold — typically liquid nitrogen applied via a cryoprobe or spray. Used to remove warts, skin lesions, and abnormal cervical tissue. The MA prepares the cryoprobe, protective supplies, and patient draping and educates the patient to expect a burning or stinging sensation during the procedure." },
-      { term: "Specimen Container & Requisition", def: "Every biopsy or surgical specimen must be placed in a correctly labeled container (patient name, date of birth, date of collection, provider name, and specimen site) with the appropriate preservative. A completed laboratory requisition form — including clinical history, indication, and LMP if relevant — must accompany every specimen sent to the lab." },
-    ],
-  },
-  {
-    name: "Pediatric Measurements", emoji: "👶", color: "#1E8449",
-    terms: [
-      { term: "Recumbent Length", def: "The measurement of an infant or young child's body length while lying flat — used from birth through 24 months. Requires two people: one holds the infant's head against the headboard while the other extends the legs fully and reads the measurement at the heel. More accurate than standing height for this age group because young children cannot stand cooperatively." },
-      { term: "Standing Height (Stature)", def: "The vertical measurement of a patient from the floor to the top of the head, taken while the patient stands upright without shoes on a stadiometer. Used for children who can stand cooperatively — typically age 2 and older. The patient stands with heels together, back straight, and eyes looking forward at the horizontal plane." },
-      { term: "Head Circumference", def: "The measurement of the largest circumference of the skull — taken just above the eyebrows anteriorly and around the occipital prominence posteriorly. Measured with a flexible non-stretch tape. Routine at every well-child visit from birth through approximately age 2 to 3. Used to monitor brain and skull growth and detect abnormal patterns early." },
-      { term: "CDC Growth Chart", def: "A standardized set of percentile curves used to track a child's growth over time, based on nationally representative data. Separate charts exist for boys and girls and for different age ranges. Each measurement (weight, length/height, head circumference, BMI) is plotted as a dot at the appropriate age intersection. A downward trend across percentile lines is more clinically significant than a single low measurement." },
-      { term: "Percentile", def: "A statistical ranking that indicates where a child's measurement falls relative to others of the same age and sex. A child at the 50th percentile is average. A child at the 10th percentile is taller or heavier than only 10% of peers. No single percentile is 'normal' or 'abnormal' — the trend over multiple visits matters more than any one data point." },
-      { term: "Body Mass Index (BMI) — Pediatric", def: "A calculated ratio of weight to height squared used to screen for underweight, healthy weight, overweight, and obesity in children ages 2 and older. Unlike in adults, pediatric BMI is interpreted using age- and sex-specific growth charts because healthy body fat percentage changes as children grow. Calculated as weight (kg) ÷ height (m²)." },
-    ],
-  },
-  {
-    name: "Pediatric Injections", emoji: "💉", color: "#922B21",
-    terms: [
-      { term: "Vastus Lateralis (Pediatric IM Site)", def: "The preferred intramuscular injection site for infants and children under 3 years of age. Located on the anterolateral (front outer) aspect of the thigh, between one hand-width above the knee and one hand-width below the greater trochanter. Has adequate muscle mass in very young patients and is free from major nerves and blood vessels. Never use the deltoid in children under 3." },
-      { term: "Deltoid (Pediatric IM Site)", def: "The muscle of the upper arm that becomes an appropriate IM injection site in children over 3 years of age once sufficient muscle mass has developed. Must be visually and manually assessed before selection. Cannot hold more than 1 mL of medication in any patient." },
-      { term: "Weight-Based Dosing", def: "A method of calculating a patient's medication dose based on their body weight, expressed as a dose per kilogram (mg/kg). The standard for pediatric medication dosing because children's organ systems and body composition differ significantly from adults. Steps: convert weight from lb to kg (÷ 2.2), multiply by the prescribed mg/kg dose, then calculate the volume based on the available concentration." },
-      { term: "Axillary Nerve", def: "A nerve that runs close to the deltoid muscle in the upper arm. Risk of injury increases when the deltoid is used as an injection site in infants and very young children whose muscle is insufficiently developed. This is the primary reason the vastus lateralis is mandatory for children under age 3." },
-      { term: "Immunization Schedule", def: "The CDC-published schedule of recommended vaccines by age — from birth through adulthood. MAs review immunization records at every well-child visit, identify overdue vaccines, and document administered immunizations including the vaccine name, manufacturer, lot number, expiration date, site, route, and date. Parents must receive a Vaccine Information Statement (VIS) before each vaccine." },
-      { term: "Vaccine Information Statement (VIS)", def: "A CDC-produced document that explains the benefits and risks of a specific vaccine. Federal law (National Childhood Vaccine Injury Act) requires that a VIS be provided to the patient or parent/guardian before every dose of a covered vaccine. The MA documents that the VIS was provided, including the edition date of the VIS and the date it was given." },
-    ],
-  },
-  {
-    name: "Pap Test Setup & Gynecologic Procedures", emoji: "🩺", color: "#1A5276",
-    terms: [
-      { term: "Pap Test (Pap Smear)", def: "A cervical cancer screening procedure that collects cells from the cervix for laboratory analysis. Recommended every 3 years for patients ages 21–29; every 3–5 years for patients ages 30–65 when combined with HPV co-testing. Not routinely recommended under age 21 or after age 65 for patients with a history of normal results." },
-      { term: "Lithotomy Position", def: "The patient examination position used for pelvic and vaginal procedures, including the Pap test. The patient lies on their back with both feet placed in locked stirrups at the end and sides of the exam table, then slides their buttocks to the edge of the table. The MA must lock the stirrups before assisting the patient and help place both feet simultaneously." },
-      { term: "Vaginal Speculum", def: "A hinged, duck-billed instrument inserted into the vaginal canal to spread the walls apart and allow visualization of the cervix. Available in multiple sizes (pediatric, small, medium, large). The provider selects the appropriate size; the MA ensures the correct size is available and warmed if needed for patient comfort." },
-      { term: "ThinPrep (Liquid-Based Cytology)", def: "The most commonly used Pap test collection method. The collection brush or spatula is rinsed directly into a vial of preservative liquid — the instrument itself is not sent to the lab. Provides a cleaner, more uniform cell layer for analysis than the traditional glass slide method and can be tested simultaneously for HPV." },
-      { term: "Specimen Labeling (Pap Test)", def: "All specimen containers and slides must be labeled before collection begins — never after. Required information: patient's full name, date of birth, date of collection, and the provider's name. An unlabeled or mislabeled specimen will be rejected by the laboratory and may require a repeat procedure." },
-      { term: "Cervical Cytology Requisition", def: "The laboratory order form that must accompany every Pap test specimen. Must include patient demographics, the date of the patient's last menstrual period (LMP), clinical indication, and any relevant history such as prior abnormal results, HPV status, or current pregnancy. Incomplete requisitions delay or invalidate results." },
-      { term: "HPV Co-Test", def: "A laboratory test performed on the same cervical specimen as the Pap test to detect high-risk strains of human papillomavirus (HPV) — the primary cause of cervical cancer. Recommended in combination with the Pap test for patients ages 30–65. A negative co-test with a normal Pap allows the screening interval to extend to 5 years." },
-    ],
-  },
-  {
-    name: "Resume Writing & Job Preparation", emoji: "📝", color: "#D4AC0D",
-    terms: [
-      { term: "Professional Resume", def: "A concise, professionally formatted document that summarizes a job applicant's education, certifications, skills, and work experience. For entry-level MAs, it should be one page, use clean formatting with a consistent font, contain no photos or decorative graphics, and be free of spelling and grammatical errors. A healthcare resume signals clinical attention to detail before the first interview." },
-      { term: "Professional Summary", def: "A 2–3 sentence statement at the top of the resume that briefly introduces the applicant, highlights their most relevant qualifications, and states the type of role they are seeking. Should lead with the applicant's value ('Certified medical assistant with training in phlebotomy, EKG, and EHR documentation...'), not with 'I am looking for a position...'" },
-      { term: "Clinical Skills Section", def: "A dedicated section of the MA resume listing specific hands-on clinical competencies acquired through training and practicum. Examples include vital signs, phlebotomy, EKG, IM/SC/ID injections, spirometry, sterile technique, and specific EHR systems. Only list skills that have been actually trained or practiced — employers may ask for demonstrations." },
-      { term: "Administrative Skills Section", def: "A dedicated section of the MA resume listing office and administrative competencies. Examples include appointment scheduling, insurance verification, medical billing, CPT and ICD-10 coding, electronic health record management, HIPAA compliance, and patient registration. Keeping clinical and administrative skills in separate sections makes the resume easier to scan." },
-      { term: "Action Verbs (Resume)", def: "Strong, specific verbs used to begin each bullet point under experience sections — demonstrating what the applicant actively did rather than passively 'was responsible for.' Examples relevant to MAs: performed, administered, documented, assisted, coordinated, educated, collected, prepared, maintained, scheduled, processed." },
-      { term: "Externship / Clinical Practicum (Resume)", def: "The supervised clinical training component completed during an MA program — counts as professional experience on a resume for entry-level positions. Should be listed under the experience section with the facility name, location, dates, and two to three bullet points describing specific duties performed using action verbs." },
-    ],
-  },
-  {
-    name: "Interview Skills & Professional Presentation", emoji: "👔", color: "#117A65",
-    terms: [
-      { term: "STAR Method", def: "A structured framework for answering behavioral interview questions — questions that ask candidates to describe a past situation. STAR stands for: Situation (set the context), Task (describe your responsibility), Action (explain specifically what you did), Result (share what happened as a result). Answers built on this framework are specific, credible, and easy for interviewers to follow." },
-      { term: "Behavioral Interview Question", def: "An interview question that asks the candidate to describe a specific past experience to predict future behavior. Typically begins with 'Tell me about a time when...' or 'Describe a situation where...' Examples: 'Tell me about a time you had a difficult patient' or 'Describe a situation where you made a mistake — how did you handle it?'" },
-      { term: "Professional Presentation", def: "The overall impression a candidate makes during an interview — including appearance, punctuality, communication, and body language. For healthcare roles: clean professional attire or pressed scrubs, minimal fragrance, hair pulled back, closed-toe shoes, and arriving 10–15 minutes early. First impressions in clinical environments are formed immediately and are difficult to reverse." },
-      { term: "Follow-Up Thank-You", def: "A brief, professional email sent to the interviewer within 24 hours of a job interview, expressing appreciation for the opportunity and reaffirming interest in the position. Still uncommon enough to be memorable. Should reference a specific topic discussed in the interview to personalize it and demonstrate attentiveness." },
-      { term: "Salary Research", def: "The practice of researching typical compensation ranges for a specific role and location before a job interview. Resources include the Bureau of Labor Statistics (BLS), Indeed, Glassdoor, and state-specific MA salary surveys. Knowing the market rate allows candidates to respond to salary questions confidently and negotiate from an informed position." },
-      { term: "Transferable Skills", def: "Skills developed in one context that apply directly in another — including customer service, communication, attention to detail, time management, and teamwork. MAs entering from other industries should identify and articulate how these skills translate to the clinical setting in their resume and interview responses." },
-    ],
-  }
+const CATEGORIES=[
+  {name:"Instruments & Sterile",color:"#E05555",terms:[
+    {term:"Surgical Asepsis",def:"The practice of maintaining a completely microorganism-free environment during any invasive procedure."},
+    {term:"Sterile Field",def:"A microorganism-free work surface — typically a draped Mayo stand — used during surgical and invasive procedures."},
+    {term:"Mayo Stand",def:"A height-adjustable, movable stainless steel instrument tray used as the sterile field surface during minor office procedures."},
+    {term:"Autoclave",def:"The primary sterilization method for reusable surgical instruments."},
+    {term:"Sterilization Indicator Tape",def:"Chemical indicator tape is applied to sterile instrument packets before autoclaving."},
+    {term:"Scalpel",def:"A small, sharp surgical knife used by the provider to make precise incisions through skin and tissue."},
+    {term:"Tissue Forceps",def:"Tweezers-like surgical instruments used to grasp, hold, or manipulate tissue during a procedure."},
+    {term:"Hemostatic Forceps",def:"Locking clamp instruments used to control bleeding by clamping blood vessels."},
+    {term:"Needle Holder",def:"A locking surgical instrument used by the provider to grasp and drive a suture needle through tissue during wound closure."},
+    {term:"Retractor",def:"A surgical instrument used to hold back tissue, skin, or organs to expose the operative site and give the provider a clear view."}
+  ]},
+  {name:"Wound Closure & Removal",color:"#6B7B8D",terms:[
+    {term:"Wound Closure",def:"The process of bringing the edges of an open wound together to prevent infection, control bleeding, promote healing."},
+    {term:"Suture",def:"Sterile thread or other material used to close and hold tissue together during healing."},
+    {term:"Suture Removal Technique",def:"Cut each suture below the knot and as close to the skin surface as possible using suture scissors."},
+    {term:"Surgical Staples",def:"Stainless steel fasteners applied with a surgical stapler to close wounds under high tension, such as on the scalp, trunk."},
+    {term:"Staple Removal Technique",def:"Place the lower jaw of the sterile staple remover beneath the staple to be removed and squeeze the handles fully closed without..."},
+    {term:"Wound Dehiscence",def:"Partial or complete separation of wound edges after closure — a complication that may indicate infection, excessive tension."},
+    {term:"Butterfly Closure (Steri-Strip)",def:"A narrow adhesive strip used to reinforce wound edges after suture or staple removal, or as a primary closure for small."},
+    {term:"Wound Irrigation",def:"The process of flushing a wound with sterile saline or an antiseptic solution to remove debris, bacteria."}
+  ]},
+  {name:"Office Procedures",color:"#8B6AAE",terms:[
+    {term:"Biopsy",def:"The surgical removal of a small tissue sample for microscopic laboratory examination — used to diagnose cancer, skin conditions."},
+    {term:"Punch Biopsy",def:"A type of skin biopsy that uses a circular cutting tool (punch) to remove a cylindrical core of skin tissue for examination."},
+    {term:"Incision and Drainage (I & D)",def:"A minor surgical procedure in which the provider makes an incision into an abscess to release accumulated pus and relieve press..."},
+    {term:"Cryosurgery",def:"The destruction of abnormal tissue using intense cold — typically liquid nitrogen applied via a cryoprobe or spray."},
+    {term:"Specimen Container & Requisition",def:"Every biopsy or surgical specimen must be placed in a correctly labeled container (patient name, date of birth."}
+  ]},
+  {name:"Pediatric Measurements",color:"#E74C6F",terms:[
+    {term:"Recumbent Length",def:"The measurement of an infant or young child's body length while lying flat — used from birth through 24 months."},
+    {term:"Standing Height (Stature)",def:"The vertical measurement of a patient from the floor to the top of the head."},
+    {term:"Head Circumference",def:"The measurement of the largest circumference of the skull — taken just above the eyebrows anteriorly and around the occipital p..."},
+    {term:"CDC Growth Chart",def:"A standardized set of percentile curves used to track a child's growth over time, based on nationally representative data."},
+    {term:"Percentile",def:"A statistical ranking that indicates where a child's measurement falls relative to others of the same age and sex."},
+    {term:"Body Mass Index (BMI) — Pediatric",def:"A calculated ratio of weight to height squared used to screen for underweight, healthy weight, overweight."}
+  ]},
+  {name:"Pediatric Injections",color:"#4A90B8",terms:[
+    {term:"Vastus Lateralis (Pediatric IM Site)",def:"The preferred intramuscular injection site for infants and children under 3 years of age."},
+    {term:"Deltoid (Pediatric IM Site)",def:"The muscle of the upper arm that becomes an appropriate IM injection site in children over 3 years of age once sufficient muscl..."},
+    {term:"Weight-Based Dosing",def:"A method of calculating a patient's medication dose based on their body weight, expressed as a dose per kilogram (mg/kg)."},
+    {term:"Axillary Nerve",def:"A nerve that runs close to the deltoid muscle in the upper arm."},
+    {term:"Immunization Schedule",def:"The CDC-published schedule of recommended vaccines by age — from birth through adulthood."},
+    {term:"Vaccine Information Statement (VIS)",def:"A CDC-produced document that explains the benefits and risks of a specific vaccine."}
+  ]},
+  {name:"Pap Test & GYN",color:"#1A8A7D",terms:[
+    {term:"Pap Test (Pap Smear)",def:"A cervical cancer screening procedure that collects cells from the cervix for laboratory analysis."},
+    {term:"Lithotomy Position",def:"The patient examination position used for pelvic and vaginal procedures, including the Pap test."},
+    {term:"Vaginal Speculum",def:"A hinged, duck-billed instrument inserted into the vaginal canal to spread the walls apart and allow visualization of the cervix."},
+    {term:"ThinPrep (Liquid-Based Cytology)",def:"The most commonly used Pap test collection method. The collection brush or spatula is rinsed directly into a vial of preservati..."},
+    {term:"Specimen Labeling (Pap Test)",def:"All specimen containers and slides must be labeled before collection begins — never after."},
+    {term:"Cervical Cytology Requisition",def:"The laboratory order form that must accompany every Pap test specimen."},
+    {term:"HPV Co-Test",def:"A laboratory test performed on the same cervical specimen as the Pap test to detect high-risk strains of human papillomavirus (..."}
+  ]},
+  {name:"Resume & Job Prep",color:"#E2B94C",terms:[
+    {term:"Professional Resume",def:"A concise, professionally formatted document that summarizes a job applicant's education, certifications, skills."},
+    {term:"Professional Summary",def:"A 2–3 sentence statement at the top of the resume that briefly introduces the applicant."},
+    {term:"Clinical Skills Section",def:"A dedicated section of the MA resume listing specific hands-on clinical competencies acquired through training and practicum."},
+    {term:"Administrative Skills Section",def:"A dedicated section of the MA resume listing office and administrative competencies."},
+    {term:"Action Verbs (Resume)",def:"Strong, specific verbs used to begin each bullet point under experience sections — demonstrating what the applicant actively di..."},
+    {term:"Externship / Clinical Practicum (Resume)",def:"The supervised clinical training component completed during an MA program — counts as professional experience on a resume for e..."}
+  ]},
+  {name:"Interview Skills",color:"#4CAF90",terms:[
+    {term:"STAR Method",def:"A structured framework for answering behavioral interview questions — questions that ask candidates to describe a past situation."},
+    {term:"Behavioral Interview Question",def:"An interview question that asks the candidate to describe a specific past experience to predict future behavior."},
+    {term:"Professional Presentation",def:"The overall impression a candidate makes during an interview — including appearance, punctuality, communication."},
+    {term:"Follow-Up Thank-You",def:"A brief, professional email sent to the interviewer within 24 hours of a job interview."},
+    {term:"Salary Research",def:"The practice of researching typical compensation ranges for a specific role and location before a job interview."},
+    {term:"Transferable Skills",def:"Skills developed in one context that apply directly in another — including customer service, communication, attention to detail."}
+  ]}
 ];
 
-const ALL_TERMS = CATEGORIES.flatMap((cat, ci) =>
-  cat.terms.map(t => ({ ...t, category: cat.name, emoji: cat.emoji, color: cat.color, catIndex: ci }))
-);
-let browseSearch = '';
-let browseOpenCat = null;
-let browseOpenTerm = null;
-document.getElementById('header-subtitle').textContent =
-  `Minor Surgical Skills & Getting Job-Ready · ${ALL_TERMS.length} terms across ${CATEGORIES.length} topics`;
-renderBrowse();
-function renderBrowse() {
-  const el = document.getElementById('browse-mode');
-  const query = browseSearch.trim().toLowerCase();
-  let html = `<div class="search-wrap"><span class="icon">🔍</span><input type="text" placeholder="Search ${ALL_TERMS.length}+ terms…" value="${escHtml(browseSearch)}" oninput="browseSearch=this.value; browseOpenTerm=null; renderBrowse();" /></div>`;
-  if (query) {
-    const filtered = ALL_TERMS.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
-    if (filtered.length === 0) {
-      html += `<p style="text-align:center;color:var(--text-secondary);padding:20px">No terms found — try different keywords!</p>`;
-    } else {
-      html += `<div style="display:flex;flex-direction:column;gap:6px">`;
-      filtered.forEach((t, i) => {
-        const isOpen = browseOpenTerm === `s-${i}`;
-        html += `<div class="result-card" onclick="browseOpenTerm=browseOpenTerm==='s-${i}'?null:'s-${i}'; renderBrowse();" style="border-color:${isOpen ? t.color : 'var(--border)'}"><div class="row"><span class="r-emoji">${t.emoji}</span><span class="r-term">${escHtml(t.term)}</span><span class="r-cat" style="background:${t.color}22;color:${t.color}">${escHtml(t.category)}</span></div>${isOpen ? `<p class="r-def">${escHtml(t.def)}</p>` : ''}</div>`;
-      });
-      html += `</div>`;
-    }
-  } else {
-    html += `<div style="display:flex;flex-direction:column;gap:8px">`;
-    CATEGORIES.forEach((cat, ci) => {
-      const isOpen = browseOpenCat === ci;
-      html += `<div><button class="cat-btn${isOpen ? ' open' : ''}" onclick="browseOpenCat=browseOpenCat===${ci}?null:${ci}; browseOpenTerm=null; renderBrowse();" style="border-color:${isOpen ? cat.color : 'var(--border)'};background:${isOpen ? cat.color + '12' : 'var(--surface-1)'}"><span class="emoji">${cat.emoji}</span><span class="name">${escHtml(cat.name)}</span><span class="count" style="color:${cat.color};background:${cat.color}22">${cat.terms.length}</span><span class="arrow">▼</span></button>`;
-      if (isOpen) {
-        html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;margin-left:20px">`;
-        cat.terms.forEach((t, ti) => {
-          const tKey = `${ci}-${ti}`;
-          const tOpen = browseOpenTerm === tKey;
-          html += `<div class="term-card" onclick="browseOpenTerm=browseOpenTerm==='${tKey}'?null:'${tKey}'; renderBrowse();" style="border-color:${tOpen ? cat.color : 'transparent'}"><span class="term-name">${escHtml(t.term)}</span>${tOpen ? `<p class="term-def">${escHtml(t.def)}</p>` : ''}</div>`;
-        });
-        html += `</div>`;
-      }
-      html += `</div>`;
-    });
-    html += `</div>`;
-  }
-  el.innerHTML = html;
-}
-function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+const glossary=[];const catNames=["All"];const catColors={};
+CATEGORIES.forEach(cat=>{catNames.push(cat.name);catColors[cat.name]=cat.color;cat.terms.forEach(t=>glossary.push({term:t.term,definition:t.def,category:cat.name}));});
+let filter="All",search="",openIdx=null,currentPage=0;const PER_PAGE=4;
+function renderFilters(){document.getElementById('filters').innerHTML=catNames.map(c=>{const col=c==="All"?"#7a7f90":(catColors[c]||"#888");const active=filter===c;return `<button class="cat-btn ${active?'active':''}" style="--cat-col:${col};--cat-bg:${col}18;${active?`border-color:${col};color:${col};background:${col}18`:''}" onclick="setFilter('${c.replace(/'/g,"\\'")}')">${c}</button>`;}).join('');}
+function getFiltered(){const s=search.toLowerCase();return glossary.filter(g=>(filter==="All"||g.category===filter)&&(g.term.toLowerCase().includes(s)||g.definition.toLowerCase().includes(s)));}
+function renderList(){const filtered=getFiltered();const totalPages=Math.max(1,Math.ceil(filtered.length/PER_PAGE));if(currentPage>=totalPages)currentPage=totalPages-1;if(currentPage<0)currentPage=0;const start=currentPage*PER_PAGE;const pageItems=filtered.slice(start,start+PER_PAGE);document.getElementById('count').textContent=filtered.length+' term'+(filtered.length!==1?'s':'')+' · Page '+(currentPage+1)+' of '+totalPages;if(!filtered.length){document.getElementById('list').innerHTML='<div class="empty">No terms match your search.</div>';document.getElementById('pager').innerHTML='';return;}document.getElementById('list').innerHTML=pageItems.map(g=>{const col=catColors[g.category]||"#888";const origIdx=glossary.indexOf(g);const isOpen=openIdx===origIdx;return `<div class="item ${isOpen?'open':''}" onclick="toggle(${origIdx})"><div class="item-head"><div class="item-left"><div class="item-bar" style="background:${col}"></div><span class="item-term">${g.term}</span></div><span class="item-cat" style="background:${col}18;color:${col}">${g.category}</span></div><div class="item-def" style="${isOpen?'display:block':''}">${g.definition}</div></div>`;}).join('');let ph=`<button class="pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>← Prev</button><div class="pg-dots">`;for(let p=0;p<totalPages;p++){ph+=`<div class="pg-dot ${p===currentPage?'active':''}" onclick="goPage(${p})"></div>`;}ph+=`</div><button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=totalPages-1?'disabled':''}>Next →</button>`;document.getElementById('pager').innerHTML=ph;}
+function setFilter(c){filter=c;currentPage=0;openIdx=null;renderFilters();renderList();}
+function toggle(i){openIdx=openIdx===i?null:i;renderList();}
+function goPage(p){currentPage=p;openIdx=null;renderList();}
+document.getElementById('search').addEventListener('input',e=>{search=e.target.value;currentPage=0;openIdx=null;renderList();});
+renderFilters();renderList();
 </script>
 </body>
 </html>

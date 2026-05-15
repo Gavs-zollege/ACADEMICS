@@ -30,32 +30,86 @@
   .header {
     flex-shrink: 0;
     text-align: center;
-    padding: 16px 24px 12px;
+    padding: 14px 24px 10px;
+    position: relative;
   }
   .header h1 {
-    font-size: 26px; font-weight: 800;
+    font-size: 28px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Fullscreen button */
+  .fs-btn {
+    position: absolute;
+    top: 14px; right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 18px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .fs-btn:hover {
+    color: var(--text-bright);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+  }
+  .fs-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
   .main {
     flex: 1; overflow: hidden;
-    display: flex; gap: 16px;
-    padding: 0 24px 16px;
+    display: flex; gap: 14px;
+    padding: 0 20px 14px;
   }
   .sidebar {
-    width: 250px; flex-shrink: 0;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 4px;
-    padding-right: 6px;
+    width: 260px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .sidebar::-webkit-scrollbar { width: 3px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .sidebar-pages {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 4px;
+    overflow: hidden;
+  }
+  .sidebar-page {
+    display: none;
+    flex-direction: column; gap: 4px;
+    flex: 1;
+  }
+  .sidebar-page.active { display: flex; }
+  .sidebar-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px 0 0;
+  }
+  .sidebar-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
+  .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .sidebar-nav .page-info {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 44px; text-align: center;
+  }
   .topic-btn {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 8px 11px;
+    border-radius: 10px; padding: 8px 12px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
@@ -63,78 +117,110 @@
   .topic-btn:hover { transform: translateX(2px); }
   .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 13px; font-weight: 500; flex: 1;
+    font-size: 14px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 4px 0; flex-shrink: 0;
-  }
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px;
+    border-radius: 16px; padding: 22px;
     display: flex; flex-direction: column;
   }
   .content-header {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     margin-bottom: 14px;
   }
-  .content-header .icon { font-size: 30px; }
+  .content-header .icon { font-size: 32px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 18px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
-  .content-scroll {
-    flex: 1; overflow-y: auto; padding-right: 6px;
+  .content-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .content-scroll::-webkit-scrollbar { width: 3px; }
-  .content-scroll::-webkit-scrollbar-track { background: transparent; }
-  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .content-points {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .content-footer {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+  .content-footer .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .content-footer .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  .content-footer .page-dots {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .content-footer .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.25s;
+  }
+  .content-footer .dot.active {
+    width: 20px; border-radius: 4px;
+  }
   .point {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px; border: 1px solid transparent;
+    border-radius: 10px; padding: 11px 14px;
+    border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .point p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .takeaway-item {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px;
+    border-radius: 10px; padding: 11px 14px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
-  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 16px; }
+  .welcome p { font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -143,48 +229,6 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
-
-  /* ===== MOBILE RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    html, body { overflow: auto; height: auto; }
-    .app { height: auto; min-height: 100vh; overflow: visible; }
-    .header { padding: 14px 16px 10px; }
-    .header h1 { font-size: 22px; }
-    .main {
-      flex-direction: column;
-      padding: 0 12px 16px;
-      overflow: visible;
-    }
-    .sidebar {
-      width: 100%;
-      flex-direction: row;
-      overflow-x: auto;
-      overflow-y: hidden;
-      gap: 6px;
-      padding-right: 0;
-      padding-bottom: 8px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
-    .topic-btn {
-      flex-shrink: 0;
-      min-width: max-content;
-      padding: 7px 12px;
-    }
-    .sidebar-divider {
-      width: 1px; height: auto;
-      min-height: 28px;
-      margin: 0 2px;
-    }
-    .content {
-      overflow: visible;
-      min-height: 60vh;
-      padding: 16px;
-    }
-    .content-scroll { overflow: visible; }
-    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
-  }
-
 </style>
 </head>
 <body>
@@ -192,141 +236,256 @@
   <div class="header">
     <h1>Law & Ethics in Healthcare</h1>
     <p>Doing the Right Thing</p>
+    <button class="fs-btn" id="fsBtn" title="Toggle fullscreen">
+      <svg id="fsIcon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
   </div>
   <div class="main">
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-pages" id="sidebarPages"></div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
     <div class="content" id="content">
       <div class="welcome">
         <div class="big-icon">📚</div>
-        <p>Select a topic to explore its key learning points</p>
+        <p>Select a topic from the left to explore its key learning points</p>
       </div>
     </div>
   </div>
 </div>
 <script>
-var TOPICS = [
-  { id:1, num:"01", icon:"🔍", title:"Identify Legal & Regulatory Requirements", color:"#E63946",
-    points:["Healthcare is one of the most heavily regulated industries because people\'s lives and health are directly at stake — federal, state, and local agencies all set rules that MAs must follow","HIPAA (1996): protects patient health information (PHI) in all forms — electronic, written, and oral; gives patients rights over their information and sets strict limits on who may access it","HITECH Act: extends HIPAA into the digital space — holds vendors and business associates directly liable for breaches and strengthens enforcement penalties for electronic data misuse","EMTALA (1986): emergency departments receiving Medicare or Medicaid must screen and provide stabilizing care for any patient, regardless of ability to pay — eliminating \'patient dumping\'","Additional laws MAs encounter: ACA (expanded insurance access), ADA (disability protections), CLIA (laboratory standards), CSA (controlled substance scheduling), and the No Surprises Act (billing transparency)"] },
-  { id:2, num:"02", icon:"🧰", title:"Identify Patient Consent", color:"#457B9D",
-    points:["Consent is a patient\'s voluntary agreement to receive care — it must be given freely, without pressure, and by a person with sufficient mental capacity to understand what they are agreeing to","Implied consent: inferred from a patient\'s actions rather than words — opening the mouth for a thermometer, rolling up a sleeve for an injection; also assumed in emergencies for unconscious patients","Expressed consent: given verbally or in writing — the patient says \'yes, go ahead\' or signs a consent form; the most common type used in routine clinical interactions","Informed consent: the most legally significant type — the provider must fully explain the procedure, all risks and benefits, expected outcomes, and available alternatives before the patient agrees; failure to obtain it can constitute medical negligence","Minors (under 18) generally require parental consent — two exceptions: (1) seeking birth control, STI treatment, pregnancy care, or substance abuse treatment; (2) emancipated minors (military, married, financially independent, or court-declared) may consent independently"] },
-  { id:3, num:"03", icon:"🌈", title:"Identify Professional Codes of Ethics", color:"#2A9D8F",
-    points:["Ethics are the moral principles that govern a person\'s behavior and guide decisions about right and wrong — in healthcare, they are the foundation of every clinical interaction","Personal ethics: an individual\'s own values about right and wrong — shaped by family, culture, religion, and experience; they influence how a person shows up at work and handles difficult situations","Professional ethics: standards established for a profession through training, codes of conduct, and organizational policies — including employee handbooks, certification codes, and the Hippocratic Oath","Medical ethics narrows the focus to the patient relationship — it uses moral analysis to define a healthcare provider\'s duties and obligations and examines what actions are ethically justified in clinical care","Four core principles of medical ethics: autonomy (patients decide for themselves), justice (equitable treatment for all), beneficence (act in the patient\'s best interest), nonmaleficence (first, do no harm)"] },
-  { id:4, num:"04", icon:"🧪", title:"Describe & Differentiate Medical Directives", color:"#8338EC",
-    points:["Advance directives are legal documents that communicate a patient\'s healthcare wishes when they are no longer able to speak for themselves — they go into effect only when the patient cannot make or communicate decisions","Living will: specifies which treatments the patient wants and which they do not — CPR, mechanical ventilation, dialysis, tube feeding, organ donation — and under what conditions each decision applies","Durable Power of Attorney for Healthcare (DPOA): names a healthcare agent or proxy to make medical decisions on the patient\'s behalf — more flexible than a living will; the agent can decide on hospital admission, treatment, record access, and arrangements after death","Do-Not-Resuscitate (DNR): a specific legal order to withhold CPR and advanced cardiac life support — does NOT stop other treatments; the patient can still receive chemotherapy, dialysis, antibiotics, and any other ongoing care","POLST (Physician Orders for Life-Sustaining Treatment): a medical order — not just a preference — that travels with the patient across care settings; advance directives do not expire and remain valid until the patient officially changes them"] },
-  { id:5, num:"05", icon:"📏", title:"Describe Patient Privacy, Confidentiality & Medical Records", color:"#FF6B35",
-    points:["HIPAA is the cornerstone of patient privacy law — it gives patients the right to access their records, request corrections, and know who has viewed their information; covered entities must comply","Three HIPAA safeguards: administrative (written policies and procedures), physical (locked areas, controlled access), and technical (passwords, encryption, audit logs for electronic systems)","Record ownership: the healthcare facility owns the physical medical record as a legal document — but the patient owns the information inside it and has the right to inspect, copy, and correct their data","A signed release form is required for standard record transfers — without it, records can only be released for court orders (subpoena), criminal investigations, communicable disease reporting, or workers\' compensation mandates","HIPAA does not require sharing information with family or friends unless they are formally designated as the patient\'s authorized representative — always verify authorization before releasing any PHI"] },
-  { id:6, num:"06", icon:"💉", title:"Identify Legal Requirements for Reportable Violations & Incidents", color:"#E63946",
-    points:["Mandatory reporting is a legal obligation — not optional — requiring healthcare professionals to report specific events to the appropriate authorities to protect patients and the public","Always reportable: births, deaths, communicable and notifiable diseases (TB, HIV, meningitis, STIs, COVID-19, E. coli, foodborne illness), assaults, and criminal acts such as gunshot wounds and stabbings","Abuse reporting: every state mandates reporting of suspected child abuse, elder abuse, and neglect — many states also require reporting of intimate partner violence; the law requires reporting suspicion, not proven abuse","Anyone who reports suspected abuse in good faith is legally protected from lawsuits — the MA does not need to prove it occurred; they only need reasonable suspicion based on what they observe","The Four Ds of Negligence establish when legal liability arises: Duty of Care, Dereliction of that duty, Direct Cause connecting the breach to the harm, and measurable Damages — all four must be present for a malpractice case"] },
-  { id:7, num:"07", icon:"🩸", title:"Personal Beliefs, Values & Providing Unbiased Care", color:"#457B9D",
-    points:["MAs will care for patients from every background — race, ethnicity, sex, age, religion, language, sexual orientation, gender identity, and more; every patient deserves the same quality of care regardless of who they are","Cultural competence is the ability to deliver healthcare that genuinely meets the needs of a diverse population — it is an ongoing learning process, not a one-time training, and includes understanding how culture shapes health decisions","Explicit (conscious) bias: a recognized preference or prejudice that a person is aware of holding; explicit biases are easier to address because the person can identify them","Implicit (unconscious) bias: a hidden preference that operates below conscious awareness — often more dangerous in healthcare because the person providing care does not realize it is influencing their behavior","Confronting personal biases is a professional responsibility — bias is not limited to race; age, weight, religion, gender identity, sexual orientation, and disability are all subject to bias that can undermine equitable patient care"] },
-];
-
-var TAKEAWAYS = [
-  "HIPAA gives patients rights over their health information — three safeguards (administrative, physical, technical) must protect it; written consent is required to share PHI in almost all circumstances",
-  "Informed consent is not just a signature on a form — it requires a competent adult to voluntarily agree after receiving complete information about risks, benefits, and all available alternatives",
-  "Advance directives do not expire — a living will, DPOA, DNR, or POLST remains valid until the patient officially changes it; every MA must understand what each document means and how to respond",
-  "Mandatory reporting of abuse is triggered by reasonable suspicion, not proven fact — good-faith reporting is legally protected; failure to report is a legal violation",
-  "The four principles of medical ethics — autonomy, justice, beneficence, nonmaleficence — are not abstract ideals; they are the practical foundation of every patient interaction and clinical decision",
-  "Cultural competence and confronting bias are ongoing professional obligations — every patient deserves equitable, unbiased care regardless of their background, identity, beliefs, or ability to pay"
-];
+var TOPICS = [{"id": 1, "num": "01", "icon": "🔍", "title": "Legal & Regulatory Requirements", "color": "#E63946", "points": ["Healthcare is one of the most heavily regulated industries because people's lives and health are directly at stake — federal, state, and local agencies all set rules that MAs must follow", "HIPAA (1996): protects patient health information (PHI) in all forms — electronic, written, and oral; gives patients rights over their information and sets strict limits on who may access it", "HITECH Act: extends HIPAA into the digital space — holds vendors and business associates directly liable for breaches and strengthens enforcement penalties for electronic data misuse", "EMTALA (1986): emergency departments receiving Medicare or Medicaid must screen and provide stabilizing care for any patient, regardless of ability to pay — eliminating 'patient dumping'", "Additional laws MAs encounter: ACA (expanded insurance access), ADA (disability protections), CLIA (laboratory standards), CSA (controlled substance scheduling), and the No Surprises Act (billing transparency)"]}, {"id": 2, "num": "02", "icon": "🧰", "title": "Patient Consent", "color": "#457B9D", "points": ["Consent is a patient's voluntary agreement to receive care — it must be given freely, without pressure, and by a person with sufficient mental capacity to understand what they are agreeing to", "Implied consent: inferred from a patient's actions rather than words — opening the mouth for a thermometer, rolling up a sleeve for an injection; also assumed in emergencies for unconscious patients", "Expressed consent: given verbally or in writing — the patient says 'yes, go ahead' or signs a consent form; the most common type used in routine clinical interactions", "Informed consent: the most legally significant type — the provider must fully explain the procedure, all risks and benefits, expected outcomes, and available alternatives before the patient agrees; failure to obtain it can constitute medical negligence", "Minors (under 18) generally require parental consent — two exceptions: (1) seeking birth control, STI treatment, pregnancy care, or substance abuse treatment; (2) emancipated minors (military, married, financially independent, or court-declared) may consent independently"]}, {"id": 3, "num": "03", "icon": "🌈", "title": "Professional Codes of Ethics", "color": "#2A9D8F", "points": ["Ethics are the moral principles that govern a person's behavior and guide decisions about right and wrong — in healthcare, they are the foundation of every clinical interaction", "Personal ethics: an individual's own values about right and wrong — shaped by family, culture, religion, and experience; they influence how a person shows up at work and handles difficult situations", "Professional ethics: standards established for a profession through training, codes of conduct, and organizational policies — including employee handbooks, certification codes, and the Hippocratic Oath", "Medical ethics narrows the focus to the patient relationship — it uses moral analysis to define a healthcare provider's duties and obligations and examines what actions are ethically justified in clinical care", "Four core principles of medical ethics: autonomy (patients decide for themselves), justice (equitable treatment for all), beneficence (act in the patient's best interest), nonmaleficence (first, do no harm)"]}, {"id": 4, "num": "04", "icon": "🧪", "title": "Medical Directives", "color": "#8338EC", "points": ["Advance directives are legal documents that communicate a patient's healthcare wishes when they are no longer able to speak for themselves — they go into effect only when the patient cannot make or communicate decisions", "Living will: specifies which treatments the patient wants and which they do not — CPR, mechanical ventilation, dialysis, tube feeding, organ donation — and under what conditions each decision applies", "Durable Power of Attorney for Healthcare (DPOA): names a healthcare agent or proxy to make medical decisions on the patient's behalf — more flexible than a living will; the agent can decide on hospital admission, treatment, record access, and arrangements after death", "Do-Not-Resuscitate (DNR): a specific legal order to withhold CPR and advanced cardiac life support — does NOT stop other treatments; the patient can still receive chemotherapy, dialysis, antibiotics, and any other ongoing care", "POLST (Physician Orders for Life-Sustaining Treatment): a medical order — not just a preference — that travels with the patient across care settings; advance directives do not expire and remain valid until the patient officially changes them"]}, {"id": 5, "num": "05", "icon": "📏", "title": "Patient Privacy & Medical Records", "color": "#FF6B35", "points": ["HIPAA is the cornerstone of patient privacy law — it gives patients the right to access their records, request corrections, and know who has viewed their information; covered entities must comply", "Three HIPAA safeguards: administrative (written policies and procedures), physical (locked areas, controlled access), and technical (passwords, encryption, audit logs for electronic systems)", "Record ownership: the healthcare facility owns the physical medical record as a legal document — but the patient owns the information inside it and has the right to inspect, copy, and correct their data", "A signed release form is required for standard record transfers — without it, records can only be released for court orders (subpoena), criminal investigations, communicable disease reporting, or workers' compensation mandates", "HIPAA does not require sharing information with family or friends unless they are formally designated as the patient's authorized representative — always verify authorization before releasing any PHI"]}, {"id": 6, "num": "06", "icon": "💉", "title": "Reportable Violations & Incidents", "color": "#E63946", "points": ["Mandatory reporting is a legal obligation — not optional — requiring healthcare professionals to report specific events to the appropriate authorities to protect patients and the public", "Always reportable: births, deaths, communicable and notifiable diseases (TB, HIV, meningitis, STIs, COVID-19, E. coli, foodborne illness), assaults, and criminal acts such as gunshot wounds and stabbings", "Abuse reporting: every state mandates reporting of suspected child abuse, elder abuse, and neglect — many states also require reporting of intimate partner violence; the law requires reporting suspicion, not proven abuse", "Anyone who reports suspected abuse in good faith is legally protected from lawsuits — the MA does not need to prove it occurred; they only need reasonable suspicion based on what they observe", "The Four Ds of Negligence establish when legal liability arises: Duty of Care, Dereliction of that duty, Direct Cause connecting the breach to the harm, and measurable Damages — all four must be present for a malpractice case"]}, {"id": 7, "num": "07", "icon": "🩸", "title": "Personal Beliefs & Providing Unbiased Care", "color": "#457B9D", "points": ["MAs will care for patients from every background — race, ethnicity, sex, age, religion, language, sexual orientation, gender identity, and more; every patient deserves the same quality of care regardless of who they are", "Cultural competence is the ability to deliver healthcare that genuinely meets the needs of a diverse population — it is an ongoing learning process, not a one-time training, and includes understanding how culture shapes health decisions", "Explicit (conscious) bias: a recognized preference or prejudice that a person is aware of holding; explicit biases are easier to address because the person can identify them", "Implicit (unconscious) bias: a hidden preference that operates below conscious awareness — often more dangerous in healthcare because the person providing care does not realize it is influencing their behavior", "Confronting personal biases is a professional responsibility — bias is not limited to race; age, weight, religion, gender identity, sexual orientation, and disability are all subject to bias that can undermine equitable patient care"]}];
+var TAKEAWAYS = ["HIPAA gives patients rights over their health information — three safeguards (administrative, physical, technical) must protect it; written consent is required to share PHI in almost all circumstances", "Informed consent is not just a signature on a form — it requires a competent adult to voluntarily agree after receiving complete information about risks, benefits, and all available alternatives", "Advance directives do not expire — a living will, DPOA, DNR, or POLST remains valid until the patient officially changes it; every MA must understand what each document means and how to respond", "Mandatory reporting of abuse is triggered by reasonable suspicion, not proven fact — good-faith reporting is legally protected; failure to report is a legal violation", "The four principles of medical ethics — autonomy, justice, beneficence, nonmaleficence — are not abstract ideals; they are the practical foundation of every patient interaction and clinical decision", "Cultural competence and confronting bias are ongoing professional obligations — every patient deserves equitable, unbiased care regardless of their background, identity, beliefs, or ability to pay"];
 
 var activeId = null;
-var sidebar = document.getElementById('sidebar');
+var contentPage = 0;
+var contentPages = [];
+var sidebarPage = 0;
+var sidebarTotalPages = 1;
+var ITEMS_PER_SIDEBAR_PAGE = 9;
+
+var sidebarPagesEl = document.getElementById('sidebarPages');
+var sidebarNavEl = document.getElementById('sidebarNav');
 var content = document.getElementById('content');
 
+/* ── Fullscreen ── */
+var fsBtn = document.getElementById('fsBtn');
+var fsIcon = document.getElementById('fsIcon');
+var expandPath = 'M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3';
+var shrinkPath = 'M4 14h2a2 2 0 0 1 2 2v2m8-16v2a2 2 0 0 0 2 2h2M4 10h2a2 2 0 0 0 2-2V6m8 16v-2a2 2 0 0 1 2-2h2';
+
+function updateFsIcon() {
+  var isFs = !!document.fullscreenElement;
+  fsIcon.innerHTML = '<path d="' + (isFs ? shrinkPath : expandPath) + '"/>';
+  fsBtn.title = isFs ? 'Exit fullscreen' : 'Toggle fullscreen';
+}
+
+fsBtn.addEventListener('click', function() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(function(){});
+  } else {
+    document.exitFullscreen().catch(function(){});
+  }
+});
+document.addEventListener('fullscreenchange', updateFsIcon);
+
+/* ── Sidebar ── */
 function buildSidebar() {
-  TOPICS.forEach(function(t) {
-    var btn = document.createElement('button');
-    btn.className = 'topic-btn';
-    btn.dataset.id = t.id;
-    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
-    btn.addEventListener('click', function() { selectTopic(t.id); });
-    btn.addEventListener('mouseenter', function() {
-      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+  sidebarPagesEl.innerHTML = '';
+  var allItems = TOPICS.map(function(t) { return { type: 'topic', data: t }; });
+  allItems.push({ type: 'takeaway' });
+  sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
+  for (var p = 0; p < sidebarTotalPages; p++) {
+    var pageDiv = document.createElement('div');
+    pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
+    pageDiv.dataset.page = p;
+    var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p + 1) * ITEMS_PER_SIDEBAR_PAGE);
+    slice.forEach(function(item) {
+      if (item.type === 'topic') {
+        var t = item.data;
+        var btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.dataset.id = t.id;
+        btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+        btn.addEventListener('click', function() { selectTopic(t.id); });
+        btn.addEventListener('mouseenter', function() {
+          if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+        });
+        btn.addEventListener('mouseleave', function() {
+          if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(btn);
+      } else {
+        var tkBtn = document.createElement('button');
+        tkBtn.className = 'topic-btn';
+        tkBtn.dataset.id = 'takeaways';
+        tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+        tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+        tkBtn.addEventListener('mouseenter', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+        });
+        tkBtn.addEventListener('mouseleave', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(tkBtn);
+      }
     });
-    btn.addEventListener('mouseleave', function() {
-      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-    });
-    sidebar.appendChild(btn);
-  });
-  var divider = document.createElement('div');
-  divider.className = 'sidebar-divider';
-  sidebar.appendChild(divider);
-  var tkBtn = document.createElement('button');
-  tkBtn.className = 'topic-btn';
-  tkBtn.dataset.id = 'takeaways';
-  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
-  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
-  tkBtn.addEventListener('mouseenter', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
-  });
-  tkBtn.addEventListener('mouseleave', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-  });
-  sidebar.appendChild(tkBtn);
+    sidebarPagesEl.appendChild(pageDiv);
+  }
+  if (sidebarTotalPages > 1) {
+    sidebarNavEl.innerHTML =
+      '<button id="sbPrev" onclick="changeSidebarPage(-1)">\u25C0</button>' +
+      '<span class="page-info" id="sbInfo"></span>' +
+      '<button id="sbNext" onclick="changeSidebarPage(1)">\u25B6</button>';
+    updateSidebarNav();
+  } else { sidebarNavEl.innerHTML = ''; }
+}
+
+function changeSidebarPage(dir) {
+  var next = sidebarPage + dir;
+  if (next < 0 || next >= sidebarTotalPages) return;
+  sidebarPage = next;
+  var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  pages[sidebarPage].classList.add('active');
+  updateSidebarNav(); updateSidebarActive();
+}
+
+function updateSidebarNav() {
+  var info = document.getElementById('sbInfo');
+  var prev = document.getElementById('sbPrev');
+  var nxt = document.getElementById('sbNext');
+  if (!info) return;
+  info.textContent = (sidebarPage + 1) + '/' + sidebarTotalPages;
+  prev.disabled = sidebarPage === 0;
+  nxt.disabled = sidebarPage === sidebarTotalPages - 1;
 }
 
 function updateSidebarActive() {
-  var btns = sidebar.querySelectorAll('.topic-btn');
+  var btns = sidebarPagesEl.querySelectorAll('.topic-btn');
   btns.forEach(function(btn) {
     var id = btn.dataset.id;
     var topic = TOPICS.find(function(t) { return t.id == id; });
     var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
     if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
     if (isActive && topic) {
-      btn.style.background = topic.color + '20';
-      btn.style.borderColor = topic.color;
+      btn.style.background = topic.color + '20'; btn.style.borderColor = topic.color;
     } else if (isActive && id === 'takeaways') {
-      btn.style.background = 'rgba(255,255,255,0.08)';
-      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+      btn.style.background = 'rgba(255,255,255,0.08)'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
     } else {
-      btn.style.background = 'var(--surface)';
-      btn.style.borderColor = 'var(--border)';
+      btn.style.background = 'var(--surface)'; btn.style.borderColor = 'var(--border)';
     }
   });
 }
 
-function renderTopic(t) {
+/* ── Content ── */
+function showContentPage(t) {
+  var points = contentPages[contentPage];
+  var globalOffset = 0;
+  for (var i = 0; i < contentPage; i++) globalOffset += contentPages[i].length;
   var html = '<div class="content-header">' +
     '<span class="icon">' + t.icon + '</span>' +
     '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
     '<div class="title">' + t.title + '</div></div></div>' +
-    '<div class="content-scroll">';
-  t.points.forEach(function(p, i) {
+    '<div class="content-body"><div class="content-points">';
+  points.forEach(function(p, i) {
     html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<div class="num" style="background:' + t.color + '">' + (globalOffset + i + 1) + '</div>' +
       '<p>' + p + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var topicIdx = TOPICS.findIndex(function(x) { return x.id === t.id; });
+  var prevTopic = topicIdx > 0 ? TOPICS[topicIdx - 1] : null;
+  var nextTopic = topicIdx < TOPICS.length - 1 ? TOPICS[topicIdx + 1] : null;
+  html += '<div class="content-footer">';
+  if (prevTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">\u2190 ' + prevTopic.title + '</button>';
+  } else { html += '<div></div>'; }
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function(x) {
+    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '"></div>';
+  });
+  html += '</div>';
+  if (nextTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' \u2192</button>';
+  } else {
+    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways \u2192</button>';
+  }
+  html += '</div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function renderTakeaways() {
   var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<span class="icon" style="font-size:32px">\uD83C\uDFAF</span>' +
     '<div><div class="title">Key Takeaways</div></div></div>' +
-    '<div class="content-scroll">';
+    '<div class="content-body"><div class="content-points">';
   TAKEAWAYS.forEach(function(t, i) {
     html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
       '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var lastTopic = TOPICS[TOPICS.length - 1];
+  html += '<div class="content-footer">';
+  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">\u2190 ' + lastTopic.title + '</button>';
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function() { html += '<div class="dot"></div>'; });
+  html += '<div class="dot active" style="background: linear-gradient(135deg, #E63946, #FF6B35)"></div>';
+  html += '</div><div></div></div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function selectTopic(id) {
   activeId = id;
-  updateSidebarActive();
-  if (id === 'takeaways') {
-    content.innerHTML = renderTakeaways();
+  if (id !== 'takeaways') {
+    var idx = TOPICS.findIndex(function(t) { return t.id === id; });
+    var targetPage = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
+    if (targetPage !== sidebarPage) {
+      sidebarPage = targetPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   } else {
-    var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) content.innerHTML = renderTopic(topic);
+    var tkPage = sidebarTotalPages - 1;
+    if (tkPage !== sidebarPage) {
+      sidebarPage = tkPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   }
-  content.style.animation = 'none';
-  void content.offsetHeight;
-  content.style.animation = 'fadeIn 0.25s ease';
+  updateSidebarActive();
+  if (id === 'takeaways') { renderTakeaways(); }
+  else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) { contentPages = [topic.points]; contentPage = 0; showContentPage(topic); }
+  }
 }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F11') { e.preventDefault(); fsBtn.click(); return; }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (activeId === null) { selectTopic(1); return; }
+    if (activeId === 'takeaways') return;
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx < TOPICS.length - 1) selectTopic(TOPICS[idx + 1].id);
+    else selectTopic('takeaways');
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (activeId === null) return;
+    if (activeId === 'takeaways') { selectTopic(TOPICS[TOPICS.length - 1].id); return; }
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx > 0) selectTopic(TOPICS[idx - 1].id);
+  }
+});
 
 buildSidebar();
 </script>

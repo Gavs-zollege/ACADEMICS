@@ -30,32 +30,86 @@
   .header {
     flex-shrink: 0;
     text-align: center;
-    padding: 16px 24px 12px;
+    padding: 14px 24px 10px;
+    position: relative;
   }
   .header h1 {
-    font-size: 26px; font-weight: 800;
+    font-size: 28px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Fullscreen button */
+  .fs-btn {
+    position: absolute;
+    top: 14px; right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 18px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .fs-btn:hover {
+    color: var(--text-bright);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+  }
+  .fs-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
   .main {
     flex: 1; overflow: hidden;
-    display: flex; gap: 16px;
-    padding: 0 24px 16px;
+    display: flex; gap: 14px;
+    padding: 0 20px 14px;
   }
   .sidebar {
-    width: 250px; flex-shrink: 0;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 4px;
-    padding-right: 6px;
+    width: 260px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .sidebar::-webkit-scrollbar { width: 3px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .sidebar-pages {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 4px;
+    overflow: hidden;
+  }
+  .sidebar-page {
+    display: none;
+    flex-direction: column; gap: 4px;
+    flex: 1;
+  }
+  .sidebar-page.active { display: flex; }
+  .sidebar-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px 0 0;
+  }
+  .sidebar-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
+  .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .sidebar-nav .page-info {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 44px; text-align: center;
+  }
   .topic-btn {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 8px 11px;
+    border-radius: 10px; padding: 8px 12px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
@@ -63,78 +117,110 @@
   .topic-btn:hover { transform: translateX(2px); }
   .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 13px; font-weight: 500; flex: 1;
+    font-size: 14px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 4px 0; flex-shrink: 0;
-  }
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px;
+    border-radius: 16px; padding: 22px;
     display: flex; flex-direction: column;
   }
   .content-header {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     margin-bottom: 14px;
   }
-  .content-header .icon { font-size: 30px; }
+  .content-header .icon { font-size: 32px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 18px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
-  .content-scroll {
-    flex: 1; overflow-y: auto; padding-right: 6px;
+  .content-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .content-scroll::-webkit-scrollbar { width: 3px; }
-  .content-scroll::-webkit-scrollbar-track { background: transparent; }
-  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .content-points {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .content-footer {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+  .content-footer .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .content-footer .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  .content-footer .page-dots {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .content-footer .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.25s;
+  }
+  .content-footer .dot.active {
+    width: 20px; border-radius: 4px;
+  }
   .point {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px; border: 1px solid transparent;
+    border-radius: 10px; padding: 11px 14px;
+    border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .point p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .takeaway-item {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px;
+    border-radius: 10px; padding: 11px 14px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
-  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 16px; }
+  .welcome p { font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -143,48 +229,6 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
-
-  /* ===== MOBILE RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    html, body { overflow: auto; height: auto; }
-    .app { height: auto; min-height: 100vh; overflow: visible; }
-    .header { padding: 14px 16px 10px; }
-    .header h1 { font-size: 22px; }
-    .main {
-      flex-direction: column;
-      padding: 0 12px 16px;
-      overflow: visible;
-    }
-    .sidebar {
-      width: 100%;
-      flex-direction: row;
-      overflow-x: auto;
-      overflow-y: hidden;
-      gap: 6px;
-      padding-right: 0;
-      padding-bottom: 8px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
-    .topic-btn {
-      flex-shrink: 0;
-      min-width: max-content;
-      padding: 7px 12px;
-    }
-    .sidebar-divider {
-      width: 1px; height: auto;
-      min-height: 28px;
-      margin: 0 2px;
-    }
-    .content {
-      overflow: visible;
-      min-height: 60vh;
-      padding: 16px;
-    }
-    .content-scroll { overflow: visible; }
-    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
-  }
-
 </style>
 </head>
 <body>
@@ -192,145 +236,256 @@
   <div class="header">
     <h1>Patient Education & Care Coordination</h1>
     <p>Communicating for Better Outcomes</p>
+    <button class="fs-btn" id="fsBtn" title="Toggle fullscreen">
+      <svg id="fsIcon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
   </div>
   <div class="main">
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-pages" id="sidebarPages"></div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
     <div class="content" id="content">
       <div class="welcome">
         <div class="big-icon">📚</div>
-        <p>Select a topic to explore its key learning points</p>
+        <p>Select a topic from the left to explore its key learning points</p>
       </div>
     </div>
   </div>
 </div>
 <script>
-var TOPICS = [
-  { id:1, num:"01", icon:"🔍", title:"Review Patient Records Before the Visit", color:"#E63946",
-    points:["Pre-visit planning begins before the patient walks in — reviewing the chart days ahead allows the MA to catch what the appointment needs to address before it starts","Check due dates for preventive testing: Pap smears, colonoscopies, mammograms, and any disease-specific labs such as HbA1c or cholesterol panels","Review immunization history against the current CDC schedule and flag any vaccines that are due or overdue","Scan the medication list for prescriptions that are expiring or have recently run out — expired prescriptions mean missed doses and disrupted care","Electronic orders for labs, imaging, or refills can be drafted in the EHR order section for the provider to review, approve, or revise before the patient arrives"] },
-  { id:2, num:"02", icon:"🧰", title:"Document Preventive Maintenance & Screenings", color:"#457B9D",
-    points:["Every screening, immunization, and preventive education encounter must be recorded in the patient\'s medical record — documentation is what makes continuity of care possible","When documenting patient education, include the topic covered at the provider\'s direction, materials used, key discussion points, and the patient\'s questions and responses","Clinical quality measures depend on accurate, complete documentation — if the screening happened but wasn\'t charted, it effectively did not happen from a quality reporting standpoint","MAs must understand that their documentation becomes part of the legal record — accuracy, completeness, and timeliness all matter","Use the EHR\'s preventive care section to track what was done and flag what remains outstanding — this becomes the roadmap for the next visit"] },
-  { id:3, num:"03", icon:"🌈", title:"Identify Timelines & Track Screening Recommendations", color:"#2A9D8F",
-    points:["Screening timelines are based on average risk — patients with family history or personal risk factors may need to be screened earlier or more frequently than standard recommendations","Key routine screenings: blood pressure (ongoing), breast cancer mammogram (annually starting at 40), cervical cancer Pap test (every 3 years ages 21–29; every 3–5 years ages 30–65 with HPV co-test)","Colorectal cancer: starting at age 45 via FOBT or colonoscopy. Lung cancer LDCT: annually ages 50–80 with ≥20-pack-year smoking history. Diabetes blood glucose: every 3 years for adults","One-time screenings: abdominal aortic aneurysm ultrasound (males ages 65–75 who ever smoked); hepatitis C (born 1945–1965, IV drug use history, blood transfusion before 1992)","Additional behavioral screenings at every visit: alcohol and tobacco use, drug use, depression, intimate partner violence, and older adult safety — all important and all often the MA\'s responsibility to initiate"] },
-  { id:4, num:"04", icon:"🧪", title:"Research & Supply Community Resource Information", color:"#8338EC",
-    points:["The MA builds and maintains a community resource library — a readily accessible, organized list of local clinical and non-clinical services patients may need","Clinical resources: home health agencies, mental health facilities, long-term care, hospice, community health centers, and specialty referral contacts","Non-clinical resources: food pantries, transportation assistance, employment programs, fuel and weatherization assistance, youth services, financial and income support programs","For each resource, capture: name, address, phone number, email, website, and the name of a contact person — update the list at least every 6 months","Navigate patients to these resources directly and document in the chart which resources were discussed and provided — this becomes part of the patient\'s care plan"] },
-  { id:5, num:"05", icon:"📏", title:"Coordinate Care with Providers & Community Organizations", color:"#FF6B35",
-    points:["Care coordination means the right information reaches the right person at the right time — it is the connective tissue that keeps team-based care functioning","Referral process: verify the specialist accepts the patient\'s insurance before scheduling; give the patient the specialist\'s contact details; always follow up to confirm an appointment was made","When coordinating transitions of care, communicate the patient\'s history, current medications, and specific needs clearly to the receiving provider — this reduces rehospitalization risk","Communicate with community-based organizations (food banks, adult day programs, disability services) on behalf of patients who face barriers to following their treatment plan","Document all coordination activities in the EHR — community referrals, provider-to-provider communication, and any follow-up actions taken on the patient\'s behalf"] },
-  { id:6, num:"06", icon:"💉", title:"Facilitate Patient Adherence to Optimize Health Outcomes", color:"#E63946",
-    points:["The best predictor of adherence is how well the patient understands their care plan — MAs who communicate clearly, assess comprehension, and follow up consistently improve outcomes","Medication education before leaving the office: how and when to take the medication, proper storage, key side effects, what to do if a dose is missed, and how to request refills without a lapse","Practical adherence tools: pill organizers, phone alarm reminders, cell phone apps for medication tracking, and reminder cards or text messages for appointments","Address barriers to care — financial, cultural, environmental, physical, or behavioral — with privacy and respect; identifying the barrier is the first step to removing it","Follow-up calls after the visit allow patients to ask questions, report problems, and receive reassurance — patients who feel cared for between visits are more likely to stay engaged in their care"] },
-  { id:7, num:"07", icon:"🩸", title:"Participate in Team-Based Patient Care — PCMH & ACO", color:"#457B9D",
-    points:["Patient-Centered Medical Home (PCMH): a care model where the primary care provider leads an interprofessional team to coordinate all aspects of a patient\'s care — from prevention through end of life","Five PCMH core functions: comprehensive care (whole patient), patient-centered (individual preferences and family involvement), coordinated (EHR-enabled team communication), accessible (open scheduling, portal tools), and quality-focused (evidence-based, data-driven)","Accountable Care Organization (ACO): a network of providers across multiple practices, hospitals, and specialty clinics that are collectively accountable for quality and cost of care for a defined patient population","ACOs extend care beyond the clinic — community outreach programs (smoking cessation, weight management, nutrition education) are a key feature because prevention at the population level reduces cost","MA role in both models: pre-visit planning, patient education, care coordination, documentation, screening follow-up, and being the consistent point of contact between the patient and the broader team"] },
-  { id:8, num:"08", icon:"📋", title:"Participate in the Transition of Care for Patients", color:"#2A9D8F",
-    points:["A care transition occurs whenever a patient moves from one provider, setting, or level of care to another — hospital to home, PCP to specialist, primary care to long-term care","Poor transitions are directly linked to rehospitalization, medication errors, missed follow-ups, and preventable adverse events — the MA\'s role is to close those gaps","Effective transition communication: send a complete summary of the patient\'s history, current medications (reconciled), allergies, pending orders, and the reason for transition to the receiving provider","Educate the patient and family about what to expect in the new setting, who will be caring for them, what medications to take (and when to start or stop them), and when to follow up","Always verify that the patient has successfully connected with the new provider or setting — do not assume the transition completed just because the referral was sent"] },
-  { id:9, num:"09", icon:"🩹", title:"Provide Patient Education via Telehealth & Virtual Visits", color:"#8338EC",
-    points:["Telehealth uses live video calls and electronic data exchange to deliver care and education remotely — expanding access for rural patients, homebound individuals, and those with transportation or financial barriers","MA responsibilities in a virtual visit: set up the telehealth platform, help patients troubleshoot technical issues, document the encounter in the EHR, provide provider-approved education, and handle follow-up scheduling and referrals","Education delivered via telehealth follows the same principles as in-person: assess learning style, speak clearly, provide written materials, confirm comprehension, and document everything","Telehealth does not reduce the MA\'s obligations — HIPAA compliance, scope of practice, documentation standards, and patient privacy requirements apply exactly as they would in the office","Remind patients to prepare for virtual visits: have self-reported vitals ready, install required apps in advance, find a private and quiet location, and know how to use the camera and microphone"] },
-];
-
-var TAKEAWAYS = [
-  "Pre-visit planning is proactive care — catching overdue screenings, expired prescriptions, and pending labs before the appointment makes the visit more efficient and safer for the patient",
-  "If it isn\'t documented in the patient record, it didn\'t happen — every screening, education session, referral, and coordination activity must be charted",
-  "Learning style drives delivery method — auditory, visual, and kinesthetic learners all need different approaches; always confirm comprehension before the patient leaves",
-  "Barriers to care are real and varied — behavioral, financial, cultural, physical, and environmental; identify them respectfully and connect patients to the right resources",
-  "Transitions are high-risk moments — clear communication between providers, combined with patient education, is the only way to prevent the gaps that lead to rehospitalization",
-  "Telehealth is the same standard of care as in-person — HIPAA, documentation, scope of practice, and patient education obligations do not change because the visit is on a screen"
-];
+var TOPICS = [{"id": 1, "num": "01", "icon": "🔍", "title": "Review Patient Records Before the Visit", "color": "#E63946", "points": ["Pre-visit planning begins before the patient walks in — reviewing the chart days ahead allows the MA to catch what the appointment needs to address before it starts", "Check due dates for preventive testing: Pap smears, colonoscopies, mammograms, and any disease-specific labs such as HbA1c or cholesterol panels", "Review immunization history against the current CDC schedule and flag any vaccines that are due or overdue", "Scan the medication list for prescriptions that are expiring or have recently run out — expired prescriptions mean missed doses and disrupted care", "Electronic orders for labs, imaging, or refills can be drafted in the EHR order section for the provider to review, approve, or revise before the patient arrives"]}, {"id": 2, "num": "02", "icon": "🧰", "title": "Document Preventive Maintenance & Screenings", "color": "#457B9D", "points": ["Every screening, immunization, and preventive education encounter must be recorded in the patient's medical record — documentation is what makes continuity of care possible", "When documenting patient education, include the topic covered at the provider's direction, materials used, key discussion points, and the patient's questions and responses", "Clinical quality measures depend on accurate, complete documentation — if the screening happened but wasn't charted, it effectively did not happen from a quality reporting standpoint", "MAs must understand that their documentation becomes part of the legal record — accuracy, completeness, and timeliness all matter", "Use the EHR's preventive care section to track what was done and flag what remains outstanding — this becomes the roadmap for the next visit"]}, {"id": 3, "num": "03", "icon": "🌈", "title": "Screening Timelines & Recommendations", "color": "#2A9D8F", "points": ["Screening timelines are based on average risk — patients with family history or personal risk factors may need to be screened earlier or more frequently than standard recommendations", "Key routine screenings: blood pressure (ongoing), breast cancer mammogram (annually starting at 40), cervical cancer Pap test (every 3 years ages 21–29; every 3–5 years ages 30–65 with HPV co-test)", "Colorectal cancer: starting at age 45 via FOBT or colonoscopy. Lung cancer LDCT: annually ages 50–80 with ≥20-pack-year smoking history. Diabetes blood glucose: every 3 years for adults", "One-time screenings: abdominal aortic aneurysm ultrasound (males ages 65–75 who ever smoked); hepatitis C (born 1945–1965, IV drug use history, blood transfusion before 1992)", "Additional behavioral screenings at every visit: alcohol and tobacco use, drug use, depression, intimate partner violence, and older adult safety — all important and all often the MA's responsibility to initiate"]}, {"id": 4, "num": "04", "icon": "🧪", "title": "Community Resource Information", "color": "#8338EC", "points": ["The MA builds and maintains a community resource library — a readily accessible, organized list of local clinical and non-clinical services patients may need", "Clinical resources: home health agencies, mental health facilities, long-term care, hospice, community health centers, and specialty referral contacts", "Non-clinical resources: food pantries, transportation assistance, employment programs, fuel and weatherization assistance, youth services, financial and income support programs", "For each resource, capture: name, address, phone number, email, website, and the name of a contact person — update the list at least every 6 months", "Navigate patients to these resources directly and document in the chart which resources were discussed and provided — this becomes part of the patient's care plan"]}, {"id": 5, "num": "05", "icon": "📏", "title": "Care Coordination with Providers & Community", "color": "#FF6B35", "points": ["Care coordination means the right information reaches the right person at the right time — it is the connective tissue that keeps team-based care functioning", "Referral process: verify the specialist accepts the patient's insurance before scheduling; give the patient the specialist's contact details; always follow up to confirm an appointment was made", "When coordinating transitions of care, communicate the patient's history, current medications, and specific needs clearly to the receiving provider — this reduces rehospitalization risk", "Communicate with community-based organizations (food banks, adult day programs, disability services) on behalf of patients who face barriers to following their treatment plan", "Document all coordination activities in the EHR — community referrals, provider-to-provider communication, and any follow-up actions taken on the patient's behalf"]}, {"id": 6, "num": "06", "icon": "💉", "title": "Facilitate Patient Adherence", "color": "#E63946", "points": ["The best predictor of adherence is how well the patient understands their care plan — MAs who communicate clearly, assess comprehension, and follow up consistently improve outcomes", "Medication education before leaving the office: how and when to take the medication, proper storage, key side effects, what to do if a dose is missed, and how to request refills without a lapse", "Practical adherence tools: pill organizers, phone alarm reminders, cell phone apps for medication tracking, and reminder cards or text messages for appointments", "Address barriers to care — financial, cultural, environmental, physical, or behavioral — with privacy and respect; identifying the barrier is the first step to removing it", "Follow-up calls after the visit allow patients to ask questions, report problems, and receive reassurance — patients who feel cared for between visits are more likely to stay engaged in their care"]}, {"id": 7, "num": "07", "icon": "🩸", "title": "Team-Based Patient Care — PCMH & ACO", "color": "#457B9D", "points": ["Patient-Centered Medical Home (PCMH): a care model where the primary care provider leads an interprofessional team to coordinate all aspects of a patient's care — from prevention through end of life", "Five PCMH core functions: comprehensive care (whole patient), patient-centered (individual preferences and family involvement), coordinated (EHR-enabled team communication), accessible (open scheduling, portal tools), and quality-focused (evidence-based, data-driven)", "Accountable Care Organization (ACO): a network of providers across multiple practices, hospitals, and specialty clinics that are collectively accountable for quality and cost of care for a defined patient population", "ACOs extend care beyond the clinic — community outreach programs (smoking cessation, weight management, nutrition education) are a key feature because prevention at the population level reduces cost", "MA role in both models: pre-visit planning, patient education, care coordination, documentation, screening follow-up, and being the consistent point of contact between the patient and the broader team"]}, {"id": 8, "num": "08", "icon": "📋", "title": "Transition of Care for Patients", "color": "#2A9D8F", "points": ["A care transition occurs whenever a patient moves from one provider, setting, or level of care to another — hospital to home, PCP to specialist, primary care to long-term care", "Poor transitions are directly linked to rehospitalization, medication errors, missed follow-ups, and preventable adverse events — the MA's role is to close those gaps", "Effective transition communication: send a complete summary of the patient's history, current medications (reconciled), allergies, pending orders, and the reason for transition to the receiving provider", "Educate the patient and family about what to expect in the new setting, who will be caring for them, what medications to take (and when to start or stop them), and when to follow up", "Always verify that the patient has successfully connected with the new provider or setting — do not assume the transition completed just because the referral was sent"]}, {"id": 9, "num": "09", "icon": "🩹", "title": "Patient Education via Telehealth", "color": "#8338EC", "points": ["Telehealth uses live video calls and electronic data exchange to deliver care and education remotely — expanding access for rural patients, homebound individuals, and those with transportation or financial barriers", "MA responsibilities in a virtual visit: set up the telehealth platform, help patients troubleshoot technical issues, document the encounter in the EHR, provide provider-approved education, and handle follow-up scheduling and referrals", "Education delivered via telehealth follows the same principles as in-person: assess learning style, speak clearly, provide written materials, confirm comprehension, and document everything", "Telehealth does not reduce the MA's obligations — HIPAA compliance, scope of practice, documentation standards, and patient privacy requirements apply exactly as they would in the office", "Remind patients to prepare for virtual visits: have self-reported vitals ready, install required apps in advance, find a private and quiet location, and know how to use the camera and microphone"]}];
+var TAKEAWAYS = ["Pre-visit planning is proactive care — catching overdue screenings, expired prescriptions, and pending labs before the appointment makes the visit more efficient and safer for the patient", "If it isn't documented in the patient record, it didn't happen — every screening, education session, referral, and coordination activity must be charted", "Learning style drives delivery method — auditory, visual, and kinesthetic learners all need different approaches; always confirm comprehension before the patient leaves", "Barriers to care are real and varied — behavioral, financial, cultural, physical, and environmental; identify them respectfully and connect patients to the right resources", "Transitions are high-risk moments — clear communication between providers, combined with patient education, is the only way to prevent the gaps that lead to rehospitalization", "Telehealth is the same standard of care as in-person — HIPAA, documentation, scope of practice, and patient education obligations do not change because the visit is on a screen"];
 
 var activeId = null;
-var sidebar = document.getElementById('sidebar');
+var contentPage = 0;
+var contentPages = [];
+var sidebarPage = 0;
+var sidebarTotalPages = 1;
+var ITEMS_PER_SIDEBAR_PAGE = 9;
+
+var sidebarPagesEl = document.getElementById('sidebarPages');
+var sidebarNavEl = document.getElementById('sidebarNav');
 var content = document.getElementById('content');
 
+/* ── Fullscreen ── */
+var fsBtn = document.getElementById('fsBtn');
+var fsIcon = document.getElementById('fsIcon');
+var expandPath = 'M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3';
+var shrinkPath = 'M4 14h2a2 2 0 0 1 2 2v2m8-16v2a2 2 0 0 0 2 2h2M4 10h2a2 2 0 0 0 2-2V6m8 16v-2a2 2 0 0 1 2-2h2';
+
+function updateFsIcon() {
+  var isFs = !!document.fullscreenElement;
+  fsIcon.innerHTML = '<path d="' + (isFs ? shrinkPath : expandPath) + '"/>';
+  fsBtn.title = isFs ? 'Exit fullscreen' : 'Toggle fullscreen';
+}
+
+fsBtn.addEventListener('click', function() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(function(){});
+  } else {
+    document.exitFullscreen().catch(function(){});
+  }
+});
+document.addEventListener('fullscreenchange', updateFsIcon);
+
+/* ── Sidebar ── */
 function buildSidebar() {
-  TOPICS.forEach(function(t) {
-    var btn = document.createElement('button');
-    btn.className = 'topic-btn';
-    btn.dataset.id = t.id;
-    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
-    btn.addEventListener('click', function() { selectTopic(t.id); });
-    btn.addEventListener('mouseenter', function() {
-      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+  sidebarPagesEl.innerHTML = '';
+  var allItems = TOPICS.map(function(t) { return { type: 'topic', data: t }; });
+  allItems.push({ type: 'takeaway' });
+  sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
+  for (var p = 0; p < sidebarTotalPages; p++) {
+    var pageDiv = document.createElement('div');
+    pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
+    pageDiv.dataset.page = p;
+    var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p + 1) * ITEMS_PER_SIDEBAR_PAGE);
+    slice.forEach(function(item) {
+      if (item.type === 'topic') {
+        var t = item.data;
+        var btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.dataset.id = t.id;
+        btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+        btn.addEventListener('click', function() { selectTopic(t.id); });
+        btn.addEventListener('mouseenter', function() {
+          if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+        });
+        btn.addEventListener('mouseleave', function() {
+          if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(btn);
+      } else {
+        var tkBtn = document.createElement('button');
+        tkBtn.className = 'topic-btn';
+        tkBtn.dataset.id = 'takeaways';
+        tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+        tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+        tkBtn.addEventListener('mouseenter', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+        });
+        tkBtn.addEventListener('mouseleave', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(tkBtn);
+      }
     });
-    btn.addEventListener('mouseleave', function() {
-      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-    });
-    sidebar.appendChild(btn);
-  });
-  var divider = document.createElement('div');
-  divider.className = 'sidebar-divider';
-  sidebar.appendChild(divider);
-  var tkBtn = document.createElement('button');
-  tkBtn.className = 'topic-btn';
-  tkBtn.dataset.id = 'takeaways';
-  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
-  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
-  tkBtn.addEventListener('mouseenter', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
-  });
-  tkBtn.addEventListener('mouseleave', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-  });
-  sidebar.appendChild(tkBtn);
+    sidebarPagesEl.appendChild(pageDiv);
+  }
+  if (sidebarTotalPages > 1) {
+    sidebarNavEl.innerHTML =
+      '<button id="sbPrev" onclick="changeSidebarPage(-1)">\u25C0</button>' +
+      '<span class="page-info" id="sbInfo"></span>' +
+      '<button id="sbNext" onclick="changeSidebarPage(1)">\u25B6</button>';
+    updateSidebarNav();
+  } else { sidebarNavEl.innerHTML = ''; }
+}
+
+function changeSidebarPage(dir) {
+  var next = sidebarPage + dir;
+  if (next < 0 || next >= sidebarTotalPages) return;
+  sidebarPage = next;
+  var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  pages[sidebarPage].classList.add('active');
+  updateSidebarNav(); updateSidebarActive();
+}
+
+function updateSidebarNav() {
+  var info = document.getElementById('sbInfo');
+  var prev = document.getElementById('sbPrev');
+  var nxt = document.getElementById('sbNext');
+  if (!info) return;
+  info.textContent = (sidebarPage + 1) + '/' + sidebarTotalPages;
+  prev.disabled = sidebarPage === 0;
+  nxt.disabled = sidebarPage === sidebarTotalPages - 1;
 }
 
 function updateSidebarActive() {
-  var btns = sidebar.querySelectorAll('.topic-btn');
+  var btns = sidebarPagesEl.querySelectorAll('.topic-btn');
   btns.forEach(function(btn) {
     var id = btn.dataset.id;
     var topic = TOPICS.find(function(t) { return t.id == id; });
     var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
     if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
     if (isActive && topic) {
-      btn.style.background = topic.color + '20';
-      btn.style.borderColor = topic.color;
+      btn.style.background = topic.color + '20'; btn.style.borderColor = topic.color;
     } else if (isActive && id === 'takeaways') {
-      btn.style.background = 'rgba(255,255,255,0.08)';
-      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+      btn.style.background = 'rgba(255,255,255,0.08)'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
     } else {
-      btn.style.background = 'var(--surface)';
-      btn.style.borderColor = 'var(--border)';
+      btn.style.background = 'var(--surface)'; btn.style.borderColor = 'var(--border)';
     }
   });
 }
 
-function renderTopic(t) {
+/* ── Content ── */
+function showContentPage(t) {
+  var points = contentPages[contentPage];
+  var globalOffset = 0;
+  for (var i = 0; i < contentPage; i++) globalOffset += contentPages[i].length;
   var html = '<div class="content-header">' +
     '<span class="icon">' + t.icon + '</span>' +
     '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
     '<div class="title">' + t.title + '</div></div></div>' +
-    '<div class="content-scroll">';
-  t.points.forEach(function(p, i) {
+    '<div class="content-body"><div class="content-points">';
+  points.forEach(function(p, i) {
     html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<div class="num" style="background:' + t.color + '">' + (globalOffset + i + 1) + '</div>' +
       '<p>' + p + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var topicIdx = TOPICS.findIndex(function(x) { return x.id === t.id; });
+  var prevTopic = topicIdx > 0 ? TOPICS[topicIdx - 1] : null;
+  var nextTopic = topicIdx < TOPICS.length - 1 ? TOPICS[topicIdx + 1] : null;
+  html += '<div class="content-footer">';
+  if (prevTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">\u2190 ' + prevTopic.title + '</button>';
+  } else { html += '<div></div>'; }
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function(x) {
+    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '"></div>';
+  });
+  html += '</div>';
+  if (nextTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' \u2192</button>';
+  } else {
+    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways \u2192</button>';
+  }
+  html += '</div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function renderTakeaways() {
   var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<span class="icon" style="font-size:32px">\uD83C\uDFAF</span>' +
     '<div><div class="title">Key Takeaways</div></div></div>' +
-    '<div class="content-scroll">';
+    '<div class="content-body"><div class="content-points">';
   TAKEAWAYS.forEach(function(t, i) {
     html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
       '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var lastTopic = TOPICS[TOPICS.length - 1];
+  html += '<div class="content-footer">';
+  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">\u2190 ' + lastTopic.title + '</button>';
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function() { html += '<div class="dot"></div>'; });
+  html += '<div class="dot active" style="background: linear-gradient(135deg, #E63946, #FF6B35)"></div>';
+  html += '</div><div></div></div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function selectTopic(id) {
   activeId = id;
-  updateSidebarActive();
-  if (id === 'takeaways') {
-    content.innerHTML = renderTakeaways();
+  if (id !== 'takeaways') {
+    var idx = TOPICS.findIndex(function(t) { return t.id === id; });
+    var targetPage = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
+    if (targetPage !== sidebarPage) {
+      sidebarPage = targetPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   } else {
-    var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) content.innerHTML = renderTopic(topic);
+    var tkPage = sidebarTotalPages - 1;
+    if (tkPage !== sidebarPage) {
+      sidebarPage = tkPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   }
-  content.style.animation = 'none';
-  void content.offsetHeight;
-  content.style.animation = 'fadeIn 0.25s ease';
+  updateSidebarActive();
+  if (id === 'takeaways') { renderTakeaways(); }
+  else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) { contentPages = [topic.points]; contentPage = 0; showContentPage(topic); }
+  }
 }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F11') { e.preventDefault(); fsBtn.click(); return; }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (activeId === null) { selectTopic(1); return; }
+    if (activeId === 'takeaways') return;
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx < TOPICS.length - 1) selectTopic(TOPICS[idx + 1].id);
+    else selectTopic('takeaways');
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (activeId === null) return;
+    if (activeId === 'takeaways') { selectTopic(TOPICS[TOPICS.length - 1].id); return; }
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx > 0) selectTopic(TOPICS[idx - 1].id);
+  }
+});
 
 buildSidebar();
 </script>

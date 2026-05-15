@@ -30,32 +30,86 @@
   .header {
     flex-shrink: 0;
     text-align: center;
-    padding: 16px 24px 12px;
+    padding: 14px 24px 10px;
+    position: relative;
   }
   .header h1 {
-    font-size: 26px; font-weight: 800;
+    font-size: 28px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Fullscreen button */
+  .fs-btn {
+    position: absolute;
+    top: 14px; right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 18px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .fs-btn:hover {
+    color: var(--text-bright);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+  }
+  .fs-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
   .main {
     flex: 1; overflow: hidden;
-    display: flex; gap: 16px;
-    padding: 0 24px 16px;
+    display: flex; gap: 14px;
+    padding: 0 20px 14px;
   }
   .sidebar {
-    width: 250px; flex-shrink: 0;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 4px;
-    padding-right: 6px;
+    width: 260px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .sidebar::-webkit-scrollbar { width: 3px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .sidebar-pages {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 4px;
+    overflow: hidden;
+  }
+  .sidebar-page {
+    display: none;
+    flex-direction: column; gap: 4px;
+    flex: 1;
+  }
+  .sidebar-page.active { display: flex; }
+  .sidebar-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px 0 0;
+  }
+  .sidebar-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
+  .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .sidebar-nav .page-info {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 44px; text-align: center;
+  }
   .topic-btn {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 8px 11px;
+    border-radius: 10px; padding: 8px 12px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
@@ -63,78 +117,110 @@
   .topic-btn:hover { transform: translateX(2px); }
   .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 13px; font-weight: 500; flex: 1;
+    font-size: 14px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 4px 0; flex-shrink: 0;
-  }
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px;
+    border-radius: 16px; padding: 22px;
     display: flex; flex-direction: column;
   }
   .content-header {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     margin-bottom: 14px;
   }
-  .content-header .icon { font-size: 30px; }
+  .content-header .icon { font-size: 32px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 18px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
-  .content-scroll {
-    flex: 1; overflow-y: auto; padding-right: 6px;
+  .content-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .content-scroll::-webkit-scrollbar { width: 3px; }
-  .content-scroll::-webkit-scrollbar-track { background: transparent; }
-  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .content-points {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .content-footer {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+  .content-footer .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .content-footer .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  .content-footer .page-dots {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .content-footer .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.25s;
+  }
+  .content-footer .dot.active {
+    width: 20px; border-radius: 4px;
+  }
   .point {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px; border: 1px solid transparent;
+    border-radius: 10px; padding: 11px 14px;
+    border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .point p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .takeaway-item {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px;
+    border-radius: 10px; padding: 11px 14px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
-  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 16px; }
+  .welcome p { font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -143,48 +229,6 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
-
-  /* ===== MOBILE RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    html, body { overflow: auto; height: auto; }
-    .app { height: auto; min-height: 100vh; overflow: visible; }
-    .header { padding: 14px 16px 10px; }
-    .header h1 { font-size: 22px; }
-    .main {
-      flex-direction: column;
-      padding: 0 12px 16px;
-      overflow: visible;
-    }
-    .sidebar {
-      width: 100%;
-      flex-direction: row;
-      overflow-x: auto;
-      overflow-y: hidden;
-      gap: 6px;
-      padding-right: 0;
-      padding-bottom: 8px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
-    .topic-btn {
-      flex-shrink: 0;
-      min-width: max-content;
-      padding: 7px 12px;
-    }
-    .sidebar-divider {
-      width: 1px; height: auto;
-      min-height: 28px;
-      margin: 0 2px;
-    }
-    .content {
-      overflow: visible;
-      min-height: 60vh;
-      padding: 16px;
-    }
-    .content-scroll { overflow: visible; }
-    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
-  }
-
 </style>
 </head>
 <body>
@@ -192,149 +236,256 @@
   <div class="header">
     <h1>General Patient Care: Foundations</h1>
     <p>Exam Prep, Medications, EMR & Telehealth</p>
+    <button class="fs-btn" id="fsBtn" title="Toggle fullscreen">
+      <svg id="fsIcon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
   </div>
   <div class="main">
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-pages" id="sidebarPages"></div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
     <div class="content" id="content">
       <div class="welcome">
         <div class="big-icon">📚</div>
-        <p>Select a topic to explore its key learning points</p>
+        <p>Select a topic from the left to explore its key learning points</p>
       </div>
     </div>
   </div>
 </div>
 <script>
-var TOPICS = [
-  { id:1, num:"01", icon:"🔍", title:"Prepare the Examination & Procedure Room", color:"#E63946",
-    points:["Review the daily schedule before patients arrive — the reason for each visit tells you which room, supplies, and equipment to set up in advance","Standard room supplies: exam table paper, gowns, drapes, gloves, tongue depressors, alcohol pads, bandages, and syringes/needles stored securely","Diagnostic equipment must be clean, properly stored, and confirmed functioning: thermometer, stethoscope, BP cuff, pulse oximeter, reflex hammer, otoscope, ophthalmoscope","Disinfect all surfaces — counters, chair, reusable equipment, and exam table — between every patient; allow to dry before placing fresh table paper","At the end of each day, restock routine items and ensure all rooms are clean, properly stocked, and ready for the next day"] },
-  { id:2, num:"02", icon:"🧰", title:"Prepare the Patient & Provide Education", color:"#457B9D",
-    points:["Always knock, announce yourself, and ask permission before entering an occupied exam room — patient privacy and consent matter from the first moment","Introduce yourself, verify the patient\'s identity with two identifiers, and explain the procedure in plain language — no medical jargon, and encourage questions","Ask the patient to empty their bladder before disrobing; provide a correctly sized gown and explain the direction of the opening","After the procedure: assist the patient off the table (dizziness is common), allow privacy to redress, and provide follow-up instructions, aftercare information, and referral details before they leave","Inform patients when to expect results and who to contact if they have complications — and remind them to call 911 for emergencies"] },
-  { id:3, num:"03", icon:"🌈", title:"Assist with Examinations — Positioning & Draping", color:"#2A9D8F",
-    points:["Supine (flat on back): used for anterior body exams — head, chest, abdomen; drape from chest to feet","Prone (face down): used for back exams and certain surgeries; drape upper back to feet","Dorsal recumbent (back with knees bent): used for head, neck, chest, vaginal, rectal, and perineal exams; drape from neck to feet","Lithotomy (stirrups): used for vaginal exams and Pap tests; patient slides to the table edge; drape from under arms to ankles","Fowler\'s (90°) and semi-Fowler\'s (45°): used for upper body exams and patients with breathing difficulty; left lateral and knee-chest used for rectal and proctologic procedures"] },
-  { id:4, num:"04", icon:"🧪", title:"Prepare & Administer Medications — Nonparenteral Routes", color:"#8338EC",
-    points:["Nonparenteral (enteral) medications are given by mouth or absorbed through mucosal membranes — bypassing the need for injection","Oral (tablets, capsules, liquids): most common route — easy, safe, and patient-familiar; timing matters (empty stomach, food interactions)","Sublingual and buccal: placed under the tongue or between the cheek and gum for rapid absorption directly into the bloodstream","Topical and transdermal: applied to skin as creams, ointments, or patches — act locally (topical) or release slowly into systemic circulation (transdermal/patch)","Always perform the nine rights before administering any medication: right patient, medication, form, dose, route, time, technique, education, and documentation"] },
-  { id:5, num:"05", icon:"📏", title:"Prepare & Administer Medications — Parenteral Routes", color:"#FF6B35",
-    points:["Parenteral means any route that bypasses the GI tract — most commonly by injection: intradermal (ID), subcutaneous (SC), and intramuscular (IM)","Intradermal (ID): 5–15° angle, bevel up, forearm — used for TB skin tests and allergy testing; a wheal must form; do not massage or bandage the site","Subcutaneous (SC): 45° angle, pinch skin, upper arm/abdomen/thigh — used for insulin, heparin, and some vaccines; up to 1.5 mL; rotate insulin sites within one anatomical region","Intramuscular (IM): 90° angle, stretch skin taut — deltoid (≤1 mL), ventrogluteal (≤3 mL), vastus lateralis (≤3 mL, preferred for children under 3); CDC no longer recommends aspiration","After any injection: ask the patient to stay 20–30 minutes for observation; immediately report severe pain, swelling, numbness, or signs of allergic reaction to the provider"] },
-  { id:6, num:"06", icon:"💉", title:"Manage Injection Supplies, Medication Logs & Controlled Substances", color:"#E63946",
-    points:["Select needle gauge and length based on injection type and patient size — higher gauge = smaller lumen; longer needles for patients with more adipose tissue","Controlled substances must be stored under double lock and require a daily count by two staff members — all use must be logged in a dedicated log or electronic system","Immunization documentation must include: vaccine name, lot number, manufacturer, expiration date, site, route, date, and patient consent","Multi-dose vials: wipe stopper with alcohol before every use; write the opened date on the vial; discard after 28 days unless the manufacturer states otherwise","Refrigerated medications: store between 2–8°C; vaccines require temperature checks daily (or twice daily); rotate stock so medications closest to expiration are used first"] },
-  { id:7, num:"07", icon:"🩸", title:"Perform Ear & Eye Instillation and Irrigation", color:"#457B9D",
-    points:["Eye instillation: patient looks toward the ceiling; pull down the lower lid to expose the conjunctival sac; dispense drops ½ inch above the sac without touching the eye or skin; only sterile ophthalmic medications may be used","Eye irrigation: flush foreign bodies or chemical irritants with warmed sterile solution; flow from inner to outer canthus; use separate sterile equipment for each eye","Ear instillation: patient lies with affected ear facing up; pull pinna outward and UPWARD for adults, outward and DOWNWARD for children and infants to straighten the canal","Ear irrigation: used to remove impacted cerumen or foreign matter; insert tip toward top of canal; spray until goal is achieved; have patient lie on irrigated side for 15 minutes after","After any eye or ear procedure: observe for discomfort or adverse reactions; document findings, solution used, and patient response"] },
-  { id:8, num:"08", icon:"📋", title:"Operate Basic Functions of an EMR/EHR System", color:"#2A9D8F",
-    points:["EMR: electronic medical record used within a single organization — a digital version of the patient chart","EHR: electronic health record that extends across organizations — shares information with specialists, labs, and hospitals for coordinated care","Core functions MAs use: document vital signs and patient history, update medication lists, record allergies, scan documents, and message the care team","EHRs are required to report communicable diseases (HIV/AIDS, TB, STIs) and birth and death statistics to state and local health agencies — this data informs public health decisions","Accuracy in EHR documentation is a legal and patient safety requirement — what is documented becomes the permanent record of what was done"] },
-  { id:9, num:"09", icon:"🩹", title:"Enter Orders Using Computerized Provider Order Entry (CPOE)", color:"#8338EC",
-    points:["CPOE allows providers to enter medical orders electronically — medications, lab tests, imaging, and referrals — instead of handwriting or calling them in","Benefits: eliminates handwriting errors, reduces transcription mistakes, speeds order delivery to pharmacies and labs, and supports clinical decision-making","Built-in clinical decision support (CDSS) automatically checks for drug interactions, allergies, and dosing errors at the time of order entry","MAs may enter order information into the system for the provider to review and authorize — MAs do not independently submit final orders","CPOE integrates with other EHR components so orders go directly to the relevant department — pharmacy, lab, or radiology — as soon as they are authorized"] },
-  { id:10, num:"10", icon:"🏷️", title:"Conduct Telehealth & Virtual Screenings", color:"#FF6B35",
-    points:["Telehealth is appropriate for: wellness visits, chronic condition check-ins, mental health, dermatology, nutrition counseling, and low-acuity urgent care (sinusitis, UTI, rashes)","Before the visit: confirm the patient\'s tech requirements (smartphone, tablet, or computer with camera and internet), send sign-in instructions, and test the connection in advance","MA role during the virtual visit: gather patient history, verify medications and pharmacy information, set the visit agenda, and flag follow-up needs just as in a standard visit","Remind patients to have self-reported vitals ready prior to the appointment — blood pressure, glucose, weight — especially for patients managing chronic conditions","Telehealth does not change the MA\'s standard of practice, scope of practice, or legal obligations — the same professionalism and documentation standards apply"] },
-  { id:11, num:"11", icon:"⚙️", title:"Follow Guidelines for Electronic Prescriptions & Refills", color:"#E63946",
-    points:["E-prescribing transmits prescriptions directly from the EHR to the patient\'s preferred pharmacy — faster than paper, eliminates handwriting errors, and reduces diversion risk","Required elements on every electronic prescription: medication name, dose, route, quantity, refills, prescriber name and DEA number (for controlled substances), date/time of transmission, and pharmacy name","Controlled substances (Schedule II–V) require DEA-approved EPCS (Electronic Prescriptions for Controlled Substances) software — both the provider and pharmacy must use certified systems","Many states now mandate e-prescribing for all medications, with very limited exceptions — paper prescriptions are being phased out","Refill requests: pharmacies can submit refill requests electronically through the e-prescribing system; the provider reviews and approves at their convenience — reducing unnecessary phone calls to the office"] },
-];
-
-var TAKEAWAYS = [
-  "Review the schedule before every patient arrives — preparation begins before they walk through the door",
-  "Positioning is a clinical skill: wrong position, wrong exam — know all eight positions and their draping requirements",
-  "The nine rights of medication administration are non-negotiable — apply them every time, for every medication, without exception",
-  "Needle direction for ear instillation is a critical detail: UPWARD for adults, DOWNWARD for children and infants",
-  "Used needles go directly into the sharps container — not the biohazard bag, not the trash, not temporarily on the counter",
-  "Everything in the EHR, CPOE, and MAR is a legal record — accuracy and timeliness in documentation directly affect patient safety"
-];
+var TOPICS = [{"id": 1, "num": "01", "icon": "🔍", "title": "Prepare the Exam & Procedure Room", "color": "#E63946", "points": ["Review the daily schedule before patients arrive — the reason for each visit tells you which room, supplies, and equipment to set up in advance", "Standard room supplies: exam table paper, gowns, drapes, gloves, tongue depressors, alcohol pads, bandages, and syringes/needles stored securely", "Diagnostic equipment must be clean, properly stored, and confirmed functioning: thermometer, stethoscope, BP cuff, pulse oximeter, reflex hammer, otoscope, ophthalmoscope", "Disinfect all surfaces — counters, chair, reusable equipment, and exam table — between every patient; allow to dry before placing fresh table paper", "At the end of each day, restock routine items and ensure all rooms are clean, properly stocked, and ready for the next day"]}, {"id": 2, "num": "02", "icon": "🧰", "title": "Prepare the Patient & Provide Education", "color": "#457B9D", "points": ["Always knock, announce yourself, and ask permission before entering an occupied exam room — patient privacy and consent matter from the first moment", "Introduce yourself, verify the patient's identity with two identifiers, and explain the procedure in plain language — no medical jargon, and encourage questions", "Ask the patient to empty their bladder before disrobing; provide a correctly sized gown and explain the direction of the opening", "After the procedure: assist the patient off the table (dizziness is common), allow privacy to redress, and provide follow-up instructions, aftercare information, and referral details before they leave", "Inform patients when to expect results and who to contact if they have complications — and remind them to call 911 for emergencies"]}, {"id": 3, "num": "03", "icon": "🌈", "title": "Positioning & Draping", "color": "#2A9D8F", "points": ["Supine (flat on back): used for anterior body exams — head, chest, abdomen; drape from chest to feet", "Prone (face down): used for back exams and certain surgeries; drape upper back to feet", "Dorsal recumbent (back with knees bent): used for head, neck, chest, vaginal, rectal, and perineal exams; drape from neck to feet", "Lithotomy (stirrups): used for vaginal exams and Pap tests; patient slides to the table edge; drape from under arms to ankles", "Fowler's (90°) and semi-Fowler's (45°): used for upper body exams and patients with breathing difficulty; left lateral and knee-chest used for rectal and proctologic procedures"]}, {"id": 4, "num": "04", "icon": "🧪", "title": "Medications — Nonparenteral Routes", "color": "#8338EC", "points": ["Nonparenteral (enteral) medications are given by mouth or absorbed through mucosal membranes — bypassing the need for injection", "Oral (tablets, capsules, liquids): most common route — easy, safe, and patient-familiar; timing matters (empty stomach, food interactions)", "Sublingual and buccal: placed under the tongue or between the cheek and gum for rapid absorption directly into the bloodstream", "Topical and transdermal: applied to skin as creams, ointments, or patches — act locally (topical) or release slowly into systemic circulation (transdermal/patch)", "Always perform the nine rights before administering any medication: right patient, medication, form, dose, route, time, technique, education, and documentation"]}, {"id": 5, "num": "05", "icon": "📏", "title": "Medications — Parenteral Routes", "color": "#FF6B35", "points": ["Parenteral means any route that bypasses the GI tract — most commonly by injection: intradermal (ID), subcutaneous (SC), and intramuscular (IM)", "Intradermal (ID): 5–15° angle, bevel up, forearm — used for TB skin tests and allergy testing; a wheal must form; do not massage or bandage the site", "Subcutaneous (SC): 45° angle, pinch skin, upper arm/abdomen/thigh — used for insulin, heparin, and some vaccines; up to 1.5 mL; rotate insulin sites within one anatomical region", "Intramuscular (IM): 90° angle, stretch skin taut — deltoid (≤1 mL), ventrogluteal (≤3 mL), vastus lateralis (≤3 mL, preferred for children under 3); CDC no longer recommends aspiration", "After any injection: ask the patient to stay 20–30 minutes for observation; immediately report severe pain, swelling, numbness, or signs of allergic reaction to the provider"]}, {"id": 6, "num": "06", "icon": "💉", "title": "Injection Supplies & Controlled Substances", "color": "#E63946", "points": ["Select needle gauge and length based on injection type and patient size — higher gauge = smaller lumen; longer needles for patients with more adipose tissue", "Controlled substances must be stored under double lock and require a daily count by two staff members — all use must be logged in a dedicated log or electronic system", "Immunization documentation must include: vaccine name, lot number, manufacturer, expiration date, site, route, date, and patient consent", "Multi-dose vials: wipe stopper with alcohol before every use; write the opened date on the vial; discard after 28 days unless the manufacturer states otherwise", "Refrigerated medications: store between 2–8°C; vaccines require temperature checks daily (or twice daily); rotate stock so medications closest to expiration are used first"]}, {"id": 7, "num": "07", "icon": "🩸", "title": "Ear & Eye Instillation and Irrigation", "color": "#457B9D", "points": ["Eye instillation: patient looks toward the ceiling; pull down the lower lid to expose the conjunctival sac; dispense drops ½ inch above the sac without touching the eye or skin; only sterile ophthalmic medications may be used", "Eye irrigation: flush foreign bodies or chemical irritants with warmed sterile solution; flow from inner to outer canthus; use separate sterile equipment for each eye", "Ear instillation: patient lies with affected ear facing up; pull pinna outward and UPWARD for adults, outward and DOWNWARD for children and infants to straighten the canal", "Ear irrigation: used to remove impacted cerumen or foreign matter; insert tip toward top of canal; spray until goal is achieved; have patient lie on irrigated side for 15 minutes after", "After any eye or ear procedure: observe for discomfort or adverse reactions; document findings, solution used, and patient response"]}, {"id": 8, "num": "08", "icon": "📋", "title": "EMR/EHR System Basics", "color": "#2A9D8F", "points": ["EMR: electronic medical record used within a single organization — a digital version of the patient chart", "EHR: electronic health record that extends across organizations — shares information with specialists, labs, and hospitals for coordinated care", "Core functions MAs use: document vital signs and patient history, update medication lists, record allergies, scan documents, and message the care team", "EHRs are required to report communicable diseases (HIV/AIDS, TB, STIs) and birth and death statistics to state and local health agencies — this data informs public health decisions", "Accuracy in EHR documentation is a legal and patient safety requirement — what is documented becomes the permanent record of what was done"]}, {"id": 9, "num": "09", "icon": "🩹", "title": "Computerized Provider Order Entry (CPOE)", "color": "#8338EC", "points": ["CPOE allows providers to enter medical orders electronically — medications, lab tests, imaging, and referrals — instead of handwriting or calling them in", "Benefits: eliminates handwriting errors, reduces transcription mistakes, speeds order delivery to pharmacies and labs, and supports clinical decision-making", "Built-in clinical decision support (CDSS) automatically checks for drug interactions, allergies, and dosing errors at the time of order entry", "MAs may enter order information into the system for the provider to review and authorize — MAs do not independently submit final orders", "CPOE integrates with other EHR components so orders go directly to the relevant department — pharmacy, lab, or radiology — as soon as they are authorized"]}, {"id": 10, "num": "10", "icon": "🏷️", "title": "Telehealth & Virtual Screenings", "color": "#FF6B35", "points": ["Telehealth is appropriate for: wellness visits, chronic condition check-ins, mental health, dermatology, nutrition counseling, and low-acuity urgent care (sinusitis, UTI, rashes)", "Before the visit: confirm the patient's tech requirements (smartphone, tablet, or computer with camera and internet), send sign-in instructions, and test the connection in advance", "MA role during the virtual visit: gather patient history, verify medications and pharmacy information, set the visit agenda, and flag follow-up needs just as in a standard visit", "Remind patients to have self-reported vitals ready prior to the appointment — blood pressure, glucose, weight — especially for patients managing chronic conditions", "Telehealth does not change the MA's standard of practice, scope of practice, or legal obligations — the same professionalism and documentation standards apply"]}, {"id": 11, "num": "11", "icon": "⚙️", "title": "Electronic Prescriptions & Refills", "color": "#E63946", "points": ["E-prescribing transmits prescriptions directly from the EHR to the patient's preferred pharmacy — faster than paper, eliminates handwriting errors, and reduces diversion risk", "Required elements on every electronic prescription: medication name, dose, route, quantity, refills, prescriber name and DEA number (for controlled substances), date/time of transmission, and pharmacy name", "Controlled substances (Schedule II–V) require DEA-approved EPCS (Electronic Prescriptions for Controlled Substances) software — both the provider and pharmacy must use certified systems", "Many states now mandate e-prescribing for all medications, with very limited exceptions — paper prescriptions are being phased out", "Refill requests: pharmacies can submit refill requests electronically through the e-prescribing system; the provider reviews and approves at their convenience — reducing unnecessary phone calls to the office"]}];
+var TAKEAWAYS = ["Review the schedule before every patient arrives — preparation begins before they walk through the door", "Positioning is a clinical skill: wrong position, wrong exam — know all eight positions and their draping requirements", "The nine rights of medication administration are non-negotiable — apply them every time, for every medication, without exception", "Needle direction for ear instillation is a critical detail: UPWARD for adults, DOWNWARD for children and infants", "Used needles go directly into the sharps container — not the biohazard bag, not the trash, not temporarily on the counter", "Everything in the EHR, CPOE, and MAR is a legal record — accuracy and timeliness in documentation directly affect patient safety"];
 
 var activeId = null;
-var sidebar = document.getElementById('sidebar');
+var contentPage = 0;
+var contentPages = [];
+var sidebarPage = 0;
+var sidebarTotalPages = 1;
+var ITEMS_PER_SIDEBAR_PAGE = 9;
+
+var sidebarPagesEl = document.getElementById('sidebarPages');
+var sidebarNavEl = document.getElementById('sidebarNav');
 var content = document.getElementById('content');
 
+/* ── Fullscreen ── */
+var fsBtn = document.getElementById('fsBtn');
+var fsIcon = document.getElementById('fsIcon');
+var expandPath = 'M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3';
+var shrinkPath = 'M4 14h2a2 2 0 0 1 2 2v2m8-16v2a2 2 0 0 0 2 2h2M4 10h2a2 2 0 0 0 2-2V6m8 16v-2a2 2 0 0 1 2-2h2';
+
+function updateFsIcon() {
+  var isFs = !!document.fullscreenElement;
+  fsIcon.innerHTML = '<path d="' + (isFs ? shrinkPath : expandPath) + '"/>';
+  fsBtn.title = isFs ? 'Exit fullscreen' : 'Toggle fullscreen';
+}
+
+fsBtn.addEventListener('click', function() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(function(){});
+  } else {
+    document.exitFullscreen().catch(function(){});
+  }
+});
+document.addEventListener('fullscreenchange', updateFsIcon);
+
+/* ── Sidebar ── */
 function buildSidebar() {
-  TOPICS.forEach(function(t) {
-    var btn = document.createElement('button');
-    btn.className = 'topic-btn';
-    btn.dataset.id = t.id;
-    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
-    btn.addEventListener('click', function() { selectTopic(t.id); });
-    btn.addEventListener('mouseenter', function() {
-      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+  sidebarPagesEl.innerHTML = '';
+  var allItems = TOPICS.map(function(t) { return { type: 'topic', data: t }; });
+  allItems.push({ type: 'takeaway' });
+  sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
+  for (var p = 0; p < sidebarTotalPages; p++) {
+    var pageDiv = document.createElement('div');
+    pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
+    pageDiv.dataset.page = p;
+    var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p + 1) * ITEMS_PER_SIDEBAR_PAGE);
+    slice.forEach(function(item) {
+      if (item.type === 'topic') {
+        var t = item.data;
+        var btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.dataset.id = t.id;
+        btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+        btn.addEventListener('click', function() { selectTopic(t.id); });
+        btn.addEventListener('mouseenter', function() {
+          if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+        });
+        btn.addEventListener('mouseleave', function() {
+          if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(btn);
+      } else {
+        var tkBtn = document.createElement('button');
+        tkBtn.className = 'topic-btn';
+        tkBtn.dataset.id = 'takeaways';
+        tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+        tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+        tkBtn.addEventListener('mouseenter', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+        });
+        tkBtn.addEventListener('mouseleave', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(tkBtn);
+      }
     });
-    btn.addEventListener('mouseleave', function() {
-      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-    });
-    sidebar.appendChild(btn);
-  });
-  var divider = document.createElement('div');
-  divider.className = 'sidebar-divider';
-  sidebar.appendChild(divider);
-  var tkBtn = document.createElement('button');
-  tkBtn.className = 'topic-btn';
-  tkBtn.dataset.id = 'takeaways';
-  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
-  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
-  tkBtn.addEventListener('mouseenter', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
-  });
-  tkBtn.addEventListener('mouseleave', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-  });
-  sidebar.appendChild(tkBtn);
+    sidebarPagesEl.appendChild(pageDiv);
+  }
+  if (sidebarTotalPages > 1) {
+    sidebarNavEl.innerHTML =
+      '<button id="sbPrev" onclick="changeSidebarPage(-1)">\u25C0</button>' +
+      '<span class="page-info" id="sbInfo"></span>' +
+      '<button id="sbNext" onclick="changeSidebarPage(1)">\u25B6</button>';
+    updateSidebarNav();
+  } else { sidebarNavEl.innerHTML = ''; }
+}
+
+function changeSidebarPage(dir) {
+  var next = sidebarPage + dir;
+  if (next < 0 || next >= sidebarTotalPages) return;
+  sidebarPage = next;
+  var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  pages[sidebarPage].classList.add('active');
+  updateSidebarNav(); updateSidebarActive();
+}
+
+function updateSidebarNav() {
+  var info = document.getElementById('sbInfo');
+  var prev = document.getElementById('sbPrev');
+  var nxt = document.getElementById('sbNext');
+  if (!info) return;
+  info.textContent = (sidebarPage + 1) + '/' + sidebarTotalPages;
+  prev.disabled = sidebarPage === 0;
+  nxt.disabled = sidebarPage === sidebarTotalPages - 1;
 }
 
 function updateSidebarActive() {
-  var btns = sidebar.querySelectorAll('.topic-btn');
+  var btns = sidebarPagesEl.querySelectorAll('.topic-btn');
   btns.forEach(function(btn) {
     var id = btn.dataset.id;
     var topic = TOPICS.find(function(t) { return t.id == id; });
     var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
     if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
     if (isActive && topic) {
-      btn.style.background = topic.color + '20';
-      btn.style.borderColor = topic.color;
+      btn.style.background = topic.color + '20'; btn.style.borderColor = topic.color;
     } else if (isActive && id === 'takeaways') {
-      btn.style.background = 'rgba(255,255,255,0.08)';
-      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+      btn.style.background = 'rgba(255,255,255,0.08)'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
     } else {
-      btn.style.background = 'var(--surface)';
-      btn.style.borderColor = 'var(--border)';
+      btn.style.background = 'var(--surface)'; btn.style.borderColor = 'var(--border)';
     }
   });
 }
 
-function renderTopic(t) {
+/* ── Content ── */
+function showContentPage(t) {
+  var points = contentPages[contentPage];
+  var globalOffset = 0;
+  for (var i = 0; i < contentPage; i++) globalOffset += contentPages[i].length;
   var html = '<div class="content-header">' +
     '<span class="icon">' + t.icon + '</span>' +
     '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
     '<div class="title">' + t.title + '</div></div></div>' +
-    '<div class="content-scroll">';
-  t.points.forEach(function(p, i) {
+    '<div class="content-body"><div class="content-points">';
+  points.forEach(function(p, i) {
     html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<div class="num" style="background:' + t.color + '">' + (globalOffset + i + 1) + '</div>' +
       '<p>' + p + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var topicIdx = TOPICS.findIndex(function(x) { return x.id === t.id; });
+  var prevTopic = topicIdx > 0 ? TOPICS[topicIdx - 1] : null;
+  var nextTopic = topicIdx < TOPICS.length - 1 ? TOPICS[topicIdx + 1] : null;
+  html += '<div class="content-footer">';
+  if (prevTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">\u2190 ' + prevTopic.title + '</button>';
+  } else { html += '<div></div>'; }
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function(x) {
+    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '"></div>';
+  });
+  html += '</div>';
+  if (nextTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' \u2192</button>';
+  } else {
+    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways \u2192</button>';
+  }
+  html += '</div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function renderTakeaways() {
   var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<span class="icon" style="font-size:32px">\uD83C\uDFAF</span>' +
     '<div><div class="title">Key Takeaways</div></div></div>' +
-    '<div class="content-scroll">';
+    '<div class="content-body"><div class="content-points">';
   TAKEAWAYS.forEach(function(t, i) {
     html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
       '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var lastTopic = TOPICS[TOPICS.length - 1];
+  html += '<div class="content-footer">';
+  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">\u2190 ' + lastTopic.title + '</button>';
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function() { html += '<div class="dot"></div>'; });
+  html += '<div class="dot active" style="background: linear-gradient(135deg, #E63946, #FF6B35)"></div>';
+  html += '</div><div></div></div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function selectTopic(id) {
   activeId = id;
-  updateSidebarActive();
-  if (id === 'takeaways') {
-    content.innerHTML = renderTakeaways();
+  if (id !== 'takeaways') {
+    var idx = TOPICS.findIndex(function(t) { return t.id === id; });
+    var targetPage = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
+    if (targetPage !== sidebarPage) {
+      sidebarPage = targetPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   } else {
-    var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) content.innerHTML = renderTopic(topic);
+    var tkPage = sidebarTotalPages - 1;
+    if (tkPage !== sidebarPage) {
+      sidebarPage = tkPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   }
-  content.style.animation = 'none';
-  void content.offsetHeight;
-  content.style.animation = 'fadeIn 0.25s ease';
+  updateSidebarActive();
+  if (id === 'takeaways') { renderTakeaways(); }
+  else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) { contentPages = [topic.points]; contentPage = 0; showContentPage(topic); }
+  }
 }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F11') { e.preventDefault(); fsBtn.click(); return; }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (activeId === null) { selectTopic(1); return; }
+    if (activeId === 'takeaways') return;
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx < TOPICS.length - 1) selectTopic(TOPICS[idx + 1].id);
+    else selectTopic('takeaways');
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (activeId === null) return;
+    if (activeId === 'takeaways') { selectTopic(TOPICS[TOPICS.length - 1].id); return; }
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx > 0) selectTopic(TOPICS[idx - 1].id);
+  }
+});
 
 buildSidebar();
 </script>

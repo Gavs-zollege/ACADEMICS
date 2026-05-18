@@ -30,32 +30,86 @@
   .header {
     flex-shrink: 0;
     text-align: center;
-    padding: 16px 24px 12px;
+    padding: 14px 24px 10px;
+    position: relative;
   }
   .header h1 {
-    font-size: 26px; font-weight: 800;
+    font-size: 28px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Fullscreen button */
+  .fs-btn {
+    position: absolute;
+    top: 14px; right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 18px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .fs-btn:hover {
+    color: var(--text-bright);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+  }
+  .fs-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
   .main {
     flex: 1; overflow: hidden;
-    display: flex; gap: 16px;
-    padding: 0 24px 16px;
+    display: flex; gap: 14px;
+    padding: 0 20px 14px;
   }
   .sidebar {
-    width: 250px; flex-shrink: 0;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 4px;
-    padding-right: 6px;
+    width: 260px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .sidebar::-webkit-scrollbar { width: 3px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .sidebar-pages {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 4px;
+    overflow: hidden;
+  }
+  .sidebar-page {
+    display: none;
+    flex-direction: column; gap: 4px;
+    flex: 1;
+  }
+  .sidebar-page.active { display: flex; }
+  .sidebar-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px 0 0;
+  }
+  .sidebar-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
+  .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .sidebar-nav .page-info {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 44px; text-align: center;
+  }
   .topic-btn {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 8px 11px;
+    border-radius: 10px; padding: 8px 12px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
@@ -63,78 +117,110 @@
   .topic-btn:hover { transform: translateX(2px); }
   .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 13px; font-weight: 500; flex: 1;
+    font-size: 14px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 4px 0; flex-shrink: 0;
-  }
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px;
+    border-radius: 16px; padding: 22px;
     display: flex; flex-direction: column;
   }
   .content-header {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     margin-bottom: 14px;
   }
-  .content-header .icon { font-size: 30px; }
+  .content-header .icon { font-size: 32px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 18px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
-  .content-scroll {
-    flex: 1; overflow-y: auto; padding-right: 6px;
+  .content-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .content-scroll::-webkit-scrollbar { width: 3px; }
-  .content-scroll::-webkit-scrollbar-track { background: transparent; }
-  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .content-points {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .content-footer {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+  .content-footer .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .content-footer .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  .content-footer .page-dots {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .content-footer .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.25s;
+  }
+  .content-footer .dot.active {
+    width: 20px; border-radius: 4px;
+  }
   .point {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px; border: 1px solid transparent;
+    border-radius: 10px; padding: 11px 14px;
+    border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .point p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .takeaway-item {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px;
+    border-radius: 10px; padding: 11px 14px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
-  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 16px; }
+  .welcome p { font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -143,48 +229,6 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
-
-  /* ===== MOBILE RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    html, body { overflow: auto; height: auto; }
-    .app { height: auto; min-height: 100vh; overflow: visible; }
-    .header { padding: 14px 16px 10px; }
-    .header h1 { font-size: 22px; }
-    .main {
-      flex-direction: column;
-      padding: 0 12px 16px;
-      overflow: visible;
-    }
-    .sidebar {
-      width: 100%;
-      flex-direction: row;
-      overflow-x: auto;
-      overflow-y: hidden;
-      gap: 6px;
-      padding-right: 0;
-      padding-bottom: 8px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
-    .topic-btn {
-      flex-shrink: 0;
-      min-width: max-content;
-      padding: 7px 12px;
-    }
-    .sidebar-divider {
-      width: 1px; height: auto;
-      min-height: 28px;
-      margin: 0 2px;
-    }
-    .content {
-      overflow: visible;
-      min-height: 60vh;
-      padding: 16px;
-    }
-    .content-scroll { overflow: visible; }
-    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
-  }
-
 </style>
 </head>
 <body>
@@ -192,145 +236,256 @@
   <div class="header">
     <h1>Infection Control Practices</h1>
     <p>Keeping Patients Safe</p>
+    <button class="fs-btn" id="fsBtn" title="Toggle fullscreen">
+      <svg id="fsIcon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
   </div>
   <div class="main">
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-pages" id="sidebarPages"></div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
     <div class="content" id="content">
       <div class="welcome">
         <div class="big-icon">📚</div>
-        <p>Select a topic to explore its key learning points</p>
+        <p>Select a topic from the left to explore its key learning points</p>
       </div>
     </div>
   </div>
 </div>
 <script>
-var TOPICS = [
-  { id:1, num:"01", icon:"🔍", title:"Adhere to Standard & Universal Precautions", color:"#E63946",
-    points:["Universal precautions treat every patient as potentially infectious for bloodborne pathogens — they apply to blood, body fluids, human tissue, and any fluid visibly contaminated with blood, regardless of the patient\'s known status","Standard precautions expand this to all body fluids and non-intact skin — not just blood — and are the baseline for every single patient encounter, every shift, without exception","Transmission-based precautions go further when a specific pathogen is identified or suspected: contact precautions for direct/indirect touch transmission, droplet precautions for coughing and sneezing illnesses, and airborne precautions for pathogens that travel in the air","Breaking any one of the six links in the chain of infection — infectious agent, reservoir, portal of exit, mode of transmission, portal of entry, or susceptible host — stops transmission entirely","Exposure categories shape PPE requirements: Category I tasks involve likely blood or fluid contact; Category II tasks do not normally involve exposure but require precautions; Category III tasks require no PPE (e.g., taking vital signs)"] },
-  { id:2, num:"02", icon:"🧰", title:"Adhere to Regulations & Guidelines for Infectious Diseases", color:"#457B9D",
-    points:["OSHA\'s Bloodborne Pathogens Standard requires every employer with at-risk employees to maintain a written exposure control plan — updated annually and reviewed with all employees upon hire and each year after","The exposure control plan must document engineering controls (safety needle devices, sharps containers), workplace practice controls (handwashing procedures, specimen packaging), required PPE, and post-exposure follow-up procedures","The Needle Safety and Prevention Act (2000) mandates the use of safety-engineered sharp devices and requires facilities to maintain a detailed sharps injury log — and MAs must know how to use these devices correctly","Communicable disease reporting is a legal obligation — certain diseases including TB, HIV, meningitis, foodborne illnesses, and COVID-19 must be reported to local health authorities per CDC guidelines and facility protocol","If you are sick with a fever, stay home until you have been fever-free for at least 24 hours without fever-reducing medication — this is not optional, it is an infection control mandate that protects patients and coworkers alike"] },
-  { id:3, num:"03", icon:"🌈", title:"Follow PPE Guidelines — Donning & Doffing", color:"#2A9D8F",
-    points:["Employers are required by OSHA to provide PPE at no cost; employees are required to use it whenever there is a reasonable expectation of contact with blood, body fluids, or other potentially infectious materials","Gloves are worn for: contact with blood, body fluids, or contaminated surfaces; injections or venipuncture; assisting with surgical procedures; handling blood specimens; and cleaning up any biological spill","Donning non-sterile gloves: wash hands → select the correct size → pull the glove over the hand to the wrist → repeat on the other hand → adjust fit","Doffing contaminated gloves: grasp the palm of the non-dominant glove with the dominant hand → pull off inside-out while holding in the dominant hand → slide two fingers inside the cuff of the dominant glove → pull off inside-out over the first glove → discard in the appropriate container → wash hands","The critical rule for doffing: never touch the contaminated outer surface of either glove with bare skin — the technique exists specifically to prevent this; practice it until it is automatic"] },
-  { id:4, num:"04", icon:"🧪", title:"Adhere to Hand Hygiene Guidelines", color:"#8338EC",
-    points:["Hand hygiene is the single most effective action for preventing the spread of infection in any healthcare setting — it is simple, free, and non-negotiable before and after every patient encounter","Proper handwashing: remove jewelry, wet hands with lukewarm water, apply 3 pumps of soap, lather with friction for 15–20 seconds with fingers pointing down, interlace fingers, clean under nails, rinse wrist to fingertip, dry with paper towel, turn off the faucet with the paper towel","Alcohol-based sanitizer (≥60% alcohol) is acceptable for hands that are not visibly soiled — before and after patient contact, after touching contaminated surfaces, before and after touching equipment near patients","Soap and water is required — not optional — after contact with blood or body fluids, before any aseptic procedure such as a blood draw or medication administration, after removing gloves, and whenever hands are visibly contaminated","Artificial nails are not permitted in clinical settings — research confirms healthcare professionals who wear them carry significantly more bacteria on their hands; remove all jewelry except a single plain band before performing hand hygiene"] },
-  { id:5, num:"05", icon:"📏", title:"Perform Disinfection & Sanitization", color:"#FF6B35",
-    points:["Sanitization comes first — it removes visible debris (blood, body fluids, organic material) from instruments and surfaces before disinfection or sterilization; both subsequent steps are significantly less effective if this step is skipped","Always wear appropriate gloves during sanitization; use thick utility gloves for sharps; follow manufacturer instructions for water temperature and detergent; separate dirty and clean work areas throughout the process","Three levels of disinfection: low-level (kills most bacteria, some viruses and fungi — used on exam tables and countertops; example: hydrogen peroxide), intermediate-level (kills bacteria, most viruses, and fungi but not spores — used on stethoscopes, BP cuffs; example: isopropyl alcohol), high-level (kills all microorganisms except a small number of spores — used on endoscopes; example: Cidex OPA)","Room cleaning order: complete hand hygiene → remove and roll table paper with contaminated side in → disinfect exam table → sink → countertops → computer keyboard","Safety Data Sheets (SDS) must be available for every chemical in the workplace — each SDS details hazard identification, first-aid measures for accidental exposure, required PPE, and spill procedures; know where yours are stored before you need them"] },
-  { id:6, num:"06", icon:"💉", title:"Perform Sterilization of Medical Equipment", color:"#E63946",
-    points:["Sterilization destroys all living microorganisms including resistant spores — it is required for any instrument that will penetrate the skin, enter a sterile body cavity, or be used in a sterile field; sanitization and disinfection must occur first","Autoclave is the primary sterilization method in the ambulatory setting — uses pressurized steam at 250–270°F; unwrapped items sterilize in 20 minutes, wrapped items in 30 minutes; always follow manufacturer guidelines","Wrap hinged instruments in the open position with gauze between the tips; use double-layer autoclave paper or peel-apart pouches; place a chemical indicator strip inside every package; seal with autoclave tape and label with date, time, initials, and contents","Sterilization indicators confirm the process was successful — autoclave tape lines turn black; pouch indicator arrows change color; biological indicators (spore tests) are the most rigorous and are used for routine autoclave quality checks","Sterilized packages are considered sterile for 30 days if they remain dry and intact; inspect every package before opening — watermarks, tears, or punctures mean the item must be rewrapped and resterilized before use"] },
-  { id:7, num:"07", icon:"🩸", title:"Perform Appropriate Aseptic Techniques", color:"#457B9D",
-    points:["Medical (clean) asepsis is used daily for all non-invasive procedures and when skin and mucous membranes are intact — it reduces the number of pathogens and prevents their growth but does not create a completely pathogen-free environment","Medical aseptic practices: wash hands before and after every patient encounter, wipe down work surfaces between patients with sanitizing wipes, use gloves and masks when in contact with body fluids, set up the lab with a designated clean side and dirty side","Surgical (sterile) asepsis is required for all invasive procedures, wound care, endoscopy, and catheter insertion — all instruments and PPE used must be sterile, and the sterile field must never be left unattended or compromised","Sterile field rules: open the farthest flap first; never reach over the field; the 1-inch border is always considered non-sterile; if sterility is ever in question, replace the item — there is no \'probably okay\' in sterile technique","Moving sick patients out of the waiting room immediately upon arrival, posting hand hygiene reminders, and not allowing eating or drinking in clinical areas are all active aseptic technique applications MAs are responsible for every day"] },
-  { id:8, num:"08", icon:"📋", title:"Dispose of Biohazardous Materials Correctly (OSHA)", color:"#2A9D8F",
-    points:["Every item that has contacted blood, body fluids, or potentially infectious material must go into an appropriate biohazard container immediately — never into regular trash, never left on a counter","Sharps container: needles, lancets, scalpel blades, broken glass, and any sharp object — must be puncture-proof, leak-proof, and labeled with the biohazard symbol; seal and replace when two-thirds full","Biohazard bag: contaminated gloves, gauze, bandages, disposable gowns, and dressings — must be leak-proof, impermeable polyethylene or polypropylene, and labeled with the biohazard symbol; double-bag if the outside of the bag is contaminated","Biohazard box: bulkier contaminated items such as table covers and disposable gowns — same labeling and material requirements; lid must be in place after every use","A licensed biohazard waste management company picks up and disposes of all biohazard waste from the facility — they are also held to OSHA standards; the facility is responsible for ensuring their protocols are followed until the waste leaves the building"] },
-  { id:9, num:"09", icon:"🩹", title:"Follow Post-Exposure Guidelines", color:"#8338EC",
-    points:["Immediately after a needlestick or sharps injury: wash the wound with soap and water; for mucous membrane exposure, flush with water; for eye exposure, irrigate at the eyewash station or with clean water — do not delay","Report immediately to your supervisor — post-exposure medical evaluation is time-sensitive; complete an incident exposure form; all employee health information remains confidential and documentation is retained for the duration of employment plus 30 years","The employer provides a medical evaluation and any necessary follow-up at no cost to the employee; hepatitis B vaccination is offered; a written opinion from the evaluating provider must be given to the employee within 15 days","Eyewash stations must be accessible in every lab area — all staff must know the location before they need it, not after; eyewash stations should be inspected and flushed monthly to confirm they are in working order","Prevention is the best post-exposure plan: never recap a used needle, always use safety-engineered devices, and drop needles directly into the sharps container immediately after use — an estimated half million needlestick exposures occur annually in the U.S., and the vast majority are preventable"] },
-];
-
-var TAKEAWAYS = [
-  "Breaking any single link in the chain of infection stops transmission — every handwash, every disinfected surface, and every properly discarded needle is a broken link",
-  "Soap and water and hand sanitizer are not interchangeable — blood, body fluid contact, aseptic procedures, and visible contamination always require soap and water",
-  "Sanitize first, then disinfect or sterilize — debris left on instruments significantly reduces the effectiveness of both subsequent steps",
-  "Sterilized and wrapped packages are considered sterile for 30 days — any watermark, tear, or puncture means rewrap and resterilize before touching a patient with it",
-  "Never recap a used needle — drop it directly into the sharps container at the point of use, every time, without exception",
-  "Post-exposure reporting must happen immediately — the medical evaluation, hepatitis B vaccination offer, and incident documentation are all time-sensitive and employer-funded"
-];
+var TOPICS = [{"id": 1, "num": "01", "icon": "🔍", "title": "Standard & Universal Precautions", "color": "#E63946", "points": ["Universal precautions treat every patient as potentially infectious for bloodborne pathogens — they apply to blood, body fluids, human tissue, and any fluid visibly contaminated with blood, regardless of the patient's known status", "Standard precautions expand this to all body fluids and non-intact skin — not just blood — and are the baseline for every single patient encounter, every shift, without exception", "Transmission-based precautions go further when a specific pathogen is identified or suspected: contact precautions for direct/indirect touch transmission, droplet precautions for coughing and sneezing illnesses, and airborne precautions for pathogens that travel in the air", "Breaking any one of the six links in the chain of infection — infectious agent, reservoir, portal of exit, mode of transmission, portal of entry, or susceptible host — stops transmission entirely", "Exposure categories shape PPE requirements: Category I tasks involve likely blood or fluid contact; Category II tasks do not normally involve exposure but require precautions; Category III tasks require no PPE (e.g., taking vital signs)"]}, {"id": 2, "num": "02", "icon": "🧰", "title": "Regulations & Guidelines for Infectious Diseases", "color": "#457B9D", "points": ["OSHA's Bloodborne Pathogens Standard requires every employer with at-risk employees to maintain a written exposure control plan — updated annually and reviewed with all employees upon hire and each year after", "The exposure control plan must document engineering controls (safety needle devices, sharps containers), workplace practice controls (handwashing procedures, specimen packaging), required PPE, and post-exposure follow-up procedures", "The Needle Safety and Prevention Act (2000) mandates the use of safety-engineered sharp devices and requires facilities to maintain a detailed sharps injury log — and MAs must know how to use these devices correctly", "Communicable disease reporting is a legal obligation — certain diseases including TB, HIV, meningitis, foodborne illnesses, and COVID-19 must be reported to local health authorities per CDC guidelines and facility protocol", "If you are sick with a fever, stay home until you have been fever-free for at least 24 hours without fever-reducing medication — this is not optional, it is an infection control mandate that protects patients and coworkers alike"]}, {"id": 3, "num": "03", "icon": "🌈", "title": "PPE Guidelines — Donning & Doffing", "color": "#2A9D8F", "points": ["Employers are required by OSHA to provide PPE at no cost; employees are required to use it whenever there is a reasonable expectation of contact with blood, body fluids, or other potentially infectious materials", "Gloves are worn for: contact with blood, body fluids, or contaminated surfaces; injections or venipuncture; assisting with surgical procedures; handling blood specimens; and cleaning up any biological spill", "Donning non-sterile gloves: wash hands → select the correct size → pull the glove over the hand to the wrist → repeat on the other hand → adjust fit", "Doffing contaminated gloves: grasp the palm of the non-dominant glove with the dominant hand → pull off inside-out while holding in the dominant hand → slide two fingers inside the cuff of the dominant glove → pull off inside-out over the first glove → discard in the appropriate container → wash hands", "The critical rule for doffing: never touch the contaminated outer surface of either glove with bare skin — the technique exists specifically to prevent this; practice it until it is automatic"]}, {"id": 4, "num": "04", "icon": "🧪", "title": "Hand Hygiene Guidelines", "color": "#8338EC", "points": ["Hand hygiene is the single most effective action for preventing the spread of infection in any healthcare setting — it is simple, free, and non-negotiable before and after every patient encounter", "Proper handwashing: remove jewelry, wet hands with lukewarm water, apply 3 pumps of soap, lather with friction for 15–20 seconds with fingers pointing down, interlace fingers, clean under nails, rinse wrist to fingertip, dry with paper towel, turn off the faucet with the paper towel", "Alcohol-based sanitizer (≥60% alcohol) is acceptable for hands that are not visibly soiled — before and after patient contact, after touching contaminated surfaces, before and after touching equipment near patients", "Soap and water is required — not optional — after contact with blood or body fluids, before any aseptic procedure such as a blood draw or medication administration, after removing gloves, and whenever hands are visibly contaminated", "Artificial nails are not permitted in clinical settings — research confirms healthcare professionals who wear them carry significantly more bacteria on their hands; remove all jewelry except a single plain band before performing hand hygiene"]}, {"id": 5, "num": "05", "icon": "📏", "title": "Disinfection & Sanitization", "color": "#FF6B35", "points": ["Sanitization comes first — it removes visible debris (blood, body fluids, organic material) from instruments and surfaces before disinfection or sterilization; both subsequent steps are significantly less effective if this step is skipped", "Always wear appropriate gloves during sanitization; use thick utility gloves for sharps; follow manufacturer instructions for water temperature and detergent; separate dirty and clean work areas throughout the process", "Three levels of disinfection: low-level (kills most bacteria, some viruses and fungi — exam tables/countertops; e.g. hydrogen peroxide), intermediate-level (kills bacteria, most viruses and fungi but not spores — stethoscopes/BP cuffs; e.g. isopropyl alcohol), high-level (kills all microorganisms except some spores — endoscopes; e.g. Cidex OPA)", "Room cleaning order: complete hand hygiene → remove and roll table paper with contaminated side in → disinfect exam table → sink → countertops → computer keyboard", "Safety Data Sheets (SDS) must be available for every chemical in the workplace — each SDS details hazard identification, first-aid measures for accidental exposure, required PPE, and spill procedures; know where yours are stored before you need them"]}, {"id": 6, "num": "06", "icon": "💉", "title": "Sterilization of Medical Equipment", "color": "#E63946", "points": ["Sterilization destroys all living microorganisms including resistant spores — it is required for any instrument that will penetrate the skin, enter a sterile body cavity, or be used in a sterile field; sanitization and disinfection must occur first", "Autoclave is the primary sterilization method in the ambulatory setting — uses pressurized steam at 250–270°F; unwrapped items sterilize in 20 minutes, wrapped items in 30 minutes; always follow manufacturer guidelines", "Wrap hinged instruments in the open position with gauze between the tips; use double-layer autoclave paper or peel-apart pouches; place a chemical indicator strip inside every package; seal with autoclave tape and label with date, time, initials, and contents", "Sterilization indicators confirm the process was successful — autoclave tape lines turn black; pouch indicator arrows change color; biological indicators (spore tests) are the most rigorous and are used for routine autoclave quality checks", "Sterilized packages are considered sterile for 30 days if they remain dry and intact; inspect every package before opening — watermarks, tears, or punctures mean the item must be rewrapped and resterilized before use"]}, {"id": 7, "num": "07", "icon": "🩸", "title": "Appropriate Aseptic Techniques", "color": "#457B9D", "points": ["Medical (clean) asepsis is used daily for all non-invasive procedures and when skin and mucous membranes are intact — it reduces the number of pathogens and prevents their growth but does not create a completely pathogen-free environment", "Medical aseptic practices: wash hands before and after every patient encounter, wipe down work surfaces between patients with sanitizing wipes, use gloves and masks when in contact with body fluids, set up the lab with a designated clean side and dirty side", "Surgical (sterile) asepsis is required for all invasive procedures, wound care, endoscopy, and catheter insertion — all instruments and PPE used must be sterile, and the sterile field must never be left unattended or compromised", "Sterile field rules: open the farthest flap first; never reach over the field; the 1-inch border is always considered non-sterile; if sterility is ever in question, replace the item — there is no 'probably okay' in sterile technique", "Moving sick patients out of the waiting room immediately upon arrival, posting hand hygiene reminders, and not allowing eating or drinking in clinical areas are all active aseptic technique applications MAs are responsible for every day"]}, {"id": 8, "num": "08", "icon": "📋", "title": "Dispose of Biohazardous Materials (OSHA)", "color": "#2A9D8F", "points": ["Every item that has contacted blood, body fluids, or potentially infectious material must go into an appropriate biohazard container immediately — never into regular trash, never left on a counter", "Sharps container: needles, lancets, scalpel blades, broken glass, and any sharp object — must be puncture-proof, leak-proof, and labeled with the biohazard symbol; seal and replace when two-thirds full", "Biohazard bag: contaminated gloves, gauze, bandages, disposable gowns, and dressings — must be leak-proof, impermeable polyethylene or polypropylene, and labeled with the biohazard symbol; double-bag if the outside of the bag is contaminated", "Biohazard box: bulkier contaminated items such as table covers and disposable gowns — same labeling and material requirements; lid must be in place after every use", "A licensed biohazard waste management company picks up and disposes of all biohazard waste from the facility — they are also held to OSHA standards; the facility is responsible for ensuring their protocols are followed until the waste leaves the building"]}, {"id": 9, "num": "09", "icon": "🩹", "title": "Post-Exposure Guidelines", "color": "#8338EC", "points": ["Immediately after a needlestick or sharps injury: wash the wound with soap and water; for mucous membrane exposure, flush with water; for eye exposure, irrigate at the eyewash station or with clean water — do not delay", "Report immediately to your supervisor — post-exposure medical evaluation is time-sensitive; complete an incident exposure form; all employee health information remains confidential and documentation is retained for the duration of employment plus 30 years", "The employer provides a medical evaluation and any necessary follow-up at no cost to the employee; hepatitis B vaccination is offered; a written opinion from the evaluating provider must be given to the employee within 15 days", "Eyewash stations must be accessible in every lab area — all staff must know the location before they need it, not after; eyewash stations should be inspected and flushed monthly to confirm they are in working order", "Prevention is the best post-exposure plan: never recap a used needle, always use safety-engineered devices, and drop needles directly into the sharps container immediately after use — an estimated half million needlestick exposures occur annually in the U.S., and the vast majority are preventable"]}];
+var TAKEAWAYS = ["Breaking any single link in the chain of infection stops transmission — every handwash, every disinfected surface, and every properly discarded needle is a broken link", "Soap and water and hand sanitizer are not interchangeable — blood, body fluid contact, aseptic procedures, and visible contamination always require soap and water", "Sanitize first, then disinfect or sterilize — debris left on instruments significantly reduces the effectiveness of both subsequent steps", "Sterilized and wrapped packages are considered sterile for 30 days — any watermark, tear, or puncture means rewrap and resterilize before touching a patient with it", "Never recap a used needle — drop it directly into the sharps container at the point of use, every time, without exception", "Post-exposure reporting must happen immediately — the medical evaluation, hepatitis B vaccination offer, and incident documentation are all time-sensitive and employer-funded"];
 
 var activeId = null;
-var sidebar = document.getElementById('sidebar');
+var contentPage = 0;
+var contentPages = [];
+var sidebarPage = 0;
+var sidebarTotalPages = 1;
+var ITEMS_PER_SIDEBAR_PAGE = 9;
+
+var sidebarPagesEl = document.getElementById('sidebarPages');
+var sidebarNavEl = document.getElementById('sidebarNav');
 var content = document.getElementById('content');
 
+/* ── Fullscreen ── */
+var fsBtn = document.getElementById('fsBtn');
+var fsIcon = document.getElementById('fsIcon');
+var expandPath = 'M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3';
+var shrinkPath = 'M4 14h2a2 2 0 0 1 2 2v2m8-16v2a2 2 0 0 0 2 2h2M4 10h2a2 2 0 0 0 2-2V6m8 16v-2a2 2 0 0 1 2-2h2';
+
+function updateFsIcon() {
+  var isFs = !!document.fullscreenElement;
+  fsIcon.innerHTML = '<path d="' + (isFs ? shrinkPath : expandPath) + '"/>';
+  fsBtn.title = isFs ? 'Exit fullscreen' : 'Toggle fullscreen';
+}
+
+fsBtn.addEventListener('click', function() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(function(){});
+  } else {
+    document.exitFullscreen().catch(function(){});
+  }
+});
+document.addEventListener('fullscreenchange', updateFsIcon);
+
+/* ── Sidebar ── */
 function buildSidebar() {
-  TOPICS.forEach(function(t) {
-    var btn = document.createElement('button');
-    btn.className = 'topic-btn';
-    btn.dataset.id = t.id;
-    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
-    btn.addEventListener('click', function() { selectTopic(t.id); });
-    btn.addEventListener('mouseenter', function() {
-      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+  sidebarPagesEl.innerHTML = '';
+  var allItems = TOPICS.map(function(t) { return { type: 'topic', data: t }; });
+  allItems.push({ type: 'takeaway' });
+  sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
+  for (var p = 0; p < sidebarTotalPages; p++) {
+    var pageDiv = document.createElement('div');
+    pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
+    pageDiv.dataset.page = p;
+    var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p + 1) * ITEMS_PER_SIDEBAR_PAGE);
+    slice.forEach(function(item) {
+      if (item.type === 'topic') {
+        var t = item.data;
+        var btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.dataset.id = t.id;
+        btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+        btn.addEventListener('click', function() { selectTopic(t.id); });
+        btn.addEventListener('mouseenter', function() {
+          if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+        });
+        btn.addEventListener('mouseleave', function() {
+          if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(btn);
+      } else {
+        var tkBtn = document.createElement('button');
+        tkBtn.className = 'topic-btn';
+        tkBtn.dataset.id = 'takeaways';
+        tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+        tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+        tkBtn.addEventListener('mouseenter', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+        });
+        tkBtn.addEventListener('mouseleave', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(tkBtn);
+      }
     });
-    btn.addEventListener('mouseleave', function() {
-      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-    });
-    sidebar.appendChild(btn);
-  });
-  var divider = document.createElement('div');
-  divider.className = 'sidebar-divider';
-  sidebar.appendChild(divider);
-  var tkBtn = document.createElement('button');
-  tkBtn.className = 'topic-btn';
-  tkBtn.dataset.id = 'takeaways';
-  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
-  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
-  tkBtn.addEventListener('mouseenter', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
-  });
-  tkBtn.addEventListener('mouseleave', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-  });
-  sidebar.appendChild(tkBtn);
+    sidebarPagesEl.appendChild(pageDiv);
+  }
+  if (sidebarTotalPages > 1) {
+    sidebarNavEl.innerHTML =
+      '<button id="sbPrev" onclick="changeSidebarPage(-1)">\u25C0</button>' +
+      '<span class="page-info" id="sbInfo"></span>' +
+      '<button id="sbNext" onclick="changeSidebarPage(1)">\u25B6</button>';
+    updateSidebarNav();
+  } else { sidebarNavEl.innerHTML = ''; }
+}
+
+function changeSidebarPage(dir) {
+  var next = sidebarPage + dir;
+  if (next < 0 || next >= sidebarTotalPages) return;
+  sidebarPage = next;
+  var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  pages[sidebarPage].classList.add('active');
+  updateSidebarNav(); updateSidebarActive();
+}
+
+function updateSidebarNav() {
+  var info = document.getElementById('sbInfo');
+  var prev = document.getElementById('sbPrev');
+  var nxt = document.getElementById('sbNext');
+  if (!info) return;
+  info.textContent = (sidebarPage + 1) + '/' + sidebarTotalPages;
+  prev.disabled = sidebarPage === 0;
+  nxt.disabled = sidebarPage === sidebarTotalPages - 1;
 }
 
 function updateSidebarActive() {
-  var btns = sidebar.querySelectorAll('.topic-btn');
+  var btns = sidebarPagesEl.querySelectorAll('.topic-btn');
   btns.forEach(function(btn) {
     var id = btn.dataset.id;
     var topic = TOPICS.find(function(t) { return t.id == id; });
     var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
     if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
     if (isActive && topic) {
-      btn.style.background = topic.color + '20';
-      btn.style.borderColor = topic.color;
+      btn.style.background = topic.color + '20'; btn.style.borderColor = topic.color;
     } else if (isActive && id === 'takeaways') {
-      btn.style.background = 'rgba(255,255,255,0.08)';
-      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+      btn.style.background = 'rgba(255,255,255,0.08)'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
     } else {
-      btn.style.background = 'var(--surface)';
-      btn.style.borderColor = 'var(--border)';
+      btn.style.background = 'var(--surface)'; btn.style.borderColor = 'var(--border)';
     }
   });
 }
 
-function renderTopic(t) {
+/* ── Content ── */
+function showContentPage(t) {
+  var points = contentPages[contentPage];
+  var globalOffset = 0;
+  for (var i = 0; i < contentPage; i++) globalOffset += contentPages[i].length;
   var html = '<div class="content-header">' +
     '<span class="icon">' + t.icon + '</span>' +
     '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
     '<div class="title">' + t.title + '</div></div></div>' +
-    '<div class="content-scroll">';
-  t.points.forEach(function(p, i) {
+    '<div class="content-body"><div class="content-points">';
+  points.forEach(function(p, i) {
     html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<div class="num" style="background:' + t.color + '">' + (globalOffset + i + 1) + '</div>' +
       '<p>' + p + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var topicIdx = TOPICS.findIndex(function(x) { return x.id === t.id; });
+  var prevTopic = topicIdx > 0 ? TOPICS[topicIdx - 1] : null;
+  var nextTopic = topicIdx < TOPICS.length - 1 ? TOPICS[topicIdx + 1] : null;
+  html += '<div class="content-footer">';
+  if (prevTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">\u2190 ' + prevTopic.title + '</button>';
+  } else { html += '<div></div>'; }
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function(x) {
+    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '"></div>';
+  });
+  html += '</div>';
+  if (nextTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' \u2192</button>';
+  } else {
+    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways \u2192</button>';
+  }
+  html += '</div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function renderTakeaways() {
   var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<span class="icon" style="font-size:32px">\uD83C\uDFAF</span>' +
     '<div><div class="title">Key Takeaways</div></div></div>' +
-    '<div class="content-scroll">';
+    '<div class="content-body"><div class="content-points">';
   TAKEAWAYS.forEach(function(t, i) {
     html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
       '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var lastTopic = TOPICS[TOPICS.length - 1];
+  html += '<div class="content-footer">';
+  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">\u2190 ' + lastTopic.title + '</button>';
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function() { html += '<div class="dot"></div>'; });
+  html += '<div class="dot active" style="background: linear-gradient(135deg, #E63946, #FF6B35)"></div>';
+  html += '</div><div></div></div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function selectTopic(id) {
   activeId = id;
-  updateSidebarActive();
-  if (id === 'takeaways') {
-    content.innerHTML = renderTakeaways();
+  if (id !== 'takeaways') {
+    var idx = TOPICS.findIndex(function(t) { return t.id === id; });
+    var targetPage = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
+    if (targetPage !== sidebarPage) {
+      sidebarPage = targetPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   } else {
-    var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) content.innerHTML = renderTopic(topic);
+    var tkPage = sidebarTotalPages - 1;
+    if (tkPage !== sidebarPage) {
+      sidebarPage = tkPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   }
-  content.style.animation = 'none';
-  void content.offsetHeight;
-  content.style.animation = 'fadeIn 0.25s ease';
+  updateSidebarActive();
+  if (id === 'takeaways') { renderTakeaways(); }
+  else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) { contentPages = [topic.points]; contentPage = 0; showContentPage(topic); }
+  }
 }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F11') { e.preventDefault(); fsBtn.click(); return; }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (activeId === null) { selectTopic(1); return; }
+    if (activeId === 'takeaways') return;
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx < TOPICS.length - 1) selectTopic(TOPICS[idx + 1].id);
+    else selectTopic('takeaways');
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (activeId === null) return;
+    if (activeId === 'takeaways') { selectTopic(TOPICS[TOPICS.length - 1].id); return; }
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx > 0) selectTopic(TOPICS[idx - 1].id);
+  }
+});
 
 buildSidebar();
 </script>

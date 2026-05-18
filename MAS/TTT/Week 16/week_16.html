@@ -30,32 +30,86 @@
   .header {
     flex-shrink: 0;
     text-align: center;
-    padding: 16px 24px 12px;
+    padding: 14px 24px 10px;
+    position: relative;
   }
   .header h1 {
-    font-size: 26px; font-weight: 800;
+    font-size: 28px; font-weight: 800;
     color: var(--text-bright); line-height: 1.1; margin-top: 2px;
   }
-  .header p { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+  .header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Fullscreen button */
+  .fs-btn {
+    position: absolute;
+    top: 14px; right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 18px;
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .fs-btn:hover {
+    color: var(--text-bright);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+  }
+  .fs-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
   .main {
     flex: 1; overflow: hidden;
-    display: flex; gap: 16px;
-    padding: 0 24px 16px;
+    display: flex; gap: 14px;
+    padding: 0 20px 14px;
   }
   .sidebar {
-    width: 250px; flex-shrink: 0;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 4px;
-    padding-right: 6px;
+    width: 260px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .sidebar::-webkit-scrollbar { width: 3px; }
-  .sidebar::-webkit-scrollbar-track { background: transparent; }
-  .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .sidebar-pages {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 4px;
+    overflow: hidden;
+  }
+  .sidebar-page {
+    display: none;
+    flex-direction: column; gap: 4px;
+    flex: 1;
+  }
+  .sidebar-page.active { display: flex; }
+  .sidebar-nav {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px 0 0;
+  }
+  .sidebar-nav button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sidebar-nav button:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.15); }
+  .sidebar-nav button:disabled { opacity: 0.3; cursor: default; }
+  .sidebar-nav .page-info {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    min-width: 44px; text-align: center;
+  }
   .topic-btn {
-    display: flex; align-items: center; gap: 9px;
+    display: flex; align-items: center; gap: 10px;
     background: var(--surface);
     border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 8px 11px;
+    border-radius: 10px; padding: 8px 12px;
     cursor: pointer; transition: all 0.2s ease;
     width: 100%; text-align: left;
     font-family: 'DM Sans', sans-serif; color: var(--text);
@@ -63,78 +117,110 @@
   .topic-btn:hover { transform: translateX(2px); }
   .topic-btn .icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
   .topic-btn .label {
-    font-size: 13px; font-weight: 500; flex: 1;
+    font-size: 14px; font-weight: 500; flex: 1;
     line-height: 1.3; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap;
   }
   .topic-btn.active .label { color: var(--text-bright); font-weight: 600; }
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 4px 0; flex-shrink: 0;
-  }
   .content {
     flex: 1; overflow: hidden;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px;
+    border-radius: 16px; padding: 22px;
     display: flex; flex-direction: column;
   }
   .content-header {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 12px;
+    display: flex; align-items: center; gap: 14px;
     margin-bottom: 14px;
   }
-  .content-header .icon { font-size: 30px; }
+  .content-header .icon { font-size: 32px; }
   .content-header .tag {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 700;
+    font-size: 12px; font-weight: 700;
   }
   .content-header .title {
-    font-size: 18px; font-weight: 700;
+    font-size: 20px; font-weight: 700;
     color: var(--text-bright); line-height: 1.2;
   }
-  .content-scroll {
-    flex: 1; overflow-y: auto; padding-right: 6px;
+  .content-body {
+    flex: 1;
+    display: flex; flex-direction: column;
+    overflow: hidden;
   }
-  .content-scroll::-webkit-scrollbar { width: 3px; }
-  .content-scroll::-webkit-scrollbar-track { background: transparent; }
-  .content-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+  .content-points {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 7px;
+  }
+  .content-footer {
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+  }
+  .content-footer .nav-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+    max-width: 200px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .content-footer .nav-btn:hover { color: var(--text-bright); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .content-footer .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  .content-footer .page-dots {
+    display: flex; gap: 5px; align-items: center;
+  }
+  .content-footer .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    transition: all 0.25s;
+  }
+  .content-footer .dot.active {
+    width: 20px; border-radius: 4px;
+  }
   .point {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px; border: 1px solid transparent;
+    border-radius: 10px; padding: 11px 14px;
+    border: 1px solid transparent;
     animation: pointIn 0.3s ease both;
   }
   .point .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .point p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .point p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .takeaway-item {
-    display: flex; gap: 10px; align-items: flex-start;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(255,255,255,0.025);
     border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 13px;
-    margin-bottom: 7px;
+    border-radius: 10px; padding: 11px 14px;
     animation: pointIn 0.3s ease both;
   }
   .takeaway-item .num {
-    width: 24px; height: 24px; border-radius: 50%;
+    width: 26px; height: 26px; border-radius: 50%;
     background: linear-gradient(135deg, #E63946, #FF6B35);
     display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
   }
-  .takeaway-item p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .takeaway-item p { font-size: 15.5px; line-height: 1.55; color: var(--text); }
   .welcome {
     height: 100%; display: flex; flex-direction: column;
     align-items: center; justify-content: center; text-align: center;
   }
-  .welcome .big-icon { font-size: 52px; margin-bottom: 14px; }
-  .welcome p { font-size: 15px; color: var(--text-muted); line-height: 1.6; max-width: 260px; }
+  .welcome .big-icon { font-size: 52px; margin-bottom: 16px; }
+  .welcome p { font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 280px; }
   @keyframes pointIn {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -143,48 +229,6 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
-
-  /* ===== MOBILE RESPONSIVE ===== */
-  @media (max-width: 768px) {
-    html, body { overflow: auto; height: auto; }
-    .app { height: auto; min-height: 100vh; overflow: visible; }
-    .header { padding: 14px 16px 10px; }
-    .header h1 { font-size: 22px; }
-    .main {
-      flex-direction: column;
-      padding: 0 12px 16px;
-      overflow: visible;
-    }
-    .sidebar {
-      width: 100%;
-      flex-direction: row;
-      overflow-x: auto;
-      overflow-y: hidden;
-      gap: 6px;
-      padding-right: 0;
-      padding-bottom: 8px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .sidebar::-webkit-scrollbar { height: 3px; width: auto; }
-    .topic-btn {
-      flex-shrink: 0;
-      min-width: max-content;
-      padding: 7px 12px;
-    }
-    .sidebar-divider {
-      width: 1px; height: auto;
-      min-height: 28px;
-      margin: 0 2px;
-    }
-    .content {
-      overflow: visible;
-      min-height: 60vh;
-      padding: 16px;
-    }
-    .content-scroll { overflow: visible; }
-    .point p, .tip-box p, .takeaway-item p { font-size: 13px; }
-  }
-
 </style>
 </head>
 <body>
@@ -192,141 +236,256 @@
   <div class="header">
     <h1>Building Competency Through Skills Practice</h1>
     <p>Applied Clinical Skills</p>
+    <button class="fs-btn" id="fsBtn" title="Toggle fullscreen">
+      <svg id="fsIcon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
   </div>
   <div class="main">
-    <div class="sidebar" id="sidebar"></div>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-pages" id="sidebarPages"></div>
+      <div class="sidebar-nav" id="sidebarNav"></div>
+    </div>
     <div class="content" id="content">
       <div class="welcome">
         <div class="big-icon">📚</div>
-        <p>Select a topic to explore its key learning points</p>
+        <p>Select a topic from the left to explore its key learning points</p>
       </div>
     </div>
   </div>
 </div>
 <script>
-var TOPICS = [
-  { id:1, num:"01", icon:"🔍", title:"Demonstrate Accurate Measurement of All Adult Vital Signs", color:"#E63946",
-    points:["Heart rate: use two or three fingertips over the radial artery for one full minute — never the thumb. Document rate, rhythm (regular or irregular), and strength (strong, weak, thready). Use the apical site and count for a full 60 seconds if the radial pulse is irregular or difficult to assess.","Blood pressure: seat the patient, feet flat, arm at heart level, rested 5 minutes. Select the correct cuff size. Inflate 20–30 mmHg above where the radial pulse disappears. Deflate slowly — 2–3 mmHg per second. First Korotkoff sound = systolic; last sound = diastolic. Normal: <120/80 mmHg.","Respiratory rate: count without telling the patient — count immediately after the pulse, while the patient still believes you are monitoring their heart rate. Watch full chest rise and fall for one minute. Document rate, rhythm, and depth. Normal adult: 12–20 breaths per minute.","Temperature: select the method appropriate for the patient. Tympanic — pull the pinna up and back for adults; down and back for children. Oral — wait 15 minutes after any hot or cold intake. Axillary — least accurate; used when other routes are not tolerated. Temporal — swipe across the forehead in a single motion.","SpO2 and Pain: place the pulse oximetry sensor on a dry, unpolished fingertip and allow the reading to stabilize before documenting. Normal SpO2: 95–100%; below 90% is critical — report immediately. Pain: ask the patient to rate their pain from 0 to 10 and document their exact number — never estimate."] },
-  { id:2, num:"02", icon:"🧰", title:"Perform ID, SC, and IM Injections — Site, Gauge, Angle & Technique", color:"#457B9D",
-    points:["Intradermal (ID): inner forearm, 10–15° angle, bevel up, 25–27 gauge, ¼–½ inch needle, ≤0.1 mL. Insert nearly parallel to the skin and watch for a wheal (raised bleb) to form — no wheal means the injection was placed too deep and the test is invalid. Do NOT massage, bandage, or apply pressure after administration.","Subcutaneous (SC/SQ): upper outer arm, abdomen, or upper thigh, 45° angle, 23–25 gauge, 5/8 inch needle, ≤1.5 mL. Pinch at least one inch of skin before inserting and release the pinch after the needle is fully seated. Rotate insulin injection sites within the same anatomical region at every visit to prevent lipodystrophy.","Intramuscular — Deltoid: 90° angle, 22–25 gauge, 1–1½ inch needle, maximum 1 mL, adults only. Locate the deltoid 2–3 finger-widths below the acromion process. Stretch the skin taut — do not pinch. Insert in a smooth, dart-like motion; withdraw and apply firm pressure with dry gauze. Drop the needle directly into the sharps container.","Intramuscular — Vastus Lateralis: 90° angle, 22–25 gauge, 1–1½ inch needle, up to 3 mL. The middle third of the anterolateral thigh. This is the preferred IM site for infants and children under age 3 — it is the largest accessible muscle in this age group. Also used in adults when the deltoid cannot be accessed.","Before every injection — the non-negotiables: perform hand hygiene and don gloves; complete the nine rights and three label checks; clean the site with an alcohol swab and allow it to dry completely; explain the procedure to the patient; always drop used needles directly into the sharps container — never recap."] },
-  { id:3, num:"03", icon:"🌈", title:"Set Up a 12-Lead EKG — Lead Placement, Technique & Artifact", color:"#2A9D8F",
-    points:["Precordial electrode placement: V1 — right of sternum, 4th intercostal space. V2 — left of sternum, 4th ICS. V3 — diagonally between V2 and V4. V4 — left midclavicular line, 5th ICS. V5 — anterior axillary line, 5th ICS (same horizontal level as V4). V6 — midaxillary line, 5th ICS (same level as V4 and V5).","Limb electrode placement: RA (right arm) — upper right torso or right arm below the shoulder. LA (left arm) — upper left torso or left arm below the shoulder. RL (right leg) — lower right torso or right leg — this is the ground electrode only; it does not generate a lead on its own. LL (left leg) — lower left torso or left leg.","Site preparation: clean all electrode sites with an alcohol pad and allow them to dry completely. Clip or shave excessive hair if needed — hair prevents full electrode adhesion. Press all edges of each electrode firmly to the skin before running the tracing. Use fresh, unopened electrodes for every patient — never reuse.","Artifact identification: the most common causes are patient movement or shivering, loose or poorly attached electrodes, dry electrode gel, nearby electrical equipment, and incorrect lead placement. If the tracing is unreadable — stop, identify the cause, correct it, and re-run. Never submit an artifact-filled tracing.","Lead misplacement is the most common EKG error in clinical settings — it does not produce artifact but produces incorrect waveforms that can lead to misdiagnosis. Verify every electrode position against the anatomical landmarks before running the tracing. When in doubt, confirm the position rather than assuming it is correct."] },
-  { id:4, num:"04", icon:"🧪", title:"Perform Venipuncture & Capillary Draws — Order, Safety & Labeling", color:"#8338EC",
-    points:["Patient identification and preparation: verify the patient\'s identity with two identifiers (full name and date of birth) before touching any supplies or the patient. Review the test order to confirm which tubes are needed. Apply the tourniquet 3–4 inches above the antecubital fossa — never leave it on for more than one minute. Palpate for the median cubital vein first — firm, straight, and well-anchored.","Order of draw — memorize this sequence (mnemonic: Stop Looking Right Now Later): Sterile/Blood Cultures → Light Blue (coagulation — must be filled completely) → Red/Gold SST (chemistry, serology) → Green (heparin, BMP) → Lavender/Purple (EDTA, CBC, blood bank) → Gray (fluoride, glucose/blood alcohol).","Venipuncture technique: clean the site with an outward circular motion using an alcohol swab — allow it to dry completely (approximately 30 seconds). Insert the needle bevel-up at a 15–30° angle in a smooth, single motion. Release the tourniquet as soon as blood flow begins. Fill tubes in the correct order. Invert each tube gently the required number of times — NEVER shake; shaking causes hemolysis.","After the draw: apply gauze over the site, withdraw the needle cleanly, and apply firm pressure immediately. Drop the needle directly into the sharps container without recapping — ever. Label every tube at the bedside immediately after collection with the patient\'s name, date of birth, date, time, and your initials. Never pre-label tubes before the draw.","Capillary draw (fingerstick): use the side of the fingertip in adults. Clean with alcohol and allow to dry. Wipe away the first drop — it is diluted with tissue fluid. Use the second drop for testing. Do not squeeze or milk the finger — this dilutes the specimen. Apply a bandage and instruct the patient to keep it on for at least 15 minutes."] },
-  { id:5, num:"05", icon:"📏", title:"Apply Clinical Safety Standards Throughout All Skills", color:"#FF6B35",
-    points:["Hand hygiene is the cornerstone of every clinical skill: wash or sanitize before patient contact, before donning gloves, after removing gloves, and after leaving any patient area. Gloves do not replace hand hygiene — perform hand hygiene after every glove removal, regardless of what the gloves were used for.","PPE selection: gloves are required for all procedures involving contact with blood, body fluids, or potentially contaminated surfaces. Add a gown, mask, and eye protection when splash risk is present. Don PPE in the correct order (gown → mask → goggles → gloves) and doff in the correct order (gloves first — using the inside-out technique — then goggles, gown, mask) to avoid self-contamination.","Patient identity verification: confirm the patient\'s full name and date of birth before every procedure — not just once at the start of the encounter, but before each individual skill. Never rely on a wristband alone or assume identity based on appearance. Two identifiers, every time.","Sharps safety: NEVER recap a used needle — drop it directly into the sharps container at the point of care immediately after use. Position the sharps container within arm\'s reach before beginning any injection or blood draw. Seal and replace the container at two-thirds full. If a needlestick occurs: wash the site with soap and water immediately, report to the supervisor right away, and complete an incident form.","Sterile and aseptic technique: clean injection and venipuncture sites with alcohol — use an outward circular motion and allow to dry completely before inserting the needle. Never touch a sterile field or the needle shaft once prepared. Disinfect all equipment and contact surfaces between every patient. Sanitize → disinfect → sterilize is the required sequence for reusable instruments."] },
-  { id:6, num:"06", icon:"💉", title:"Demonstrate Professional Communication During All Skills Practice", color:"#E63946",
-    points:["Before every procedure — prepare the patient: knock and identify yourself by name and role before entering. Confirm the patient\'s identity. Explain what you are about to do in plain, clear language — no medical jargon. Warn the patient immediately before inserting a needle or applying a cuff. Ask about any known allergies before administering any medication or injection.","During the procedure — communicate throughout: narrate your key steps out loud if it helps the patient stay calm and informed. Watch the patient\'s nonverbal cues — a tense arm, a grimace, or a change in breathing are all signals that require acknowledgment and response. Never proceed silently through a procedure as if the patient is not present.","Handling anxious or upset patients: stay calm and speak in a steady, reassuring tone. Never match a patient\'s agitation. Use active listening — pause, make eye contact, and acknowledge what they are feeling before redirecting. A patient who feels heard is far easier to work with than one who feels dismissed.","After the procedure — close professionally: tell the patient what you found and what happens next, at the appropriate level of detail for your role. Ask whether they have questions. Assist them if they need help getting dressed or off the exam table. Thank them before you leave the room.","Documentation is part of communication: document all vital signs, procedures, and findings accurately and promptly. Include the time, your initials, and any relevant patient responses or concerns. Never document in advance and never document from memory hours later. If it is not documented, it did not happen."] },
-  { id:7, num:"07", icon:"🩸", title:"Submit Remaining Externship Hours & Complete Program Requirements", color:"#457B9D",
-    points:["Your externship is where everything becomes real: the clinical skills you have practiced in lab, the communication techniques you have rehearsed, and the safety protocols you have drilled — all of them are applied to actual patients in a real healthcare setting, under the supervision of licensed providers. The externship is not a formality; it is the most important part of your training.","What your hours document: your logged externship hours confirm that you have worked alongside licensed providers, performed MA duties in a real clinical environment, navigated an actual EHR system, and managed the pace and demands of a functioning medical practice. This documentation is required for both program completion and CCMA certification eligibility.","Submit all remaining hours this week — no exceptions: every required hour must be submitted accurately to complete the program. Do not wait until the final day to log hours in bulk. If you have any questions about your remaining hour requirement or how to submit, contact your program coordinator immediately — before the deadline, not after.","Professionalism during externship matters beyond the clinical tasks: arrive on time every scheduled shift, dressed professionally and ready to work. Treat every patient with the same dignity and care you would want for a family member. Never perform any task you have not been specifically trained for and authorized to do — ask your clinical supervisor before attempting anything new.","Your externship site is your first professional reference: how you show up during your externship — your punctuality, your work ethic, your communication, your initiative, and your clinical accuracy — all become the foundation of your professional reputation. From the day you complete this program, you are no longer a student. You are a practicing medical assistant."] },
-];
-
-var TAKEAWAYS = [
-  "Vital signs: document rate, rhythm, and strength for every pulse; count respirations without announcing it; record the patient\'s exact pain number — never estimate it",
-  "Injections: NEVER recap a used needle. Know the angle, gauge, volume limit, and site for each route without hesitation — ID, SC, IM deltoid, and IM vastus lateralis",
-  "EKG: V1/V2 flank the sternum at the 4th ICS; V4 is at the left midclavicular 5th ICS; V5 and V6 follow the same level laterally — use fresh electrodes for every patient",
-  "Phlebotomy: median cubital vein first; correct order of draw; label every tube at the bedside immediately after the draw — never before. NEVER shake a tube",
-  "Safety applies to every skill equally: hand hygiene before and after every patient contact, two-identifier verification before every procedure, sharps container within arm\'s reach",
-  "Submit all remaining externship hours this week — incomplete hours block program completion and CCMA certification eligibility. Contact your coordinator immediately with any questions"
-];
+var TOPICS = [{"id": 1, "num": "01", "icon": "🔍", "title": "Demonstrate Accurate Measurement of All Adult Vital Signs", "color": "#E63946", "points": ["Heart rate: use two or three fingertips over the radial artery for one full minute — never the thumb. Document rate, rhythm (regular or irregular), and strength (strong, weak, thready). Use the apical site and count for a full 60 seconds if the radial pulse is irregular or difficult to assess.", "Blood pressure: seat the patient, feet flat, arm at heart level, rested 5 minutes. Select the correct cuff size. Inflate 20–30 mmHg above where the radial pulse disappears. Deflate slowly — 2–3 mmHg per second. First Korotkoff sound = systolic; last sound = diastolic. Normal: <120/80 mmHg.", "Respiratory rate: count without telling the patient — count immediately after the pulse, while the patient still believes you are monitoring their heart rate. Watch full chest rise and fall for one minute. Document rate, rhythm, and depth. Normal adult: 12–20 breaths per minute.", "Temperature: select the method appropriate for the patient. Tympanic — pull the pinna up and back for adults; down and back for children. Oral — wait 15 minutes after any hot or cold intake. Axillary — least accurate; used when other routes are not tolerated. Temporal — swipe across the forehead in a single motion.", "SpO2 and Pain: place the pulse oximetry sensor on a dry, unpolished fingertip and allow the reading to stabilize before documenting. Normal SpO2: 95–100%; below 90% is critical — report immediately. Pain: ask the patient to rate their pain from 0 to 10 and document their exact number — never estimate."]}, {"id": 2, "num": "02", "icon": "🧰", "title": "Perform ID, SC, and IM Injections — Site, Gauge, Angle & Technique", "color": "#457B9D", "points": ["Intradermal (ID): inner forearm, 10–15° angle, bevel up, 25–27 gauge, ¼–½ inch needle, ≤0.1 mL. Insert nearly parallel to the skin and watch for a wheal (raised bleb) to form — no wheal means the injection was placed too deep and the test is invalid. Do NOT massage, bandage, or apply pressure after administration.", "Subcutaneous (SC/SQ): upper outer arm, abdomen, or upper thigh, 45° angle, 23–25 gauge, 5/8 inch needle, ≤1.5 mL. Pinch at least one inch of skin before inserting and release the pinch after the needle is fully seated. Rotate insulin injection sites within the same anatomical region at every visit to prevent lipodystrophy.", "Intramuscular — Deltoid: 90° angle, 22–25 gauge, 1–1½ inch needle, maximum 1 mL, adults only. Locate the deltoid 2–3 finger-widths below the acromion process. Stretch the skin taut — do not pinch. Insert in a smooth, dart-like motion; withdraw and apply firm pressure with dry gauze. Drop the needle directly into the sharps container.", "Intramuscular — Vastus Lateralis: 90° angle, 22–25 gauge, 1–1½ inch needle, up to 3 mL. The middle third of the anterolateral thigh. This is the preferred IM site for infants and children under age 3 — it is the largest accessible muscle in this age group. Also used in adults when the deltoid cannot be accessed.", "Before every injection — the non-negotiables: perform hand hygiene and don gloves; complete the nine rights and three label checks; clean the site with an alcohol swab and allow it to dry completely; explain the procedure to the patient; always drop used needles directly into the sharps container — never recap."]}, {"id": 3, "num": "03", "icon": "🌈", "title": "Set Up a 12-Lead EKG — Lead Placement, Technique & Artifact", "color": "#2A9D8F", "points": ["Precordial electrode placement: V1 — right of sternum, 4th intercostal space. V2 — left of sternum, 4th ICS. V3 — diagonally between V2 and V4. V4 — left midclavicular line, 5th ICS. V5 — anterior axillary line, 5th ICS (same horizontal level as V4). V6 — midaxillary line, 5th ICS (same level as V4 and V5).", "Limb electrode placement: RA (right arm) — upper right torso or right arm below the shoulder. LA (left arm) — upper left torso or left arm below the shoulder. RL (right leg) — lower right torso or right leg — this is the ground electrode only; it does not generate a lead on its own. LL (left leg) — lower left torso or left leg.", "Site preparation: clean all electrode sites with an alcohol pad and allow them to dry completely. Clip or shave excessive hair if needed — hair prevents full electrode adhesion. Press all edges of each electrode firmly to the skin before running the tracing. Use fresh, unopened electrodes for every patient — never reuse.", "Artifact identification: the most common causes are patient movement or shivering, loose or poorly attached electrodes, dry electrode gel, nearby electrical equipment, and incorrect lead placement. If the tracing is unreadable — stop, identify the cause, correct it, and re-run. Never submit an artifact-filled tracing.", "Lead misplacement is the most common EKG error in clinical settings — it does not produce artifact but produces incorrect waveforms that can lead to misdiagnosis. Verify every electrode position against the anatomical landmarks before running the tracing. When in doubt, confirm the position rather than assuming it is correct."]}, {"id": 4, "num": "04", "icon": "🧪", "title": "Perform Venipuncture & Capillary Draws — Order, Safety & Labeling", "color": "#8338EC", "points": ["Patient identification and preparation: verify the patient's identity with two identifiers (full name and date of birth) before touching any supplies or the patient. Review the test order to confirm which tubes are needed. Apply the tourniquet 3–4 inches above the antecubital fossa — never leave it on for more than one minute. Palpate for the median cubital vein first — firm, straight, and well-anchored.", "Order of draw — memorize this sequence (mnemonic: Stop Looking Right Now Later): Sterile/Blood Cultures → Light Blue (coagulation — must be filled completely) → Red/Gold SST (chemistry, serology) → Green (heparin, BMP) → Lavender/Purple (EDTA, CBC, blood bank) → Gray (fluoride, glucose/blood alcohol).", "Venipuncture technique: clean the site with an outward circular motion using an alcohol swab — allow it to dry completely (approximately 30 seconds). Insert the needle bevel-up at a 15–30° angle in a smooth, single motion. Release the tourniquet as soon as blood flow begins. Fill tubes in the correct order. Invert each tube gently the required number of times — NEVER shake; shaking causes hemolysis.", "After the draw: apply gauze over the site, withdraw the needle cleanly, and apply firm pressure immediately. Drop the needle directly into the sharps container without recapping — ever. Label every tube at the bedside immediately after collection with the patient's name, date of birth, date, time, and your initials. Never pre-label tubes before the draw.", "Capillary draw (fingerstick): use the side of the fingertip in adults. Clean with alcohol and allow to dry. Wipe away the first drop — it is diluted with tissue fluid. Use the second drop for testing. Do not squeeze or milk the finger — this dilutes the specimen. Apply a bandage and instruct the patient to keep it on for at least 15 minutes."]}, {"id": 5, "num": "05", "icon": "📏", "title": "Apply Clinical Safety Standards Throughout All Skills", "color": "#FF6B35", "points": ["Hand hygiene is the cornerstone of every clinical skill: wash or sanitize before patient contact, before donning gloves, after removing gloves, and after leaving any patient area. Gloves do not replace hand hygiene — perform hand hygiene after every glove removal, regardless of what the gloves were used for.", "PPE selection: gloves are required for all procedures involving contact with blood, body fluids, or potentially contaminated surfaces. Add a gown, mask, and eye protection when splash risk is present. Don PPE in the correct order (gown → mask → goggles → gloves) and doff in the correct order (gloves first — using the inside-out technique — then goggles, gown, mask) to avoid self-contamination.", "Patient identity verification: confirm the patient's full name and date of birth before every procedure — not just once at the start of the encounter, but before each individual skill. Never rely on a wristband alone or assume identity based on appearance. Two identifiers, every time.", "Sharps safety: NEVER recap a used needle — drop it directly into the sharps container at the point of care immediately after use. Position the sharps container within arm's reach before beginning any injection or blood draw. Seal and replace the container at two-thirds full. If a needlestick occurs: wash the site with soap and water immediately, report to the supervisor right away, and complete an incident form.", "Sterile and aseptic technique: clean injection and venipuncture sites with alcohol — use an outward circular motion and allow to dry completely before inserting the needle. Never touch a sterile field or the needle shaft once prepared. Disinfect all equipment and contact surfaces between every patient. Sanitize → disinfect → sterilize is the required sequence for reusable instruments."]}, {"id": 6, "num": "06", "icon": "💉", "title": "Demonstrate Professional Communication During All Skills Practice", "color": "#E63946", "points": ["Before every procedure — prepare the patient: knock and identify yourself by name and role before entering. Confirm the patient's identity. Explain what you are about to do in plain, clear language — no medical jargon. Warn the patient immediately before inserting a needle or applying a cuff. Ask about any known allergies before administering any medication or injection.", "During the procedure — communicate throughout: narrate your key steps out loud if it helps the patient stay calm and informed. Watch the patient's nonverbal cues — a tense arm, a grimace, or a change in breathing are all signals that require acknowledgment and response. Never proceed silently through a procedure as if the patient is not present.", "Handling anxious or upset patients: stay calm and speak in a steady, reassuring tone. Never match a patient's agitation. Use active listening — pause, make eye contact, and acknowledge what they are feeling before redirecting. A patient who feels heard is far easier to work with than one who feels dismissed.", "After the procedure — close professionally: tell the patient what you found and what happens next, at the appropriate level of detail for your role. Ask whether they have questions. Assist them if they need help getting dressed or off the exam table. Thank them before you leave the room.", "Documentation is part of communication: document all vital signs, procedures, and findings accurately and promptly. Include the time, your initials, and any relevant patient responses or concerns. Never document in advance and never document from memory hours later. If it is not documented, it did not happen."]}, {"id": 7, "num": "07", "icon": "🩸", "title": "Submit Remaining Externship Hours & Complete Program Requirements", "color": "#457B9D", "points": ["Your externship is where everything becomes real: the clinical skills you have practiced in lab, the communication techniques you have rehearsed, and the safety protocols you have drilled — all of them are applied to actual patients in a real healthcare setting, under the supervision of licensed providers. The externship is not a formality; it is the most important part of your training.", "What your hours document: your logged externship hours confirm that you have worked alongside licensed providers, performed MA duties in a real clinical environment, navigated an actual EHR system, and managed the pace and demands of a functioning medical practice. This documentation is required for both program completion and CCMA certification eligibility.", "Submit all remaining hours this week — no exceptions: every required hour must be submitted accurately to complete the program. Do not wait until the final day to log hours in bulk. If you have any questions about your remaining hour requirement or how to submit, contact your program coordinator immediately — before the deadline, not after.", "Professionalism during externship matters beyond the clinical tasks: arrive on time every scheduled shift, dressed professionally and ready to work. Treat every patient with the same dignity and care you would want for a family member. Never perform any task you have not been specifically trained for and authorized to do — ask your clinical supervisor before attempting anything new.", "Your externship site is your first professional reference: how you show up during your externship — your punctuality, your work ethic, your communication, your initiative, and your clinical accuracy — all become the foundation of your professional reputation. From the day you complete this program, you are no longer a student. You are a practicing medical assistant."]}];
+var TAKEAWAYS = ["Vital signs: document rate, rhythm, and strength for every pulse; count respirations without announcing it; record the patient's exact pain number — never estimate it", "Injections: NEVER recap a used needle. Know the angle, gauge, volume limit, and site for each route without hesitation — ID, SC, IM deltoid, and IM vastus lateralis", "EKG: V1/V2 flank the sternum at the 4th ICS; V4 is at the left midclavicular 5th ICS; V5 and V6 follow the same level laterally — use fresh electrodes for every patient", "Phlebotomy: median cubital vein first; correct order of draw; label every tube at the bedside immediately after the draw — never before. NEVER shake a tube", "Safety applies to every skill equally: hand hygiene before and after every patient contact, two-identifier verification before every procedure, sharps container within arm's reach", "Submit all remaining externship hours this week — incomplete hours block program completion and CCMA certification eligibility. Contact your coordinator immediately with any questions"];
 
 var activeId = null;
-var sidebar = document.getElementById('sidebar');
+var contentPage = 0;
+var contentPages = [];
+var sidebarPage = 0;
+var sidebarTotalPages = 1;
+var ITEMS_PER_SIDEBAR_PAGE = 9;
+
+var sidebarPagesEl = document.getElementById('sidebarPages');
+var sidebarNavEl = document.getElementById('sidebarNav');
 var content = document.getElementById('content');
 
+/* ── Fullscreen ── */
+var fsBtn = document.getElementById('fsBtn');
+var fsIcon = document.getElementById('fsIcon');
+var expandPath = 'M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3';
+var shrinkPath = 'M4 14h2a2 2 0 0 1 2 2v2m8-16v2a2 2 0 0 0 2 2h2M4 10h2a2 2 0 0 0 2-2V6m8 16v-2a2 2 0 0 1 2-2h2';
+
+function updateFsIcon() {
+  var isFs = !!document.fullscreenElement;
+  fsIcon.innerHTML = '<path d="' + (isFs ? shrinkPath : expandPath) + '"/>';
+  fsBtn.title = isFs ? 'Exit fullscreen' : 'Toggle fullscreen';
+}
+
+fsBtn.addEventListener('click', function() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(function(){});
+  } else {
+    document.exitFullscreen().catch(function(){});
+  }
+});
+document.addEventListener('fullscreenchange', updateFsIcon);
+
+/* ── Sidebar ── */
 function buildSidebar() {
-  TOPICS.forEach(function(t) {
-    var btn = document.createElement('button');
-    btn.className = 'topic-btn';
-    btn.dataset.id = t.id;
-    btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
-    btn.addEventListener('click', function() { selectTopic(t.id); });
-    btn.addEventListener('mouseenter', function() {
-      if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+  sidebarPagesEl.innerHTML = '';
+  var allItems = TOPICS.map(function(t) { return { type: 'topic', data: t }; });
+  allItems.push({ type: 'takeaway' });
+  sidebarTotalPages = Math.ceil(allItems.length / ITEMS_PER_SIDEBAR_PAGE);
+  for (var p = 0; p < sidebarTotalPages; p++) {
+    var pageDiv = document.createElement('div');
+    pageDiv.className = 'sidebar-page' + (p === 0 ? ' active' : '');
+    pageDiv.dataset.page = p;
+    var slice = allItems.slice(p * ITEMS_PER_SIDEBAR_PAGE, (p + 1) * ITEMS_PER_SIDEBAR_PAGE);
+    slice.forEach(function(item) {
+      if (item.type === 'topic') {
+        var t = item.data;
+        var btn = document.createElement('button');
+        btn.className = 'topic-btn';
+        btn.dataset.id = t.id;
+        btn.innerHTML = '<span class="icon">' + t.icon + '</span><span class="label">' + t.title + '</span>';
+        btn.addEventListener('click', function() { selectTopic(t.id); });
+        btn.addEventListener('mouseenter', function() {
+          if (activeId !== t.id) { this.style.background = t.color + '10'; this.style.borderColor = t.color + '55'; }
+        });
+        btn.addEventListener('mouseleave', function() {
+          if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(btn);
+      } else {
+        var tkBtn = document.createElement('button');
+        tkBtn.className = 'topic-btn';
+        tkBtn.dataset.id = 'takeaways';
+        tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
+        tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
+        tkBtn.addEventListener('mouseenter', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
+        });
+        tkBtn.addEventListener('mouseleave', function() {
+          if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
+        });
+        pageDiv.appendChild(tkBtn);
+      }
     });
-    btn.addEventListener('mouseleave', function() {
-      if (activeId !== t.id) { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-    });
-    sidebar.appendChild(btn);
-  });
-  var divider = document.createElement('div');
-  divider.className = 'sidebar-divider';
-  sidebar.appendChild(divider);
-  var tkBtn = document.createElement('button');
-  tkBtn.className = 'topic-btn';
-  tkBtn.dataset.id = 'takeaways';
-  tkBtn.innerHTML = '<span class="icon">🎯</span><span class="label">Key Takeaways</span>';
-  tkBtn.addEventListener('click', function() { selectTopic('takeaways'); });
-  tkBtn.addEventListener('mouseenter', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'rgba(255,255,255,0.06)'; this.style.borderColor = 'rgba(255,255,255,0.15)'; }
-  });
-  tkBtn.addEventListener('mouseleave', function() {
-    if (activeId !== 'takeaways') { this.style.background = 'var(--surface)'; this.style.borderColor = 'var(--border)'; }
-  });
-  sidebar.appendChild(tkBtn);
+    sidebarPagesEl.appendChild(pageDiv);
+  }
+  if (sidebarTotalPages > 1) {
+    sidebarNavEl.innerHTML =
+      '<button id="sbPrev" onclick="changeSidebarPage(-1)">\u25C0</button>' +
+      '<span class="page-info" id="sbInfo"></span>' +
+      '<button id="sbNext" onclick="changeSidebarPage(1)">\u25B6</button>';
+    updateSidebarNav();
+  } else { sidebarNavEl.innerHTML = ''; }
+}
+
+function changeSidebarPage(dir) {
+  var next = sidebarPage + dir;
+  if (next < 0 || next >= sidebarTotalPages) return;
+  sidebarPage = next;
+  var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+  pages.forEach(function(p) { p.classList.remove('active'); });
+  pages[sidebarPage].classList.add('active');
+  updateSidebarNav(); updateSidebarActive();
+}
+
+function updateSidebarNav() {
+  var info = document.getElementById('sbInfo');
+  var prev = document.getElementById('sbPrev');
+  var nxt = document.getElementById('sbNext');
+  if (!info) return;
+  info.textContent = (sidebarPage + 1) + '/' + sidebarTotalPages;
+  prev.disabled = sidebarPage === 0;
+  nxt.disabled = sidebarPage === sidebarTotalPages - 1;
 }
 
 function updateSidebarActive() {
-  var btns = sidebar.querySelectorAll('.topic-btn');
+  var btns = sidebarPagesEl.querySelectorAll('.topic-btn');
   btns.forEach(function(btn) {
     var id = btn.dataset.id;
     var topic = TOPICS.find(function(t) { return t.id == id; });
     var isActive = (id == activeId) || (id === 'takeaways' && activeId === 'takeaways');
     if (isActive) btn.classList.add('active'); else btn.classList.remove('active');
     if (isActive && topic) {
-      btn.style.background = topic.color + '20';
-      btn.style.borderColor = topic.color;
+      btn.style.background = topic.color + '20'; btn.style.borderColor = topic.color;
     } else if (isActive && id === 'takeaways') {
-      btn.style.background = 'rgba(255,255,255,0.08)';
-      btn.style.borderColor = 'rgba(255,255,255,0.2)';
+      btn.style.background = 'rgba(255,255,255,0.08)'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
     } else {
-      btn.style.background = 'var(--surface)';
-      btn.style.borderColor = 'var(--border)';
+      btn.style.background = 'var(--surface)'; btn.style.borderColor = 'var(--border)';
     }
   });
 }
 
-function renderTopic(t) {
+/* ── Content ── */
+function showContentPage(t) {
+  var points = contentPages[contentPage];
+  var globalOffset = 0;
+  for (var i = 0; i < contentPage; i++) globalOffset += contentPages[i].length;
   var html = '<div class="content-header">' +
     '<span class="icon">' + t.icon + '</span>' +
     '<div><div class="tag" style="color:' + t.color + '">TOPIC ' + t.num + '</div>' +
     '<div class="title">' + t.title + '</div></div></div>' +
-    '<div class="content-scroll">';
-  t.points.forEach(function(p, i) {
+    '<div class="content-body"><div class="content-points">';
+  points.forEach(function(p, i) {
     html += '<div class="point" style="border-color:' + t.color + '22;animation-delay:' + (i * 50) + 'ms">' +
-      '<div class="num" style="background:' + t.color + '">' + (i + 1) + '</div>' +
+      '<div class="num" style="background:' + t.color + '">' + (globalOffset + i + 1) + '</div>' +
       '<p>' + p + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var topicIdx = TOPICS.findIndex(function(x) { return x.id === t.id; });
+  var prevTopic = topicIdx > 0 ? TOPICS[topicIdx - 1] : null;
+  var nextTopic = topicIdx < TOPICS.length - 1 ? TOPICS[topicIdx + 1] : null;
+  html += '<div class="content-footer">';
+  if (prevTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + prevTopic.id + ')">\u2190 ' + prevTopic.title + '</button>';
+  } else { html += '<div></div>'; }
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function(x) {
+    html += '<div class="dot' + (x.id === t.id ? ' active' : '') + '" style="' + (x.id === t.id ? 'background:' + t.color : '') + '"></div>';
+  });
+  html += '</div>';
+  if (nextTopic) {
+    html += '<button class="nav-btn" onclick="selectTopic(' + nextTopic.id + ')">' + nextTopic.title + ' \u2192</button>';
+  } else {
+    html += '<button class="nav-btn" onclick="selectTopic(\'takeaways\')">Key Takeaways \u2192</button>';
+  }
+  html += '</div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function renderTakeaways() {
   var html = '<div class="content-header">' +
-    '<span class="icon" style="font-size:30px">🎯</span>' +
+    '<span class="icon" style="font-size:32px">\uD83C\uDFAF</span>' +
     '<div><div class="title">Key Takeaways</div></div></div>' +
-    '<div class="content-scroll">';
+    '<div class="content-body"><div class="content-points">';
   TAKEAWAYS.forEach(function(t, i) {
     html += '<div class="takeaway-item" style="animation-delay:' + (i * 50) + 'ms">' +
       '<div class="num">' + (i + 1) + '</div><p>' + t + '</p></div>';
   });
   html += '</div>';
-  return html;
+  var lastTopic = TOPICS[TOPICS.length - 1];
+  html += '<div class="content-footer">';
+  html += '<button class="nav-btn" onclick="selectTopic(' + lastTopic.id + ')">\u2190 ' + lastTopic.title + '</button>';
+  html += '<div class="page-dots">';
+  TOPICS.forEach(function() { html += '<div class="dot"></div>'; });
+  html += '<div class="dot active" style="background: linear-gradient(135deg, #E63946, #FF6B35)"></div>';
+  html += '</div><div></div></div></div>';
+  content.innerHTML = html;
+  content.style.animation = 'none'; void content.offsetHeight;
+  content.style.animation = 'fadeIn 0.25s ease';
 }
 
 function selectTopic(id) {
   activeId = id;
-  updateSidebarActive();
-  if (id === 'takeaways') {
-    content.innerHTML = renderTakeaways();
+  if (id !== 'takeaways') {
+    var idx = TOPICS.findIndex(function(t) { return t.id === id; });
+    var targetPage = Math.floor(idx / ITEMS_PER_SIDEBAR_PAGE);
+    if (targetPage !== sidebarPage) {
+      sidebarPage = targetPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   } else {
-    var topic = TOPICS.find(function(t) { return t.id === id; });
-    if (topic) content.innerHTML = renderTopic(topic);
+    var tkPage = sidebarTotalPages - 1;
+    if (tkPage !== sidebarPage) {
+      sidebarPage = tkPage;
+      var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+      pages.forEach(function(p) { p.classList.remove('active'); });
+      pages[sidebarPage].classList.add('active');
+      updateSidebarNav();
+    }
   }
-  content.style.animation = 'none';
-  void content.offsetHeight;
-  content.style.animation = 'fadeIn 0.25s ease';
+  updateSidebarActive();
+  if (id === 'takeaways') { renderTakeaways(); }
+  else {
+    var topic = TOPICS.find(function(t) { return t.id === id; });
+    if (topic) { contentPages = [topic.points]; contentPage = 0; showContentPage(topic); }
+  }
 }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'F11') { e.preventDefault(); fsBtn.click(); return; }
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (activeId === null) { selectTopic(1); return; }
+    if (activeId === 'takeaways') return;
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx < TOPICS.length - 1) selectTopic(TOPICS[idx + 1].id);
+    else selectTopic('takeaways');
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (activeId === null) return;
+    if (activeId === 'takeaways') { selectTopic(TOPICS[TOPICS.length - 1].id); return; }
+    var idx = TOPICS.findIndex(function(t) { return t.id === activeId; });
+    if (idx > 0) selectTopic(TOPICS[idx - 1].id);
+  }
+});
 
 buildSidebar();
 </script>

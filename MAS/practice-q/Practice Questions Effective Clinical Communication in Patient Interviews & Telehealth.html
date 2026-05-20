@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Practice Questions: Essential Skills: Eye and Ear Procedure Techniques</title>
+<title>Practice Questions: Effective Clinical Communication in Patient Interviews & Telehealth</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg-deep: #130f1a;
-    --bg-card: #1e1728;
-    --bg-card-hover: #2a2035;
-    --accent: #e879f9;
-    --accent-glow: rgba(232, 121, 249, 0.25);
+    --bg-deep: #0b1120;
+    --bg-card: #122030;
+    --bg-card-hover: #1a2d42;
+    --accent: #2dd4bf;
+    --accent-glow: rgba(45, 212, 191, 0.25);
     --wrong: #f87171;
     --wrong-glow: rgba(248, 113, 113, 0.25);
-    --text-primary: #f5f0ff;
-    --text-secondary: #a08dbd;
-    --border: #332a44;
-    --option-bg: #19121f;
-    --option-border: #2e2340;
-    --gradient-start: #e879f9;
-    --gradient-end: #fb923c;
+    --text-primary: #ecfdf5;
+    --text-secondary: #7fa8b8;
+    --border: #1e3a4d;
+    --option-bg: #0f1d2d;
+    --option-border: #1f3548;
+    --gradient-start: #2dd4bf;
+    --gradient-end: #818cf8;
   }
 
   html, body {
@@ -37,8 +37,8 @@
     content: '';
     position: fixed; top: -50%; left: -50%;
     width: 200%; height: 200%;
-    background: radial-gradient(ellipse at 20% 15%, rgba(232, 121, 249, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 85%, rgba(251, 146, 60, 0.05) 0%, transparent 50%);
+    background: radial-gradient(ellipse at 25% 15%, rgba(45, 212, 191, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 75% 85%, rgba(129, 140, 248, 0.05) 0%, transparent 50%);
     z-index: 0; pointer-events: none;
   }
 
@@ -55,10 +55,10 @@
   }
   .start-screen .icon { font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 0 24px var(--accent-glow)); }
   .start-screen h1 {
-    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.25rem;
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.2rem;
     background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 8px; max-width: 560px; line-height: 1.4;
+    margin-bottom: 8px; max-width: 580px; line-height: 1.4;
   }
   .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 480px; }
   .badge-row { display: flex; gap: 10px; margin: 14px 0 24px; flex-wrap: wrap; justify-content: center; }
@@ -68,8 +68,8 @@
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, var(--gradient-start), #d946ef);
-    color: #130f1a; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
+    background: linear-gradient(135deg, var(--gradient-start), #14b8a6);
+    color: #0b1120; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
     border: none; border-radius: 12px; padding: 13px 40px; cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 24px var(--accent-glow);
@@ -83,7 +83,7 @@
     color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem;
     border-radius: 12px; padding: 10px 28px; cursor: pointer; transition: all 0.2s;
   }
-  .btn-secondary:hover { background: rgba(232, 121, 249, 0.1); }
+  .btn-secondary:hover { background: rgba(45, 212, 191, 0.1); }
 
   .progress-wrapper { flex-shrink: 0; margin-bottom: 10px; }
   .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
@@ -116,7 +116,7 @@
     background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
   }
   .q-type-badge {
-    display: inline-block; background: rgba(251, 146, 60, 0.15); color: #fdba74;
+    display: inline-block; background: rgba(129, 140, 248, 0.15); color: #a5b4fc;
     font-size: 0.68rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
     padding: 3px 10px; border-radius: 5px; margin-bottom: 8px; flex-shrink: 0;
   }
@@ -144,7 +144,7 @@
     background: var(--accent); color: var(--bg-deep); border-color: var(--accent);
   }
   .option-btn.correct {
-    background: rgba(232, 121, 249, 0.12); border-color: var(--accent);
+    background: rgba(45, 212, 191, 0.12); border-color: var(--accent);
     box-shadow: 0 0 20px var(--accent-glow); animation: popIn 0.35s ease;
   }
   .option-btn.correct .option-letter { background: var(--accent); color: var(--bg-deep); border-color: var(--accent); }
@@ -170,7 +170,7 @@
     animation: fadeUp 0.3s ease; display: flex; align-items: flex-start; gap: 10px;
     flex-shrink: 0;
   }
-  .feedback-box.correct-fb { background: rgba(232, 121, 249, 0.1); border: 1px solid rgba(232, 121, 249, 0.3); }
+  .feedback-box.correct-fb { background: rgba(45, 212, 191, 0.1); border: 1px solid rgba(45, 212, 191, 0.3); }
   .feedback-box.wrong-fb { background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.3); }
   .feedback-box .fb-icon { font-size: 1rem; flex-shrink: 0; }
 
@@ -257,87 +257,73 @@
 const QUESTIONS = [
   {
     type: "mcq",
-    question: "What does a Snellen chart test?",
-    options: ["Hearing loss", "Peripheral vision", "Distance vision", "Near vision"],
+    question: "What is the primary role of a medical assistant (MA) during the initial patient contact?",
+    options: ["Administer medication", "Diagnose the patient", "Set the tone for the patient experience", "Perform surgery"],
     correct: 2,
-    explanation: "The Snellen chart tests distance vision, typically measured at 20 feet from the chart."
+    explanation: "The MA is often the first clinical person a patient interacts with — their demeanor, professionalism, and communication set the tone for the entire visit."
   },
   {
     type: "mcq",
-    question: "The correct technique for ear irrigation in adults includes:",
-    options: ["Pull auricle down and back", "Use ice-cold water", "Aim water directly at eardrum", "Pull auricle up and back"],
-    correct: 3,
-    explanation: "For adults, the auricle (outer ear) is pulled up and back to straighten the ear canal for proper irrigation access."
-  },
-  {
-    type: "mcq",
-    question: "Eye irrigation is used for:",
-    options: ["Testing for glaucoma", "Removing debris or chemicals", "Treating pink eye", "Enhancing vision"],
-    correct: 1,
-    explanation: "Eye irrigation is performed to flush out foreign debris or chemical contaminants from the eye."
-  },
-  {
-    type: "mcq",
-    question: "What does 20/40 vision mean?",
-    options: ["Normal vision", "Patient sees at 20 ft what normal vision sees at 40 ft", "Patient sees better than average", "Patient is legally blind"],
-    correct: 1,
-    explanation: "20/40 means the patient must be at 20 feet to see what a person with normal vision can see at 40 feet — indicating reduced visual acuity."
-  },
-  {
-    type: "mcq",
-    question: "When applying eye drops, where should the drop be placed?",
-    options: ["Upper eyelid", "Sclera", "Lower conjunctival sac", "Cornea"],
+    question: "Why is it essential to restate or clarify what the patient says during an interview?",
+    options: ["To make the patient feel uncomfortable", "To ensure the patient is rushed through the process", "To avoid confusion and ensure accuracy", "To avoid asking too many questions"],
     correct: 2,
-    explanation: "Eye drops are placed in the lower conjunctival sac (the pocket formed by pulling down the lower eyelid) to minimize irritation and ensure proper absorption."
+    explanation: "Restating and clarifying ensures the information documented is accurate and that the patient feels heard and understood."
   },
   {
     type: "mcq",
-    question: "Which test is used to assess hearing with headphones and tones?",
-    options: ["Snellen test", "Audiometry", "Rinne test", "Tonometry"],
+    question: "Which of the following is NOT typically updated during the medical history review?",
+    options: ["Allergies", "Vital signs", "Surgical history", "Family history"],
     correct: 1,
-    explanation: "Audiometry uses headphones and various tones at different frequencies and volumes to assess a patient's hearing ability."
+    explanation: "Vital signs are measured during the current visit — they are not part of the medical history review, which covers allergies, surgical history, family history, and medications."
   },
   {
     type: "mcq",
-    question: "What should be avoided during eye medication administration?",
-    options: ["Touching the dropper to the eye", "Using gloves", "Documenting time and dose", "Explaining the procedure"],
+    question: "What tool is used to assess generalized anxiety?",
+    options: ["PHQ-9", "GAD-7", "MMSE", "PAQ-9"],
+    correct: 1,
+    explanation: "The GAD-7 (Generalized Anxiety Disorder 7-item scale) is the standard screening tool for assessing generalized anxiety. PHQ-9 screens for depression."
+  },
+  {
+    type: "mcq",
+    question: "What is one key consideration when communicating with patients?",
+    options: ["Speak quickly to save time", "Use only medical terminology", "Modify communication based on patient's needs", "Never adjust tone or language"],
+    correct: 2,
+    explanation: "Effective communication requires adapting your language, tone, and approach based on each patient's age, literacy level, emotional state, and cultural background."
+  },
+  {
+    type: "tf",
+    question: "The MA is often the second person a patient sees during their visit.",
+    options: ["True", "False"],
+    correct: 1,
+    explanation: "False — the MA is typically the first clinical person a patient interacts with (after check-in at the front desk), not the second. They set the tone for the visit."
+  },
+  {
+    type: "tf",
+    question: "Telehealth visits are ideal for all types of patient conditions, including those that require physical assessments.",
+    options: ["True", "False"],
+    correct: 1,
+    explanation: "False — telehealth has limitations. Conditions requiring hands-on physical examination, palpation, or in-person procedures are not suitable for telehealth."
+  },
+  {
+    type: "tf",
+    question: "A patient's weight and blood pressure may still be gathered during a telehealth visit if they have the proper equipment.",
+    options: ["True", "False"],
     correct: 0,
-    explanation: "Never touch the dropper tip to the eye or surrounding tissue — this can contaminate the medication solution and cause infection."
+    explanation: "True — patients with home monitoring devices (scales, BP cuffs) can self-report vitals during telehealth visits, which the MA can document."
   },
   {
-    type: "mcq",
-    question: "The tragus is gently massaged after administering:",
-    options: ["Eye drops", "Ear drops", "Oral meds", "Nasal sprays"],
+    type: "tf",
+    question: "Conducting screenings such as PHQ-9 and Fall Risk is part of gathering additional information during patient interviews.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — standardized screenings like PHQ-9 (depression), GAD-7 (anxiety), and Fall Risk assessments are routinely administered as part of comprehensive patient interviews."
+  },
+  {
+    type: "tf",
+    question: "Ending a telehealth call should be done by the MA immediately after giving instructions.",
+    options: ["True", "False"],
     correct: 1,
-    explanation: "After instilling ear drops, gently massaging the tragus (the small cartilage flap in front of the ear canal) helps disperse the medication deeper into the ear canal."
-  },
-  {
-    type: "mcq",
-    question: "What is a common symptom after ear irrigation that should be reported?",
-    options: ["Sneezing", "Dizziness", "Coughing", "Hiccups"],
-    correct: 1,
-    explanation: "Dizziness after ear irrigation may indicate inner ear stimulation or a complication and should be reported to the provider immediately."
-  },
-  {
-    type: "mcq",
-    question: "The Weber test helps determine:",
-    options: ["Peripheral vision loss", "Distance vision", "Hearing loss location", "Fluid in the eyes"],
-    correct: 2,
-    explanation: "The Weber test uses a tuning fork placed on the forehead to help determine whether hearing loss is conductive or sensorineural, and which ear is affected."
-  },
-  {
-    type: "mcq",
-    question: "What is the MA's role during a foreign body eye removal?",
-    options: ["Remove the object", "Prescribe medication", "Assist the provider and document", "Perform tonometry"],
-    correct: 2,
-    explanation: "The MA supports the provider during the procedure and is responsible for documenting the details — removal and prescribing are outside the MA's scope."
-  },
-  {
-    type: "mcq",
-    question: "What should be done if a patient becomes lightheaded during ear irrigation?",
-    options: ["Continue quickly", "Stop procedure and notify provider", "Ask patient to hold still and go slower", "Change to hot water"],
-    correct: 1,
-    explanation: "Stop the procedure immediately and notify the provider — dizziness or lightheadedness may indicate an adverse response requiring medical evaluation."
+    explanation: "False — before ending a telehealth call, the MA should confirm the patient understands instructions, ask if they have questions, and ensure a proper, respectful closing."
   }
 ];
 
@@ -393,7 +379,7 @@ function showResults() { clearInterval(state.timerInterval); state.screen = 'res
 
 function spawnConfetti() {
   const c = document.createElement('div'); c.className = 'confetti-container'; document.body.appendChild(c);
-  const colors = ['#e879f9','#fb923c','#2dd4bf','#60a5fa','#fbbf24','#f87171'];
+  const colors = ['#2dd4bf','#818cf8','#fbbf24','#f87171','#34d399','#e879f9'];
   for (let i = 0; i < 50; i++) {
     const p = document.createElement('div'); p.className = 'confetti-piece';
     p.style.left = Math.random()*100+'%'; p.style.top = '-10px';
@@ -420,11 +406,11 @@ function render() {
   if (state.screen === 'start') {
     app.innerHTML = `
       <div class="start-screen">
-        <div class="icon">👁️</div>
-        <h1>Essential Skills: Eye and Ear Procedure Techniques</h1>
-        <p>Practice questions on Snellen testing, audiometry, irrigation procedures, medication administration, and clinical assistance.</p>
+        <div class="icon">🩺</div>
+        <h1>Effective Clinical Communication in Patient Interviews & Telehealth</h1>
+        <p>Practice questions on patient interviews, clinical screenings, communication strategies, and telehealth best practices.</p>
         <div class="badge-row">
-          <span class="badge">📋 12 Questions</span>
+          <span class="badge">📋 10 Questions</span>
           <span class="badge">🔀 Shuffled</span>
           <span class="badge">⏱ Timed</span>
         </div>
@@ -438,6 +424,7 @@ function render() {
     const total = state.shuffledQuestions.length;
     const pct = ((state.currentQ + (state.answered ? 1 : 0)) / total * 100);
     const letters = ['A','B','C','D'];
+    const typeBadge = q.type === 'tf' ? 'TRUE / FALSE' : 'MULTIPLE CHOICE';
 
     let optionsHTML = q.options.map((opt, i) => {
       let cls = 'option-btn';
@@ -486,7 +473,7 @@ function render() {
         <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       </div>
       <div class="question-card">
-        <span class="q-type-badge">MULTIPLE CHOICE</span>
+        <span class="q-type-badge">${typeBadge}</span>
         <div class="question-text">${q.question}</div>
         <div class="options-list">${optionsHTML}</div>
         ${feedbackHTML}

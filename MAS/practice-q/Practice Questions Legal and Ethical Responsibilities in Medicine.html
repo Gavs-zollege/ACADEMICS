@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Practice Questions: From Checkups to Immunizations: Pediatric Office Practices</title>
+<title>Practice Questions: Legal and Ethical Responsibilities in Medicine</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg-deep: #0a1410;
-    --bg-card: #12221a;
-    --bg-card-hover: #1a3226;
-    --accent: #4ade80;
-    --accent-glow: rgba(74, 222, 128, 0.25);
-    --wrong: #fb7185;
-    --wrong-glow: rgba(251, 113, 133, 0.25);
-    --text-primary: #f0fdf4;
-    --text-secondary: #7daa90;
-    --border: #1e3a28;
-    --option-bg: #0e1c14;
-    --option-border: #213d2b;
-    --gradient-start: #4ade80;
-    --gradient-end: #facc15;
+    --bg-deep: #0e0c15;
+    --bg-card: #1a1525;
+    --bg-card-hover: #252035;
+    --accent: #a78bfa;
+    --accent-glow: rgba(167, 139, 250, 0.25);
+    --wrong: #f87171;
+    --wrong-glow: rgba(248, 113, 113, 0.25);
+    --text-primary: #f5f3ff;
+    --text-secondary: #8b80aa;
+    --border: #2d2545;
+    --option-bg: #14101e;
+    --option-border: #2a2240;
+    --gradient-start: #a78bfa;
+    --gradient-end: #fb923c;
   }
 
   html, body {
@@ -37,8 +37,8 @@
     content: '';
     position: fixed; top: -50%; left: -50%;
     width: 200%; height: 200%;
-    background: radial-gradient(ellipse at 20% 15%, rgba(74, 222, 128, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 85%, rgba(250, 204, 21, 0.04) 0%, transparent 50%);
+    background: radial-gradient(ellipse at 20% 15%, rgba(167, 139, 250, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 85%, rgba(251, 146, 60, 0.04) 0%, transparent 50%);
     z-index: 0; pointer-events: none;
   }
 
@@ -60,7 +60,7 @@
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     margin-bottom: 8px; max-width: 580px; line-height: 1.4;
   }
-  .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 480px; }
+  .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 490px; }
   .badge-row { display: flex; gap: 10px; margin: 14px 0 24px; flex-wrap: wrap; justify-content: center; }
   .badge {
     background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px;
@@ -68,8 +68,8 @@
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, var(--gradient-start), #22c55e);
-    color: #0a1410; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
+    background: linear-gradient(135deg, var(--gradient-start), #8b5cf6);
+    color: #0e0c15; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
     border: none; border-radius: 12px; padding: 13px 40px; cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 24px var(--accent-glow);
@@ -83,7 +83,7 @@
     color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem;
     border-radius: 12px; padding: 10px 28px; cursor: pointer; transition: all 0.2s;
   }
-  .btn-secondary:hover { background: rgba(74, 222, 128, 0.1); }
+  .btn-secondary:hover { background: rgba(167, 139, 250, 0.1); }
 
   .progress-wrapper { flex-shrink: 0; margin-bottom: 10px; }
   .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
@@ -116,7 +116,7 @@
     background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
   }
   .q-type-badge {
-    display: inline-block; background: rgba(250, 204, 21, 0.12); color: #fde047;
+    display: inline-block; background: rgba(251, 146, 60, 0.12); color: #fdba74;
     font-size: 0.68rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
     padding: 3px 10px; border-radius: 5px; margin-bottom: 8px; flex-shrink: 0;
   }
@@ -144,14 +144,14 @@
     background: var(--accent); color: var(--bg-deep); border-color: var(--accent);
   }
   .option-btn.correct {
-    background: rgba(74, 222, 128, 0.12); border-color: var(--accent);
+    background: rgba(167, 139, 250, 0.12); border-color: var(--accent);
     box-shadow: 0 0 20px var(--accent-glow); animation: popIn 0.35s ease;
   }
   .option-btn.correct .option-letter { background: var(--accent); color: var(--bg-deep); border-color: var(--accent); }
   .option-btn.correct .check-icon { display: block; }
 
   .option-btn.wrong {
-    background: rgba(251, 113, 133, 0.12); border-color: var(--wrong);
+    background: rgba(248, 113, 113, 0.12); border-color: var(--wrong);
     box-shadow: 0 0 20px var(--wrong-glow); animation: shake 0.4s ease;
   }
   .option-btn.wrong .option-letter { background: var(--wrong); color: #fff; border-color: var(--wrong); }
@@ -170,8 +170,8 @@
     animation: fadeUp 0.3s ease; display: flex; align-items: flex-start; gap: 10px;
     flex-shrink: 0;
   }
-  .feedback-box.correct-fb { background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.3); }
-  .feedback-box.wrong-fb { background: rgba(251, 113, 133, 0.1); border: 1px solid rgba(251, 113, 133, 0.3); }
+  .feedback-box.correct-fb { background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.3); }
+  .feedback-box.wrong-fb { background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.3); }
   .feedback-box .fb-icon { font-size: 1rem; flex-shrink: 0; }
 
   .next-btn-wrap { margin-top: 10px; display: flex; justify-content: flex-end; flex-shrink: 0; }
@@ -256,76 +256,109 @@
 <script>
 const QUESTIONS = [
   {
-    question: "What age range defines pediatric patients?",
-    options: ["0–12 months", "Birth to 21 years", "Birth to 18 years", "1–17 years"],
+    type: "mcq",
+    question: "What is the main difference between ethics and law in healthcare?",
+    options: ["Ethics are based on religion; laws are not", "Laws guide personal behavior; ethics guide legal decisions", "Ethics guide what is right or wrong; laws define what is legal or illegal", "Ethics only apply to physicians"],
     correct: 2,
-    explanation: "Pediatric care spans from birth through 18 years of age."
+    explanation: "Ethics address moral principles of right and wrong conduct, while laws are formal rules enacted by government that define what is legal or illegal. Both guide healthcare behavior but from different foundations."
   },
   {
-    question: "Which muscle is recommended for intramuscular injections in infants?",
-    options: ["Deltoid", "Gluteus maximus", "Trapezius", "Vastus lateralis"],
-    correct: 3,
-    explanation: "The vastus lateralis (outer thigh) is the safest and most developed IM injection site for infants."
-  },
-  {
-    question: "When should head circumference be measured?",
-    options: ["Only at birth", "Until age 3", "After age 5", "Once a year for all children"],
-    correct: 1,
-    explanation: "Head circumference is routinely monitored from birth until 3 years of age to track brain and skull growth."
-  },
-  {
-    question: "What is the MA's primary role during a pediatric procedure?",
-    options: ["Diagnose illness", "Administer anesthesia", "Support the child and assist provider", "Interpret X-rays"],
-    correct: 2,
-    explanation: "The MA supports the child emotionally, assists the provider with the procedure, and documents — diagnosing and prescribing are outside their scope."
-  },
-  {
-    question: "Which of the following is part of routine pediatric care?",
-    options: ["Pap smear", "EKG", "Lead screening", "Mammogram"],
-    correct: 2,
-    explanation: "Lead screening is a routine pediatric test, typically performed around 12 months and 24 months, to detect lead exposure."
-  },
-  {
-    question: "Where should a Snellen chart be placed for testing a 5-year-old?",
-    options: ["On the floor", "10 feet away", "20 feet away", "5 feet away"],
-    correct: 2,
-    explanation: "The Snellen chart is positioned 20 feet from the patient for standard distance vision testing, regardless of the child's age."
-  },
-  {
-    question: "What does CDC stand for in the context of immunizations?",
-    options: ["Centers for Disease Control and Prevention", "Clinical Doctoral Corporation", "Certified Development Committee", "Children's Diagnostic Center"],
+    type: "tf",
+    question: "Ethical conflicts in healthcare often involve competing values.",
+    options: ["True", "False"],
     correct: 0,
-    explanation: "The CDC (Centers for Disease Control and Prevention) sets immunization schedules and public health guidelines nationwide."
+    explanation: "True — ethical dilemmas arise when two or more valid principles conflict, such as patient autonomy vs. beneficence, requiring careful consideration to determine the best course of action."
   },
   {
-    question: "A 2-year-old child should receive an injection in which site?",
-    options: ["Deltoid", "Dorsogluteal", "Vastus lateralis", "Biceps"],
-    correct: 2,
-    explanation: "The vastus lateralis remains the preferred IM injection site for toddlers due to its well-developed muscle mass at this age."
+    type: "tf",
+    question: "HIPAA allows for casual discussions of patient cases in public spaces.",
+    options: ["True", "False"],
+    correct: 1,
+    explanation: "False — HIPAA strictly prohibits discussing patient information in public areas such as hallways, elevators, cafeterias, or social media. Patient information must only be shared in private, authorized settings."
   },
   {
-    question: "When is a child most likely to receive the MMR vaccine?",
-    options: ["At birth", "At 6 months", "At 12–15 months", "At 5 years"],
-    correct: 2,
-    explanation: "The first dose of MMR (measles, mumps, rubella) vaccine is typically administered between 12–15 months of age per the CDC schedule."
+    type: "tf",
+    question: "Ethical drift refers to how professionals may slowly abandon ethical standards over time.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — ethical drift is the gradual erosion of ethical standards that occurs when small compromises accumulate over time, often without the professional realizing it."
   },
   {
-    question: "Which technique helps reduce anxiety during pediatric procedures?",
-    options: ["Use of sharp language", "Delaying procedures", "Using toys and explaining steps", "Ignoring questions"],
-    correct: 2,
-    explanation: "Distraction techniques (toys, games) combined with age-appropriate explanations of each step help reduce fear and anxiety in children."
+    type: "tf",
+    question: "The principle of justice means treating all patients fairly.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — justice in healthcare ethics means fair and equitable treatment of all patients regardless of race, gender, socioeconomic status, or personal beliefs."
   },
   {
-    question: "What action should an MA take if they suspect child abuse?",
-    options: ["Tell the parent", "Say nothing", "Document and report to supervisor", "Ask the child for confirmation in front of parent"],
-    correct: 2,
-    explanation: "MAs are mandatory reporters — they must objectively document observations and report suspected abuse to their supervisor or appropriate authority."
+    type: "tf",
+    question: "Social media use by MAs is never related to ethical concerns.",
+    options: ["True", "False"],
+    correct: 1,
+    explanation: "False — social media poses significant ethical risks including inadvertent HIPAA violations, sharing identifiable patient information, or posting content that undermines professional credibility."
   },
   {
-    question: "How should vaccines be documented?",
-    options: ["With a sticker only", "Record only the date", "Include date, lot number, manufacturer, and site", "No documentation is required"],
+    type: "tf",
+    question: "Reporting medical errors is both a legal and ethical responsibility.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — medical errors must be reported promptly. Legally, it protects the facility and ensures proper documentation. Ethically, it prioritizes patient safety and transparency."
+  },
+  {
+    type: "mcq",
+    question: "Which ethical principle means \"doing good\" for the patient?",
+    options: ["Nonmaleficence", "Beneficence", "Autonomy", "Justice"],
+    correct: 1,
+    explanation: "Beneficence means acting in the patient's best interest and doing good. Nonmaleficence means \"do no harm,\" autonomy respects patient decisions, and justice ensures fairness."
+  },
+  {
+    type: "mcq",
+    question: "What does the principle of autonomy emphasize in patient care?",
+    options: ["Preventing lawsuits", "Ensuring provider control", "Respecting the patient's right to make decisions", "Limiting patient involvement in care"],
     correct: 2,
-    explanation: "Complete vaccine documentation must include: date administered, vaccine name, lot number, manufacturer, injection site, route, and the administrator's name."
+    explanation: "Autonomy recognizes and respects each patient's right to make informed decisions about their own healthcare, including the right to refuse treatment."
+  },
+  {
+    type: "mcq",
+    question: "Which government agency oversees workplace safety in healthcare settings?",
+    options: ["CDC", "OSHA", "CMS", "DEA"],
+    correct: 1,
+    explanation: "OSHA (Occupational Safety and Health Administration) sets and enforces workplace safety standards, including bloodborne pathogen protocols, hazard communication, and PPE requirements in healthcare."
+  },
+  {
+    type: "mcq",
+    question: "What is an example of professional ethics in a clinical setting?",
+    options: ["Offering personal opinions about a patient's choices", "Maintaining patient confidentiality even outside the clinic", "Sharing patient stories to entertain friends", "Prioritizing personal beliefs over patient needs"],
+    correct: 1,
+    explanation: "Professional ethics require maintaining patient confidentiality at all times — including outside the workplace. Sharing patient information in any non-authorized setting is a violation."
+  },
+  {
+    type: "mcq",
+    question: "What is the purpose of the NHA Code of Ethics?",
+    options: ["To enforce legal action against MAs", "To standardize ethical behavior among medical assistants", "To limit patient choices", "To simplify clinical documentation"],
+    correct: 1,
+    explanation: "The NHA Code of Ethics provides a framework of professional standards that guide medical assistants in ethical decision-making, conduct, and patient care practices."
+  },
+  {
+    type: "mcq",
+    question: "What should an MA do upon witnessing a legal or ethical violation?",
+    options: ["Ignore it unless a supervisor notices", "Report it professionally and promptly", "Post about it anonymously online", "Confront the person publicly"],
+    correct: 1,
+    explanation: "MAs have a professional duty to report violations through proper channels — promptly and professionally — to protect patients and maintain facility integrity."
+  },
+  {
+    type: "mcq",
+    question: "Which of the following is a legal duty related to patient rights?",
+    options: ["Asking patients to waive their confidentiality rights", "Refusing to treat patients with controversial views", "Ensuring informed consent before procedures", "Telling patients they cannot refuse treatment"],
+    correct: 2,
+    explanation: "Informed consent is both a legal requirement and an ethical obligation — patients must understand and agree to procedures before they are performed."
+  },
+  {
+    type: "tf",
+    question: "Healthcare compliance is optional for medical assistants.",
+    options: ["True", "False"],
+    correct: 1,
+    explanation: "False — healthcare compliance (HIPAA, OSHA, facility policies) is mandatory for all healthcare workers, including medical assistants. Non-compliance can result in disciplinary action or legal consequences."
   }
 ];
 
@@ -381,7 +414,7 @@ function showResults() { clearInterval(state.timerInterval); state.screen = 'res
 
 function spawnConfetti() {
   const c = document.createElement('div'); c.className = 'confetti-container'; document.body.appendChild(c);
-  const colors = ['#4ade80','#facc15','#60a5fa','#fb923c','#e879f9','#2dd4bf'];
+  const colors = ['#a78bfa','#fb923c','#22d3ee','#4ade80','#f472b6','#facc15'];
   for (let i = 0; i < 50; i++) {
     const p = document.createElement('div'); p.className = 'confetti-piece';
     p.style.left = Math.random()*100+'%'; p.style.top = '-10px';
@@ -408,11 +441,11 @@ function render() {
   if (state.screen === 'start') {
     app.innerHTML = `
       <div class="start-screen">
-        <div class="icon">👶</div>
-        <h1>From Checkups to Immunizations: Pediatric Office Practices</h1>
-        <p>Practice questions on pediatric assessments, immunizations, injection sites, growth monitoring, and child safety protocols.</p>
+        <div class="icon">⚖️</div>
+        <h1>Legal and Ethical Responsibilities in Medicine</h1>
+        <p>Practice questions on bioethics principles, HIPAA, OSHA, NHA Code of Ethics, informed consent, compliance, and professional conduct.</p>
         <div class="badge-row">
-          <span class="badge">📋 12 Questions</span>
+          <span class="badge">📋 15 Questions</span>
           <span class="badge">🔀 Shuffled</span>
           <span class="badge">⏱ Timed</span>
         </div>
@@ -426,6 +459,7 @@ function render() {
     const total = state.shuffledQuestions.length;
     const pct = ((state.currentQ + (state.answered ? 1 : 0)) / total * 100);
     const letters = ['A','B','C','D'];
+    const typeBadge = q.type === 'tf' ? 'TRUE / FALSE' : 'MULTIPLE CHOICE';
 
     let optionsHTML = q.options.map((opt, i) => {
       let cls = 'option-btn';
@@ -474,7 +508,7 @@ function render() {
         <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       </div>
       <div class="question-card">
-        <span class="q-type-badge">MULTIPLE CHOICE</span>
+        <span class="q-type-badge">${typeBadge}</span>
         <div class="question-text">${q.question}</div>
         <div class="options-list">${optionsHTML}</div>
         ${feedbackHTML}

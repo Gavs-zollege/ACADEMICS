@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Practice Questions: Legal and Ethical Responsibilities in Medicine</title>
+<title>Practice Questions: Infection Control in Healthcare</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg-deep: #0e0c15;
-    --bg-card: #1a1525;
-    --bg-card-hover: #252035;
-    --accent: #a78bfa;
-    --accent-glow: rgba(167, 139, 250, 0.25);
+    --bg-deep: #0c1219;
+    --bg-card: #141e2b;
+    --bg-card-hover: #1c2a3a;
+    --accent: #22d3ee;
+    --accent-glow: rgba(34, 211, 238, 0.25);
     --wrong: #f87171;
     --wrong-glow: rgba(248, 113, 113, 0.25);
-    --text-primary: #f5f3ff;
-    --text-secondary: #8b80aa;
-    --border: #2d2545;
-    --option-bg: #14101e;
-    --option-border: #2a2240;
-    --gradient-start: #a78bfa;
-    --gradient-end: #fb923c;
+    --text-primary: #ecfeff;
+    --text-secondary: #6ea5b5;
+    --border: #1c3040;
+    --option-bg: #101a24;
+    --option-border: #1e3344;
+    --gradient-start: #22d3ee;
+    --gradient-end: #a3e635;
   }
 
   html, body {
@@ -37,8 +37,8 @@
     content: '';
     position: fixed; top: -50%; left: -50%;
     width: 200%; height: 200%;
-    background: radial-gradient(ellipse at 20% 15%, rgba(167, 139, 250, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 85%, rgba(251, 146, 60, 0.04) 0%, transparent 50%);
+    background: radial-gradient(ellipse at 20% 15%, rgba(34, 211, 238, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 85%, rgba(163, 230, 53, 0.04) 0%, transparent 50%);
     z-index: 0; pointer-events: none;
   }
 
@@ -55,12 +55,12 @@
   }
   .start-screen .icon { font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 0 24px var(--accent-glow)); }
   .start-screen h1 {
-    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.2rem;
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.3rem;
     background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 8px; max-width: 580px; line-height: 1.4;
+    margin-bottom: 8px; max-width: 560px; line-height: 1.4;
   }
-  .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 490px; }
+  .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 480px; }
   .badge-row { display: flex; gap: 10px; margin: 14px 0 24px; flex-wrap: wrap; justify-content: center; }
   .badge {
     background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px;
@@ -68,8 +68,8 @@
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, var(--gradient-start), #8b5cf6);
-    color: #0e0c15; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
+    background: linear-gradient(135deg, var(--gradient-start), #06b6d4);
+    color: #0c1219; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
     border: none; border-radius: 12px; padding: 13px 40px; cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 24px var(--accent-glow);
@@ -83,7 +83,7 @@
     color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem;
     border-radius: 12px; padding: 10px 28px; cursor: pointer; transition: all 0.2s;
   }
-  .btn-secondary:hover { background: rgba(167, 139, 250, 0.1); }
+  .btn-secondary:hover { background: rgba(34, 211, 238, 0.1); }
 
   .progress-wrapper { flex-shrink: 0; margin-bottom: 10px; }
   .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
@@ -116,7 +116,7 @@
     background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
   }
   .q-type-badge {
-    display: inline-block; background: rgba(251, 146, 60, 0.12); color: #fdba74;
+    display: inline-block; background: rgba(163, 230, 53, 0.12); color: #bef264;
     font-size: 0.68rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
     padding: 3px 10px; border-radius: 5px; margin-bottom: 8px; flex-shrink: 0;
   }
@@ -144,7 +144,7 @@
     background: var(--accent); color: var(--bg-deep); border-color: var(--accent);
   }
   .option-btn.correct {
-    background: rgba(167, 139, 250, 0.12); border-color: var(--accent);
+    background: rgba(34, 211, 238, 0.12); border-color: var(--accent);
     box-shadow: 0 0 20px var(--accent-glow); animation: popIn 0.35s ease;
   }
   .option-btn.correct .option-letter { background: var(--accent); color: var(--bg-deep); border-color: var(--accent); }
@@ -170,7 +170,7 @@
     animation: fadeUp 0.3s ease; display: flex; align-items: flex-start; gap: 10px;
     flex-shrink: 0;
   }
-  .feedback-box.correct-fb { background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.3); }
+  .feedback-box.correct-fb { background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); }
   .feedback-box.wrong-fb { background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.3); }
   .feedback-box .fb-icon { font-size: 1rem; flex-shrink: 0; }
 
@@ -240,7 +240,7 @@
   .question-card::-webkit-scrollbar-thumb, .review-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
   @media (max-width: 600px) {
-    .start-screen h1 { font-size: 1.05rem; }
+    .start-screen h1 { font-size: 1.1rem; }
     .question-text { font-size: 0.93rem; }
     .option-btn { padding: 8px 11px; font-size: 0.83rem; }
     .option-letter { width: 24px; height: 24px; font-size: 0.73rem; }
@@ -256,109 +256,64 @@
 <script>
 const QUESTIONS = [
   {
-    type: "mcq",
-    question: "What is the main difference between ethics and law in healthcare?",
-    options: ["Ethics are based on religion; laws are not", "Laws guide personal behavior; ethics guide legal decisions", "Ethics guide what is right or wrong; laws define what is legal or illegal", "Ethics only apply to physicians"],
+    question: "What is the correct order for donning PPE?",
+    options: ["Gloves, gown, mask, goggles", "Gown, gloves, mask, goggles", "Gown, mask, goggles, gloves", "Mask, gown, gloves, goggles"],
     correct: 2,
-    explanation: "Ethics address moral principles of right and wrong conduct, while laws are formal rules enacted by government that define what is legal or illegal. Both guide healthcare behavior but from different foundations."
+    explanation: "The correct donning order is: gown first, then mask, then goggles/face shield, and gloves last. Gloves go on last so they cover the gown cuffs and form a complete barrier."
   },
   {
-    type: "tf",
-    question: "Ethical conflicts in healthcare often involve competing values.",
-    options: ["True", "False"],
-    correct: 0,
-    explanation: "True — ethical dilemmas arise when two or more valid principles conflict, such as patient autonomy vs. beneficence, requiring careful consideration to determine the best course of action."
-  },
-  {
-    type: "tf",
-    question: "HIPAA allows for casual discussions of patient cases in public spaces.",
-    options: ["True", "False"],
+    question: "When should you avoid using alcohol-based hand sanitizer?",
+    options: ["Before eating", "When hands are visibly dirty", "After shaking hands", "After using the keyboard"],
     correct: 1,
-    explanation: "False — HIPAA strictly prohibits discussing patient information in public areas such as hallways, elevators, cafeterias, or social media. Patient information must only be shared in private, authorized settings."
+    explanation: "Alcohol-based sanitizer is ineffective on visibly soiled hands. When hands are visibly dirty or contaminated, soap and water must be used instead."
   },
   {
-    type: "tf",
-    question: "Ethical drift refers to how professionals may slowly abandon ethical standards over time.",
-    options: ["True", "False"],
-    correct: 0,
-    explanation: "True — ethical drift is the gradual erosion of ethical standards that occurs when small compromises accumulate over time, often without the professional realizing it."
-  },
-  {
-    type: "tf",
-    question: "The principle of justice means treating all patients fairly.",
-    options: ["True", "False"],
-    correct: 0,
-    explanation: "True — justice in healthcare ethics means fair and equitable treatment of all patients regardless of race, gender, socioeconomic status, or personal beliefs."
-  },
-  {
-    type: "tf",
-    question: "Social media use by MAs is never related to ethical concerns.",
-    options: ["True", "False"],
-    correct: 1,
-    explanation: "False — social media poses significant ethical risks including inadvertent HIPAA violations, sharing identifiable patient information, or posting content that undermines professional credibility."
-  },
-  {
-    type: "tf",
-    question: "Reporting medical errors is both a legal and ethical responsibility.",
-    options: ["True", "False"],
-    correct: 0,
-    explanation: "True — medical errors must be reported promptly. Legally, it protects the facility and ensures proper documentation. Ethically, it prioritizes patient safety and transparency."
-  },
-  {
-    type: "mcq",
-    question: "Which ethical principle means \"doing good\" for the patient?",
-    options: ["Nonmaleficence", "Beneficence", "Autonomy", "Justice"],
-    correct: 1,
-    explanation: "Beneficence means acting in the patient's best interest and doing good. Nonmaleficence means \"do no harm,\" autonomy respects patient decisions, and justice ensures fairness."
-  },
-  {
-    type: "mcq",
-    question: "What does the principle of autonomy emphasize in patient care?",
-    options: ["Preventing lawsuits", "Ensuring provider control", "Respecting the patient's right to make decisions", "Limiting patient involvement in care"],
+    question: "What is the primary purpose of aseptic hand washing?",
+    options: ["To remove all bacteria permanently", "To sterilize the skin before surgery", "To reduce microorganisms and prevent cross-contamination", "To cool the skin and improve blood flow"],
     correct: 2,
-    explanation: "Autonomy recognizes and respects each patient's right to make informed decisions about their own healthcare, including the right to refuse treatment."
+    explanation: "Aseptic hand washing reduces the number of microorganisms on the hands to prevent cross-contamination between patients, surfaces, and the healthcare worker."
   },
   {
-    type: "mcq",
-    question: "Which government agency oversees workplace safety in healthcare settings?",
-    options: ["CDC", "OSHA", "CMS", "DEA"],
-    correct: 1,
-    explanation: "OSHA (Occupational Safety and Health Administration) sets and enforces workplace safety standards, including bloodborne pathogen protocols, hazard communication, and PPE requirements in healthcare."
+    question: "Which of the following is a step in aseptic hand washing?",
+    options: ["Using bar soap", "Holding hands above elbows", "Using cold water", "Cleaning under fingernails with a disposable stick"],
+    correct: 3,
+    explanation: "Cleaning under the fingernails with a disposable nail stick or brush is part of proper aseptic hand washing technique to remove trapped microorganisms."
   },
   {
-    type: "mcq",
-    question: "What is an example of professional ethics in a clinical setting?",
-    options: ["Offering personal opinions about a patient's choices", "Maintaining patient confidentiality even outside the clinic", "Sharing patient stories to entertain friends", "Prioritizing personal beliefs over patient needs"],
-    correct: 1,
-    explanation: "Professional ethics require maintaining patient confidentiality at all times — including outside the workplace. Sharing patient information in any non-authorized setting is a violation."
-  },
-  {
-    type: "mcq",
-    question: "What is the purpose of the NHA Code of Ethics?",
-    options: ["To enforce legal action against MAs", "To standardize ethical behavior among medical assistants", "To limit patient choices", "To simplify clinical documentation"],
-    correct: 1,
-    explanation: "The NHA Code of Ethics provides a framework of professional standards that guide medical assistants in ethical decision-making, conduct, and patient care practices."
-  },
-  {
-    type: "mcq",
-    question: "What should an MA do upon witnessing a legal or ethical violation?",
-    options: ["Ignore it unless a supervisor notices", "Report it professionally and promptly", "Post about it anonymously online", "Confront the person publicly"],
-    correct: 1,
-    explanation: "MAs have a professional duty to report violations through proper channels — promptly and professionally — to protect patients and maintain facility integrity."
-  },
-  {
-    type: "mcq",
-    question: "Which of the following is a legal duty related to patient rights?",
-    options: ["Asking patients to waive their confidentiality rights", "Refusing to treat patients with controversial views", "Ensuring informed consent before procedures", "Telling patients they cannot refuse treatment"],
+    question: "Which of the following is TRUE about instrument sanitization?",
+    options: ["It removes all microorganisms, including spores", "It's the same as sterilization", "It prepares instruments for further disinfection or sterilization", "It uses dry heat for cleaning"],
     correct: 2,
-    explanation: "Informed consent is both a legal requirement and an ethical obligation — patients must understand and agree to procedures before they are performed."
+    explanation: "Sanitization is the first step — it removes debris and reduces microbial load to prepare instruments for higher-level disinfection or sterilization. It does not eliminate all organisms."
   },
   {
-    type: "tf",
-    question: "Healthcare compliance is optional for medical assistants.",
-    options: ["True", "False"],
+    question: "What is the final step when removing PPE?",
+    options: ["Remove gloves", "Remove gown", "Remove mask", "Remove face shield"],
+    correct: 2,
+    explanation: "The doffing order is: gloves first, then gown, then face shield/goggles, and the mask is removed last (since it protects the airway). Always perform hand hygiene after removal."
+  },
+  {
+    question: "What is used to confirm successful sterilization in an autoclave?",
+    options: ["The smell of disinfectant", "A sterilization indicator strip", "A flashing green light", "Temperature alone"],
     correct: 1,
-    explanation: "False — healthcare compliance (HIPAA, OSHA, facility policies) is mandatory for all healthcare workers, including medical assistants. Non-compliance can result in disciplinary action or legal consequences."
+    explanation: "Sterilization indicator strips (chemical or biological indicators) change color or provide results to confirm that proper sterilization conditions were achieved inside the autoclave."
+  },
+  {
+    question: "Which of the following would require soap and water over hand sanitizer?",
+    options: ["After taking vital signs", "After removing clean gloves", "Your first handwash of the day", "After adjusting a mask"],
+    correct: 2,
+    explanation: "The first handwash of the day should be done with soap and water to thoroughly cleanse hands before beginning patient care. Sanitizer is suitable for subsequent clean-to-clean situations."
+  },
+  {
+    question: "What is the proper way to remove contaminated gloves?",
+    options: ["Pull from the wrist with the opposite hand", "Pull from the fingertips and shake off", "Grasp outside of one glove near the palm and peel off inside-out", "Tear both gloves off quickly"],
+    correct: 2,
+    explanation: "Grasp the outside of one glove near the wrist/palm area and peel it off inside-out, then slide fingers under the remaining glove and peel it off — this prevents contact with contaminated surfaces."
+  },
+  {
+    question: "Why is it important to label a disinfectant soaking container?",
+    options: ["For aesthetic purposes", "To avoid mixing with food or water", "So everyone knows the solution type and discard date", "So it can be used for multiple chemicals"],
+    correct: 2,
+    explanation: "Labeling ensures all staff know the solution type, concentration, preparation date, and discard date — maintaining proper disinfection standards and preventing use of expired solutions."
   }
 ];
 
@@ -414,7 +369,7 @@ function showResults() { clearInterval(state.timerInterval); state.screen = 'res
 
 function spawnConfetti() {
   const c = document.createElement('div'); c.className = 'confetti-container'; document.body.appendChild(c);
-  const colors = ['#a78bfa','#fb923c','#22d3ee','#4ade80','#f472b6','#facc15'];
+  const colors = ['#22d3ee','#a3e635','#f472b6','#facc15','#60a5fa','#fb923c'];
   for (let i = 0; i < 50; i++) {
     const p = document.createElement('div'); p.className = 'confetti-piece';
     p.style.left = Math.random()*100+'%'; p.style.top = '-10px';
@@ -441,11 +396,11 @@ function render() {
   if (state.screen === 'start') {
     app.innerHTML = `
       <div class="start-screen">
-        <div class="icon">⚖️</div>
-        <h1>Legal and Ethical Responsibilities in Medicine</h1>
-        <p>Practice questions on bioethics principles, HIPAA, OSHA, NHA Code of Ethics, informed consent, compliance, and professional conduct.</p>
+        <div class="icon">🧤</div>
+        <h1>Infection Control in Healthcare</h1>
+        <p>Practice questions on PPE donning/doffing, hand hygiene, aseptic technique, sanitization, sterilization, and disinfection protocols.</p>
         <div class="badge-row">
-          <span class="badge">📋 15 Questions</span>
+          <span class="badge">📋 10 Questions</span>
           <span class="badge">🔀 Shuffled</span>
           <span class="badge">⏱ Timed</span>
         </div>
@@ -459,7 +414,6 @@ function render() {
     const total = state.shuffledQuestions.length;
     const pct = ((state.currentQ + (state.answered ? 1 : 0)) / total * 100);
     const letters = ['A','B','C','D'];
-    const typeBadge = q.type === 'tf' ? 'TRUE / FALSE' : 'MULTIPLE CHOICE';
 
     let optionsHTML = q.options.map((opt, i) => {
       let cls = 'option-btn';
@@ -508,7 +462,7 @@ function render() {
         <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       </div>
       <div class="question-card">
-        <span class="q-type-badge">${typeBadge}</span>
+        <span class="q-type-badge">MULTIPLE CHOICE</span>
         <div class="question-text">${q.question}</div>
         <div class="options-list">${optionsHTML}</div>
         ${feedbackHTML}

@@ -3,26 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Practice Questions: Fundamentals of Medication Administration and Pharmacology</title>
+<title>Practice Questions Cardiopulmonary Testing and Patient Care</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg-deep: #140b11;
-    --bg-card: #221420;
-    --bg-card-hover: #321c2e;
-    --accent: #f472b6;
-    --accent-glow: rgba(244, 114, 182, 0.25);
-    --wrong: #f87171;
-    --wrong-glow: rgba(248, 113, 113, 0.25);
-    --text-primary: #fdf2f8;
-    --text-secondary: #b07a9a;
-    --border: #3a1e32;
-    --option-bg: #1a0e16;
-    --option-border: #3d2036;
-    --gradient-start: #f472b6;
-    --gradient-end: #60a5fa;
+    --bg-deep: #0f1729;
+    --bg-card: #182240;
+    --bg-card-hover: #1e2d52;
+    --accent: #00e5a0;
+    --accent-glow: rgba(0, 229, 160, 0.25);
+    --wrong: #ff4f6e;
+    --wrong-glow: rgba(255, 79, 110, 0.25);
+    --text-primary: #f0f4ff;
+    --text-secondary: #8e99b8;
+    --border: #2a3660;
+    --option-bg: #1a2748;
+    --option-border: #2e3f6e;
   }
 
   html, body {
@@ -37,8 +35,8 @@
     content: '';
     position: fixed; top: -50%; left: -50%;
     width: 200%; height: 200%;
-    background: radial-gradient(ellipse at 20% 15%, rgba(244, 114, 182, 0.05) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 85%, rgba(96, 165, 250, 0.04) 0%, transparent 50%);
+    background: radial-gradient(ellipse at 30% 20%, rgba(0, 229, 160, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 50%);
     z-index: 0; pointer-events: none;
   }
 
@@ -49,27 +47,29 @@
     display: flex; flex-direction: column;
   }
 
+  /* ── START SCREEN ── */
   .start-screen {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     flex: 1; text-align: center; animation: fadeUp 0.7s ease;
   }
   .start-screen .icon { font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 0 24px var(--accent-glow)); }
   .start-screen h1 {
-    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.15rem;
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.7rem;
+    background: linear-gradient(135deg, var(--accent), #6366f1);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 8px; max-width: 600px; line-height: 1.4;
+    margin-bottom: 8px;
   }
-  .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 490px; }
+  .start-screen p { color: var(--text-secondary); font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; max-width: 460px; }
   .badge-row { display: flex; gap: 10px; margin: 14px 0 24px; flex-wrap: wrap; justify-content: center; }
   .badge {
     background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px;
     padding: 5px 14px; font-size: 0.78rem; font-weight: 700; color: var(--accent);
   }
 
+  /* ── BUTTONS ── */
   .btn-primary {
-    background: linear-gradient(135deg, var(--gradient-start), #ec4899);
-    color: #140b11; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
+    background: linear-gradient(135deg, var(--accent), #00c48c);
+    color: #0f1729; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
     border: none; border-radius: 12px; padding: 13px 40px; cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 24px var(--accent-glow);
@@ -83,8 +83,9 @@
     color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem;
     border-radius: 12px; padding: 10px 28px; cursor: pointer; transition: all 0.2s;
   }
-  .btn-secondary:hover { background: rgba(244, 114, 182, 0.1); }
+  .btn-secondary:hover { background: rgba(0, 229, 160, 0.1); }
 
+  /* ── PROGRESS BAR ── */
   .progress-wrapper { flex-shrink: 0; margin-bottom: 10px; }
   .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
   .progress-header span { font-weight: 700; font-size: 0.8rem; color: var(--text-secondary); }
@@ -94,7 +95,7 @@
     overflow: hidden; border: 1px solid var(--border);
   }
   .progress-fill {
-    height: 100%; background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    height: 100%; background: linear-gradient(90deg, var(--accent), #6366f1);
     border-radius: 100px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -106,6 +107,7 @@
   .live-score .correct-count { color: var(--accent); }
   .live-score .wrong-count { color: var(--wrong); }
 
+  /* ── QUESTION CARD ── */
   .question-card {
     background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
     padding: 18px 20px; animation: fadeUp 0.4s ease; position: relative;
@@ -113,21 +115,22 @@
   }
   .question-card::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    background: linear-gradient(90deg, var(--accent), #6366f1);
   }
   .q-type-badge {
-    display: inline-block; background: rgba(96, 165, 250, 0.12); color: #93c5fd;
+    display: inline-block; background: rgba(99, 102, 241, 0.15); color: #a5b4fc;
     font-size: 0.68rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
     padding: 3px 10px; border-radius: 5px; margin-bottom: 8px; flex-shrink: 0;
   }
   .question-text { font-size: 1.05rem; font-weight: 700; line-height: 1.45; margin-bottom: 14px; flex-shrink: 0; }
 
-  .options-list { display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
+  /* ── OPTIONS ── */
+  .options-list { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
 
   .option-btn {
     width: 100%; text-align: left; background: var(--option-bg); border: 2px solid var(--option-border);
     border-radius: 11px; padding: 10px 14px; font-family: 'Outfit', sans-serif;
-    font-size: 0.9rem; font-weight: 600; color: var(--text-primary); cursor: pointer;
+    font-size: 0.92rem; font-weight: 600; color: var(--text-primary); cursor: pointer;
     transition: all 0.2s; display: flex; align-items: center; gap: 10px; position: relative;
   }
   .option-btn:hover:not(.disabled) {
@@ -135,23 +138,23 @@
     transform: translateX(3px); box-shadow: 0 0 16px var(--accent-glow);
   }
   .option-letter {
-    flex-shrink: 0; width: 28px; height: 28px; border-radius: 8px;
+    flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px;
     background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 0.8rem; color: var(--text-secondary);
+    font-weight: 800; font-size: 0.82rem; color: var(--text-secondary);
     border: 1px solid var(--border); transition: all 0.2s;
   }
   .option-btn:hover:not(.disabled) .option-letter {
     background: var(--accent); color: var(--bg-deep); border-color: var(--accent);
   }
   .option-btn.correct {
-    background: rgba(244, 114, 182, 0.12); border-color: var(--accent);
+    background: rgba(0, 229, 160, 0.12); border-color: var(--accent);
     box-shadow: 0 0 20px var(--accent-glow); animation: popIn 0.35s ease;
   }
   .option-btn.correct .option-letter { background: var(--accent); color: var(--bg-deep); border-color: var(--accent); }
   .option-btn.correct .check-icon { display: block; }
 
   .option-btn.wrong {
-    background: rgba(248, 113, 113, 0.12); border-color: var(--wrong);
+    background: rgba(255, 79, 110, 0.12); border-color: var(--wrong);
     box-shadow: 0 0 20px var(--wrong-glow); animation: shake 0.4s ease;
   }
   .option-btn.wrong .option-letter { background: var(--wrong); color: #fff; border-color: var(--wrong); }
@@ -164,18 +167,20 @@
   .check-icon { color: var(--accent); }
   .x-icon { color: var(--wrong); }
 
+  /* ── FEEDBACK ── */
   .feedback-box {
-    margin-top: 10px; padding: 9px 12px; border-radius: 10px;
-    font-weight: 600; font-size: 0.82rem; line-height: 1.4;
+    margin-top: 12px; padding: 10px 14px; border-radius: 10px;
+    font-weight: 600; font-size: 0.85rem; line-height: 1.4;
     animation: fadeUp 0.3s ease; display: flex; align-items: flex-start; gap: 10px;
     flex-shrink: 0;
   }
-  .feedback-box.correct-fb { background: rgba(244, 114, 182, 0.1); border: 1px solid rgba(244, 114, 182, 0.3); }
-  .feedback-box.wrong-fb { background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.3); }
-  .feedback-box .fb-icon { font-size: 1rem; flex-shrink: 0; }
+  .feedback-box.correct-fb { background: rgba(0, 229, 160, 0.1); border: 1px solid rgba(0, 229, 160, 0.3); }
+  .feedback-box.wrong-fb { background: rgba(255, 79, 110, 0.1); border: 1px solid rgba(255, 79, 110, 0.3); }
+  .feedback-box .fb-icon { font-size: 1.1rem; flex-shrink: 0; }
 
-  .next-btn-wrap { margin-top: 10px; display: flex; justify-content: flex-end; flex-shrink: 0; }
+  .next-btn-wrap { margin-top: 12px; display: flex; justify-content: flex-end; flex-shrink: 0; }
 
+  /* ── RESULTS SCREEN ── */
   .results-screen {
     flex: 1; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
@@ -189,12 +194,13 @@
   }
   .score-display {
     font-size: 3.2rem; font-weight: 900; margin: 10px 0;
-    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    background: linear-gradient(135deg, var(--accent), #6366f1);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
   .score-subtitle { color: var(--text-secondary); font-weight: 600; margin-bottom: 18px; font-size: 0.92rem; }
   .results-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 14px; }
 
+  /* ── REVIEW (scrollable within its own container) ── */
   .review-section {
     width: 100%; max-width: 720px; flex: 1; overflow-y: auto;
     text-align: left; min-height: 0;
@@ -206,21 +212,22 @@
   }
   .review-card {
     background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
-    padding: 12px 14px; margin-bottom: 8px;
+    padding: 14px 14px; margin-bottom: 8px;
   }
-  .review-card .rv-q { font-weight: 700; font-size: 0.86rem; margin-bottom: 5px; }
-  .review-card .rv-status { font-weight: 800; font-size: 0.72rem; margin-bottom: 3px; letter-spacing: 0.5px; }
+  .review-card .rv-q { font-weight: 700; font-size: 0.88rem; margin-bottom: 6px; }
+  .review-card .rv-status { font-weight: 800; font-size: 0.74rem; margin-bottom: 4px; letter-spacing: 0.5px; }
   .review-card .rv-status.rv-correct { color: var(--accent); }
   .review-card .rv-status.rv-wrong { color: var(--wrong); }
-  .review-card .rv-answer { font-weight: 600; color: var(--text-secondary); font-size: 0.82rem; }
+  .review-card .rv-answer { font-weight: 600; color: var(--text-secondary); font-size: 0.84rem; }
   .review-card .rv-answer strong { color: var(--accent); }
-  .review-card .rv-explain { margin-top: 4px; font-size: 0.78rem; color: var(--text-secondary); font-weight: 600; }
+  .review-card .rv-explain { margin-top: 5px; font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
 
   .timer-bar {
     display: flex; align-items: center; gap: 5px; font-weight: 700; font-size: 0.8rem; color: var(--text-secondary);
   }
   .timer-bar .time { font-family: 'Space Mono', monospace; color: var(--text-primary); }
 
+  /* ── ANIMATIONS ── */
   @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes popIn { 0% { transform: scale(0.96); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
   @keyframes shake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
@@ -235,15 +242,16 @@
     100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.3); }
   }
 
+  /* scrollbar styling */
   .question-card::-webkit-scrollbar, .review-section::-webkit-scrollbar { width: 5px; }
   .question-card::-webkit-scrollbar-track, .review-section::-webkit-scrollbar-track { background: transparent; }
   .question-card::-webkit-scrollbar-thumb, .review-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
   @media (max-width: 600px) {
-    .start-screen h1 { font-size: 1rem; }
-    .question-text { font-size: 0.93rem; }
-    .option-btn { padding: 8px 11px; font-size: 0.83rem; }
-    .option-letter { width: 24px; height: 24px; font-size: 0.73rem; }
+    .start-screen h1 { font-size: 1.3rem; }
+    .question-text { font-size: 0.95rem; }
+    .option-btn { padding: 9px 12px; font-size: 0.85rem; }
+    .option-letter { width: 26px; height: 26px; font-size: 0.75rem; }
     .score-display { font-size: 2.6rem; }
     .app { padding: 10px 10px 6px; }
   }
@@ -256,76 +264,74 @@
 <script>
 const QUESTIONS = [
   {
-    question: "Which of the following is NOT one of the Nine Rights of Medication Administration?",
-    options: ["Right documentation", "Right reason", "Right technique", "Right diagnosis"],
-    correct: 3,
-    explanation: "The Nine Rights include: right patient, medication, dose, time, route, documentation, reason, response, and right to refuse. Diagnosis is a provider's responsibility, not an MA administration right."
-  },
-  {
-    question: "A provider orders 800 mg of ibuprofen. Your clinic only stocks 200 mg tablets. How many tablets should you administer?",
-    options: ["2", "3", "4", "5"],
-    correct: 2,
-    explanation: "Use the formula: Desired ÷ Have = Dosage. 800 mg ÷ 200 mg = 4 tablets."
-  },
-  {
-    question: "Which route of administration delivers medication into the fatty tissue beneath the skin?",
-    options: ["Intramuscular", "Intradermal", "Subcutaneous", "Oral"],
-    correct: 2,
-    explanation: "Subcutaneous (SubQ) injections deliver medication into the fat layer beneath the skin (e.g., insulin). Intradermal is just under the skin surface, and intramuscular goes deeper into muscle."
-  },
-  {
-    question: "Why is it essential to monitor a patient for 20–30 minutes after giving an injection?",
-    options: ["To give the patient time to fill out forms", "To prevent medication theft", "To observe for allergic or adverse reactions", "To double-check insurance authorization"],
-    correct: 2,
-    explanation: "Some medications can trigger serious reactions, including anaphylaxis. Post-injection monitoring ensures the MA can respond quickly and alert the provider if needed."
-  },
-  {
-    question: "What should a medical assistant do if a patient refuses a prescribed medication?",
-    options: ["Force them to take it", "Ignore it and note it as \"given\"", "Document the refusal and inform the provider", "Give the medication anyway if they look okay with it"],
-    correct: 2,
-    explanation: "Patients have the right to refuse medication. The MA must respect this, document it accurately in the EHR, and notify the provider immediately."
-  },
-  {
-    question: "Which of the following is an example of a therapeutic effect of a medication?",
-    options: ["Nausea after taking antibiotics", "Drowsiness after diphenhydramine", "Pain relief after taking acetaminophen", "Rash due to penicillin allergy"],
-    correct: 2,
-    explanation: "A therapeutic effect is the intended outcome of a medication. Pain relief from acetaminophen is its intended purpose. Side effects (drowsiness) and adverse effects (rash) are unintended."
-  },
-  {
-    question: "A medication label says \"Store refrigerated.\" You find it on the shelf at room temperature. What should you do?",
-    options: ["Shake it and give it anyway", "Ask the patient if they want to take the risk", "Administer it as long as it hasn't expired", "Do not administer and notify the provider or supervisor"],
-    correct: 3,
-    explanation: "Temperature-sensitive medications lose potency or become unsafe if improperly stored. Never administer — notify the provider or supervisor and follow facility protocol."
-  },
-  {
-    question: "What should you do before withdrawing medication from a vial?",
-    options: ["Shake the vial vigorously", "Insert the needle without cleansing", "Wipe the rubber stopper with alcohol", "Break the vial seal by hand"],
-    correct: 2,
-    explanation: "Always cleanse the rubber stopper with an alcohol swab to prevent contamination and infection before withdrawing medication."
-  },
-  {
-    question: "Which site is most appropriate for an intradermal (ID) injection?",
-    options: ["Deltoid muscle", "Mid-anterior forearm", "Upper gluteal region", "Lateral thigh"],
+    type: "mcq",
+    question: "Which of the following symptoms may indicate the need for an ECG?",
+    options: ["Earache", "Chest pain", "Abdominal bloating", "Headache"],
     correct: 1,
-    explanation: "The mid-anterior forearm is the standard site for intradermal injections such as allergy testing and TB (PPD) tests, due to easy access and visibility for reading results."
+    explanation: "Chest pain is a red-flag symptom that prompts an ECG to assess for cardiac issues such as arrhythmias or myocardial infarction."
   },
   {
-    question: "What is the primary purpose of the \"right to know\" in medication administration?",
-    options: ["To allow the patient to choose their medication", "To help the MA avoid documentation", "To educate the patient about the medication", "To give the provider extra time during visits"],
+    type: "mcq",
+    question: "Proper lead placement during an ECG is important because:",
+    options: ["It ensures the machine powers on", "It gives a faster result", "It ensures accurate recording of heart activity", "It prevents infection"],
     correct: 2,
-    explanation: "Patients have the right to know what medication they are receiving, its purpose, and potential side effects or interactions before it is administered."
+    explanation: "Proper lead placement is crucial for obtaining reliable ECG results that accurately reflect the heart's electrical activity."
   },
   {
-    question: "Which medication classification is best suited to treat high blood pressure?",
-    options: ["Antidepressants", "Antipyretics", "Antibiotics", "Antihypertensives"],
-    correct: 3,
-    explanation: "Antihypertensives (such as lisinopril, amlodipine, or losartan) are specifically designed to lower blood pressure and reduce cardiovascular risk."
+    type: "mcq",
+    question: "Before placing ECG electrodes, you should:",
+    options: ["Apply lotion to the skin", "Rub alcohol on the skin and let it dry", "Shave all body hair", "Skip prep if the patient is elderly"],
+    correct: 1,
+    explanation: "Rubbing alcohol removes oils and improves electrode adhesion for cleaner ECG signals."
   },
   {
-    question: "You are preparing a dose of a liquid medication. What is the correct way to measure the dose accurately?",
-    options: ["Hold the cup below eye level", "Pour and estimate the dose", "Read the measurement at the top of the liquid", "Hold at eye level and read from the bottom of the meniscus"],
-    correct: 3,
-    explanation: "The meniscus is the curve at the surface of a liquid. Always hold the measuring device at eye level and read from the bottom of the meniscus for an accurate measurement."
+    type: "mcq",
+    question: "What does a Pulmonary Function Test (PFT) measure?",
+    options: ["Brain activity", "Heart rate", "Lung volume and airflow", "Oxygen level in the blood"],
+    correct: 2,
+    explanation: "PFTs evaluate respiratory function by measuring lung volume, capacity, and rates of airflow."
+  },
+  {
+    type: "mcq",
+    question: "Why is coaching important during PFT and peak flow tests?",
+    options: ["It prevents the patient from speaking", "It ensures accurate and consistent effort", "It shortens test duration", "It avoids paperwork"],
+    correct: 1,
+    explanation: "Coaching helps the patient perform optimally and produce reliable, reproducible data."
+  },
+  {
+    type: "mcq",
+    question: "Which condition would most likely require peak flow testing?",
+    options: ["Appendicitis", "Asthma", "Fracture", "Concussion"],
+    correct: 1,
+    explanation: "Peak flow testing monitors breathing capacity and is a key tool for managing asthma."
+  },
+  {
+    type: "mcq",
+    question: "If a patient cannot lie flat for an ECG, the MA should:",
+    options: ["Reschedule the test", "Perform the test in a seated or semi-Fowler's position", "Cancel the test", "Only perform limb leads"],
+    correct: 1,
+    explanation: "Accommodate the patient's comfort — a semi-Fowler's or seated position is acceptable. Document the positioning change."
+  },
+  {
+    type: "tf",
+    question: "A baseline PFT is commonly performed before surgery for smokers.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — baseline PFTs are often required before surgery, especially in high-risk patients like smokers."
+  },
+  {
+    type: "tf",
+    question: "All ECGs must be done with the patient in a supine position.",
+    options: ["True", "False"],
+    correct: 1,
+    explanation: "False — some patients may need ECGs in non-supine positions due to conditions like heart failure or respiratory distress."
+  },
+  {
+    type: "tf",
+    question: "The medical assistant is responsible for ensuring the patient understands each step of a respiratory test.",
+    options: ["True", "False"],
+    correct: 0,
+    explanation: "True — clear communication ensures safe, effective testing and better patient cooperation."
   }
 ];
 
@@ -381,7 +387,7 @@ function showResults() { clearInterval(state.timerInterval); state.screen = 'res
 
 function spawnConfetti() {
   const c = document.createElement('div'); c.className = 'confetti-container'; document.body.appendChild(c);
-  const colors = ['#f472b6','#60a5fa','#facc15','#4ade80','#e879f9','#fb923c'];
+  const colors = ['#00e5a0','#6366f1','#f59e0b','#ff4f6e','#06b6d4','#a78bfa'];
   for (let i = 0; i < 50; i++) {
     const p = document.createElement('div'); p.className = 'confetti-piece';
     p.style.left = Math.random()*100+'%'; p.style.top = '-10px';
@@ -408,11 +414,11 @@ function render() {
   if (state.screen === 'start') {
     app.innerHTML = `
       <div class="start-screen">
-        <div class="icon">💊</div>
-        <h1>Fundamentals of Medication Administration and Pharmacology</h1>
-        <p>Practice questions on the Nine Rights, injection routes, dosage calculations, medication safety, storage, and drug classifications.</p>
+        <div class="icon">🫀</div>
+        <h1>Practice Questions Cardiopulmonary Testing and Patient Care</h1>
+        <p>Test your knowledge on Electrocardiography, Pulmonary Function Tests, and clinical procedures.</p>
         <div class="badge-row">
-          <span class="badge">📋 12 Questions</span>
+          <span class="badge">📋 10 Questions</span>
           <span class="badge">🔀 Shuffled</span>
           <span class="badge">⏱ Timed</span>
         </div>
@@ -426,6 +432,7 @@ function render() {
     const total = state.shuffledQuestions.length;
     const pct = ((state.currentQ + (state.answered ? 1 : 0)) / total * 100);
     const letters = ['A','B','C','D'];
+    const typeBadge = q.type === 'tf' ? 'TRUE / FALSE' : 'MULTIPLE CHOICE';
 
     let optionsHTML = q.options.map((opt, i) => {
       let cls = 'option-btn';
@@ -449,8 +456,8 @@ function render() {
         <div class="feedback-box ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
           <span class="fb-icon">${isCorrect ? '✅' : '❌'}</span>
           <div>
-            <strong style="font-size:0.85rem;">${isCorrect ? 'Correct!' : 'Incorrect — Answer: ' + q.options[q.correct]}</strong><br>
-            <span style="color:var(--text-secondary);font-size:0.8rem;">${q.explanation}</span>
+            <strong style="font-size:0.88rem;">${isCorrect ? 'Correct!' : 'Incorrect — Answer: ' + q.options[q.correct]}</strong><br>
+            <span style="color:var(--text-secondary);font-size:0.82rem;">${q.explanation}</span>
           </div>
         </div>
         <div class="next-btn-wrap">
@@ -474,7 +481,7 @@ function render() {
         <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       </div>
       <div class="question-card">
-        <span class="q-type-badge">MULTIPLE CHOICE</span>
+        <span class="q-type-badge">${typeBadge}</span>
         <div class="question-text">${q.question}</div>
         <div class="options-list">${optionsHTML}</div>
         ${feedbackHTML}

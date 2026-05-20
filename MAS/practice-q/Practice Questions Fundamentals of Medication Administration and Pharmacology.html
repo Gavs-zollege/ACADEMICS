@@ -3,26 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Practice Questions: Communication Essentials for Patient Care</title>
+<title>Practice Questions: Fundamentals of Medication Administration and Pharmacology</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg-deep: #111827;
-    --bg-card: #1e2a3f;
-    --bg-card-hover: #263350;
-    --accent: #38bdf8;
-    --accent-glow: rgba(56, 189, 248, 0.25);
-    --wrong: #fb7185;
-    --wrong-glow: rgba(251, 113, 133, 0.25);
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --border: #334155;
-    --option-bg: #1a2535;
-    --option-border: #2d3f56;
-    --gradient-start: #38bdf8;
-    --gradient-end: #a78bfa;
+    --bg-deep: #140b11;
+    --bg-card: #221420;
+    --bg-card-hover: #321c2e;
+    --accent: #f472b6;
+    --accent-glow: rgba(244, 114, 182, 0.25);
+    --wrong: #f87171;
+    --wrong-glow: rgba(248, 113, 113, 0.25);
+    --text-primary: #fdf2f8;
+    --text-secondary: #b07a9a;
+    --border: #3a1e32;
+    --option-bg: #1a0e16;
+    --option-border: #3d2036;
+    --gradient-start: #f472b6;
+    --gradient-end: #60a5fa;
   }
 
   html, body {
@@ -37,8 +37,8 @@
     content: '';
     position: fixed; top: -50%; left: -50%;
     width: 200%; height: 200%;
-    background: radial-gradient(ellipse at 25% 15%, rgba(56, 189, 248, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 75% 85%, rgba(167, 139, 250, 0.06) 0%, transparent 50%);
+    background: radial-gradient(ellipse at 20% 15%, rgba(244, 114, 182, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 85%, rgba(96, 165, 250, 0.04) 0%, transparent 50%);
     z-index: 0; pointer-events: none;
   }
 
@@ -55,12 +55,12 @@
   }
   .start-screen .icon { font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 0 24px var(--accent-glow)); }
   .start-screen h1 {
-    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.45rem;
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.15rem;
     background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 8px; max-width: 540px;
+    margin-bottom: 8px; max-width: 600px; line-height: 1.4;
   }
-  .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 460px; }
+  .start-screen p { color: var(--text-secondary); font-size: 0.92rem; font-weight: 600; margin-bottom: 6px; max-width: 490px; }
   .badge-row { display: flex; gap: 10px; margin: 14px 0 24px; flex-wrap: wrap; justify-content: center; }
   .badge {
     background: var(--bg-card); border: 1px solid var(--border); border-radius: 100px;
@@ -68,8 +68,8 @@
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, var(--gradient-start), #0ea5e9);
-    color: #0f1729; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
+    background: linear-gradient(135deg, var(--gradient-start), #ec4899);
+    color: #140b11; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem;
     border: none; border-radius: 12px; padding: 13px 40px; cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 24px var(--accent-glow);
@@ -83,7 +83,7 @@
     color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.9rem;
     border-radius: 12px; padding: 10px 28px; cursor: pointer; transition: all 0.2s;
   }
-  .btn-secondary:hover { background: rgba(56, 189, 248, 0.1); }
+  .btn-secondary:hover { background: rgba(244, 114, 182, 0.1); }
 
   .progress-wrapper { flex-shrink: 0; margin-bottom: 10px; }
   .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
@@ -116,7 +116,7 @@
     background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
   }
   .q-type-badge {
-    display: inline-block; background: rgba(167, 139, 250, 0.15); color: #c4b5fd;
+    display: inline-block; background: rgba(96, 165, 250, 0.12); color: #93c5fd;
     font-size: 0.68rem; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase;
     padding: 3px 10px; border-radius: 5px; margin-bottom: 8px; flex-shrink: 0;
   }
@@ -144,14 +144,14 @@
     background: var(--accent); color: var(--bg-deep); border-color: var(--accent);
   }
   .option-btn.correct {
-    background: rgba(56, 189, 248, 0.12); border-color: var(--accent);
+    background: rgba(244, 114, 182, 0.12); border-color: var(--accent);
     box-shadow: 0 0 20px var(--accent-glow); animation: popIn 0.35s ease;
   }
   .option-btn.correct .option-letter { background: var(--accent); color: var(--bg-deep); border-color: var(--accent); }
   .option-btn.correct .check-icon { display: block; }
 
   .option-btn.wrong {
-    background: rgba(251, 113, 133, 0.12); border-color: var(--wrong);
+    background: rgba(248, 113, 113, 0.12); border-color: var(--wrong);
     box-shadow: 0 0 20px var(--wrong-glow); animation: shake 0.4s ease;
   }
   .option-btn.wrong .option-letter { background: var(--wrong); color: #fff; border-color: var(--wrong); }
@@ -170,8 +170,8 @@
     animation: fadeUp 0.3s ease; display: flex; align-items: flex-start; gap: 10px;
     flex-shrink: 0;
   }
-  .feedback-box.correct-fb { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); }
-  .feedback-box.wrong-fb { background: rgba(251, 113, 133, 0.1); border: 1px solid rgba(251, 113, 133, 0.3); }
+  .feedback-box.correct-fb { background: rgba(244, 114, 182, 0.1); border: 1px solid rgba(244, 114, 182, 0.3); }
+  .feedback-box.wrong-fb { background: rgba(248, 113, 113, 0.1); border: 1px solid rgba(248, 113, 113, 0.3); }
   .feedback-box .fb-icon { font-size: 1rem; flex-shrink: 0; }
 
   .next-btn-wrap { margin-top: 10px; display: flex; justify-content: flex-end; flex-shrink: 0; }
@@ -240,7 +240,7 @@
   .question-card::-webkit-scrollbar-thumb, .review-section::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
   @media (max-width: 600px) {
-    .start-screen h1 { font-size: 1.15rem; }
+    .start-screen h1 { font-size: 1rem; }
     .question-text { font-size: 0.93rem; }
     .option-btn { padding: 8px 11px; font-size: 0.83rem; }
     .option-letter { width: 24px; height: 24px; font-size: 0.73rem; }
@@ -256,109 +256,76 @@
 <script>
 const QUESTIONS = [
   {
-    type: "mcq",
-    question: "What is one of the foundational pillars of effective communication in healthcare?",
-    options: ["Medical record keeping", "Clarity of verbal communication", "Prescription knowledge", "Laboratory skills"],
-    correct: 1,
-    explanation: "Clarity of verbal communication is foundational — it ensures patients understand instructions, diagnoses, and care plans accurately."
+    question: "Which of the following is NOT one of the Nine Rights of Medication Administration?",
+    options: ["Right documentation", "Right reason", "Right technique", "Right diagnosis"],
+    correct: 3,
+    explanation: "The Nine Rights include: right patient, medication, dose, time, route, documentation, reason, response, and right to refuse. Diagnosis is a provider's responsibility, not an MA administration right."
   },
   {
-    type: "tf",
-    question: "Nonverbal cues play a critical role in how patients perceive messages.",
-    options: ["True", "False"],
-    correct: 0,
-    explanation: "True — body language, facial expressions, eye contact, and tone convey as much (or more) meaning as spoken words."
-  },
-  {
-    type: "tf",
-    question: "Objective information is gathered solely from the patient's personal account.",
-    options: ["True", "False"],
-    correct: 1,
-    explanation: "False — objective information comes from measurable, observable data (vital signs, lab results, physical exam findings), not the patient's personal account."
-  },
-  {
-    type: "tf",
-    question: "Listening with intent can be a form of therapy for patients.",
-    options: ["True", "False"],
-    correct: 0,
-    explanation: "True — therapeutic listening helps patients feel heard, validated, and supported, which can improve outcomes."
-  },
-  {
-    type: "tf",
-    question: "Professionalism should be maintained in both verbal and written communication.",
-    options: ["True", "False"],
-    correct: 0,
-    explanation: "True — professionalism in all forms of communication builds trust and ensures accuracy in patient care."
-  },
-  {
-    type: "tf",
-    question: "Stress management is irrelevant to communication practices in patient care.",
-    options: ["True", "False"],
-    correct: 1,
-    explanation: "False — unmanaged stress can impair clarity, empathy, and professionalism in communication with patients and colleagues."
-  },
-  {
-    type: "tf",
-    question: "Relational communication involves personalizing your interaction to enhance the patient experience.",
-    options: ["True", "False"],
-    correct: 0,
-    explanation: "True — tailoring communication to each patient's needs and preferences builds rapport and improves the care experience."
-  },
-  {
-    type: "mcq",
-    question: "Which of the following is an example of nonverbal communication?",
-    options: ["Speaking clearly", "Asking open-ended questions", "Body language", "Using medical terminology"],
+    question: "A provider orders 800 mg of ibuprofen. Your clinic only stocks 200 mg tablets. How many tablets should you administer?",
+    options: ["2", "3", "4", "5"],
     correct: 2,
-    explanation: "Body language (posture, gestures, facial expressions) is a primary form of nonverbal communication."
+    explanation: "Use the formula: Desired ÷ Have = Dosage. 800 mg ÷ 200 mg = 4 tablets."
   },
   {
-    type: "mcq",
-    question: "What type of information comes from the patient's own description of their condition?",
-    options: ["Subjective information", "Objective information", "Quantitative data", "Verifiable evidence"],
-    correct: 0,
-    explanation: "Subjective information is based on the patient's own perceptions, feelings, and descriptions of symptoms."
-  },
-  {
-    type: "mcq",
-    question: "What is a key practice in therapeutic communication?",
-    options: ["Giving short, direct orders", "Using medical jargon", "Active listening", "Avoiding all emotional language"],
+    question: "Which route of administration delivers medication into the fatty tissue beneath the skin?",
+    options: ["Intramuscular", "Intradermal", "Subcutaneous", "Oral"],
     correct: 2,
-    explanation: "Active listening — paying full attention and reflecting understanding — is central to therapeutic communication."
+    explanation: "Subcutaneous (SubQ) injections deliver medication into the fat layer beneath the skin (e.g., insulin). Intradermal is just under the skin surface, and intramuscular goes deeper into muscle."
   },
   {
-    type: "mcq",
-    question: "Which type of question encourages patients to share more detailed responses?",
-    options: ["Open-ended", "Closed-ended", "Yes/No", "Binary"],
-    correct: 0,
-    explanation: "Open-ended questions invite patients to elaborate, providing richer clinical information."
+    question: "Why is it essential to monitor a patient for 20–30 minutes after giving an injection?",
+    options: ["To give the patient time to fill out forms", "To prevent medication theft", "To observe for allergic or adverse reactions", "To double-check insurance authorization"],
+    correct: 2,
+    explanation: "Some medications can trigger serious reactions, including anaphylaxis. Post-injection monitoring ensures the MA can respond quickly and alert the provider if needed."
   },
   {
-    type: "mcq",
-    question: "What should be avoided when aiming for clarity in communication?",
-    options: ["Adjusting for the listener", "Using jargon", "Confirming understanding", "Repeating important points"],
+    question: "What should a medical assistant do if a patient refuses a prescribed medication?",
+    options: ["Force them to take it", "Ignore it and note it as \"given\"", "Document the refusal and inform the provider", "Give the medication anyway if they look okay with it"],
+    correct: 2,
+    explanation: "Patients have the right to refuse medication. The MA must respect this, document it accurately in the EHR, and notify the provider immediately."
+  },
+  {
+    question: "Which of the following is an example of a therapeutic effect of a medication?",
+    options: ["Nausea after taking antibiotics", "Drowsiness after diphenhydramine", "Pain relief after taking acetaminophen", "Rash due to penicillin allergy"],
+    correct: 2,
+    explanation: "A therapeutic effect is the intended outcome of a medication. Pain relief from acetaminophen is its intended purpose. Side effects (drowsiness) and adverse effects (rash) are unintended."
+  },
+  {
+    question: "A medication label says \"Store refrigerated.\" You find it on the shelf at room temperature. What should you do?",
+    options: ["Shake it and give it anyway", "Ask the patient if they want to take the risk", "Administer it as long as it hasn't expired", "Do not administer and notify the provider or supervisor"],
+    correct: 3,
+    explanation: "Temperature-sensitive medications lose potency or become unsafe if improperly stored. Never administer — notify the provider or supervisor and follow facility protocol."
+  },
+  {
+    question: "What should you do before withdrawing medication from a vial?",
+    options: ["Shake the vial vigorously", "Insert the needle without cleansing", "Wipe the rubber stopper with alcohol", "Break the vial seal by hand"],
+    correct: 2,
+    explanation: "Always cleanse the rubber stopper with an alcohol swab to prevent contamination and infection before withdrawing medication."
+  },
+  {
+    question: "Which site is most appropriate for an intradermal (ID) injection?",
+    options: ["Deltoid muscle", "Mid-anterior forearm", "Upper gluteal region", "Lateral thigh"],
     correct: 1,
-    explanation: "Jargon creates confusion — clear communication means using plain, patient-friendly language."
+    explanation: "The mid-anterior forearm is the standard site for intradermal injections such as allergy testing and TB (PPD) tests, due to easy access and visibility for reading results."
   },
   {
-    type: "mcq",
-    question: "Why is professional telephone etiquette important in healthcare?",
-    options: ["It saves time", "It avoids the need for follow-up", "It ensures clear, respectful, and professional communication", "It impresses supervisors"],
+    question: "What is the primary purpose of the \"right to know\" in medication administration?",
+    options: ["To allow the patient to choose their medication", "To help the MA avoid documentation", "To educate the patient about the medication", "To give the provider extra time during visits"],
     correct: 2,
-    explanation: "Professional phone etiquette ensures patients receive clear, respectful, and accurate information even without face-to-face contact."
+    explanation: "Patients have the right to know what medication they are receiving, its purpose, and potential side effects or interactions before it is administered."
   },
   {
-    type: "mcq",
-    question: "Which factor is NOT considered when adapting communication?",
-    options: ["Emotional state", "Physical or sensory impairment", "Patient's insurance provider", "Language differences"],
-    correct: 2,
-    explanation: "Insurance provider is an administrative detail — communication adaptation focuses on emotional, physical, sensory, and language factors."
+    question: "Which medication classification is best suited to treat high blood pressure?",
+    options: ["Antidepressants", "Antipyretics", "Antibiotics", "Antihypertensives"],
+    correct: 3,
+    explanation: "Antihypertensives (such as lisinopril, amlodipine, or losartan) are specifically designed to lower blood pressure and reduce cardiovascular risk."
   },
   {
-    type: "tf",
-    question: "Communication in healthcare is only about the words you use.",
-    options: ["True", "False"],
-    correct: 1,
-    explanation: "False — effective healthcare communication includes nonverbal cues, tone, active listening, empathy, and written documentation alongside spoken words."
+    question: "You are preparing a dose of a liquid medication. What is the correct way to measure the dose accurately?",
+    options: ["Hold the cup below eye level", "Pour and estimate the dose", "Read the measurement at the top of the liquid", "Hold at eye level and read from the bottom of the meniscus"],
+    correct: 3,
+    explanation: "The meniscus is the curve at the surface of a liquid. Always hold the measuring device at eye level and read from the bottom of the meniscus for an accurate measurement."
   }
 ];
 
@@ -414,7 +381,7 @@ function showResults() { clearInterval(state.timerInterval); state.screen = 'res
 
 function spawnConfetti() {
   const c = document.createElement('div'); c.className = 'confetti-container'; document.body.appendChild(c);
-  const colors = ['#38bdf8','#a78bfa','#f59e0b','#fb7185','#34d399','#e879f9'];
+  const colors = ['#f472b6','#60a5fa','#facc15','#4ade80','#e879f9','#fb923c'];
   for (let i = 0; i < 50; i++) {
     const p = document.createElement('div'); p.className = 'confetti-piece';
     p.style.left = Math.random()*100+'%'; p.style.top = '-10px';
@@ -441,11 +408,11 @@ function render() {
   if (state.screen === 'start') {
     app.innerHTML = `
       <div class="start-screen">
-        <div class="icon">💬</div>
-        <h1>Communication Essentials for Patient Care</h1>
-        <p>Practice questions on verbal, nonverbal, therapeutic communication, and professional etiquette in healthcare.</p>
+        <div class="icon">💊</div>
+        <h1>Fundamentals of Medication Administration and Pharmacology</h1>
+        <p>Practice questions on the Nine Rights, injection routes, dosage calculations, medication safety, storage, and drug classifications.</p>
         <div class="badge-row">
-          <span class="badge">📋 15 Questions</span>
+          <span class="badge">📋 12 Questions</span>
           <span class="badge">🔀 Shuffled</span>
           <span class="badge">⏱ Timed</span>
         </div>
@@ -459,7 +426,6 @@ function render() {
     const total = state.shuffledQuestions.length;
     const pct = ((state.currentQ + (state.answered ? 1 : 0)) / total * 100);
     const letters = ['A','B','C','D'];
-    const typeBadge = q.type === 'tf' ? 'TRUE / FALSE' : 'MULTIPLE CHOICE';
 
     let optionsHTML = q.options.map((opt, i) => {
       let cls = 'option-btn';
@@ -508,7 +474,7 @@ function render() {
         <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
       </div>
       <div class="question-card">
-        <span class="q-type-badge">${typeBadge}</span>
+        <span class="q-type-badge">MULTIPLE CHOICE</span>
         <div class="question-text">${q.question}</div>
         <div class="options-list">${optionsHTML}</div>
         ${feedbackHTML}

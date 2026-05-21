@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Interviews &amp; Telehealth — What Would You Do?</title>
+<link href="https://fonts.googleapis.com/css2?family=Brygada+1918:wght@400;600;700&family=Geologica:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#090D16;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7090;--success:#38C97A;--error:#E05555;--border:#1C2444;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;}
+  body{background:radial-gradient(ellipse at 50% 0%,#141A2E,var(--bg));font-family:'Brygada 1918',serif;color:var(--text);}
+  .wrap{max-width:560px;margin:0 auto;padding:10px 16px;height:100%;display:flex;flex-direction:column;}
+  .header{text-align:center;margin-bottom:8px;flex-shrink:0;}
+  h1{font-size:24px;color:var(--gold);}
+  .sub{font-family:'Geologica',sans-serif;color:var(--dim);font-size:11px;margin-top:2px;}
+  .game-area{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .steps{display:flex;gap:3px;justify-content:center;margin-bottom:6px;flex-shrink:0;}
+  .step{height:6px;border-radius:3px;transition:all .3s;}
+  .sc{background:var(--card);border-radius:10px;padding:10px 14px;border:1px solid var(--border);margin-bottom:6px;position:relative;flex-shrink:0;}
+  .sc .num{position:absolute;top:8px;right:12px;font-size:10px;color:var(--dim);font-family:'Geologica',sans-serif;}
+  .scenario-label{font-family:'Geologica',sans-serif;font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:3px;font-weight:600;}
+  .st{font-size:13px;line-height:1.4;padding-right:26px;}
+  .opts{display:flex;flex-direction:column;gap:4px;margin-bottom:6px;flex-shrink:0;}
+  .opt{border:2px solid var(--border);cursor:pointer;font-family:'Geologica',sans-serif;font-weight:500;font-size:12px;border-radius:8px;padding:8px 10px;color:var(--text);background:var(--card);transition:all .2s;text-align:left;display:flex;align-items:center;gap:8px;line-height:1.3;}
+  .opt:hover{border-color:var(--gold);transform:scale(1.02);}
+  .opt .letter{width:22px;height:22px;border-radius:5px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;flex-shrink:0;color:var(--gold);}
+  .fb{padding:8px 12px;border-radius:8px;margin-bottom:6px;flex-shrink:0;}
+  .fb-t{font-family:'Geologica',sans-serif;font-size:11px;font-weight:600;margin-bottom:1px;}
+  .fb-d{font-family:'Geologica',sans-serif;font-size:11px;color:var(--dim);line-height:1.35;}
+  .nw{text-align:center;flex-shrink:0;}
+  .bn{padding:8px 28px;border-radius:7px;border:none;background:var(--gold);color:var(--bg);font-size:12px;font-weight:600;font-family:'Geologica',sans-serif;cursor:pointer;}
+  .results{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;}
+  .rs{font-size:48px;font-weight:700;color:var(--gold);margin:8px 0 4px;}
+  .rm{font-size:13px;font-family:'Geologica',sans-serif;margin-bottom:20px;}
+  .br{padding:10px 32px;border-radius:8px;border:none;background:var(--teal);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>What Would You Do?</h1><p class="sub">Read each scenario and choose the best response.</p></div>
+  <div class="game-area" id="game">
+    <div class="steps" id="steps"></div>
+    <div class="sc" id="scard"></div>
+    <div class="opts" id="opts"></div>
+    <div id="fba" style="display:none"></div>
+    <div class="nw" id="nw" style="display:none"><button class="bn" id="nb" onclick="next()">Next →</button></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"You're about to room a patient but haven't checked the EHR yet. The clinic is very busy. What do you do?",choices:["Skip the EHR check to save time","Quickly review the EHR for orders and results before starting","Ask the patient what tests they need","Let the provider handle it"],a:1,e:"Even when busy, reviewing the EHR is a critical first step. It ensures you know the visit's purpose, pending orders, and any outstanding results."},
+  {q:"A patient gives vague answers when you ask about their chief complaint. How do you get better information?",choices:["Accept the vague answer and move on","Ask clarifying open-ended questions about severity, duration, and triggers","Tell them to write it down and bring it next time","Skip the chief complaint section"],a:1,e:"Follow-up open-ended questions about severity, duration, associated symptoms, and what worsens or improves it help capture accurate, detailed information."},
+  {q:"During a telehealth visit, you can't take the patient's vitals. What should you do?",choices:["Skip vitals entirely","Ask the patient if they have a home BP reading or recent weight","Tell them to come in person instead","Guess based on their last visit"],a:1,e:"In telehealth, MAs adapt by asking patients for self-reported data like home blood pressure readings and current weight when available."},
+  {q:"A patient mentions a new medication but can't remember the name. How do you handle this?",choices:["Skip it — they'll remember next time","Document 'unknown medication' and ask them to verify the name","Ignore it since it's probably not important","Guess the medication based on their condition"],a:1,e:"Document what you know and ask the patient to confirm the name. Accurate medication records are essential for preventing drug interactions and errors."},
+  {q:"You're conducting a telehealth interview and the patient seems distracted, giving rushed answers. What's your best approach?",choices:["Rush through the rest to match their pace","Gently acknowledge it and ask if this is a good time to talk","Hang up and reschedule","Ignore it and keep reading from the checklist"],a:1,e:"Acknowledging the situation shows empathy. Confirming it's a good time ensures you collect accurate information and the patient feels respected."},
+  {q:"After completing the interview, you realize you forgot to update the patient's allergy list. What do you do?",choices:["Skip it — allergies rarely change","Go back and ask the patient before the provider enters","Wait until the next visit","Ask the provider to handle it"],a:1,e:"Allergy updates are critical for patient safety. Always verify before the provider sees the patient to prevent adverse reactions."},
+  {q:"A patient asks you to explain their test results during the interview. You see the results in the EHR but the provider hasn't discussed them yet. What do you do?",choices:["Read the results to the patient","Let them know the provider will review results with them and note their question","Tell them the results are confidential","Ignore the request"],a:1,e:"Discussing results is typically the provider's role. Note the patient's question so the provider addresses it, while staying within your scope."},
+  {q:"You're transitioning a telehealth patient to the provider. What's the most important thing to tell the patient?",choices:["Just say goodbye","Explain the provider will join shortly and remind them not to hang up","Tell them to call back in 10 minutes","Transfer without saying anything"],a:1,e:"Proper transition includes thanking the patient, explaining the provider will join shortly, and reminding them to stay on the line."},
+  {q:"A new patient arrives and you need to take a full medical history. Where do you start?",choices:["Surgical history","Allergies, then medications, surgical, family, and social history","Ask about their insurance first","Start with social history only"],a:1,e:"A systematic approach starting with allergies, then medications, surgical history, family history, and social history ensures nothing is missed."},
+  {q:"You finish a patient interview and are about to conclude the in-person visit. What are your next steps?",choices:["Leave the room immediately","Measure vitals, gather equipment, give disrobing instructions, and exit professionally","Wait for the provider to tell you what to do","Ask the patient to measure their own vitals"],a:1,e:"Concluding the visit includes measuring vitals (height, weight, BP, temp), gathering needed equipment, providing instructions, and exiting professionally."},
+];
+let idx=0,answer=null,score=0;
+const letters=['A','B','C','D'];
+function render(){const q=QS[idx];let sh='';QS.forEach((_,i)=>{const w=i===idx?18:7;const bg=i<idx?'var(--success)':i===idx?'var(--gold)':'var(--border)';sh+=`<div class="step" style="width:${w}px;background:${bg}"></div>`;});document.getElementById('steps').innerHTML=sh;document.getElementById('scard').innerHTML=`<div class="num">Q${idx+1}</div><div class="scenario-label">Scenario</div><div class="st">${q.q}</div>`;if(answer===null){let oh='';q.choices.forEach((c,i)=>{oh+=`<button class="opt" onclick="pick(${i})"><span class="letter">${letters[i]}</span>${c}</button>`;});document.getElementById('opts').innerHTML=oh;document.getElementById('opts').style.display='flex';document.getElementById('fba').style.display='none';document.getElementById('nw').style.display='none';}}
+function pick(v){if(answer!==null)return;answer=v;const q=QS[idx];const c=v===q.a;if(c)score++;const btns=document.getElementById('opts').children;for(let i=0;i<btns.length;i++){btns[i].style.cursor='default';btns[i].onclick=null;if(i===q.a){btns[i].style.borderColor='var(--success)';btns[i].style.background='rgba(56,201,122,.1)';btns[i].querySelector('.letter').style.background='var(--success)';btns[i].querySelector('.letter').style.color='#fff';}else if(i===v&&!c){btns[i].style.borderColor='var(--error)';btns[i].style.background='rgba(224,85,85,.1)';btns[i].querySelector('.letter').style.background='var(--error)';btns[i].querySelector('.letter').style.color='#fff';}else{btns[i].style.opacity='.4';}}const fb=document.getElementById('fba');fb.style.display='block';fb.innerHTML=`<div class="fb" style="background:${c?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)'};border:1px solid ${c?'rgba(56,201,122,.2)':'rgba(224,85,85,.2)'}"><div class="fb-t" style="color:${c?'var(--success)':'var(--error)'}">${c?'Correct!':'Incorrect'}</div><div class="fb-d">${q.e}</div></div>`;document.getElementById('nw').style.display='block';document.getElementById('nb').textContent=idx+1>=QS.length?'See Results':'Next →';}
+function next(){if(idx+1>=QS.length){showRes();return;}idx++;answer=null;render();}
+function showRes(){document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='flex';const pct=score/QS.length*100;const col=pct>=80?'var(--success)':pct>=60?'var(--gold)':'var(--error)';const msg=pct>=80?"Excellent clinical judgment!":pct>=60?"Good instincts — review what you missed.":"Review the material and try again!";r.innerHTML=`<div class="rs">${score}/${QS.length}</div><div class="rm" style="color:${col}">${msg}</div><button class="br" onclick="reset()">Try Again</button>`;}
+function reset(){idx=0;answer=null;score=0;document.getElementById('game').style.display='flex';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

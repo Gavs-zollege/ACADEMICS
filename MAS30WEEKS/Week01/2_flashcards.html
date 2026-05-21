@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MA Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0C0A09;
+    --surface: #1C1917;
+    --surface-2: #292524;
+    --surface-3: #3B3633;
+    --text: #FAFAF9;
+    --text-dim: #A8A29E;
+    --ruby: #DC2626;
+    --ruby-dark: #991B1B;
+    --amber: #D97706;
+    --amber-glow: rgba(217,119,6,0.12);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; overflow:hidden; }
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  body::after {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+    background: url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  header { text-align: center; flex-shrink: 0; margin-bottom: 8px; }
+  header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  header p { color: var(--text-dim); font-weight: 300; font-size: 0.8rem; margin-top: 4px; }
+
+  .dots {
+    display: flex; gap: 5px; justify-content: center;
+    padding: 10px 0 4px; flex-wrap: wrap; max-width: 320px; flex-shrink: 0;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--surface-2); border: 1px solid var(--surface-3);
+    transition: all 0.3s; cursor: pointer;
+  }
+  .dot.active { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 8px var(--amber-glow); transform: scale(1.2); }
+  .dot.seen { background: var(--surface-3); }
+
+  .counter {
+    text-align: center; font-size: 0.72rem; color: var(--text-dim);
+    letter-spacing: 2px; margin: 8px 0 12px; font-weight: 300; flex-shrink: 0;
+  }
+
+  .card-stage {
+    perspective: 1400px; width: 100%; max-width: 460px; flex-shrink: 1;
+    display: flex; align-items: center; justify-content: center;
+    min-height: 0;
+  }
+  .card {
+    width: 100%; aspect-ratio: 5/3;
+    max-height: calc(100vh - 260px);
+    position: relative; transform-style: preserve-3d;
+    transition: transform 0.65s cubic-bezier(0.23,1,0.32,1);
+    cursor: pointer;
+  }
+  .card.flipped { transform: rotateY(180deg); }
+
+  .face {
+    position: absolute; inset: 0; backface-visibility: hidden;
+    border-radius: 14px; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 24px 28px; text-align: center; overflow: hidden;
+  }
+  .front {
+    background: linear-gradient(160deg, var(--surface) 0%, var(--surface-2) 100%);
+    border: 1px solid var(--surface-3);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .front .tag {
+    font-size: 0.6rem; text-transform: uppercase; letter-spacing: 4px;
+    color: var(--amber); margin-bottom: 14px; font-weight: 600;
+  }
+  .front .term {
+    font-family: 'Fraunces', serif; font-size: 1.25rem; line-height: 1.35; font-weight: 700;
+  }
+  .front .hint {
+    margin-top: 18px; font-size: 0.65rem; color: var(--text-dim);
+    letter-spacing: 1px; text-transform: uppercase; opacity: 0.6;
+  }
+
+  .back {
+    background: linear-gradient(160deg, var(--ruby-dark) 0%, #450A0A 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    transform: rotateY(180deg);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  }
+  .back .tag {
+    font-size: 0.6rem; text-transform: uppercase; letter-spacing: 4px;
+    color: #FCA5A5; margin-bottom: 14px; font-weight: 600;
+  }
+  .back .definition {
+    font-weight: 300; font-size: 0.9rem; line-height: 1.6; color: #FEE2E2;
+  }
+
+  .controls {
+    display: flex; gap: 10px; margin-top: 16px; flex-shrink: 0;
+  }
+  .ctrl-btn {
+    background: var(--surface); border: 1px solid var(--surface-3);
+    color: var(--text); padding: 9px 22px; border-radius: 40px;
+    cursor: pointer; font-family: 'Manrope', sans-serif;
+    font-size: 0.78rem; font-weight: 500; transition: all 0.25s;
+  }
+  .ctrl-btn:hover { background: var(--surface-2); border-color: var(--amber); color: var(--amber); }
+  .ctrl-btn.primary { background: var(--ruby-dark); border-color: var(--ruby); color: #fff; }
+  .ctrl-btn.primary:hover { background: var(--ruby); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Flashcards</h1>
+  <p>Medical Assistant Key Concepts</p>
+</header>
+
+<div class="dots" id="dots"></div>
+<div class="counter" id="counter"></div>
+
+<div class="card-stage">
+  <div class="card" id="card" onclick="flip()">
+    <div class="face front">
+      <div class="tag">Term</div>
+      <div class="term" id="fc-term"></div>
+      <div class="hint">tap to reveal</div>
+    </div>
+    <div class="face back">
+      <div class="tag">Definition</div>
+      <div class="definition" id="fc-def"></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="ctrl-btn" onclick="prev()">← Prev</button>
+  <button class="ctrl-btn primary" onclick="shuffle()">Shuffle</button>
+  <button class="ctrl-btn" onclick="next()">Next →</button>
+</div>
+
+<script>
+const cards = [
+  { t:"Medical Assistant (MA)", d:"A healthcare professional trained to perform both administrative and clinical tasks in medical settings such as clinics, hospitals, and urgent care centers." },
+  { t:"Scope of Practice", d:"The legally defined range of duties, procedures, and actions a medical assistant is permitted to perform based on their training and state regulations." },
+  { t:"Fee-for-Service", d:"A payment model in which healthcare providers are reimbursed for each individual service or procedure they deliver to a patient." },
+  { t:"Capitation", d:"A payment arrangement where a provider receives a set amount per patient over a specific period, regardless of the number of services provided." },
+  { t:"Value-Based Care", d:"A reimbursement model that ties payment to the quality and outcomes of care rather than the volume of services rendered." },
+  { t:"Vital Signs", d:"Measurements of the body's essential functions — including temperature, pulse, respiration rate, and blood pressure — used to assess a patient's general health." },
+  { t:"Patient Education", d:"The process of informing patients about their conditions, treatments, medications, and self-care strategies to improve health outcomes." },
+  { t:"Care Coordination", d:"The organized effort to manage patient care activities, ensuring services are delivered in the right sequence with proper communication across providers." },
+  { t:"Social Determinants of Health", d:"Non-medical factors — such as income, education, housing, and neighborhood conditions — that influence overall health and well-being." },
+  { t:"Electronic Health Record (EHR)", d:"A digital version of a patient's medical chart containing their history, diagnoses, medications, treatment plans, and test results." },
+  { t:"Medical Coding", d:"The process of translating healthcare diagnoses, procedures, and services into standardized alphanumeric codes for billing and documentation." },
+  { t:"Collaborative Care", d:"A team-based approach in which physicians, nurses, MAs, and other professionals work together to provide comprehensive patient treatment." },
+  { t:"Cultural Competency", d:"The ability to effectively deliver services that meet the social, cultural, and linguistic needs of diverse patient populations." },
+  { t:"Outpatient Clinic", d:"A medical facility where patients receive care, diagnostic tests, or treatments without being admitted overnight to a hospital." },
+  { t:"Reimbursement", d:"The payment a healthcare provider receives from an insurance company or government program for services rendered to a patient." }
+];
+let deck=[...cards], idx=0, seen=new Set();
+
+function renderDots(){
+  document.getElementById('dots').innerHTML=deck.map((_,i)=>
+    `<div class="dot${i===idx?' active':''}${seen.has(i)?' seen':''}" onclick="goTo(${i})"></div>`
+  ).join('');
+}
+function show(){
+  seen.add(idx);
+  document.getElementById('fc-term').textContent=deck[idx].t;
+  document.getElementById('fc-def').textContent=deck[idx].d;
+  document.getElementById('counter').textContent=`${idx+1} / ${deck.length}`;
+  document.getElementById('card').classList.remove('flipped');
+  renderDots();
+}
+function flip(){document.getElementById('card').classList.toggle('flipped');}
+function next(){idx=(idx+1)%deck.length;show();}
+function prev(){idx=(idx-1+deck.length)%deck.length;show();}
+function goTo(i){idx=i;show();}
+function shuffle(){
+  for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]];}
+  idx=0;seen.clear();show();
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')next();
+  else if(e.key==='ArrowLeft')prev();
+  else if(e.key===' '){e.preventDefault();flip();}
+});
+show();
+</script>
+</body>
+</html>

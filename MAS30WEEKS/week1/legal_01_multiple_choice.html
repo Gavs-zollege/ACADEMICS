@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal &amp; Ethical Responsibilities — Multiple Choice</title>
+<link href="https://fonts.googleapis.com/css2?family=Brygada+1918:wght@400;600;700&family=Geologica:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#090D16;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7090;--success:#38C97A;--error:#E05555;--border:#1C2444;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;}
+  body{background:radial-gradient(ellipse at 50% 0%,#141A2E,var(--bg));font-family:'Brygada 1918',serif;color:var(--text);}
+  .wrap{max-width:560px;margin:0 auto;padding:10px 16px;height:100%;display:flex;flex-direction:column;}
+  .header{text-align:center;margin-bottom:8px;flex-shrink:0;}
+  h1{font-size:24px;color:var(--gold);}
+  .sub{font-family:'Geologica',sans-serif;color:var(--dim);font-size:11px;margin-top:2px;}
+  .game-area{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .steps{display:flex;gap:3px;justify-content:center;margin-bottom:6px;flex-shrink:0;}
+  .step{height:6px;border-radius:3px;transition:all .3s;}
+  .sc{background:var(--card);border-radius:10px;padding:10px 14px;border:1px solid var(--border);margin-bottom:6px;position:relative;flex-shrink:0;}
+  .sc .num{position:absolute;top:8px;right:12px;font-size:10px;color:var(--dim);font-family:'Geologica',sans-serif;}
+  .st{font-size:13px;line-height:1.45;padding-right:26px;}
+  .opts{display:flex;flex-direction:column;gap:4px;margin-bottom:6px;flex-shrink:0;}
+  .opt{border:2px solid var(--border);cursor:pointer;font-family:'Geologica',sans-serif;font-weight:500;font-size:12px;border-radius:8px;padding:8px 10px;color:var(--text);background:var(--card);transition:all .2s;text-align:left;display:flex;align-items:center;gap:8px;line-height:1.3;}
+  .opt:hover{border-color:var(--gold);transform:scale(1.02);}
+  .opt .letter{width:22px;height:22px;border-radius:5px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;flex-shrink:0;color:var(--gold);}
+  .fb{padding:8px 12px;border-radius:8px;margin-bottom:6px;flex-shrink:0;}
+  .fb-t{font-family:'Geologica',sans-serif;font-size:11px;font-weight:600;margin-bottom:1px;}
+  .fb-d{font-family:'Geologica',sans-serif;font-size:11px;color:var(--dim);line-height:1.35;}
+  .nw{text-align:center;flex-shrink:0;}
+  .bn{padding:8px 28px;border-radius:7px;border:none;background:var(--gold);color:var(--bg);font-size:12px;font-weight:600;font-family:'Geologica',sans-serif;cursor:pointer;}
+  .results{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;}
+  .rs{font-size:48px;font-weight:700;color:var(--gold);margin:8px 0 4px;}
+  .rm{font-size:13px;font-family:'Geologica',sans-serif;margin-bottom:20px;}
+  .br{padding:10px 32px;border-radius:8px;border:none;background:var(--teal);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>Multiple Choice</h1><p class="sub">Select the best answer for each question.</p></div>
+  <div class="game-area" id="game">
+    <div class="steps" id="steps"></div>
+    <div class="sc" id="scard"></div>
+    <div class="opts" id="opts"></div>
+    <div id="fba" style="display:none"></div>
+    <div class="nw" id="nw" style="display:none"><button class="bn" id="nb" onclick="next()">Next →</button></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"Which ethical principle means 'do no harm'?",choices:["Autonomy","Beneficence","Nonmaleficence","Justice"],a:2,e:"Nonmaleficence is the duty to avoid causing harm to patients. It is one of the four core principles of medical ethics."},
+  {q:"What is the main difference between ethics and laws in healthcare?",choices:["Ethics are legally enforceable; laws are not","Ethics guide right vs. wrong; laws define legal vs. illegal","They are the same thing","Laws are optional; ethics are mandatory"],a:1,e:"Ethics address moral right and wrong in professional conduct, while laws set legally enforceable standards with penalties for violations."},
+  {q:"Which regulatory body oversees workplace safety standards in healthcare settings?",choices:["CMS","HIPAA","OSHA","FDA"],a:2,e:"OSHA (Occupational Safety and Health Administration) sets and enforces workplace safety and health standards, including in healthcare facilities."},
+  {q:"What does informed consent require?",choices:["The patient signs any form given to them","The patient understands the procedure, risks, and alternatives before agreeing","Only the physician's verbal approval","A family member's signature"],a:1,e:"Informed consent means the patient has been fully educated about the procedure, its risks, benefits, and alternatives, and voluntarily agrees to proceed."},
+  {q:"Which ethical framework focuses on whether an action fulfills a moral duty, regardless of outcome?",choices:["Utilitarianism","Virtue ethics","Deontology","Principlism"],a:2,e:"Deontology holds that actions are morally right or wrong based on rules and duties, not their consequences."},
+  {q:"What does HIPAA primarily protect?",choices:["Physician licensing","Patient health information privacy","Insurance company profits","Hospital building codes"],a:1,e:"HIPAA (Health Insurance Portability and Accountability Act) safeguards patient protected health information (PHI) from unauthorized disclosure."},
+  {q:"Which principle upholds a patient's right to make their own healthcare decisions?",choices:["Beneficence","Justice","Autonomy","Nonmaleficence"],a:2,e:"Autonomy is the ethical principle that respects a patient's right to make informed decisions about their own care, including refusing treatment."},
+  {q:"What is 'ethical drift'?",choices:["A sudden change in ethics policies","A gradual decline in ethical standards over time","Moving to a new ethics committee","Learning new ethical frameworks"],a:1,e:"Ethical drift occurs when professionals slowly lower their ethical standards over time, often without realizing it. Ongoing accountability prevents this."},
+  {q:"CMS is a regulatory body that primarily oversees which area?",choices:["Workplace safety","Drug approvals","Medicare and Medicaid programs","Medical assistant licensing"],a:2,e:"CMS (Centers for Medicare & Medicaid Services) administers federal healthcare programs and sets standards that directly affect billing and documentation."},
+  {q:"An MA witnesses a provider make an error during a procedure. What is the MA's legal duty?",choices:["Ignore it to avoid conflict","Report it through the proper channels","Post about it on social media","Only tell the patient"],a:1,e:"MAs have a legal and ethical duty to report errors professionally through proper channels to protect patient safety and maintain compliance."},
+];
+let idx=0,answer=null,score=0;
+const letters=['A','B','C','D'];
+function render(){
+  const q=QS[idx];let sh='';QS.forEach((_,i)=>{const w=i===idx?18:7;const bg=i<idx?'var(--success)':i===idx?'var(--gold)':'var(--border)';sh+=`<div class="step" style="width:${w}px;background:${bg}"></div>`;});
+  document.getElementById('steps').innerHTML=sh;
+  document.getElementById('scard').innerHTML=`<div class="num">Q${idx+1}</div><div class="st">${q.q}</div>`;
+  if(answer===null){
+    let oh='';q.choices.forEach((c,i)=>{oh+=`<button class="opt" onclick="pick(${i})"><span class="letter">${letters[i]}</span>${c}</button>`;});
+    document.getElementById('opts').innerHTML=oh;
+    document.getElementById('opts').style.display='flex';document.getElementById('fba').style.display='none';document.getElementById('nw').style.display='none';
+  }
+}
+function pick(v){if(answer!==null)return;answer=v;const q=QS[idx];const c=v===q.a;if(c)score++;
+  const btns=document.getElementById('opts').children;
+  for(let i=0;i<btns.length;i++){
+    btns[i].style.cursor='default';btns[i].onclick=null;
+    if(i===q.a){btns[i].style.borderColor='var(--success)';btns[i].style.background='rgba(56,201,122,.1)';btns[i].querySelector('.letter').style.background='var(--success)';btns[i].querySelector('.letter').style.color='#fff';}
+    else if(i===v&&!c){btns[i].style.borderColor='var(--error)';btns[i].style.background='rgba(224,85,85,.1)';btns[i].querySelector('.letter').style.background='var(--error)';btns[i].querySelector('.letter').style.color='#fff';}
+    else{btns[i].style.opacity='.4';}
+  }
+  const fb=document.getElementById('fba');fb.style.display='block';
+  fb.innerHTML=`<div class="fb" style="background:${c?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)'};border:1px solid ${c?'rgba(56,201,122,.2)':'rgba(224,85,85,.2)'}"><div class="fb-t" style="color:${c?'var(--success)':'var(--error)'}">${c?'Correct!':'Incorrect'}</div><div class="fb-d">${q.e}</div></div>`;
+  document.getElementById('nw').style.display='block';document.getElementById('nb').textContent=idx+1>=QS.length?'See Results':'Next →';
+}
+function next(){if(idx+1>=QS.length){showRes();return;}idx++;answer=null;render();}
+function showRes(){document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='flex';
+  const pct=score/QS.length*100;const col=pct>=80?'var(--success)':pct>=60?'var(--gold)':'var(--error)';
+  const msg=pct>=80?"Excellent work!":pct>=60?"Good effort — review what you missed.":"Keep studying the material!";
+  r.innerHTML=`<div class="rs">${score}/${QS.length}</div><div class="rm" style="color:${col}">${msg}</div><button class="br" onclick="reset()">Try Again</button>`;}
+function reset(){idx=0;answer=null;score=0;document.getElementById('game').style.display='flex';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

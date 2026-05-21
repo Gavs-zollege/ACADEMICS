@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal &amp; Ethical Responsibilities — What Would You Do?</title>
+<link href="https://fonts.googleapis.com/css2?family=Brygada+1918:wght@400;600;700&family=Geologica:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#090D16;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7090;--success:#38C97A;--error:#E05555;--border:#1C2444;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;overflow:hidden;}
+  body{background:radial-gradient(ellipse at 50% 0%,#141A2E,var(--bg));font-family:'Brygada 1918',serif;color:var(--text);}
+  .wrap{max-width:560px;margin:0 auto;padding:10px 16px;height:100%;display:flex;flex-direction:column;}
+  .header{text-align:center;margin-bottom:8px;flex-shrink:0;}
+  h1{font-size:24px;color:var(--gold);}
+  .sub{font-family:'Geologica',sans-serif;color:var(--dim);font-size:11px;margin-top:2px;}
+  .game-area{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .steps{display:flex;gap:3px;justify-content:center;margin-bottom:6px;flex-shrink:0;}
+  .step{height:6px;border-radius:3px;transition:all .3s;}
+  .sc{background:var(--card);border-radius:10px;padding:10px 14px;border:1px solid var(--border);margin-bottom:6px;position:relative;flex-shrink:0;}
+  .sc .num{position:absolute;top:8px;right:12px;font-size:10px;color:var(--dim);font-family:'Geologica',sans-serif;}
+  .scenario-label{font-family:'Geologica',sans-serif;font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:3px;font-weight:600;}
+  .st{font-size:13px;line-height:1.4;padding-right:26px;}
+  .opts{display:flex;flex-direction:column;gap:4px;margin-bottom:6px;flex-shrink:0;}
+  .opt{border:2px solid var(--border);cursor:pointer;font-family:'Geologica',sans-serif;font-weight:500;font-size:12px;border-radius:8px;padding:8px 10px;color:var(--text);background:var(--card);transition:all .2s;text-align:left;display:flex;align-items:center;gap:8px;line-height:1.3;}
+  .opt:hover{border-color:var(--gold);transform:scale(1.02);}
+  .opt .letter{width:22px;height:22px;border-radius:5px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:10px;flex-shrink:0;color:var(--gold);}
+  .fb{padding:8px 12px;border-radius:8px;margin-bottom:6px;flex-shrink:0;}
+  .fb-t{font-family:'Geologica',sans-serif;font-size:11px;font-weight:600;margin-bottom:1px;}
+  .fb-d{font-family:'Geologica',sans-serif;font-size:11px;color:var(--dim);line-height:1.35;}
+  .nw{text-align:center;flex-shrink:0;}
+  .bn{padding:8px 28px;border-radius:7px;border:none;background:var(--gold);color:var(--bg);font-size:12px;font-weight:600;font-family:'Geologica',sans-serif;cursor:pointer;}
+  .results{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;}
+  .rs{font-size:48px;font-weight:700;color:var(--gold);margin:8px 0 4px;}
+  .rm{font-size:13px;font-family:'Geologica',sans-serif;margin-bottom:20px;}
+  .br{padding:10px 32px;border-radius:8px;border:none;background:var(--teal);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>What Would You Do?</h1><p class="sub">Read each scenario and choose the best response.</p></div>
+  <div class="game-area" id="game">
+    <div class="steps" id="steps"></div>
+    <div class="sc" id="scard"></div>
+    <div class="opts" id="opts"></div>
+    <div id="fba" style="display:none"></div>
+    <div class="nw" id="nw" style="display:none"><button class="bn" id="nb" onclick="next()">Next →</button></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {q:"You run into a patient at the grocery store and they ask about their test results. What do you do?",choices:["Share the results since they asked","Politely say you can't discuss it outside the clinic","Whisper the results quietly","Tell them to call the office, then share a hint"],a:1,e:"Discussing patient information in public violates HIPAA. Politely redirect them to contact the clinic through proper channels."},
+  {q:"A patient with Alzheimer's is confused and upset. A coworker speaks to them dismissively. What should you do?",choices:["Laugh along to lighten the mood","Step in with a calm, respectful approach and model dignity","Ignore it — the patient won't remember","Report the coworker without addressing the patient"],a:1,e:"All patients deserve dignity regardless of their cognitive state. Model respectful behavior and address the situation professionally."},
+  {q:"A provider asks you to document a procedure that wasn't actually performed. What's the right response?",choices:["Document it as asked — the provider knows best","Refuse and report the request through proper channels","Do it but tell a coworker","Ignore the request and hope it goes away"],a:1,e:"Falsifying documentation is fraud and illegal. You have a legal and ethical duty to refuse and report through proper channels."},
+  {q:"A patient asks you to explain a treatment they're about to consent to, but they seem to not fully understand it. What do you do?",choices:["Have them sign the form anyway","Ensure the provider re-explains it until the patient truly understands","Tell them it's routine and not to worry","Skip the consent process to save time"],a:1,e:"Informed consent requires genuine understanding. The provider must ensure the patient comprehends the procedure, risks, and alternatives."},
+  {q:"Your personal religious beliefs conflict with a treatment a patient is requesting. How should you handle this?",choices:["Refuse to assist the patient","Provide professional care regardless of personal beliefs","Lecture the patient on your views","Ask to switch patients without explanation"],a:1,e:"Professional ethics require separating personal beliefs from patient care. All patients deserve respectful, unbiased treatment."},
+  {q:"You notice a coworker has been cutting corners on sterilization protocols because the clinic is busy. What do you do?",choices:["Help them cut corners to keep up","Report the safety concern to a supervisor","Ignore it — everyone is stressed","Only mention it if a patient gets infected"],a:1,e:"Patient safety is non-negotiable. Non-compliance with sterilization protocols can cause serious harm and must be reported immediately."},
+  {q:"A teenager comes in alone requesting confidential reproductive health services. Their parent calls asking for details. What do you do?",choices:["Share everything with the parent","Follow your state's minor consent laws and clinic policy","Refuse to speak to the parent entirely","Make up information to satisfy the parent"],a:1,e:"Minor consent laws vary by state. Follow applicable laws and clinic policy to protect the patient's rights while staying legally compliant."},
+  {q:"You accidentally send a patient's lab results to the wrong email address. What should you do?",choices:["Delete the email and hope no one notices","Report the breach immediately per HIPAA protocols","Wait to see if anyone complains","Ask the wrong recipient to just delete it"],a:1,e:"Accidental disclosures are HIPAA breaches that must be reported immediately. Timely reporting allows proper mitigation and protects the patient."},
+  {q:"A colleague posts a vague but identifiable story about a patient on social media. What's appropriate?",choices:["Like the post to show support","Inform them it could be a HIPAA violation and report if needed","Comment asking for more details","Ignore it — it's their personal account"],a:1,e:"Even vague patient details on social media can violate HIPAA if the patient is identifiable. Address it directly and report per policy."},
+  {q:"During a busy shift, you realize you made a minor documentation error on a patient chart. What do you do?",choices:["Ignore it — it's minor","Correct it following proper amendment procedures","White it out and rewrite it","Ask a coworker to fix it for you"],a:1,e:"All documentation errors must be corrected through proper amendment procedures to maintain legal integrity and patient safety."},
+];
+let idx=0,answer=null,score=0;
+const letters=['A','B','C','D'];
+function render(){
+  const q=QS[idx];let sh='';QS.forEach((_,i)=>{const w=i===idx?18:7;const bg=i<idx?'var(--success)':i===idx?'var(--gold)':'var(--border)';sh+=`<div class="step" style="width:${w}px;background:${bg}"></div>`;});
+  document.getElementById('steps').innerHTML=sh;
+  document.getElementById('scard').innerHTML=`<div class="num">Q${idx+1}</div><div class="scenario-label">Scenario</div><div class="st">${q.q}</div>`;
+  if(answer===null){
+    let oh='';q.choices.forEach((c,i)=>{oh+=`<button class="opt" onclick="pick(${i})"><span class="letter">${letters[i]}</span>${c}</button>`;});
+    document.getElementById('opts').innerHTML=oh;
+    document.getElementById('opts').style.display='flex';document.getElementById('fba').style.display='none';document.getElementById('nw').style.display='none';
+  }
+}
+function pick(v){if(answer!==null)return;answer=v;const q=QS[idx];const c=v===q.a;if(c)score++;
+  const btns=document.getElementById('opts').children;
+  for(let i=0;i<btns.length;i++){
+    btns[i].style.cursor='default';btns[i].onclick=null;
+    if(i===q.a){btns[i].style.borderColor='var(--success)';btns[i].style.background='rgba(56,201,122,.1)';btns[i].querySelector('.letter').style.background='var(--success)';btns[i].querySelector('.letter').style.color='#fff';}
+    else if(i===v&&!c){btns[i].style.borderColor='var(--error)';btns[i].style.background='rgba(224,85,85,.1)';btns[i].querySelector('.letter').style.background='var(--error)';btns[i].querySelector('.letter').style.color='#fff';}
+    else{btns[i].style.opacity='.4';}
+  }
+  const fb=document.getElementById('fba');fb.style.display='block';
+  fb.innerHTML=`<div class="fb" style="background:${c?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)'};border:1px solid ${c?'rgba(56,201,122,.2)':'rgba(224,85,85,.2)'}"><div class="fb-t" style="color:${c?'var(--success)':'var(--error)'}">${c?'Correct!':'Incorrect'}</div><div class="fb-d">${q.e}</div></div>`;
+  document.getElementById('nw').style.display='block';document.getElementById('nb').textContent=idx+1>=QS.length?'See Results':'Next →';
+}
+function next(){if(idx+1>=QS.length){showRes();return;}idx++;answer=null;render();}
+function showRes(){document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='flex';
+  const pct=score/QS.length*100;const col=pct>=80?'var(--success)':pct>=60?'var(--gold)':'var(--error)';
+  const msg=pct>=80?"Excellent ethical judgment!":pct>=60?"Good instincts — review what you missed.":"Review the material and try again!";
+  r.innerHTML=`<div class="rs">${score}/${QS.length}</div><div class="rm" style="color:${col}">${msg}</div><button class="br" onclick="reset()">Try Again</button>`;}
+function reset(){idx=0;answer=null;score=0;document.getElementById('game').style.display='flex';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

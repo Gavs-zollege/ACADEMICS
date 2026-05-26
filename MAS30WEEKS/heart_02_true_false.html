@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heart &amp; Vascular System — True or False</title>
+<link href="https://fonts.googleapis.com/css2?family=Brygada+1918:wght@400;600;700&family=Geologica:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#090D16;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7090;--success:#38C97A;--error:#E05555;--border:#1C2444;}*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;overflow:hidden;}body{background:radial-gradient(ellipse at 50% 0%,#141A2E,var(--bg));font-family:'Brygada 1918',serif;color:var(--text);}.wrap{max-width:560px;margin:0 auto;padding:16px 20px;height:100%;display:flex;flex-direction:column;}.header{text-align:center;margin-bottom:12px;flex-shrink:0;}h1{font-size:26px;color:var(--gold);}.sub{font-family:'Geologica',sans-serif;color:var(--dim);font-size:12px;margin-top:4px;}.game-area{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0;}.steps{display:flex;gap:3px;justify-content:center;margin-bottom:12px;flex-shrink:0;}.step{height:8px;border-radius:4px;transition:all .3s;}.sc{background:var(--card);border-radius:12px;padding:20px 20px;border:1px solid var(--border);margin-bottom:14px;position:relative;flex-shrink:0;}.sc .num{position:absolute;top:12px;right:16px;font-size:11px;color:var(--dim);font-family:'Geologica',sans-serif;}.st{font-size:17px;line-height:1.5;padding-right:30px;}.btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;flex-shrink:0;}.tf{border:2px solid;cursor:pointer;font-family:'Geologica',sans-serif;font-weight:700;font-size:16px;border-radius:10px;padding:16px;color:var(--text);transition:all .2s;}.tf:hover{transform:scale(1.03);}.fb{padding:12px 16px;border-radius:10px;margin-bottom:10px;flex-shrink:0;}.fb-t{font-family:'Geologica',sans-serif;font-size:13px;font-weight:600;margin-bottom:2px;}.fb-d{font-family:'Geologica',sans-serif;font-size:12px;color:var(--dim);line-height:1.4;}.nw{text-align:center;flex-shrink:0;}.bn{padding:10px 32px;border-radius:8px;border:none;background:var(--gold);color:var(--bg);font-size:13px;font-weight:600;font-family:'Geologica',sans-serif;cursor:pointer;}.results{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;}.rs{font-size:52px;font-weight:700;color:var(--gold);margin:10px 0 6px;}.rm{font-size:14px;font-family:'Geologica',sans-serif;margin-bottom:24px;}.br{padding:12px 36px;border-radius:10px;border:none;background:var(--teal);color:var(--text);font-size:14px;font-family:inherit;cursor:pointer;}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>True or False</h1><p class="sub">Heart &amp; Vascular System — Is each statement true or false?</p></div>
+  <div class="game-area" id="game">
+    <div class="steps" id="steps"></div>
+    <div class="sc" id="scard"></div>
+    <div class="btns" id="btns"></div>
+    <div id="fba" style="display:none"></div>
+    <div class="nw" id="nw" style="display:none"><button class="bn" id="nb" onclick="next()">Next →</button></div>
+  </div>
+  <div id="results" class="results" style="display:none"></div>
+</div>
+<script>
+const QS=[
+  {s:"The heart is located in the thoracic cavity in a region called the mediastinum.",a:true,e:"Correct — the heart sits in the mediastinum, the central compartment of the thoracic cavity, between the lungs and slightly left of the midline."},
+  {s:"The tricuspid valve is located between the left atrium and left ventricle.",a:false,e:"The tricuspid valve is between the right atrium and right ventricle. The valve between the left atrium and left ventricle is the mitral (bicuspid) valve."},
+  {s:"The SA node is the heart's natural pacemaker and generates impulses at 60–100 beats per minute.",a:true,e:"Correct — the sinoatrial (SA) node initiates each heartbeat and sets the heart's rhythm at a normal rate of 60–100 bpm. If it fails, the AV node can act as a backup at 40–60 bpm."},
+  {s:"Veins carry blood away from the heart, while arteries return blood to the heart.",a:false,e:"It's the opposite. Arteries carry blood away from the heart, and veins return blood to the heart. An easy way to remember: Arteries = Away."},
+  {s:"The aorta is the largest artery in the body and branches to supply oxygenated blood to all organs.",a:true,e:"Correct — the aorta originates from the left ventricle and branches into the brachiocephalic, carotid, subclavian, and other arteries to deliver oxygenated blood throughout the body."},
+  {s:"Pulmonary arteries carry oxygenated blood from the heart to the lungs.",a:false,e:"Pulmonary arteries carry deoxygenated blood from the right ventricle to the lungs for gas exchange. They are the exception to the rule that arteries carry oxygenated blood."},
+  {s:"The P wave on an EKG represents ventricular depolarization (contraction).",a:false,e:"The P wave represents atrial depolarization (atrial contraction). Ventricular depolarization is represented by the QRS complex. The T wave represents ventricular repolarization (recovery)."},
+  {s:"Capillaries are the smallest blood vessels and are the site of gas exchange between blood and tissues.",a:true,e:"Correct — capillaries are thin-walled vessels where oxygen and nutrients are delivered to tissues and carbon dioxide and waste are picked up, connecting arteries to veins."},
+  {s:"The septum is the muscular wall that separates the left and right sides of the heart.",a:true,e:"Correct — the interatrial septum separates the two atria, and the interventricular septum separates the two ventricles, preventing mixing of oxygenated and deoxygenated blood."},
+  {s:"Atherosclerosis is a condition where the veins become inflamed and swell.",a:false,e:"Atherosclerosis is the buildup of fatty deposits (plaque) inside artery walls, narrowing them and restricting blood flow. Vein inflammation is called phlebitis. Atherosclerosis is a leading cause of heart attacks and strokes."},
+];
+let idx=0,answer=null,score=0;
+function render(){const q=QS[idx];let sh='';QS.forEach((_,i)=>{const w=i===idx?20:8;const bg=i<idx?'var(--success)':i===idx?'var(--gold)':'var(--border)';sh+=`<div class="step" style="width:${w}px;background:${bg}"></div>`;});document.getElementById('steps').innerHTML=sh;document.getElementById('scard').innerHTML=`<div class="num">Q${idx+1}</div><div class="st">"${q.s}"</div>`;if(answer===null){document.getElementById('btns').innerHTML=`<button class="tf" onclick="pick(true)" style="background:rgba(56,201,122,.1);border-color:rgba(56,201,122,.3)">✓ TRUE</button><button class="tf" onclick="pick(false)" style="background:rgba(224,85,85,.1);border-color:rgba(224,85,85,.3)">✗ FALSE</button>`;document.getElementById('btns').style.display='grid';document.getElementById('fba').style.display='none';document.getElementById('nw').style.display='none';}}
+function pick(v){if(answer!==null)return;answer=v;const q=QS[idx];const c=v===q.a;if(c)score++;const tB=q.a===true?'var(--success)':answer===true?'var(--error)':'var(--surface)';const fB=q.a===false?'var(--success)':answer===false?'var(--error)':'var(--surface)';document.getElementById('btns').innerHTML=`<button class="tf" style="background:${tB};border-color:${tB};opacity:${answer!==true&&q.a!==true?'.4':'1'};cursor:default">✓ TRUE</button><button class="tf" style="background:${fB};border-color:${fB};opacity:${answer!==false&&q.a!==false?'.4':'1'};cursor:default">✗ FALSE</button>`;const fb=document.getElementById('fba');fb.style.display='block';fb.innerHTML=`<div class="fb" style="background:${c?'rgba(56,201,122,.06)':'rgba(224,85,85,.06)'};border:1px solid ${c?'rgba(56,201,122,.2)':'rgba(224,85,85,.2)'}"><div class="fb-t" style="color:${c?'var(--success)':'var(--error)'}">${c?'Correct!':'Incorrect'}</div><div class="fb-d">${q.e}</div></div>`;document.getElementById('nw').style.display='block';document.getElementById('nb').textContent=idx+1>=QS.length?'See Results':'Next →';}
+function next(){if(idx+1>=QS.length){showRes();return;}idx++;answer=null;render();}
+function showRes(){document.getElementById('game').style.display='none';const r=document.getElementById('results');r.style.display='flex';const pct=score/QS.length*100;const col=pct>=80?'var(--success)':pct>=60?'var(--gold)':'var(--error)';const msg=pct>=80?"Excellent!":pct>=60?"Good effort — review the tricky ones.":"Keep studying!";r.innerHTML=`<div class="rs">${score}/${QS.length}</div><div class="rm" style="color:${col}">${msg}</div><button class="br" onclick="reset()">Try Again</button>`;}
+function reset(){idx=0;answer=null;score=0;document.getElementById('game').style.display='flex';document.getElementById('results').style.display='none';render();}
+render();
+</script>
+</body>
+</html>

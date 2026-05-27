@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Mastery Review — Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Brygada+1918:wght@400;600;700&family=Geologica:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#090D16;--card:#10162A;--surface:#181F38;--teal:#1A8A7D;--gold:#E2B94C;--text:#ECE8E0;--dim:#6A7090;--success:#38C97A;--error:#E05555;--border:#1C2444;}*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;overflow:hidden;}body{background:radial-gradient(ellipse at 50% 0%,#141A2E,var(--bg));font-family:'Brygada 1918',serif;color:var(--text);}.wrap{max-width:560px;margin:0 auto;padding:16px 20px;height:100%;display:flex;flex-direction:column;}.header{text-align:center;margin-bottom:12px;flex-shrink:0;}h1{font-size:26px;color:var(--gold);}.sub{font-family:'Geologica',sans-serif;color:var(--dim);font-size:12px;margin-top:4px;}.card-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;}.counter{font-family:'Geologica',sans-serif;font-size:12px;color:var(--dim);margin-bottom:12px;}.flip-container{width:100%;max-width:460px;height:260px;perspective:1000px;cursor:pointer;margin-bottom:20px;}.flip-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}.flip-container.flipped .flip-inner{transform:rotateY(180deg);}.card-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;text-align:center;border:1px solid var(--border);}.card-front{background:var(--card);}.card-front .label{font-family:'Geologica',sans-serif;font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;font-weight:600;}.card-front .term{font-size:22px;line-height:1.4;font-weight:600;}.card-front .hint{font-family:'Geologica',sans-serif;font-size:11px;color:var(--dim);margin-top:16px;}.card-back{background:var(--surface);transform:rotateY(180deg);}.card-back .label{font-family:'Geologica',sans-serif;font-size:10px;color:var(--success);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;font-weight:600;}.card-back .definition{font-family:'Geologica',sans-serif;font-size:14px;line-height:1.55;color:var(--text);font-weight:400;}.nav{display:flex;gap:12px;align-items:center;flex-shrink:0;}.nav-btn{padding:10px 28px;border-radius:8px;border:none;font-size:13px;font-weight:600;font-family:'Geologica',sans-serif;cursor:pointer;transition:all .2s;}.nav-btn:hover{transform:scale(1.04);}.prev-btn{background:var(--surface);color:var(--text);border:1px solid var(--border);}.next-btn{background:var(--gold);color:var(--bg);}.progress{display:flex;gap:4px;justify-content:center;margin-bottom:14px;flex-shrink:0;}.dot{width:8px;height:8px;border-radius:50%;transition:all .3s;}.shuffle-btn{font-family:'Geologica',sans-serif;font-size:11px;color:var(--dim);background:none;border:1px solid var(--border);border-radius:6px;padding:6px 14px;cursor:pointer;margin-top:14px;transition:all .2s;}.shuffle-btn:hover{border-color:var(--gold);color:var(--gold);}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header"><h1>Flashcards</h1><p class="sub">Clinical Mastery Review — Tap the card to reveal the answer.</p></div>
+  <div class="card-area">
+    <div class="counter" id="counter"></div>
+    <div class="progress" id="progress"></div>
+    <div class="flip-container" id="flipCard" onclick="flipCard()">
+      <div class="flip-inner" id="flipInner">
+        <div class="card-face card-front" id="front"></div>
+        <div class="card-face card-back" id="back"></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="nav-btn prev-btn" onclick="prev()">← Back</button>
+      <button class="nav-btn next-btn" onclick="nextCard()">Next →</button>
+    </div>
+    <button class="shuffle-btn" onclick="shuffle()">⟳ Shuffle Cards</button>
+  </div>
+</div>
+<script>
+const CARDS=[
+  {t:"Vital Signs: Normal Ranges",d:"BP: <120/80 · Pulse: 60–100 bpm · Resp: 12–20/min · Temp: 97.6–99.6°F · SpO₂: 95–100% · Pain: 0–10 scale"},
+  {t:"OLDCARTS",d:"HPI intake framework: Onset, Location, Duration, Characteristics, Aggravating, Relieving, Timing, Severity. Always verify two patient identifiers first."},
+  {t:"IM Injection",d:"90° angle. Sites: deltoid (max 1 mL), ventrogluteal, vastus lateralis (max 2–3 mL). Clean skin, pull taut, document site, dose, route, and time."},
+  {t:"SC Injection",d:"45° angle into fatty tissue (back of arm, abdomen). Max volume: 1 mL. Pinch skin if needed. Rotate injection sites to prevent tissue damage."},
+  {t:"Intradermal (ID) Injection",d:"5–15° angle, bevel up. Creates a wheal. Used for TB tests and allergy testing. Do NOT massage the site afterward."},
+  {t:"TB Test Reading",d:"Read 48–72 hours after placement. Measure induration only (not redness) in millimeters. Never document only 'positive' or 'negative' — record the mm measurement."},
+  {t:"EKG Limb Leads",d:"RA: right arm · LA: left arm · RL: right leg (ground) · LL: left leg. Place on fleshy areas, not over bone."},
+  {t:"EKG Chest Leads (V1–V6)",d:"V1: 4th ICS, right sternal border · V2: 4th ICS, left sternal border · V3: between V2 & V4 · V4: 5th ICS, midclavicular · V5: anterior axillary · V6: midaxillary"},
+  {t:"EKG Artifact Causes",d:"Wandering baseline → movement/loose leads · Somatic tremor → shivering · AC interference → nearby electronics · Interrupted baseline → detached lead"},
+  {t:"Order of Draw",d:"1) Blood cultures  2) Light blue (coag)  3) Red/Gold/Tiger (serum)  4) Green  5) Lavender (EDTA)  6) Gray — Guaranteed CCMA question!"},
+  {t:"Venipuncture Needle Gauge",d:"21g is standard for routine draws. 22–23g for small or fragile veins. Lower gauge number = larger needle diameter."},
+  {t:"Syncope During Venipuncture",d:"If patient faints: remove needle safely, protect head, lay flat with legs elevated. Stabilize the patient first, then document."},
+  {t:"Hematoma During Draw",d:"Stop the draw immediately. Apply direct pressure. Do not continue collecting blood through a hematoma."},
+  {t:"Missed Vein Protocol",d:"Withdraw slightly, redirect once. If unsuccessful, stop. NEVER dig, fish, or probe. Try a different site or have another MA attempt."},
+  {t:"Specimen Labeling Rules",d:"Label at bedside. Two patient identifiers. Include time, date, collector initials. Keep tubes upright. Follow temp instructions. Biohazard transport bags required."},
+  {t:"Sterile Field Rules",d:"Keep above waist. Never reach over. Replace wet/contaminated items. Open pack away from body. Wear gloves for blood exposure. PPE based on risk level."},
+  {t:"Wound Care",d:"Clean from center outward. Don't reuse soiled gauze on cleaned area. Apply thin ointment layer. Use correct dressing type. Document wound appearance."},
+  {t:"Documentation Rules",d:"Objective, factual language. No assumptions. Single-line corrections + initials + date. EHR: use addendum (never delete). Record site, dose, route, time, patient response."},
+  {t:"OSHA vs CDC vs HIPAA vs CLIA",d:"OSHA: workplace safety & exposure control · CDC: infection control · HIPAA: patient privacy · CLIA: lab testing regulations"},
+  {t:"Aseptic Technique",d:"Wash hands before and after. Keep sterile field above waist. Never reach over sterile field. Replace wet or contaminated items. Gloves always for blood exposure."},
+];
+let cards=[...CARDS],idx=0,flipped=false;
+function render(){document.getElementById('counter').textContent=`Card ${idx+1} of ${cards.length}`;let ph='';cards.forEach((_,i)=>{const bg=i===idx?'var(--gold)':'var(--border)';ph+=`<div class="dot" style="background:${bg}"></div>`;});document.getElementById('progress').innerHTML=ph;const c=cards[idx];document.getElementById('front').innerHTML=`<div class="label">Term</div><div class="term">${c.t}</div><div class="hint">Tap to reveal</div>`;document.getElementById('back').innerHTML=`<div class="label">Definition</div><div class="definition">${c.d}</div>`;if(flipped)document.getElementById('flipCard').classList.add('flipped');else document.getElementById('flipCard').classList.remove('flipped');}
+function flipCard(){flipped=!flipped;if(flipped)document.getElementById('flipCard').classList.add('flipped');else document.getElementById('flipCard').classList.remove('flipped');}
+function nextCard(){flipped=false;idx=(idx+1)%cards.length;render();}
+function prev(){flipped=false;idx=(idx-1+cards.length)%cards.length;render();}
+function shuffle(){flipped=false;for(let i=cards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}idx=0;render();}
+render();
+</script>
+</body>
+</html>

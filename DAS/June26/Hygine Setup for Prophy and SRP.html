@@ -433,5 +433,46 @@ html, body {
   }
 </script>
 
+<!-- Fullscreen Button -->
+<button id="fs-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶ Fullscreen</button>
+
+<style>
+  #fs-btn {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 9999;
+    background: rgba(0,0,0,0.55);
+    border: 2px solid rgba(255,255,255,0.7);
+    color: #fff;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  #fs-btn:hover { background: rgba(255,255,255,0.3); }
+</style>
+
+<script>
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
+  document.addEventListener('fullscreenchange', () => {
+    document.getElementById('fs-btn').innerHTML = document.fullscreenElement ? '✕ Exit' : '⛶ Fullscreen';
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'f' || e.key === 'F') toggleFullscreen();
+  });
+</script>
+
 </body>
 </html>

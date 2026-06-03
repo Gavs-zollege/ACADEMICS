@@ -6,33 +6,38 @@
 <title>SRP (Scaling &amp; Root Planing) Tray Set-Up</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
   body {
     background: #fff;
     font-family: 'Arial Black', Arial, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
-    padding: 32px 12px 24px;
+    height: 100vh;
+    padding: 18px 12px 8px;
   }
   h1 {
-    font-size: clamp(1.2rem, 3vw, 2rem);
+    font-size: clamp(1rem, 2.2vw, 1.75rem);
     font-weight: 900;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #111;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     text-align: center;
+    flex-shrink: 0;
   }
   .tray-wrap {
     position: relative;
     width: 100%;
     max-width: 1672px;
+    flex: 1;
+    min-height: 0;
     line-height: 0;
   }
   .tray-wrap img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
     display: block;
   }
   .hotspot {
@@ -43,6 +48,30 @@
     outline: none;
     z-index: 10;
   }
+  /* Fullscreen button */
+  #fullscreen-btn {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    z-index: 900;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+    transition: background 0.2s;
+  }
+  #fullscreen-btn:hover { background: #333; }
+  #fullscreen-btn svg { width: 16px; height: 16px; fill: #fff; flex-shrink: 0; }
+
   /* Lightbox */
   #lightbox {
     display: none;
@@ -102,6 +131,11 @@
 </style>
 </head>
 <body>
+
+<button id="fullscreen-btn" onclick="toggleFullscreen()">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 3h6v2H5v4H3V3zm12 0h6v6h-2V5h-4V3zM3 15h2v4h4v2H3v-6zm16 4h-4v2h6v-6h-2v4z"/></svg>
+  <span id="fs-label">Full Screen</span>
+</button>
 
 <h1>SRP (Scaling &amp; Root Planing) Tray Set-Up</h1>
 
@@ -183,6 +217,25 @@ document.querySelectorAll('.hotspot').forEach(el => {
     e.stopPropagation();
     openLightbox(el.dataset.key, el.dataset.name);
   });
+});
+
+// Fullscreen
+function toggleFullscreen() {
+  const label = document.getElementById('fs-label');
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().then(() => {
+      label.textContent = 'Exit Full Screen';
+    });
+  } else {
+    document.exitFullscreen().then(() => {
+      label.textContent = 'Full Screen';
+    });
+  }
+}
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    document.getElementById('fs-label').textContent = 'Full Screen';
+  }
 });
 
 lb.addEventListener('click', closeLightbox);

@@ -147,8 +147,8 @@ html, body {
 }
 
 .field {
-  font-size: clamp(9px, 1.1vw, 13.5px);
-  line-height: 1.5;
+  font-size: clamp(11px, 1.35vw, 16px);
+  line-height: 1.55;
   color: var(--text);
 }
 .field b { font-weight: 700; }
@@ -283,8 +283,8 @@ html, body {
           <div class="card-right">
             <div class="card-header"><h2>Instrument: Prophy Cup &amp; Paste</h2></div>
             <div class="card-body">
-              <p class="field"><b>Functions:</b> To polish coronal surface after cleaning or before certain operative procedures</p>
-              <p class="field"><b>Characteristics:</b> Different prophy cups/points fluoridated or non-fluoridated pastes, also differ in grit</p>
+              <p class="field"><b>Functions:</b> To polish the coronal surfaces of teeth after scaling and debridement, and to prepare tooth surfaces before certain operative procedures such as sealant placement or bonding.</p>
+              <p class="field"><b>Characteristics:</b> Available in different cup and point shapes; used with fluoridated or non-fluoridated prophylaxis pastes that vary in grit (fine, medium, coarse). Disposable or reusable; attaches to a prophy angle.</p>
             </div>
           </div>
         </div>
@@ -296,8 +296,8 @@ html, body {
           <div class="card-right">
             <div class="card-header"><h2>Instrument: Fluoride Varnish</h2></div>
             <div class="card-body">
-              <p class="field"><b>Functions:</b> To decrease post cleaning sensitivity, remineralize incipient carious lesions, caries prevention</p>
-              <p class="field"><b>Characteristics:</b> Differs in color, sticky, resin based, some patients may be allergic to the resin in the varnish</p>
+              <p class="field"><b>Functions:</b> To decrease post-cleaning sensitivity, remineralize incipient carious lesions, and provide caries prevention by delivering a high concentration of fluoride to the tooth surface.</p>
+              <p class="field"><b>Characteristics:</b> Differs in color and flavor; sticky resin-based formula that adheres to enamel. Some patients may be allergic to the resin component. Sets quickly on contact with saliva; patient should avoid eating hard foods for several hours after application.</p>
             </div>
           </div>
         </div>
@@ -318,8 +318,8 @@ html, body {
           <div class="card-right">
             <div class="card-header"><h2>Instrument: Patient Tooth Brush</h2></div>
             <div class="card-body">
-              <p class="field"><b>Functions:</b> To allow the patient to continue good oral home care</p>
-              <p class="field"><b>Characteristics:</b> Soft bristle tooth brush</p>
+              <p class="field"><b>Functions:</b> To allow the patient to continue effective oral home care between dental visits, reinforcing plaque removal techniques taught during the appointment.</p>
+              <p class="field"><b>Characteristics:</b> Soft-bristle toothbrush recommended for most patients to prevent gingival trauma and enamel abrasion. Available in manual and powered versions; head size and handle design vary for patient comfort and access.</p>
             </div>
           </div>
         </div>
@@ -331,8 +331,8 @@ html, body {
           <div class="card-right">
             <div class="card-header"><h2>Instrument: Patient Floss</h2></div>
             <div class="card-body">
-              <p class="field"><b>Functions:</b> To allow the patient to continue good oral home care</p>
-              <p class="field"><b>Characteristics:</b> Waxed or non-waxed floss</p>
+              <p class="field"><b>Functions:</b> To allow the patient to continue effective interproximal plaque removal at home, reaching areas the toothbrush cannot access.</p>
+              <p class="field"><b>Characteristics:</b> Available in waxed or non-waxed varieties; waxed slides more easily through tight contacts. Also comes in flavored, tape, and floss pick forms. Proper technique instruction should be provided at each appointment.</p>
             </div>
           </div>
         </div>
@@ -353,8 +353,8 @@ html, body {
           <div class="card-right">
             <div class="card-header"><h2>Instrument: Prophy Angle</h2></div>
             <div class="card-body">
-              <p class="field"><b>Functions:</b> To polish teeth with prophy cup or brush</p>
-              <p class="field"><b>Characteristics:</b> An attachment for straight or prophy handpiece; types: prophy cup for polishing all surfaces of teeth, prophy brush for polishing occlusal surfaces and lingual surfaces of anterior teeth</p>
+              <p class="field"><b>Functions:</b> To hold and rotate the prophy cup or brush during coronal polishing, enabling efficient removal of extrinsic stain and plaque from all accessible tooth surfaces.</p>
+              <p class="field"><b>Characteristics:</b> Attaches to a straight or contra-angle handpiece. Available in disposable or reusable forms. Two tip types: prophy cup for polishing all facial, lingual, and occlusal surfaces; prophy brush for occlusal surfaces and lingual surfaces of anterior teeth. Speed is controlled by the handpiece.</p>
             </div>
           </div>
         </div>
@@ -405,8 +405,8 @@ html, body {
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight') go(cur + 1);
-    if (e.key === 'ArrowLeft')  go(cur - 1);
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
   });
 
   let tx = 0;
@@ -414,6 +414,14 @@ html, body {
   document.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].clientX - tx;
     if (Math.abs(dx) > 40) go(dx < 0 ? cur + 1 : cur - 1);
+  }, {passive:true});
+
+  let wLock = false;
+  document.addEventListener('wheel', e => {
+    if (wLock) return;
+    wLock = true;
+    go(e.deltaY > 0 ? cur + 1 : cur - 1);
+    setTimeout(() => wLock = false, 600);
   }, {passive:true});
 
   function openLightbox(src) {

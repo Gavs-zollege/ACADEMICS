@@ -405,8 +405,8 @@ html, body {
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(cur + 1);
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(cur - 1);
+    if (e.key === 'ArrowRight') go(cur + 1);
+    if (e.key === 'ArrowLeft')  go(cur - 1);
   });
 
   let tx = 0;
@@ -414,14 +414,6 @@ html, body {
   document.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].clientX - tx;
     if (Math.abs(dx) > 40) go(dx < 0 ? cur + 1 : cur - 1);
-  }, {passive:true});
-
-  let wLock = false;
-  document.addEventListener('wheel', e => {
-    if (wLock) return;
-    wLock = true;
-    go(e.deltaY > 0 ? cur + 1 : cur - 1);
-    setTimeout(() => wLock = false, 600);
   }, {passive:true});
 
   function openLightbox(src) {

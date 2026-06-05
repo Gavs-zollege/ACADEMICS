@@ -7,36 +7,51 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
   body {
     background: #ffffff;
     font-family: 'Arial Black', Arial, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 100vh;
-    padding: 16px;
+    justify-content: center;
+    height: 100vh;
+    padding: 10px 16px 10px;
   }
 
   h1 {
     text-transform: uppercase;
     font-weight: 900;
-    font-size: clamp(1.1rem, 2.5vw, 2rem);
+    font-size: clamp(0.9rem, 2vw, 1.6rem);
     letter-spacing: 0.08em;
     color: #111;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     text-align: center;
+    flex-shrink: 0;
   }
 
   #tray-container {
     position: relative;
     width: 100%;
     max-width: 1400px;
+    flex: 1 1 auto;
+    min-height: 0;
     line-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   #tray-img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    max-height: calc(100vh - 60px);
+    object-fit: contain;
     display: block;
     border-radius: 4px;
   }

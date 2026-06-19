@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Office Compliance Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:#0f0e17;color:#f0eeff;font-family:'Inter',sans-serif;}
+.shell{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+.topbar{flex-shrink:0;padding:10px 16px;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);}
+.t-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#a78bfa,#ec4899);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.t-info{flex:1;min-width:0;}
+.t-title{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#fff;}
+.prow{display:flex;align-items:center;gap:7px;margin-top:3px;}
+.pbg{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;}
+.pfill{height:5px;border-radius:99px;background:linear-gradient(90deg,#a78bfa,#ec4899);transition:width .4s ease;}
+.plabel{font-size:10px;color:#9d9bb8;white-space:nowrap;}
+.content{flex:1;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 16px;}
+.inner{width:100%;max-width:660px;display:flex;flex-direction:column;gap:8px;}
+.qtag{display:inline-flex;align-items:center;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;align-self:flex-start;}
+.qtext{font-family:'Nunito',sans-serif;font-size:clamp(13px,2vw,17px);font-weight:800;color:#fff;line-height:1.35;}
+.opts{display:flex;flex-direction:column;gap:6px;}
+.opt{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;cursor:pointer;font-size:clamp(11px,1.5vw,13px);font-weight:600;color:#d4d0f0;text-align:left;transition:all .18s;display:flex;align-items:center;gap:10px;}
+.ol{width:26px;height:26px;min-width:26px;border-radius:7px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;transition:all .18s;}
+.opt:hover:not(:disabled){border-color:#a78bfa;background:rgba(167,139,250,.1);transform:translateX(3px);}
+.opt:hover .ol{background:#a78bfa;}
+.opt.correct{border-color:#10b981;background:rgba(16,185,129,.12);}
+.opt.correct .ol{background:#10b981;color:#fff;}
+.opt.incorrect{border-color:#ef4444;background:rgba(239,68,68,.1);}
+.opt.incorrect .ol{background:#ef4444;color:#fff;}
+.opt:disabled{cursor:default;transform:none!important;}
+.fb{padding:10px 14px;border-radius:11px;display:none;animation:su .25s ease;}
+@keyframes su{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.fb.correct{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);}
+.fb.incorrect{background:rgba(239,68,68,.09);border:1px solid rgba(239,68,68,.3);}
+.fb-h{font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;margin-bottom:3px;}
+.fb-h.correct{color:#34d399;}.fb-h.incorrect{color:#f87171;}
+.fb-b{font-size:11px;color:#d4d0f0;line-height:1.45;}
+.footer{flex-shrink:0;padding:9px 16px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.03);}
+.qc{font-size:11px;color:#9d9bb8;}
+.btn-next{background:linear-gradient(135deg,#a78bfa,#ec4899);color:#fff;border:none;border-radius:9px;padding:8px 22px;font-size:13px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;display:none;box-shadow:0 3px 14px rgba(167,139,250,.4);}
+.result{display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;height:100%;gap:6px;}
+.result.active{display:flex;}
+.remoji{font-size:clamp(48px,8vw,72px);animation:bounce .5s ease;}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.rpct{font-family:'Nunito',sans-serif;font-size:clamp(40px,7vw,56px);font-weight:900;background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.rtitle{font-family:'Nunito',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:900;color:#fff;}
+.rsub{font-size:clamp(11px,1.8vw,13px);color:#9d9bb8;line-height:1.45;}
+.btn-retry{background:linear-gradient(135deg,#a78bfa,#ec4899);color:#fff;border:none;border-radius:11px;padding:12px 28px;font-size:15px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="t-icon">📋</div>
+    <div class="t-info">
+      <div class="t-title">Office Compliance Quiz</div>
+      <div class="prow"><div class="pbg"><div class="pfill" id="pf" style="width:0%"></div></div><span class="plabel" id="pl">0/4</span></div>
+    </div>
+  </div>
+  <div class="content" id="content"></div>
+  <div class="footer">
+    <span class="qc" id="qc">Question 1 of 4</span>
+    <button class="btn-next" id="bn" onclick="next()">Next →</button>
+  </div>
+</div>
+<script>
+const Q=[
+  {q:'Under CCR § 1068, where must the list of delegated duties be posted?',o:['In each treatment room','On the office website','In a common office area visible to all staff','In the employee handbook'],c:2,f:'📌 Common area, visible to ALL staff — inspectors check for this every visit. Not in a drawer or online — on the wall.'},
+  {q:'BPC § 1683 requires that each provider who renders treatment must:',o:['Submit a written report to the Dental Board monthly','Sign/initial and date all treatment entries in the patient record','Obtain written patient consent before each procedure','Provide the patient with a copy of their scope of practice'],c:1,f:'✍️ Sign or initial AND date all entries in the patient treatment record. Every treatment, every provider, every time — no exceptions under BPC § 1683.'},
+  {q:'The minimum font size for license status on a provider nametag under BPC § 700 / § 680 is:',o:['12 pt','14 pt','16 pt','18 pt'],c:3,f:'🏷️ AT LEAST 18 pt — both name and license status must be clearly visible. Anything smaller is a compliance violation.'},
+  {q:'Under BPC § 1684, who faces criminal liability when an unlicensed DA performs an illegal function with the dentist\'s knowledge?',o:['Only the unlicensed DA','Only the supervising dentist','Both the unlicensed DA and the supervising dentist','Only the office owner'],c:2,f:'⚖️ BOTH! The performer AND the dentist who aids or abets face criminal liability + Board discipline. Knowledge makes the dentist equally responsible.'}
+];
+let cur=0,score=0,ans=false;
+function render(){
+  ans=false;document.getElementById('bn').style.display='none';
+  const q=Q[cur];
+  document.getElementById('pf').style.width=Math.round(cur/Q.length*100)+'%';
+  document.getElementById('pl').textContent=cur+'/'+Q.length;
+  document.getElementById('qc').textContent='Question '+(cur+1)+' of '+Q.length;
+  document.getElementById('content').innerHTML=`<div class="inner">
+    <div class="qtag">📋 Office Accountability · Q${cur+1}</div>
+    <div class="qtext">${q.q}</div>
+    <div class="opts">${q.o.map((o,i)=>`<button class="opt" onclick="answer(${i})"><span class="ol">${String.fromCharCode(65+i)}</span>${o}</button>`).join('')}</div>
+    <div class="fb" id="fb"></div>
+  </div>`;
+}
+function answer(i){
+  if(ans)return;ans=true;
+  const q=Q[cur],ok=i===q.c;if(ok)score++;
+  const btns=document.querySelectorAll('.opt');btns.forEach(b=>b.disabled=true);
+  btns[i].classList.add(ok?'correct':'incorrect');
+  if(!ok)btns[q.c].classList.add('correct');
+  const fb=document.getElementById('fb');
+  fb.className='fb '+(ok?'correct':'incorrect');fb.style.display='block';
+  fb.innerHTML=`<div class="fb-h ${ok?'correct':'incorrect'}">${ok?'🎉 Correct!':'😬 Not quite!'}</div><div class="fb-b">${q.f}</div>`;
+  document.getElementById('bn').style.display='inline-block';
+}
+function next(){cur++;cur>=Q.length?done():render();}
+function done(){
+  const p=Math.round(score/Q.length*100);
+  document.getElementById('pf').style.width='100%';document.getElementById('pl').textContent=Q.length+'/'+Q.length;
+  document.getElementById('qc').textContent='';document.getElementById('bn').style.display='none';
+  document.getElementById('content').innerHTML=`<div class="result active">
+    <div class="remoji">${p===100?'🏆':p>=75?'🎯':'📖'}</div>
+    <div class="rpct">${p}%</div>
+    <div class="rtitle">${p===100?'Perfect!':p>=75?'Well Done!':'Keep Studying!'}</div>
+    <div class="rsub">You got <strong>${score}</strong> of <strong>${Q.length}</strong> correct.<br>Post (CCR § 1068) · Display ≥18pt (BPC § 700) · Sign every entry (BPC § 1683)</div>
+    <button class="btn-retry" onclick="cur=0;score=0;render()">Try Again 🔄</button>
+  </div>`;
+}
+render();
+</script>
+</body>
+</html>

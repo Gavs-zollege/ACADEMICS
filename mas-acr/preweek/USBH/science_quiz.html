@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Behind Healthcare — Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{display:flex;flex-direction:column;align-items:center;padding:10px 14px;gap:8px;background:#0f1e2e;color:#e8eef5;font-family:'Inter',sans-serif}
+.header{flex-shrink:0;width:100%;max-width:760px;display:flex;flex-direction:column;gap:6px}
+.title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:#c9a84c;letter-spacing:.3px}
+.progress-wrap{display:flex;align-items:center;gap:10px}
+.progress-bar-bg{flex:1;height:6px;background:#162840;border-radius:3px;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,#2a8fa3,#c9a84c);border-radius:3px;transition:width .4s ease}
+.progress-label{font-size:12px;color:#6b8aaa;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600}
+.score-label{font-size:12px;color:#6b8aaa;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;white-space:nowrap}
+.card{flex:1;min-height:0;width:100%;max-width:760px;background:#162840;border-radius:14px;border:1px solid #1e3a56;display:flex;flex-direction:column;padding:22px 26px;gap:14px;overflow:hidden}
+.q-number{font-size:11px;font-weight:700;color:#2a8fa3;text-transform:uppercase;letter-spacing:1px;font-family:'Plus Jakarta Sans',sans-serif}
+.q-text{font-size:15.5px;font-weight:600;color:#e8eef5;line-height:1.55;font-family:'Plus Jakarta Sans',sans-serif;flex-shrink:0}
+.options{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0;overflow:hidden}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:10px;border:1.5px solid #1e3a56;background:#0f1e2e;cursor:pointer;transition:border-color .18s,background .18s;flex-shrink:0;font-family:'Plus Jakarta Sans',sans-serif}
+.opt:hover:not(.locked){border-color:#2a8fa3;background:#102030}
+.chip{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:#1e3a56;color:#6b8aaa;flex-shrink:0;transition:background .18s,color .18s;font-family:'Plus Jakarta Sans',sans-serif}
+.opt-text{font-size:13.5px;color:#b0c4d8;line-height:1.4;padding-top:4px}
+.opt.correct{border-color:#2db37a;background:#0d2820}
+.opt.correct .chip{background:#2db37a;color:#fff}
+.opt.wrong{border-color:#e05252;background:#2a0d0d}
+.opt.wrong .chip{background:#e05252;color:#fff}
+.opt.locked{cursor:default}
+.explanation{font-size:12.5px;color:#7ec8d8;background:#0a1f30;border-left:3px solid #2a8fa3;padding:10px 14px;border-radius:0 8px 8px 0;line-height:1.5;display:none;flex-shrink:0}
+.explanation.show{display:block}
+.footer{flex-shrink:0;width:100%;max-width:760px;display:flex;align-items:center;justify-content:flex-end}
+.btn-next{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;background:#c9a84c;color:#0f1e2e;border:none;border-radius:9px;padding:10px 24px;cursor:pointer;display:none;transition:opacity .2s}
+.btn-next:hover{opacity:.88}
+.btn-next.show{display:block}
+.end-screen{flex:1;min-height:0;width:100%;max-width:760px;background:#162840;border-radius:14px;border:1px solid #1e3a56;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:30px}
+.end-screen.show{display:flex}
+.ring-wrap{position:relative;width:130px;height:130px}
+.ring-wrap svg{transform:rotate(-90deg)}
+circle.track{fill:none;stroke:#1e3a56;stroke-width:12}
+circle.fill{fill:none;stroke:#2db37a;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.ring-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-size:28px;font-weight:800;color:#e8eef5;font-family:'Plus Jakarta Sans',sans-serif}
+.ring-sub{font-size:11px;color:#6b8aaa;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600}
+.end-title{font-size:20px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;color:#c9a84c}
+.end-detail{font-size:13px;color:#7a9cc0;text-align:center;line-height:1.5}
+.btn-restart{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;background:#1e3550;color:#e8eef5;border:none;border-radius:9px;padding:10px 26px;cursor:pointer;transition:background .2s;margin-top:6px}
+.btn-restart:hover{background:#2a4a6e}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="title">Science Behind Healthcare — Quiz</div>
+  <div class="progress-wrap">
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progBar" style="width:5%"></div></div>
+    <div class="progress-label" id="progLabel">1 / 20</div>
+    <div class="score-label" id="scoreLabel">Score: 0</div>
+  </div>
+</div>
+<div class="card" id="questionCard">
+  <div class="q-number" id="qNum">Question 1 of 20</div>
+  <div class="q-text" id="qText"></div>
+  <div class="options" id="optionsWrap"></div>
+  <div class="explanation" id="explanation"></div>
+</div>
+<div class="end-screen" id="endScreen">
+  <div class="ring-wrap">
+    <svg viewBox="0 0 130 130" width="130" height="130">
+      <circle class="track" cx="65" cy="65" r="54"/>
+      <circle class="fill" id="ringFill" cx="65" cy="65" r="54" stroke-dasharray="339.3" stroke-dashoffset="339.3"/>
+    </svg>
+    <div class="ring-text"><div class="ring-pct" id="ringPct">0%</div><div class="ring-sub" id="ringFrac">0/20</div></div>
+  </div>
+  <div class="end-title" id="endTitle">Quiz Complete!</div>
+  <div class="end-detail" id="endDetail"></div>
+  <button class="btn-restart" onclick="restart()">Try Again</button>
+</div>
+<div class="footer"><button class="btn-next" id="btnNext" onclick="nextQuestion()">Next →</button></div>
+<script>
+const questions=[
+  {q:"What is the correct order of the scientific method as applied to medicine?",opts:["Hypothesis → Observation → Experiment → Analysis → Conclusion","Observation → Question → Hypothesis → Experiment → Analysis → Conclusion","Question → Hypothesis → Observation → Conclusion → Peer Review","Experiment → Analysis → Hypothesis → Conclusion → Publication"],ans:1,exp:"The scientific method proceeds: Observation (noticing a pattern), Question (forming a researchable question), Hypothesis (testable prediction), Experiment/Study, Analysis, then Conclusion/Publication."},
+  {q:"Evidence-Based Practice (EBP) integrates three components. Which answer correctly identifies all three?",opts:["Best research evidence, clinical expertise, patient values and needs","Clinical guidelines, insurance requirements, provider preference","Peer-reviewed journals, hospital policy, MA judgment","Patient values, anecdotal evidence, clinical experience"],ans:0,exp:"EBP integrates: (1) best current research evidence, (2) clinical expertise from training and experience, and (3) individual patient values and needs. All three must inform clinical decisions."},
+  {q:"In the hierarchy of evidence, which study design ranks HIGHEST (strongest evidence)?",opts:["Case reports and expert opinion","Randomized Controlled Trials (RCTs)","Cohort and case-control studies","Systematic reviews and meta-analyses"],ans:3,exp:"Systematic reviews and meta-analyses (Level 1) rank highest because they synthesize findings from multiple high-quality studies. RCTs are Level 2. Anecdote/personal experience is the weakest (Level 5)."},
+  {q:"Homeostasis refers to:",opts:["The process of digesting food and absorbing nutrients","The body's ability to maintain a stable internal environment despite external changes","The immune system's response to a bacterial infection","The pharmacokinetic absorption of oral medications"],ans:1,exp:"Homeostasis is the fundamental goal of virtually every physiological process — the body constantly self-corrects to maintain stable internal conditions like temperature, blood glucose, and pH."},
+  {q:"A patient's blood glucose drops below 70 mg/dL. Which hormone is released to restore homeostasis?",opts:["Insulin","Cortisol","Glucagon","Epinephrine"],ans:2,exp:"When blood glucose falls too low, the pancreas releases glucagon, which stimulates the liver to release stored glucose (glycogenolysis), raising blood sugar back toward the normal range of 70–100 mg/dL."},
+  {q:"Normal blood pH range is:",opts:["6.80–7.10","7.00–7.20","7.35–7.45","7.50–7.80"],ans:2,exp:"Normal blood pH is tightly regulated between 7.35–7.45. The body maintains this narrow range via breathing rate adjustments and kidney bicarbonate regulation. Values outside this range indicate acidosis or alkalosis."},
+  {q:"Pathophysiology is best defined as:",opts:["The study of medications and their effects on the body","The study of how normal physiological processes are disrupted by disease, injury, or dysfunction","The study of microorganisms that cause infection","The study of anatomy and normal body structure"],ans:1,exp:"Pathophysiology is the bridge between basic science and clinical medicine — it explains HOW disease disrupts normal function, helping MAs understand why symptoms present the way they do."},
+  {q:"Which of the following is an example of an AUTOIMMUNE disease?",opts:["Pneumonia caused by Streptococcus bacteria","Cystic fibrosis inherited from parents","Type 1 Diabetes — immune system attacks pancreatic beta cells","Lung cancer from chronic smoking"],ans:2,exp:"Autoimmune diseases occur when the immune system attacks the body's own healthy cells. Type 1 Diabetes, rheumatoid arthritis, lupus, and Crohn's disease are all autoimmune conditions."},
+  {q:"What does 'infarction' mean in pathophysiology?",opts:["Reduced blood flow to a tissue","Complete blockage causing tissue death","Inflammation from bacterial infection","Uncontrolled cell division"],ans:1,exp:"Infarction = tissue death resulting from complete blockage of blood supply. Ischemia = reduced (but not fully blocked) blood flow. Myocardial infarction (heart attack) and cerebrovascular accident (stroke) are classic examples."},
+  {q:"In pharmacokinetics, what does the 'M' in ADME stand for, and where does it primarily occur?",opts:["Movement — occurs in the bloodstream","Metabolism — occurs primarily in the liver","Mobilization — occurs in the lymphatic system","Monitoring — occurs at the receptor site"],ans:1,exp:"Metabolism (M in ADME) is where the liver transforms drugs into metabolites. The 'first-pass effect' means oral drugs are significantly metabolized before reaching systemic circulation, reducing their effective potency."},
+  {q:"The 'therapeutic window' in pharmacology refers to:",opts:["The time of day when medications are most effective","The dose range that produces a therapeutic effect without causing toxicity","The window of time after administration before the drug is absorbed","The number of minutes before a drug reaches peak plasma concentration"],ans:1,exp:"The therapeutic window is the dose range between minimum effective concentration and toxic concentration. Drugs with narrow therapeutic windows (like warfarin, digoxin, lithium) require close monitoring and careful dosing."},
+  {q:"Which drug class is MOST associated with monitoring for bruising, bleeding, and dietary Vitamin K changes?",opts:["Antidiabetics","Antibiotics","Anticoagulants","Corticosteroids"],ans:2,exp:"Anticoagulants (warfarin, heparin, apixaban) prevent clot formation. MAs must flag significant changes in Vitamin K intake (leafy greens affect warfarin's INR), bruising, or unusual bleeding at every visit."},
+  {q:"A patient on corticosteroids (prednisone) needs which MA monitoring action at every visit?",opts:["Check INR levels for anticoagulation","Monitor blood glucose due to steroid-induced glucose elevation","Monitor for signs of hypoglycemia","Record vitamin K dietary intake"],ans:1,exp:"Corticosteroids raise blood glucose levels as a major side effect. MAs should document glucose readings and be alert for steroid-induced hyperglycemia. Immune suppression is another key concern to document."},
+  {q:"In a Randomized Controlled Trial (RCT), what makes it the 'gold standard' of research?",opts:["It uses the largest possible sample sizes","Participants are randomly assigned to treatment or control, eliminating selection bias","It is conducted over the longest time period","It requires the most expensive equipment"],ans:1,exp:"Random assignment eliminates selection bias — ensuring the only systematic difference between groups is the treatment being studied. This allows researchers to establish causation, not just correlation."},
+  {q:"In a double-blind clinical trial, who is UNAWARE of treatment assignment?",opts:["Only the patients","Only the researchers","Both the participants AND the researchers","Only the statisticians analyzing data"],ans:2,exp:"In a double-blind study, neither participants nor researchers know who receives the treatment or placebo. This eliminates both participant expectation effects (placebo effect) and researcher observation bias."},
+  {q:"A p-value of 0.03 in a research study means:",opts:["There is a 3% chance the treatment works","There is a 97% probability the treatment is safe","There is less than a 5% chance the results occurred by chance alone","The sample size was too small to draw conclusions"],ans:2,exp:"A p-value < 0.05 means statistical significance — there is less than a 5% probability that the observed results occurred by random chance. This is the standard threshold for medical research conclusions."},
+  {q:"Which Phase of clinical trials is the FIRST to involve human participants?",opts:["Pre-Clinical","Phase I (~20–100 participants)","Phase II (~100–300 participants)","Phase III (~1,000–3,000 participants)"],ans:1,exp:"Phase I is the first human trial, enrolling 20–100 participants. It focuses on safety, dosage ranges, and side effects. Pre-clinical testing occurs in labs and animal studies before any human exposure."},
+  {q:"A patient shows you a social media post claiming a supplement 'cures' arthritis and diabetes simultaneously. What is the correct critical thinking response?",opts:["Share the post with the provider as an alternative treatment option","Recommend the supplement since natural products are generally safe","Recognize this as a misinformation red flag — a single product curing multiple unrelated conditions is not scientifically credible","Ask the patient to bring the supplement in to check for drug interactions before recommending it"],ans:2,exp:"A product claiming to cure multiple unrelated conditions is a classic misinformation red flag. MAs apply critical thinking: check for peer-reviewed citations, note the source is social media (not journals), and recognize fear/urgency tactics used to sell products."},
+  {q:"When an MA administers a medication, which scientific principle directly governs why route and timing matter?",opts:["Evidence-based practice","The scientific method","Pharmacokinetics — absorption, distribution, metabolism, excretion","Homeostatic feedback loops"],ans:2,exp:"Pharmacokinetics explains how route (oral vs. IM vs. IV) and timing affect how much drug enters the bloodstream and when. This is the science behind the 5 Rights of medication administration."},
+  {q:"According to the slides, which daily MA task is most directly connected to the scientific method through specimen integrity?",opts:["Taking vital signs","Administering medications","Collecting lab specimens","Providing patient education"],ans:2,exp:"Lab specimen collection is directly linked to the scientific method: contaminated or mislabeled specimens generate false data, just as flawed experimental conditions invalidate study results. Proper labeling, storage, and transport ensures valid, reproducible results."},
+];
+
+let current=0,score=0,locked=false;
+function render(){
+  const q=questions[current];
+  document.getElementById('qNum').textContent='Question '+(current+1)+' of '+questions.length;
+  document.getElementById('qText').textContent=q.q;
+  const wrap=document.getElementById('optionsWrap');
+  wrap.innerHTML='';
+  ['A','B','C','D'].forEach((lbl,i)=>{
+    const div=document.createElement('div');
+    div.className='opt';
+    div.innerHTML='<div class="chip">'+lbl+'</div><div class="opt-text">'+q.opts[i]+'</div>';
+    div.addEventListener('click',()=>answer(i,div,q.ans));
+    wrap.appendChild(div);
+  });
+  document.getElementById('explanation').className='explanation';
+  document.getElementById('explanation').textContent='';
+  document.getElementById('btnNext').className='btn-next';
+  document.getElementById('progBar').style.width=((current+1)/questions.length*100)+'%';
+  document.getElementById('progLabel').textContent=(current+1)+' / '+questions.length;
+  locked=false;
+}
+function answer(idx,el,correct){
+  if(locked)return;locked=true;
+  const opts=document.querySelectorAll('.opt');
+  opts.forEach(o=>o.classList.add('locked'));
+  if(idx===correct){el.classList.add('correct');score++;document.getElementById('scoreLabel').textContent='Score: '+score;}
+  else{el.classList.add('wrong');opts[correct].classList.add('correct');}
+  const exp=document.getElementById('explanation');
+  exp.textContent=questions[current].exp;exp.className='explanation show';
+  document.getElementById('btnNext').className='btn-next show';
+}
+function nextQuestion(){current++;if(current>=questions.length){showEnd();return;}render();}
+function showEnd(){
+  document.getElementById('questionCard').style.display='none';document.getElementById('btnNext').style.display='none';
+  const pct=Math.round(score/questions.length*100);
+  const end=document.getElementById('endScreen');end.classList.add('show');
+  document.getElementById('ringPct').textContent=pct+'%';document.getElementById('ringFrac').textContent=score+'/'+questions.length;
+  const fill=document.getElementById('ringFill');const circ=339.3;
+  setTimeout(()=>{fill.style.strokeDashoffset=circ-(circ*pct/100);},100);
+  fill.style.stroke=pct>=80?'#2db37a':pct>=60?'#c9a84c':'#e05252';
+  document.getElementById('endTitle').textContent=pct>=80?'Excellent Work! 🎉':'Keep Studying! 📚';
+  document.getElementById('endDetail').textContent='You scored '+score+' out of '+questions.length+'. '+(pct>=90?'Outstanding — you have mastered the science of healthcare.':pct>=70?'Good work! Review any missed explanations.':'Review the slides and try again.');
+}
+function restart(){
+  current=0;score=0;locked=false;
+  document.getElementById('scoreLabel').textContent='Score: 0';
+  document.getElementById('questionCard').style.display='';
+  document.getElementById('endScreen').classList.remove('show');render();
+}
+render();
+</script>
+</body>
+</html>

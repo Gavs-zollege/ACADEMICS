@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>General Patient Care – Glossary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0c1a28;
+    --surface: #13253b;
+    --surface2: #1a3050;
+    --border: #1e3d5c;
+    --text: #e8eef5;
+    --muted: #6a90b8;
+    --gold: #c9a84c;
+    --gold-dim: #7a6030;
+    --teal: #2a8fa3;
+    --green: #2db37a;
+    --purple: #7b5ea7;
+    --red: #c0464a;
+    --blue: #3a7ecf;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', sans-serif;
+  }
+
+  body {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start;
+    padding: 16px 20px; gap: 12px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; max-width: 860px; flex-shrink: 0;
+  }
+
+  .title-block h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 22px; font-weight: 800; line-height: 1;
+  }
+  .title-block h1 em { color: var(--gold); font-style: normal; }
+  .title-block p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+  /* Search */
+  .search-wrap {
+    position: relative; width: 220px;
+  }
+  .search-wrap input {
+    width: 100%; padding: 8px 12px 8px 34px;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    font-size: 13px; font-family: 'Inter', sans-serif;
+    outline: none; transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: var(--teal); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-icon {
+    position: absolute; left: 11px; top: 50%;
+    transform: translateY(-50%); font-size: 14px; pointer-events: none;
+  }
+
+  /* ── CATEGORY PILLS ── */
+  .cats {
+    display: flex; gap: 6px; flex-wrap: nowrap;
+    width: 100%; max-width: 860px; flex-shrink: 0;
+  }
+  .cat-pill {
+    display: flex; align-items: center; gap: 5px;
+    padding: 6px 13px; border-radius: 22px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    border: 1.5px solid var(--border); background: var(--surface);
+    color: var(--muted); transition: all .2s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .cat-pill:hover { border-color: var(--muted); color: var(--text); }
+  .cat-pill.active { color: #fff; border-color: transparent; }
+  .cat-pill[data-cat="all"].active  { background: var(--gold); color: #1a1000; }
+  .cat-pill[data-cat="room"].active      { background: var(--teal); }
+  .cat-pill[data-cat="positioning"].active { background: var(--purple); }
+  .cat-pill[data-cat="injection"].active { background: var(--gold-dim); color: #ffd980; border-color: var(--gold); }
+  .cat-pill[data-cat="meds"].active     { background: var(--green); }
+  .cat-pill[data-cat="eye-ear"].active  { background: var(--red); }
+  .cat-pill[data-cat="ehr"].active      { background: var(--blue); }
+
+  /* ── MAIN CARD ── */
+  .main-card {
+    width: 100%; max-width: 860px; flex-shrink: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 18px; padding: 28px 36px;
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative; min-height: 200px;
+  }
+
+  .card-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 12px;
+  }
+
+  .term-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 26px; font-weight: 800; line-height: 1.2;
+    color: var(--text);
+  }
+
+  .term-abbr {
+    font-size: 12px; font-weight: 600;
+    padding: 4px 11px; border-radius: 8px;
+    border: 1.5px solid; white-space: nowrap;
+    flex-shrink: 0; margin-top: 4px;
+  }
+
+  .cat-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 700; letter-spacing: .5px;
+    text-transform: uppercase; padding: 4px 12px;
+    border-radius: 20px; border: 1.5px solid;
+    width: fit-content;
+  }
+
+  .term-def {
+    font-size: 15px; color: #c8d8ea;
+    line-height: 1.65; font-weight: 400;
+  }
+
+  .term-note {
+    display: flex; align-items: flex-start; gap: 8px;
+    background: #1c1608; border: 1px solid #5a4010;
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 13px; color: #e0ba66; line-height: 1.5;
+  }
+  .note-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── NAV ROW ── */
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; max-width: 860px; flex-shrink: 0;
+  }
+
+  .nav-btn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 9px 20px; border-radius: 10px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700; font-size: 13px; cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--text);
+    transition: all .2s;
+  }
+  .nav-btn:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
+  .nav-btn:disabled { opacity: .3; cursor: default; }
+
+  .counter-block { text-align: center; }
+  .counter-num {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 22px; font-weight: 800; color: var(--gold); line-height: 1;
+  }
+  .counter-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* ── DOTS ── */
+  .dots-row {
+    display: flex; gap: 5px; justify-content: center;
+    width: 100%; max-width: 860px; flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--border); cursor: pointer;
+    transition: all .2s;
+  }
+  .dot.seen { background: var(--surface2); border: 1px solid var(--muted); }
+  .dot.current { background: var(--gold); transform: scale(1.3); }
+
+  /* No results */
+  .no-results {
+    text-align: center; padding: 40px;
+    color: var(--muted); font-size: 15px;
+  }
+  .no-results .emoji { font-size: 40px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="title-block">
+    <h1>Patient Care <em>Glossary</em></h1>
+    <p id="subtitle">40 terms · use arrows or search to browse</p>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Search terms…" oninput="onSearch()">
+  </div>
+</div>
+
+<!-- CATEGORY PILLS -->
+<div class="cats">
+  <div class="cat-pill active" data-cat="all" onclick="setFilter('all',this)">All</div>
+  <div class="cat-pill" data-cat="room" onclick="setFilter('room',this)">🏥 Room Prep</div>
+  <div class="cat-pill" data-cat="positioning" onclick="setFilter('positioning',this)">🛏️ Positioning</div>
+  <div class="cat-pill" data-cat="injection" onclick="setFilter('injection',this)">💉 Injections</div>
+  <div class="cat-pill" data-cat="meds" onclick="setFilter('meds',this)">💊 Medications</div>
+  <div class="cat-pill" data-cat="eye-ear" onclick="setFilter('eye-ear',this)">👁️ Eye &amp; Ear</div>
+  <div class="cat-pill" data-cat="ehr" onclick="setFilter('ehr',this)">💻 EHR &amp; Tech</div>
+</div>
+
+<!-- MAIN CARD -->
+<div class="main-card" id="main-card">
+  <div class="card-top">
+    <div class="term-name" id="term-name"></div>
+    <div class="term-abbr" id="term-abbr" style="display:none"></div>
+  </div>
+  <div class="cat-badge" id="cat-badge"></div>
+  <div class="term-def" id="term-def"></div>
+  <div class="term-note" id="term-note" style="display:none">
+    <span class="note-icon">💡</span>
+    <span id="note-text"></span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-row">
+  <button class="nav-btn" id="prev-btn" onclick="go(-1)" disabled>← Prev</button>
+  <div class="counter-block">
+    <div class="counter-num" id="counter-num">1 / 40</div>
+    <div class="counter-label" id="counter-label">General Patient Care</div>
+  </div>
+  <button class="nav-btn" id="next-btn" onclick="go(1)">Next →</button>
+</div>
+
+<!-- DOTS -->
+<div class="dots-row" id="dots-row"></div>
+
+<script>
+const CAT = {
+  room:        { label:'🏥 Room Prep',   bg:'#0d3040', border:'#2a8fa3', text:'#2a8fa3' },
+  positioning: { label:'🛏️ Positioning', bg:'#1a1035', border:'#7b5ea7', text:'#a07ad0' },
+  injection:   { label:'💉 Injections',  bg:'#2a1e00', border:'#c9a84c', text:'#c9a84c' },
+  meds:        { label:'💊 Medications', bg:'#0d2818', border:'#2db37a', text:'#2db37a' },
+  'eye-ear':   { label:'👁️ Eye & Ear',   bg:'#2a0d10', border:'#c0464a', text:'#e07070' },
+  ehr:         { label:'💻 EHR & Tech',  bg:'#0d1830', border:'#3a7ecf', text:'#6aaaf0' },
+};
+
+const ALL_TERMS = [
+  { term:'Ampule', abbr:null, cat:'injection',
+    def:'A sealed glass container holding a single dose of medication. Snap the neck using an alcohol swab, draw up with a filter needle, then swap to a regular needle before injecting.',
+    note:'Never inject with the filter needle — it traps glass fragments.' },
+  { term:'Bevel', abbr:null, cat:'injection',
+    def:'The slanted tip of a needle. Always insert bevel-side UP for smoother skin entry and controlled medication delivery.',
+    note:null },
+  { term:'Biohazard Container', abbr:null, cat:'room',
+    def:'Labeled red bag for waste contaminated with blood or body fluids. Sharps go in the sharps container — never here.',
+    note:null },
+  { term:'Cerumen', abbr:null, cat:'eye-ear',
+    def:'The medical term for earwax. Impacted cerumen is the main reason a patient receives ear irrigation.',
+    note:null },
+  { term:'Conjunctival Sac', abbr:null, cat:'eye-ear',
+    def:'The pocket exposed when you gently pull down the lower eyelid. Eye drops are dispensed about ½ inch above this sac — never touching the eye.',
+    note:null },
+  { term:'Controlled Substance', abbr:null, cat:'meds',
+    def:'A federally regulated drug with abuse potential. Must be stored under double lock, counted daily by two staff members, and every use logged.',
+    note:null },
+  { term:'CPOE', abbr:'Computerized Provider Order Entry', cat:'ehr',
+    def:'A digital system where providers enter orders for medications, labs, and referrals electronically. Eliminates handwriting errors and flags drug interactions automatically.',
+    note:null },
+  { term:'DEA Number', abbr:'Drug Enforcement Admin. ID', cat:'ehr',
+    def:'A unique registration number that authorizes a provider to prescribe controlled substances. Required on every e-prescription for a controlled drug.',
+    note:null },
+  { term:'Deltoid', abbr:null, cat:'injection',
+    def:'The triangular muscle of the upper arm used as an IM injection site. Volume is strictly limited to ≤ 1 mL.',
+    note:null },
+  { term:'Dorsal Recumbent', abbr:null, cat:'positioning',
+    def:'Patient lies on their back with knees bent and feet flat on the table. Used for head, neck, chest, vaginal, rectal, and perineal exams.',
+    note:null },
+  { term:'Draping', abbr:null, cat:'positioning',
+    def:'Covering a patient with a gown or paper sheet during an exam to maintain their privacy, dignity, and warmth. Each position has its own draping protocol.',
+    note:null },
+  { term:'EHR', abbr:'Electronic Health Record', cat:'ehr',
+    def:'A digital patient record that travels with the patient across multiple organizations — providers, labs, specialists, and hospitals all share access.',
+    note:null },
+  { term:'EMR', abbr:'Electronic Medical Record', cat:'ehr',
+    def:'A digital record used only within one organization. Unlike an EHR, it cannot be shared with outside providers.',
+    note:null },
+  { term:'E-Prescribing', abbr:null, cat:'ehr',
+    def:'Sending a prescription electronically straight to the patient\'s pharmacy. Controlled substances require DEA-approved EPCS software and the provider\'s DEA number.',
+    note:null },
+  { term:'Filter Needle', abbr:null, cat:'injection',
+    def:'A special needle used to draw medication from a glass ampule. Its filter traps glass fragments so they can\'t be injected. Always replace it before administering.',
+    note:'Replace the filter needle with a standard needle before injecting the patient.' },
+  { term:'Fowler\'s Position', abbr:null, cat:'positioning',
+    def:'Patient sits upright at 90° (full Fowler\'s) or reclined at 45° (semi-Fowler\'s). Used for head, neck, and upper body exams, and for patients with breathing difficulty.',
+    note:null },
+  { term:'Gauge', abbr:null, cat:'injection',
+    def:'A measure of needle diameter. Higher number = thinner needle. 25–27G for intradermal/subcutaneous; 22–25G for intramuscular; 18G for drawing up thick medications.',
+    note:null },
+  { term:'Immunization Log', abbr:null, cat:'meds',
+    def:'The legal record every vaccine administration requires. Must capture: vaccine name, lot number, manufacturer, expiration date, site, route, date given, and patient consent.',
+    note:null },
+  { term:'Intradermal Injection', abbr:'ID', cat:'injection',
+    def:'Delivered into the dermis at 5–15°, with a 25–27G needle, max 0.1 mL. A raised wheal must appear beneath the skin for the test to be valid.',
+    note:'Do NOT massage, cover, or press the site — it will invalidate the TB reading.' },
+  { term:'Intramuscular Injection', abbr:'IM', cat:'injection',
+    def:'Delivered directly into muscle at 90°, up to 3 mL. Sites: deltoid (≤1 mL), ventrogluteal, and vastus lateralis. The CDC no longer recommends aspiration.',
+    note:null },
+  { term:'Insulin Syringe', abbr:null, cat:'injection',
+    def:'A syringe calibrated in insulin units rather than milliliters. U-100 syringes are used only with U-100 insulin — never mix types.',
+    note:null },
+  { term:'Knee-Chest Position', abbr:null, cat:'positioning',
+    def:'Patient kneels with chest resting on the table and thighs perpendicular to the surface. Used for proctologic exams and sigmoidoscopy.',
+    note:null },
+  { term:'Left Lateral Position', abbr:null, cat:'positioning',
+    def:'Patient lies on their left side. Used for rectal exams, enemas, rectal temperature readings, and perineal exams.',
+    note:null },
+  { term:'Lithotomy Position', abbr:null, cat:'positioning',
+    def:'Patient lies on their back with feet placed in stirrups and slides to the table edge. Standard position for vaginal exams, Pap tests, and pelvic procedures.',
+    note:null },
+  { term:'MAR', abbr:'Medication Administration Record', cat:'meds',
+    def:'The legal record of every medication given to a patient. Must include date, time, drug, dose, route, provider, frequency, and any reactions. Always completed after — never before — giving the medication.',
+    note:null },
+  { term:'Multi-Dose Vial', abbr:null, cat:'injection',
+    def:'A vial containing several doses of the same medication. Wipe the stopper with alcohol before every access. Discard 28 days after first opening — write the date on the vial.',
+    note:null },
+  { term:'Nine Rights', abbr:null, cat:'meds',
+    def:'The framework every medication administration must follow: Right Patient · Medication · Form · Dose · Route · Time · Technique · Education · Documentation.',
+    note:'Documentation is the 9th Right — always after giving, never before.' },
+  { term:'Pinna', abbr:null, cat:'eye-ear',
+    def:'The outer, visible part of the ear. During ear drop instillation, pull it outward and upward for adults, outward and downward for children and infants.',
+    note:'Direction matters — wrong pull means the drops won\'t reach the canal.' },
+  { term:'Prone Position', abbr:null, cat:'positioning',
+    def:'Patient lies face-down on the table with their head turned to one side. Used for back exams and select surgical procedures.',
+    note:null },
+  { term:'Pulse Oximeter', abbr:null, cat:'room',
+    def:'A clip-on device that measures blood oxygen saturation (SpO₂) and pulse rate non-invasively. Standard diagnostic equipment in every exam room.',
+    note:null },
+  { term:'Sharps Container', abbr:null, cat:'injection',
+    def:'A puncture-resistant, clearly labeled container for used needles and other sharps. Used needles go directly here — never in trash or biohazard bags.',
+    note:null },
+  { term:'Single-Dose Vial', abbr:null, cat:'injection',
+    def:'A vial containing one dose only. Safest option because there\'s no risk of cross-contamination from repeated access.',
+    note:null },
+  { term:'Sphygmomanometer', abbr:'BP Cuff', cat:'room',
+    def:'The instrument used to measure blood pressure — an inflatable cuff connected to a pressure gauge. A standard piece of diagnostic equipment in every exam room.',
+    note:null },
+  { term:'Sterile Technique', abbr:null, cat:'injection',
+    def:'Practices that keep the injection field germ-free: never share needles, discard any needle that touches a non-sterile surface, and clean the injection site with alcohol for 30 seconds — letting it dry fully before injecting.',
+    note:null },
+  { term:'Subcutaneous Injection', abbr:'SC', cat:'injection',
+    def:'Delivered into the fatty tissue just under the skin at 45°. Maximum 1.5 mL. Pinch at least 1 inch of skin, release after the needle seats, and do not massage. Rotate insulin injection sites.',
+    note:null },
+  { term:'Supine Position', abbr:null, cat:'positioning',
+    def:'Patient lies flat on their back. Used for head, chest, and abdominal exams, and for anterior X-rays.',
+    note:null },
+  { term:'Telehealth', abbr:null, cat:'ehr',
+    def:'Care delivered by video or phone. MA duties include confirming tech requirements, testing the connection, collecting the patient\'s history and medication list, and reminding patients to have self-reported vitals ready.',
+    note:null },
+  { term:'Tuberculin Syringe', abbr:null, cat:'injection',
+    def:'A 0.5–1 mL syringe marked in 0.01 mL increments for very precise small doses. The go-to syringe for TB skin testing and other intradermal injections.',
+    note:null },
+  { term:'Vastus Lateralis', abbr:null, cat:'injection',
+    def:'The outer thigh muscle — an IM site that accepts up to 3 mL. The preferred site for children under 3 because the deltoid is still underdeveloped.',
+    note:null },
+  { term:'Wheal', abbr:null, cat:'injection',
+    def:'A small, raised bubble (bleb) that appears just under the skin after a correct intradermal injection. If no wheal forms during a TB test, the result is invalid.',
+    note:null },
+];
+
+let filtered = [...ALL_TERMS];
+let idx = 0;
+let activeFilter = 'all';
+
+function renderCard() {
+  if (filtered.length === 0) {
+    document.getElementById('term-name').textContent = 'No results';
+    document.getElementById('term-abbr').style.display = 'none';
+    document.getElementById('cat-badge').style.display = 'none';
+    document.getElementById('term-def').textContent = 'Try a different search or category.';
+    document.getElementById('term-note').style.display = 'none';
+    document.getElementById('counter-num').textContent = '0 / 0';
+    document.getElementById('prev-btn').disabled = true;
+    document.getElementById('next-btn').disabled = true;
+    renderDots();
+    return;
+  }
+  const t = filtered[idx];
+  const c = CAT[t.cat];
+  const q = document.getElementById('search').value.trim();
+
+  document.getElementById('term-name').innerHTML = hl(t.term, q);
+
+  const abbrEl = document.getElementById('term-abbr');
+  if (t.abbr) {
+    abbrEl.textContent = t.abbr;
+    abbrEl.style.display = 'block';
+    abbrEl.style.color = c.text;
+    abbrEl.style.borderColor = c.border;
+    abbrEl.style.background = c.bg;
+  } else {
+    abbrEl.style.display = 'none';
+  }
+
+  const badge = document.getElementById('cat-badge');
+  badge.textContent = c.label;
+  badge.style.display = 'inline-flex';
+  badge.style.background = c.bg;
+  badge.style.borderColor = c.border;
+  badge.style.color = c.text;
+
+  document.getElementById('term-def').innerHTML = hl(t.def, q);
+
+  const noteEl = document.getElementById('term-note');
+  if (t.note) {
+    document.getElementById('note-text').innerHTML = hl(t.note, q);
+    noteEl.style.display = 'flex';
+  } else {
+    noteEl.style.display = 'none';
+  }
+
+  document.getElementById('counter-num').textContent = `${idx + 1} / ${filtered.length}`;
+  document.getElementById('counter-label').textContent = t.term;
+  document.getElementById('prev-btn').disabled = idx === 0;
+  document.getElementById('next-btn').disabled = idx === filtered.length - 1;
+  renderDots();
+}
+
+function hl(text, q) {
+  if (!q) return text;
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return text.replace(re, '<mark style="background:#c9a84c44;color:#e0ba66;border-radius:3px;padding:0 2px">$1</mark>');
+}
+
+function renderDots() {
+  const row = document.getElementById('dots-row');
+  const max = Math.min(filtered.length, 20);
+  row.innerHTML = '';
+  for (let i = 0; i < max; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < idx ? ' seen' : i === idx ? ' current' : '');
+    const ci = i;
+    d.onclick = () => { idx = ci; renderCard(); };
+    row.appendChild(d);
+  }
+  if (filtered.length > 20) {
+    const more = document.createElement('span');
+    more.style.cssText = 'font-size:11px;color:var(--muted);align-self:center;';
+    more.textContent = `+${filtered.length - 20} more`;
+    row.appendChild(more);
+  }
+}
+
+function go(dir) {
+  idx = Math.max(0, Math.min(filtered.length - 1, idx + dir));
+  renderCard();
+}
+
+function setFilter(cat, el) {
+  activeFilter = cat;
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function onSearch() { applyFilters(); }
+
+function applyFilters() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  filtered = ALL_TERMS.filter(t => {
+    const catOk = activeFilter === 'all' || t.cat === activeFilter;
+    const txtOk = !q || t.term.toLowerCase().includes(q) || t.def.toLowerCase().includes(q) || (t.abbr && t.abbr.toLowerCase().includes(q));
+    return catOk && txtOk;
+  });
+  idx = 0;
+  document.getElementById('subtitle').textContent =
+    `${filtered.length} term${filtered.length !== 1 ? 's' : ''} · use arrows to browse`;
+  renderCard();
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') go(-1);
+  if (e.key === 'ArrowRight') go(1);
+});
+
+applyFilters();
+</script>
+</body>
+</html>

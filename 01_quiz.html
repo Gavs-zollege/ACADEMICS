@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>General Patient Care – Knowledge Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap');
+  :root {
+    --navy:#1b3a5c; --gold:#c9a84c; --teal:#2a8fa3;
+    --bg:#0f1e2e; --surface:#162840; --surface2:#1e3550;
+    --text:#e8eef5; --muted:#7a9bbf; --border:#2a4060;
+    --correct:#2db37a; --wrong:#e05252;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:10px 12px;}
+
+  .badge{display:inline-block;background:var(--gold);color:var(--navy);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 10px;border-radius:20px;}
+  h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;margin:4px 0 1px;}
+  h1 span{color:var(--gold);}
+  .subtitle{color:var(--muted);font-size:12px;}
+  header{text-align:center;margin-bottom:8px;}
+
+  .meta-row{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:680px;font-size:12px;color:var(--muted);margin-bottom:3px;}
+  .progress-wrap{width:100%;max-width:680px;background:var(--surface);border-radius:6px;height:6px;margin-bottom:8px;overflow:hidden;}
+  .progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:6px;transition:width .4s;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;max-width:680px;width:100%;margin-bottom:8px;}
+  .q-num{font-size:10px;color:var(--gold);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+  .q-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;line-height:1.4;margin-bottom:12px;}
+  .options{display:flex;flex-direction:column;gap:6px;}
+  .option{background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;cursor:pointer;font-size:13px;transition:all .2s;display:flex;align-items:center;gap:10px;}
+  .option:hover:not(.locked){border-color:var(--teal);background:#1e3f60;}
+  .option .letter{width:24px;height:24px;border-radius:50%;background:var(--navy);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0;}
+  .option.correct{border-color:var(--correct);background:#102d22;}
+  .option.correct .letter{background:var(--correct);border-color:var(--correct);color:#fff;}
+  .option.wrong{border-color:var(--wrong);background:#2d1010;}
+  .option.wrong .letter{background:var(--wrong);border-color:var(--wrong);color:#fff;}
+  .option.locked{cursor:default;}
+
+  .feedback{display:none;margin-top:8px;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.5;}
+  .correct-fb{background:#102d22;border:1px solid var(--correct);color:#5de8a8;display:block;}
+  .wrong-fb{background:#2d1010;border:1px solid var(--wrong);color:#f08080;display:block;}
+
+  .nav-row{display:flex;gap:10px;justify-content:flex-end;max-width:680px;width:100%;}
+  .btn{padding:9px 22px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:13px;cursor:pointer;border:none;transition:all .2s;}
+  .btn-primary{background:var(--gold);color:var(--navy);}
+  .btn-primary:hover{background:#e0ba66;}
+
+  #score-screen{display:none;text-align:center;max-width:680px;width:100%;padding:20px;}
+  .score-circle{width:110px;height:110px;border-radius:50%;border:5px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:16px auto;}
+  .score-num{font-size:36px;font-weight:800;color:var(--gold);font-family:'Plus Jakarta Sans',sans-serif;}
+  .score-total{font-size:13px;color:var(--muted);}
+  .score-msg{font-size:18px;font-weight:700;margin-bottom:6px;font-family:'Plus Jakarta Sans',sans-serif;}
+  .score-sub{color:var(--muted);font-size:13px;margin-bottom:16px;}
+</style>
+</head>
+<body>
+<header>
+  
+  <h1>General Patient Care <span>Quiz</span></h1>
+  <p class="subtitle">20 questions · Test your knowledge before class</p>
+</header>
+
+<div class="meta-row">
+  <span id="q-counter">Question 1 of 20</span>
+  <span id="score-counter">Score: 0</span>
+</div>
+<div class="progress-wrap"><div class="progress-bar" id="progress" style="width:5%"></div></div>
+
+<div class="card" id="quiz-card">
+  <div class="q-num" id="q-num">QUESTION 1</div>
+  <div class="q-text" id="q-text"></div>
+  <div class="options" id="options"></div>
+  <div class="feedback" id="feedback"></div>
+</div>
+
+<div class="nav-row">
+  <button class="btn btn-primary" id="next-btn" style="display:none" onclick="nextQ()">Next →</button>
+</div>
+
+<div id="score-screen">
+  <div class="score-circle">
+    <div class="score-num" id="final-score">0</div>
+    <div class="score-total" id="final-total">/20</div>
+  </div>
+  <div class="score-msg" id="score-msg"></div>
+  <div class="score-sub" id="score-sub"></div>
+  <button class="btn btn-primary" onclick="restart()">🔄 Retake Quiz</button>
+</div>
+
+<script>
+const questions=[
+  {q:"What should a Medical Assistant review FIRST before any patient arrives?",opts:["The patient's lab results","The day's schedule and reasons for each visit","The medication storage logs","The EHR system settings"],ans:1,exp:"Reviewing the schedule tells you what room, equipment, and supplies to prepare before patients arrive."},
+  {q:"When identifying a patient, you must use:",opts:["Patient room number and last name","Full name and date of birth","Insurance card and address","Employee badge and photo ID"],ans:1,exp:"Two identifiers — full name and date of birth — are required for safe patient identification."},
+  {q:"For an intradermal (ID) injection, the correct needle angle is:",opts:["45°","90°","5–15°","30°"],ans:2,exp:"ID injections are given at 5–15°, nearly parallel to skin, to form a wheal just below the surface."},
+  {q:"Which syringe type is calibrated in units rather than milliliters?",opts:["Tuberculin syringe","Hypodermic syringe","Insulin syringe","Filter-needle syringe"],ans:2,exp:"Insulin syringes are calibrated in units. U-100 syringes must only be used with U-100 insulin."},
+  {q:"After opening a multi-dose vial, it must be discarded within:",opts:["7 days","14 days","28 days","60 days"],ans:2,exp:"Multi-dose vials expire 28 days after opening. The opening date must be written on the vial."},
+  {q:"When administering ear drops to an adult, the pinna is pulled:",opts:["Inward and downward","Outward and downward","Outward and upward","Straight outward only"],ans:2,exp:"For adults, pull the pinna outward and UPWARD. Children/infants require outward and DOWNWARD."},
+  {q:"The lithotomy position is most commonly used for:",opts:["Back exams and surgical procedures","Vaginal exams, Pap tests, and pelvic procedures","Head and neck exams","Rectal exams with patient on their side"],ans:1,exp:"Lithotomy — with stirrups — is used for vaginal exams, Pap tests, and pelvic procedures."},
+  {q:"The dosage formula for medication calculation is:",opts:["X = H ÷ (D × Q)","X = Q × (H ÷ D)","X = (D ÷ H) × Q","X = D + H – Q"],ans:2,exp:"X = (D ÷ H) × Q, where D = desired dose, H = dose on hand, Q = quantity of one unit."},
+  {q:"According to the Nine Rights, medication should be documented:",opts:["Before administration","During administration","After administration only","Either before or after"],ans:2,exp:"Always document AFTER administration, never before. This is the 9th Right."},
+  {q:"Which injection site is preferred for children under 3 years old?",opts:["Deltoid","Ventrogluteal","Vastus lateralis","Intradermal forearm"],ans:2,exp:"The vastus lateralis (outer thigh) is preferred for children under 3 — the deltoid is underdeveloped."},
+  {q:"Eye drops should be dispensed how far above the conjunctival sac?",opts:["Touching the sac","About ¼ inch above","About ½ inch above","About 1 inch above"],ans:2,exp:"Dispense drops approximately ½ inch above the conjunctival sac to avoid contaminating the applicator."},
+  {q:"CPOE stands for:",opts:["Clinical Provider Order Entry","Computerized Provider Order Entry","Clinical Prescription Order Evaluation","Computerized Patient Output Entry"],ans:1,exp:"CPOE = Computerized Provider Order Entry. It allows electronic ordering of medications, labs, and referrals."},
+  {q:"What is the key difference between an EMR and an EHR?",opts:["EMRs include imaging; EHRs do not","EHRs are used in hospitals only","EHRs share records across multiple organizations; EMRs are single-organization","They are exactly the same thing"],ans:2,exp:"An EHR extends across organizations and providers; an EMR is limited to a single organization."},
+  {q:"For a subcutaneous (SC) injection, how much skin must be pinched?",opts:["At least ½ inch","At least 1 inch","At least 2 inches","No pinching needed"],ans:1,exp:"Pinch at least 1 inch of skin before inserting a subcutaneous needle."},
+  {q:"Where should used needles be discarded?",opts:["Biohazard bag","Regular trash","Sharps container","Wrapped in gauze"],ans:2,exp:"Used needles go DIRECTLY into the sharps container — never in regular trash or biohazard bag."},
+  {q:"The Fowler's position (90°) is most appropriate for:",opts:["Rectal exams","Patients with breathing difficulty and head/neck exams","Proctologic exams","Anterior X-rays"],ans:1,exp:"Fowler's (90°) is used for head, neck, and upper body exams, and for patients with breathing difficulty."},
+  {q:"After eye irrigation, you should dry the eyelid from:",opts:["Outer to inner corner","Inner to outer corner","Top lid to bottom lid","No drying needed"],ans:1,exp:"After irrigation, dry the eyelid from inner (medial) to outer (lateral) corner."},
+  {q:"Which of these is NOT required in an immunization log?",opts:["Vaccine lot number","Patient's insurance provider","Administration site and route","Patient consent"],ans:1,exp:"Immunization logs must include vaccine name, lot number, manufacturer, expiration, site/route, date, and patient consent — NOT insurance info."},
+  {q:"Controlled substances must be stored under:",opts:["Single lock in a restricted area","Double lock","Refrigeration at all times","No special storage required"],ans:1,exp:"Controlled substances must be stored under double lock and require a daily count by two people."},
+  {q:"When assisting older adult patients, which is most important?",opts:["Use terms like 'sweetie' to build warmth","Allow extra time for movement and questions","Move them quickly to avoid fatigue","Assume they need full assistance"],ans:1,exp:"Older adults need extra time for medication review, questions, and physical movement. Avoid condescending terms."}
+];
+
+let current=0,score=0,answered=false;
+
+function loadQ(){
+  const q=questions[current];
+  document.getElementById('q-num').textContent=`QUESTION ${current+1}`;
+  document.getElementById('q-text').textContent=q.q;
+  document.getElementById('q-counter').textContent=`Question ${current+1} of ${questions.length}`;
+  document.getElementById('progress').style.width=`${((current+1)/questions.length)*100}%`;
+  const opts=document.getElementById('options');
+  opts.innerHTML='';
+  ['A','B','C','D'].forEach((l,i)=>{
+    const div=document.createElement('div');
+    div.className='option';
+    div.innerHTML=`<div class="letter">${l}</div><span>${q.opts[i]}</span>`;
+    div.onclick=()=>select(i);
+    opts.appendChild(div);
+  });
+  const fb=document.getElementById('feedback');
+  fb.style.display='none';fb.className='feedback';
+  document.getElementById('next-btn').style.display='none';
+  answered=false;
+}
+
+function select(idx){
+  if(answered)return;
+  answered=true;
+  const q=questions[current];
+  const opts=document.querySelectorAll('.option');
+  opts.forEach(o=>o.classList.add('locked'));
+  const fb=document.getElementById('feedback');
+  if(idx===q.ans){
+    opts[idx].classList.add('correct');
+    fb.className='feedback correct-fb';
+    fb.innerHTML=`✅ <strong>Correct!</strong> ${q.exp}`;
+    score++;
+    document.getElementById('score-counter').textContent=`Score: ${score}`;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    fb.className='feedback wrong-fb';
+    fb.innerHTML=`❌ <strong>Not quite.</strong> ${q.exp}`;
+  }
+  document.getElementById('next-btn').style.display='inline-block';
+}
+
+function nextQ(){
+  current++;
+  if(current>=questions.length)showScore();
+  else loadQ();
+}
+
+function showScore(){
+  document.getElementById('quiz-card').style.display='none';
+  document.querySelector('.nav-row').style.display='none';
+  document.getElementById('score-screen').style.display='block';
+  document.getElementById('final-score').textContent=score;
+  document.getElementById('final-total').textContent=`/${questions.length}`;
+  const pct=Math.round((score/questions.length)*100);
+  let msg,sub;
+  if(pct>=90){msg='🏆 Outstanding!';sub='You clearly know this material. Great prep!';}
+  else if(pct>=75){msg='👍 Well Done!';sub='Solid understanding. Review any missed questions before class.';}
+  else if(pct>=60){msg='📚 Keep Studying!';sub='You have a foundation — revisit the slides on areas you missed.';}
+  else{msg='💪 Let\'s Review!';sub='Go back through the pre-class slides and try again!';}
+  document.getElementById('score-msg').textContent=msg;
+  document.getElementById('score-sub').textContent=sub;
+}
+
+function restart(){
+  current=0;score=0;answered=false;
+  document.getElementById('score-counter').textContent='Score: 0';
+  document.getElementById('quiz-card').style.display='block';
+  document.querySelector('.nav-row').style.display='flex';
+  document.getElementById('score-screen').style.display='none';
+  loadQ();
+}
+loadQ();
+</script>
+</body>
+</html>

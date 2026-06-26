@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nutrition Essentials — Flashcards</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{display:flex;flex-direction:column;align-items:center;padding:10px 14px;gap:8px;background:#0f1e2e;color:#e8eef5;font-family:'Inter',sans-serif}
+h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.15rem;font-weight:800;color:#c9a84c;letter-spacing:.03em;flex-shrink:0}
+.controls{display:flex;gap:8px;align-items:center;flex-shrink:0;width:100%;max-width:700px;flex-wrap:nowrap;overflow:hidden}
+.filter-wrap{display:flex;gap:6px;overflow-x:auto;flex:1;min-width:0;padding-bottom:2px}
+.filter-wrap::-webkit-scrollbar{height:3px}
+.filter-wrap::-webkit-scrollbar-thumb{background:#2a8fa340;border-radius:99px}
+.pill{white-space:nowrap;padding:5px 12px;border-radius:99px;border:1.5px solid #1e3550;background:transparent;color:#8da8c0;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;transition:all .2s;flex-shrink:0}
+.pill.active{background:#2a8fa3;border-color:#2a8fa3;color:#fff}
+.pill:hover:not(.active){border-color:#2a8fa3;color:#2a8fa3}
+.shuffle-btn{padding:5px 12px;border-radius:99px;background:#1e3550;border:none;color:#c9a84c;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.shuffle-btn:hover{background:#2a3d55}
+/* Card */
+.card-wrap{flex:1;min-height:0;width:100%;max-width:700px;perspective:1200px;cursor:pointer}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1)}
+.card-inner.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 32px;gap:12px}
+.card-front{background:#2a8fa3}
+.card-back{background:#162840;border:2px solid #c9a84c;transform:rotateY(180deg)}
+.cat-tag{font-family:'Plus Jakarta Sans',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.85)}
+.card-front .cat-tag{background:rgba(255,255,255,.2)}
+.card-back .cat-tag{background:#0f1e2e;color:#c9a84c}
+.card-term{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;text-align:center;line-height:1.25}
+.card-front .card-term{color:#fff}
+.card-def{font-family:'Inter',sans-serif;font-size:.92rem;color:#c9dbe8;text-align:center;line-height:1.6;max-width:480px}
+.card-back .card-def{color:#e8eef5}
+.flip-hint{font-size:.72rem;color:rgba(255,255,255,.5);margin-top:4px;font-family:'Inter',sans-serif}
+/* Nav */
+.nav-row{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.nav-btn{padding:7px 18px;border-radius:8px;background:#1e3550;border:none;color:#e8eef5;font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer}
+.nav-btn:hover{background:#2a3d55}
+.nav-btn:disabled{opacity:.35;cursor:default}
+/* Dots */
+.dots{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:300px}
+.dot{width:7px;height:7px;border-radius:50%;background:#1e3550;transition:background .2s}
+.dot.active{background:#c9a84c}
+.dot.seen{background:#2a8fa3}
+.count-label{font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;color:#8da8c0;flex-shrink:0}
+</style>
+</head>
+<body>
+<h1>Nutrition Essentials — Flashcards</h1>
+<div class="controls">
+  <div class="filter-wrap" id="filterWrap"></div>
+  <button class="shuffle-btn" onclick="shuffleCards()">🔀 Shuffle</button>
+</div>
+<div class="card-wrap" id="cardWrap" onclick="flipCard()">
+  <div class="card-inner" id="cardInner">
+    <div class="card-face card-front" id="cardFront">
+      <div class="cat-tag" id="frontCat"></div>
+      <div class="card-term" id="termText"></div>
+      <div class="flip-hint">Tap to reveal definition</div>
+    </div>
+    <div class="card-face card-back" id="cardBack">
+      <div class="cat-tag" id="backCat"></div>
+      <div class="card-term" id="termText2" style="font-size:1rem;color:#c9a84c"></div>
+      <div class="card-def" id="defText"></div>
+    </div>
+  </div>
+</div>
+<div class="nav-row">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">← Prev</button>
+  <div class="dots" id="dots"></div>
+  <span class="count-label" id="countLabel"></span>
+  <button class="nav-btn" id="nextBtn2" onclick="navigate(1)">Next →</button>
+</div>
+<script>
+const allCards=[
+  {term:"Nutrition",def:"The science of how the body takes in, digests, absorbs, and uses food to sustain life, support growth, and prevent disease.",cat:"Foundations"},
+  {term:"Macronutrients",def:"Nutrients needed in large amounts that provide energy: carbohydrates (4 kcal/g), proteins (4 kcal/g), and fats (9 kcal/g).",cat:"Foundations"},
+  {term:"Micronutrients",def:"Vitamins and minerals needed in small amounts to regulate body processes; include fat-soluble vitamins (A, D, E, K) and water-soluble vitamins (B complex, C).",cat:"Foundations"},
+  {term:"Carbohydrates",def:"The body's preferred primary energy source; includes simple sugars (fast-digesting) and complex carbohydrates (starches and fiber). Provides 4 kcal/g.",cat:"Macronutrients"},
+  {term:"Proteins",def:"Macronutrients that build and repair tissues, produce enzymes and hormones, and support immune function. Provide 4 kcal/g; RDA ~0.8 g/kg body weight.",cat:"Macronutrients"},
+  {term:"Fats",def:"Most energy-dense macronutrient at 9 kcal/g. Functions include energy storage and absorption of fat-soluble vitamins A, D, E, K.",cat:"Macronutrients"},
+  {term:"Complete Proteins",def:"Proteins containing all 9 essential amino acids. Found in animal products (meat, eggs, dairy) and soy.",cat:"Macronutrients"},
+  {term:"Incomplete Proteins",def:"Proteins missing one or more essential amino acids. Found in grains and legumes; can be combined to form complete protein.",cat:"Macronutrients"},
+  {term:"Simple Carbohydrates",def:"Sugars (glucose, fructose, lactose, sucrose) digested and absorbed rapidly, causing quick rises in blood glucose. Found in fruit, milk, candy, white bread.",cat:"Macronutrients"},
+  {term:"Complex Carbohydrates",def:"Starches and fiber made of longer sugar chains; digested slowly for steadier blood sugar. Found in whole grains, legumes, and vegetables.",cat:"Macronutrients"},
+  {term:"Unsaturated Fats",def:"Healthy fats found in olive oil, nuts, avocado, and fatty fish. Help reduce LDL cholesterol and support heart health.",cat:"Macronutrients"},
+  {term:"Trans Fats",def:"Partially hydrogenated oils — the most harmful type of fat. Raise LDL, lower HDL. Banned in most food products.",cat:"Macronutrients"},
+  {term:"Vitamin A",def:"Fat-soluble vitamin essential for vision, immune function, and skin health. Found in liver, dairy, and orange/yellow produce.",cat:"Vitamins & Minerals"},
+  {term:"Vitamin D",def:"Fat-soluble vitamin required for calcium absorption and bone health. Sources include sunlight, fatty fish, and fortified dairy.",cat:"Vitamins & Minerals"},
+  {term:"Vitamin C",def:"Water-soluble vitamin supporting immune function, wound healing, and iron absorption. Found in citrus, peppers, and strawberries. Deficiency causes scurvy.",cat:"Vitamins & Minerals"},
+  {term:"Vitamin B12",def:"Water-soluble vitamin needed for red blood cell formation and nerve function. Found in meat, dairy, eggs. Deficiency causes anemia and neuropathy; common in vegans.",cat:"Vitamins & Minerals"},
+  {term:"Folate (B9)",def:"Water-soluble vitamin essential for DNA synthesis and fetal neural tube development. Deficiency causes neural tube defects in pregnancy and megaloblastic anemia.",cat:"Vitamins & Minerals"},
+  {term:"Iron",def:"Mineral required for hemoglobin production and oxygen transport. Deficiency causes iron-deficiency anemia: fatigue, pallor, brittle nails, tachycardia.",cat:"Vitamins & Minerals"},
+  {term:"Calcium",def:"Mineral essential for bone and tooth strength, muscle contraction, and nerve function. Deficiency leads to osteoporosis and muscle cramps.",cat:"Vitamins & Minerals"},
+  {term:"Potassium",def:"Mineral supporting heart rhythm, fluid balance, and blood pressure regulation. Found in bananas, potatoes, beans. Deficiency causes muscle weakness and irregular heartbeat.",cat:"Vitamins & Minerals"},
+  {term:"MyPlate",def:"USDA's current dietary framework showing a plate divided as: 30% vegetables, 30% grains, 20% fruits, 20% protein, plus a side of dairy.",cat:"Dietary Guidelines"},
+  {term:"DASH Diet",def:"Dietary Approaches to Stop Hypertension. Reduces saturated fat and sodium while increasing fiber and produce. Used for hypertension and cardiovascular disease.",cat:"Therapeutic Diets"},
+  {term:"Diabetic/Carb-Controlled Diet",def:"Therapeutic diet for Type 2 Diabetes limiting added sugars and refined carbs. Carb counting targets ~45–60 g per meal using MyPlate principles.",cat:"Therapeutic Diets"},
+  {term:"Low-Sodium Diet",def:"Diet restricting sodium to <2,000 mg/day for patients with hypertension, CHF, CKD, or edema. Avoids processed foods and canned soups.",cat:"Therapeutic Diets"},
+  {term:"Renal/CKD Diet",def:"Diet for Chronic Kidney Disease restricting potassium, phosphorus, sodium, and sometimes protein based on disease stage.",cat:"Therapeutic Diets"},
+  {term:"Gluten-Free Diet",def:"Eliminates wheat, barley, and rye completely. Required for celiac disease; even trace exposure can cause intestinal damage.",cat:"Therapeutic Diets"},
+  {term:"Iron-Deficiency Anemia",def:"Most common nutritional deficiency; signs include fatigue, pallor, brittle nails, pica, and tachycardia. At risk: women of childbearing age, vegetarians, pregnant patients.",cat:"Deficiencies"},
+  {term:"Scurvy",def:"Vitamin C deficiency disease presenting with poor wound healing, bleeding gums, and easy bruising.",cat:"Deficiencies"}
+];
+
+const categories=['All',...[...new Set(allCards.map(c=>c.cat))]];
+let filtered=[...allCards];
+let current=0;
+let seen=new Set();
+let activeFilter='All';
+
+function buildFilters(){
+  const fw=document.getElementById('filterWrap');
+  categories.forEach(cat=>{
+    const p=document.createElement('button');
+    p.className='pill'+(cat==='All'?' active':'');
+    p.textContent=cat;
+    p.onclick=()=>setFilter(cat);
+    fw.appendChild(p);
+  });
+}
+
+function setFilter(cat){
+  activeFilter=cat;
+  filtered=cat==='All'?[...allCards]:allCards.filter(c=>c.cat===cat);
+  current=0; seen=new Set();
+  document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('active',p.textContent===cat));
+  document.getElementById('cardInner').classList.remove('flipped');
+  renderCard();
+  buildDots();
+}
+
+function renderCard(){
+  if(!filtered.length)return;
+  const c=filtered[current];
+  document.getElementById('frontCat').textContent=c.cat;
+  document.getElementById('backCat').textContent=c.cat;
+  document.getElementById('termText').textContent=c.term;
+  document.getElementById('termText2').textContent=c.term;
+  document.getElementById('defText').textContent=c.def;
+  document.getElementById('countLabel').textContent=(current+1)+'/'+filtered.length;
+  document.getElementById('prevBtn').disabled=current===0;
+  document.getElementById('nextBtn2').disabled=current===filtered.length-1;
+  updateDots();
+}
+
+function flipCard(){
+  document.getElementById('cardInner').classList.toggle('flipped');
+  seen.add(current);
+  updateDots();
+}
+
+function navigate(dir){
+  document.getElementById('cardInner').classList.remove('flipped');
+  current=Math.max(0,Math.min(filtered.length-1,current+dir));
+  setTimeout(()=>renderCard(),50);
+}
+
+function buildDots(){
+  const d=document.getElementById('dots');
+  d.innerHTML='';
+  filtered.forEach((_,i)=>{
+    const dot=document.createElement('div');
+    dot.className='dot';
+    d.appendChild(dot);
+  });
+  updateDots();
+}
+
+function updateDots(){
+  document.querySelectorAll('.dot').forEach((d,i)=>{
+    d.classList.toggle('active',i===current);
+    d.classList.toggle('seen',seen.has(i)&&i!==current);
+  });
+}
+
+function shuffleCards(){
+  for(let i=filtered.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [filtered[i],filtered[j]]=[filtered[j],filtered[i]];
+  }
+  current=0; seen=new Set();
+  document.getElementById('cardInner').classList.remove('flipped');
+  renderCard();
+  buildDots();
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight')navigate(1);
+  else if(e.key==='ArrowLeft')navigate(-1);
+  else if(e.key===' '){e.preventDefault();flipCard();}
+});
+
+buildFilters();
+renderCard();
+buildDots();
+</script>
+</body>
+</html>

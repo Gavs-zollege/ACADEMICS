@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nutrition Essentials — True/False</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{display:flex;flex-direction:column;align-items:center;padding:10px 14px;gap:8px;background:#0f1e2e;color:#e8eef5;font-family:'Inter',sans-serif}
+h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.15rem;font-weight:800;color:#c9a84c;letter-spacing:.03em;flex-shrink:0}
+/* Stats bar */
+.stats-bar{width:100%;max-width:680px;display:flex;gap:10px;align-items:center;flex-shrink:0}
+.stat-chip{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;background:#162840;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700}
+.stat-chip.correct{color:#2db37a;border:1.5px solid #2db37a40}
+.stat-chip.wrong{color:#e05252;border:1.5px solid #e0525240}
+.stat-chip.streak{color:#c9a84c;border:1.5px solid #c9a84c40}
+.prog-bar{flex:1;height:6px;background:#162840;border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#2a8fa3,#c9a84c);border-radius:99px;transition:width .4s ease}
+/* Card */
+.card{width:100%;max-width:680px;background:#162840;border-radius:16px;padding:24px 26px;flex:1;min-height:0;display:flex;flex-direction:column;gap:14px;border:2px solid #1e3550;transition:border-color .35s}
+.card.correct{border-color:#2db37a;background:#0d2820}
+.card.wrong{border-color:#e05252;background:#2a0d0d}
+.q-meta{display:flex;justify-content:space-between;align-items:center}
+.q-num{font-family:'Plus Jakarta Sans',sans-serif;font-size:.73rem;color:#2a8fa3;font-weight:700;letter-spacing:.08em}
+.cat-tag{font-family:'Plus Jakarta Sans',sans-serif;font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:99px;background:#1e3550;color:#8da8c0}
+.statement{font-family:'Inter',sans-serif;font-size:1.05rem;color:#e8eef5;line-height:1.6;flex:1;display:flex;align-items:center}
+.feedback{font-size:.82rem;line-height:1.5;border-left:3px solid #2a8fa3;padding:8px 12px;border-radius:0 8px 8px 0;display:none;flex-shrink:0}
+.feedback.show{display:block}
+.card.correct .feedback{border-left-color:#2db37a;background:#0f2e1e;color:#7ad4a0}
+.card.wrong .feedback{border-left-color:#e05252;background:#2e0f0f;color:#e08080}
+/* Buttons */
+.btn-row{display:flex;gap:12px;width:100%;max-width:680px;flex-shrink:0}
+.tf-btn{flex:1;padding:14px;border-radius:12px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;font-weight:800;cursor:pointer;transition:opacity .2s,transform .1s}
+.tf-btn:active{transform:scale(.96)}
+.tf-btn.true-btn{background:#2db37a;color:#fff}
+.tf-btn.false-btn{background:#e05252;color:#fff}
+.tf-btn:hover{opacity:.88}
+.tf-btn:disabled{opacity:.4;cursor:default}
+/* Next */
+.next-btn{display:none;width:100%;max-width:680px;padding:11px;border-radius:10px;background:#c9a84c;color:#0f1e2e;font-family:'Plus Jakarta Sans',sans-serif;font-size:.95rem;font-weight:800;border:none;cursor:pointer;flex-shrink:0}
+.next-btn:hover{opacity:.88}
+.next-btn.show{display:block}
+/* End screen */
+.end-screen{display:none;flex:1;min-height:0;align-items:center;justify-content:center;flex-direction:column;gap:16px;width:100%;max-width:680px}
+.end-screen.show{display:flex}
+.ring-wrap{position:relative;width:130px;height:130px}
+.ring-wrap svg{width:130px;height:130px}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif}
+.ring-pct{font-size:2rem;font-weight:800;color:#c9a84c}
+.ring-label{font-size:.72rem;color:#8da8c0}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.2rem;font-weight:800;color:#e8eef5}
+.end-sub{font-size:.85rem;color:#8da8c0;text-align:center;max-width:360px;line-height:1.5}
+.end-stats{display:flex;gap:14px}
+.end-stat{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 18px;border-radius:10px;background:#162840}
+.end-stat-n{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800}
+.end-stat-l{font-size:.72rem;color:#8da8c0;font-family:'Inter',sans-serif}
+.restart-btn{padding:11px 28px;border-radius:10px;background:#c9a84c;color:#0f1e2e;font-family:'Plus Jakarta Sans',sans-serif;font-size:.95rem;font-weight:800;border:none;cursor:pointer}
+.restart-btn:hover{opacity:.88}
+</style>
+</head>
+<body>
+<h1>Nutrition Essentials — True / False</h1>
+<div class="stats-bar">
+  <div class="stat-chip correct" id="correctStat">✓ 0</div>
+  <div class="stat-chip wrong" id="wrongStat">✗ 0</div>
+  <div class="stat-chip streak" id="streakStat">🔥 0</div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:4%"></div></div>
+</div>
+<div class="card" id="mainCard">
+  <div class="q-meta">
+    <div class="q-num" id="qNum">1 / 25</div>
+    <div class="cat-tag" id="catTag"></div>
+  </div>
+  <div class="statement" id="statement"></div>
+  <div class="feedback" id="feedback"></div>
+</div>
+<div class="btn-row">
+  <button class="tf-btn true-btn" id="trueBtn" onclick="answer(true)">✅ True</button>
+  <button class="tf-btn false-btn" id="falseBtn" onclick="answer(false)">❌ False</button>
+</div>
+<button class="next-btn" id="nextBtn" onclick="nextQ()">Next →</button>
+<div class="end-screen" id="endScreen">
+  <div class="ring-wrap">
+    <svg viewBox="0 0 130 130"><circle cx="65" cy="65" r="56" fill="none" stroke="#162840" stroke-width="12"/><circle id="ringCircle" cx="65" cy="65" r="56" fill="none" stroke="#c9a84c" stroke-width="12" stroke-linecap="round" stroke-dasharray="351.86" stroke-dashoffset="351.86" transform="rotate(-90 65 65)" style="transition:stroke-dashoffset 1s ease"/></svg>
+    <div class="ring-center"><div class="ring-pct" id="ringPct">0%</div><div class="ring-label">Correct</div></div>
+  </div>
+  <div class="end-title" id="endTitle"></div>
+  <div class="end-stats">
+    <div class="end-stat"><div class="end-stat-n" id="finalCorrect" style="color:#2db37a"></div><div class="end-stat-l">Correct</div></div>
+    <div class="end-stat"><div class="end-stat-n" id="finalWrong" style="color:#e05252"></div><div class="end-stat-l">Wrong</div></div>
+    <div class="end-stat"><div class="end-stat-n" id="finalStreak" style="color:#c9a84c"></div><div class="end-stat-l">Best Streak</div></div>
+  </div>
+  <div class="end-sub" id="endSub"></div>
+  <button class="restart-btn" onclick="restart()">🔀 Shuffle & Restart</button>
+</div>
+<script>
+const statements=[
+  {s:"Carbohydrates provide 9 kcal per gram, making them the most energy-dense macronutrient.",ans:false,exp:"Carbohydrates provide 4 kcal/g. Fats provide 9 kcal/g — that is what makes fats the most energy-dense macronutrient.",cat:"Macronutrients"},
+  {s:"The USDA MyPlate recommends filling half your plate with fruits and vegetables combined.",ans:true,exp:"MyPlate dedicates 30% to vegetables and 20% to fruits — totaling 50% of the plate to produce.",cat:"Dietary Guidelines"},
+  {s:"Vitamin B12 deficiency is common in vegans because B12 is found almost exclusively in animal products.",ans:true,exp:"True. B12 is found primarily in meat, dairy, and eggs. Vegans, vegetarians, elderly individuals, and metformin users are at highest risk.",cat:"Deficiencies"},
+  {s:"Trans fats are considered the healthiest type of dietary fat for cardiovascular health.",ans:false,exp:"Trans fats are the most harmful dietary fat — they raise LDL (bad) cholesterol and lower HDL (good) cholesterol. They have been banned in most products.",cat:"Macronutrients"},
+  {s:"Medical assistants are permitted to create individualized meal plans for patients with diabetes.",ans:false,exp:"Creating individualized meal plans is Medical Nutrition Therapy — performed only by a Registered Dietitian. This is outside MA scope of practice.",cat:"MA Scope"},
+  {s:"Iron is an essential component of hemoglobin, responsible for transporting oxygen in the blood.",ans:true,exp:"Correct. Iron is the core component of hemoglobin in red blood cells. Deficiency causes iron-deficiency anemia with symptoms like fatigue and pallor.",cat:"Vitamins & Minerals"},
+  {s:"Folate deficiency during pregnancy is most closely linked to neural tube defects in the developing fetus.",ans:true,exp:"Folate (B9) is critical for fetal DNA synthesis and neural tube closure. Deficiency significantly increases the risk of defects like spina bifida.",cat:"Deficiencies"},
+  {s:"The gluten-free diet eliminates wheat, barley, and rye and is required for patients with celiac disease.",ans:true,exp:"Celiac disease requires strict gluten elimination. Even trace amounts of wheat, barley, or rye can cause intestinal damage and inflammatory reactions.",cat:"Therapeutic Diets"},
+  {s:"Fat-soluble vitamins (A, D, E, K) are excreted in the urine when consumed in excess.",ans:false,exp:"Water-soluble vitamins (B complex and C) are excreted in urine when in excess. Fat-soluble vitamins are stored in body fat and can accumulate to toxic levels.",cat:"Vitamins & Minerals"},
+  {s:"Simple carbohydrates cause a slower, steadier rise in blood glucose than complex carbohydrates.",ans:false,exp:"Simple carbohydrates are digested rapidly and cause quick blood glucose spikes. Complex carbohydrates are digested more slowly, producing steadier glucose levels.",cat:"Macronutrients"},
+  {s:"A patient with Chronic Kidney Disease (CKD) must restrict potassium, phosphorus, and sodium in their diet.",ans:true,exp:"CKD impairs the kidneys' ability to filter these minerals. Restriction is essential to prevent dangerous accumulation. Protein may also be restricted depending on disease stage.",cat:"Therapeutic Diets"},
+  {s:"Scurvy is caused by a deficiency of Vitamin D.",ans:false,exp:"Scurvy is caused by Vitamin C deficiency, presenting with poor wound healing and bleeding gums. Vitamin D deficiency causes rickets in children and osteomalacia in adults.",cat:"Deficiencies"},
+  {s:"The recommended daily sodium intake is less than 2,300 mg per day according to current dietary guidelines.",ans:true,exp:"Current dietary guidelines recommend <2,300 mg of sodium per day to reduce hypertension and cardiovascular disease risk.",cat:"Dietary Guidelines"},
+  {s:"Proteins provide 4 kcal per gram and are the body's preferred primary energy source.",ans:false,exp:"Proteins do provide 4 kcal/g, but they are NOT the preferred energy source. Carbohydrates are the body's preferred primary fuel, especially for the brain.",cat:"Macronutrients"},
+  {s:"Calcium deficiency can contribute to osteoporosis, muscle cramps, and dental problems.",ans:true,exp:"Calcium is essential for bone density, muscle contraction, and dental strength. Long-term deficiency leads to osteoporosis, cramps, and poor dentition.",cat:"Deficiencies"},
+  {s:"The DASH diet was specifically designed to manage Chronic Kidney Disease.",ans:false,exp:"DASH (Dietary Approaches to Stop Hypertension) is designed for hypertension and cardiovascular disease. CKD has its own specialized renal diet with different restrictions.",cat:"Therapeutic Diets"},
+  {s:"Medical assistants should document dietary history and 24-hour food recall as part of patient intake.",ans:true,exp:"Documenting dietary history and 24-hour food recall is explicitly within MA scope. It provides important information for the provider and care team.",cat:"MA Scope"},
+  {s:"Potassium is an electrolyte mineral that supports heart rhythm, fluid balance, and blood pressure.",ans:true,exp:"Potassium is essential for cardiac conduction, fluid regulation, and blood pressure. Deficiency causes muscle weakness and potentially dangerous cardiac arrhythmias.",cat:"Vitamins & Minerals"},
+  {s:"A clear liquid diet includes foods like milk, pudding, and cream soups.",ans:false,exp:"A clear liquid diet includes only broth, water, gelatin, and clear juices. A full liquid diet adds milk, pudding, and cream soups. These are two distinct therapeutic diet levels.",cat:"Therapeutic Diets"},
+  {s:"Vitamin D requires dietary fat to be absorbed from the gastrointestinal tract.",ans:true,exp:"Vitamin D is fat-soluble and requires dietary fat for absorption. Patients on very low-fat diets may have impaired absorption of all fat-soluble vitamins (A, D, E, K).",cat:"Vitamins & Minerals"},
+  {s:"Iron-deficiency anemia is most common in post-menopausal women and elderly men.",ans:false,exp:"Iron-deficiency anemia most commonly affects women of childbearing age (due to menstruation), pregnant patients, and vegetarians — not primarily post-menopausal women.",cat:"Deficiencies"},
+  {s:"Eggs and soy are examples of complete proteins because they contain all 9 essential amino acids.",ans:true,exp:"Complete proteins contain all 9 essential amino acids the body cannot synthesize. Animal products and soy are complete; most plant foods are incomplete.",cat:"Macronutrients"},
+  {s:"An MA discovering that a patient's HbA1c has worsened should modify the patient's carbohydrate meal plan.",ans:false,exp:"Modifying a meal plan is outside MA scope — that requires an RD or provider. The MA's role is to document the finding, alert the provider, and reinforce existing provider instructions.",cat:"MA Scope"},
+  {s:"MyPlate recommends making at least half of your daily grain intake whole grains.",ans:true,exp:"MyPlate advises choosing whole wheat, brown rice, and oats over refined grains — making at least half of grain servings whole grains for optimal fiber and nutrient intake.",cat:"Dietary Guidelines"},
+  {s:"Protein-energy malnutrition can present with muscle wasting, poor wound healing, and edema.",ans:true,exp:"Protein-energy malnutrition is common in elderly, post-surgical, cancer, and eating disorder patients. Signs include muscle wasting, edema, poor wound healing, and hair loss.",cat:"Deficiencies"}
+];
+
+let deck=[...statements];
+let current=0,correct=0,wrong=0,streak=0,bestStreak=0,answered=false;
+
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}}
+
+function render(){
+  const q=deck[current];
+  document.getElementById('qNum').textContent=(current+1)+' / '+deck.length;
+  document.getElementById('catTag').textContent=q.cat;
+  document.getElementById('statement').textContent=q.s;
+  document.getElementById('mainCard').className='card';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('feedback').textContent='';
+  document.getElementById('trueBtn').disabled=false;
+  document.getElementById('falseBtn').disabled=false;
+  document.getElementById('nextBtn').classList.remove('show');
+  document.getElementById('progFill').style.width=((current/deck.length)*100+4)+'%';
+  answered=false;
+}
+
+function updateStats(){
+  document.getElementById('correctStat').textContent='✓ '+correct;
+  document.getElementById('wrongStat').textContent='✗ '+wrong;
+  document.getElementById('streakStat').textContent='🔥 '+streak;
+}
+
+function answer(userTrue){
+  if(answered)return;
+  answered=true;
+  const q=deck[current];
+  const isCorrect=userTrue===q.ans;
+  const card=document.getElementById('mainCard');
+  const fb=document.getElementById('feedback');
+  if(isCorrect){correct++;streak++;if(streak>bestStreak)bestStreak=streak;card.classList.add('correct');}
+  else{wrong++;streak=0;card.classList.add('wrong');}
+  fb.textContent=(isCorrect?'✓ Correct! ':'✗ Incorrect. ')+q.exp;
+  fb.classList.add('show');
+  document.getElementById('trueBtn').disabled=true;
+  document.getElementById('falseBtn').disabled=true;
+  updateStats();
+  const nb=document.getElementById('nextBtn');
+  nb.textContent=current===deck.length-1?'See Results →':'Next Statement →';
+  nb.classList.add('show');
+}
+
+function nextQ(){
+  current++;
+  if(current>=deck.length){showEnd();return;}
+  render();
+}
+
+function showEnd(){
+  document.getElementById('mainCard').style.display='none';
+  document.querySelectorAll('.btn-row,.stats-bar').forEach(el=>el.style.display='none');
+  document.getElementById('nextBtn').style.display='none';
+  document.querySelector('h1').style.display='none';
+  const pct=Math.round((correct/deck.length)*100);
+  document.getElementById('endScreen').classList.add('show');
+  document.getElementById('ringPct').textContent=pct+'%';
+  const circ=351.86;
+  const rc=document.getElementById('ringCircle');
+  rc.style.strokeDashoffset=circ-(circ*(pct/100));
+  rc.style.stroke=pct>=80?'#2db37a':pct>=60?'#c9a84c':'#e05252';
+  document.getElementById('endTitle').textContent=pct>=80?'Strong Performance! 🎉':pct>=60?'Nice Work! 💪':'Keep Reviewing 📚';
+  document.getElementById('finalCorrect').textContent=correct;
+  document.getElementById('finalWrong').textContent=wrong;
+  document.getElementById('finalStreak').textContent=bestStreak;
+  document.getElementById('endSub').textContent='You answered '+correct+' of '+deck.length+' statements correctly ('+pct+'%). '+(pct>=80?'Excellent grasp of nutrition concepts.':'Review the statements you missed and try again.');
+}
+
+function restart(){
+  current=0;correct=0;wrong=0;streak=0;bestStreak=0;answered=false;
+  shuffle(deck);
+  document.querySelector('h1').style.display='';
+  document.getElementById('mainCard').style.display='flex';
+  document.querySelectorAll('.btn-row,.stats-bar').forEach(el=>el.style.display='');
+  document.getElementById('endScreen').classList.remove('show');
+  document.getElementById('nextBtn').style.display='';
+  updateStats();
+  render();
+}
+
+render();
+updateStats();
+</script>
+</body>
+</html>

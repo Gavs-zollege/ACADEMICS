@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Scenarios — Science Behind Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0d0d0d; --surface:#141414; --card:#1a1a1a; --border:rgba(255,255,255,.07);
+  --red:#e05a3a; --red-dim:rgba(224,90,58,.12); --text:#ffffff; --muted:#6b7280; --muted2:#9ca3af;
+  --green:#4caf82; --rose:#e05a5a;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr auto auto;padding:0 20px;max-width:680px;margin:0 auto;}
+.hdr{text-align:center;padding:16px 0 6px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:2px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:7px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:24px;background:var(--red);}
+.dot.d{background:var(--green);}
+.sc-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin:6px 0;}
+.sc-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.sc-text{font-size:12px;color:var(--text);line-height:1.55;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:7px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.5;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden;justify-content:flex-start;}
+.opt{width:100%;text-align:left;padding:10px 15px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:11px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:9px 14px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:none;margin:6px auto 8px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:34px 48px;text-align:center;grid-row:2/7;align-self:center;}
+.end-box.show{display:flex;}
+.end-big{font-size:50px;font-weight:800;color:var(--red);font-family:'Plus Jakarta Sans',sans-serif;}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);max-width:300px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Science Behind Healthcare</div>
+    <h1>Clinical Scenario Simulator</h1>
+    <p>Apply scientific principles to real clinical situations.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="sc-box" id="scBox">
+    <div class="sc-label">Clinical Scenario</div>
+    <div class="sc-text" id="scText"></div>
+  </div>
+  <div class="q-box" id="qBox">
+    <div class="q-text" id="qText"></div>
+    <div class="q-num" id="qNum"></div>
+  </div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Step →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-big" id="endBig"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <button class="restart-btn" onclick="init()">Try Another Scenario</button>
+  </div>
+</div>
+<script>
+const SCENARIOS=[
+  {
+    setup:"A 62-year-old patient on warfarin for atrial fibrillation reports taking St. John's Wort after reading about it on a wellness blog. His INR today is 1.4 (therapeutic range: 2.0–3.0).",
+    steps:[
+      {q:"What pharmacological mechanism explains the sub-therapeutic INR?",opts:["St. John's Wort blocks warfarin absorption in the stomach","St. John's Wort induces CYP450 enzymes, accelerating warfarin metabolism","St. John's Wort has anticoagulant properties that compete with warfarin","The patient is likely taking too much warfarin"],ans:1,ok:"St. John's Wort induces CYP450 liver enzymes, accelerating warfarin metabolism — clearing it faster and reducing blood levels, leading to a sub-therapeutic INR.",no:"St. John's Wort induces CYP450 enzymes → faster warfarin metabolism → lower warfarin blood levels → sub-therapeutic INR. This is a drug-herb pharmacokinetic interaction."},
+      {q:"The patient asks: 'Should I switch to a new blood thinner I saw advertised?' What is the correct MA response?",opts:["Recommend the advertised drug if it seems reliable","Tell him the new drug is probably better and not to worry about INR monitoring","Acknowledge the question, note it for the provider, and avoid making clinical comparisons — that is the provider's role","Advise him to stop warfarin and start the new drug immediately"],ans:2,ok:"The MA acknowledges the question, documents it, and flags it for the provider. Making clinical drug comparisons is outside MA scope — this is EBP in action.",no:"Clinical drug comparisons are outside MA scope. The correct approach: acknowledge, note for the provider, and avoid offering clinical recommendations."},
+      {q:"What is your documentation and next step as the MA?",opts:["Wait for the provider to discover the INR result during the visit","Document the supplement use and sub-therapeutic INR; flag to the provider before they see the patient","Advise the patient to stop St. John's Wort immediately on your own","Chart the INR only and leave a note for the next visit"],ans:2,ok:"Document the supplement use and sub-therapeutic INR accurately, then flag to the provider BEFORE the visit. Do not advise stopping the supplement without provider instruction.",no:"Document supplement use + INR → flag to provider before the visit. Never advise stopping supplements without provider authorization."},
+    ]
+  },
+  {
+    setup:"A patient presents concerned about a viral video claiming a 'natural compound' cures Type 2 Diabetes. The video has no citations, is on a social media channel selling supplements, and features a single testimonial.",
+    steps:[
+      {q:"Using the hierarchy of evidence, how would you classify the evidence in this video?",opts:["Level 1 — systematic review because many patients have commented positively","Level 2 — randomized controlled trial because it was tested in real people","Level 5 — anecdote/personal experience, the weakest form of evidence","Level 3 — cohort study because it tracks outcomes over time"],ans:2,ok:"A single testimonial with no citations is Level 5 (anecdote/personal experience) — the weakest form of evidence in the hierarchy. No methodology, no control group, no peer review.",no:"Single testimonials = Level 5 (anecdote). Hierarchy: systematic reviews (L1) → RCTs (L2) → cohort/case-control (L3) → case reports (L4) → anecdote (L5)."},
+      {q:"Which misinformation red flag is MOST prominent in this scenario?",opts:["The video was produced professionally","The supplement has a medical-sounding name","The source is selling something and based on a single anecdote with no citations","The patient found it on the internet"],ans:2,ok:"The source is selling something + single anecdote + no citations are classic misinformation red flags. Conflicts of interest and absence of methodology are major warning signs.",no:"Red flags present: source is selling something, single anecdote, no citations. These strongly suggest the information is unreliable."},
+      {q:"Within MA scope, what is the BEST way to address this patient's concern?",opts:["Tell the patient the video is definitely wrong and to ignore it completely","Confirm you have seen the same video and agree it sounds promising","Acknowledge the patient's concern, note it for the provider, and encourage the patient to ask the provider about evidence-based options","Recommend a different supplement that you believe is more reliable"],ans:2,ok:"Acknowledge → note for provider → encourage provider discussion. MAs do not evaluate or endorse health claims. Directing patients to their provider is always the right scope-aware response.",no:"Within MA scope: acknowledge the concern, document it, and direct to the provider. Never evaluate health claims or recommend supplements."},
+    ]
+  },
+  {
+    setup:"During patient intake, a 45-year-old patient reports chest tightness that started 20 minutes ago. Her BP is 158/96, HR is 102, and she is slightly diaphoretic. She says she thought it might be 'just indigestion.'",
+    steps:[
+      {q:"Applying homeostasis knowledge — which parameter is MOST concerning and why?",opts:["Temperature — slight fever usually indicates infection","BP 158/96 — mild hypertension that can wait for the provider","HR 102 + diaphoresis + chest pain — homeostasis is failing; this combination signals possible ischemia requiring immediate action","Respiratory rate — if normal, there is no emergency"],ans:2,ok:"HR 102 + diaphoresis + chest pain together signal a possible acute cardiac event (ischemia). Homeostasis is failing — the body is compensating, not coping. Immediate provider notification is required.",no:"The combination — tachycardia + diaphoresis + chest pain — signals possible myocardial ischemia. Individual values can be misleading; the PATTERN is what matters."},
+      {q:"What pathophysiological process are you most concerned about based on these findings?",opts:["Neoplasia — uncontrolled cell growth in the chest wall","Ischemia — reduced blood flow to the myocardium, potentially progressing to infarction","Autoimmune inflammation of the pericardium only","Degeneration — gradual tissue loss that can be monitored at the next visit"],ans:1,ok:"The presentation is consistent with myocardial ischemia — reduced coronary blood flow. Without intervention, ischemia can progress to infarction (MI). This is a potential emergency.",no:"Chest pain + tachycardia + diaphoresis = myocardial ischemia until proven otherwise. Ischemia can rapidly progress to infarction (irreversible tissue death)."},
+      {q:"What is the correct MA action?",opts:["Document the vitals and wait for the patient to ask for help","Reassure the patient that indigestion is common and offer water","Immediately notify the provider, keep the patient calm and seated, and document all findings precisely","Ask the patient to return tomorrow for a follow-up if symptoms persist"],ans:2,ok:"Immediate provider notification is the correct action. The MA keeps the patient calm and seated, does not leave them alone, and documents all findings. Time is myocardium.",no:"Immediately notify the provider — do not delay. Keep the patient calm and still. Document everything. Time is critical in possible ischemia."},
+    ]
+  },
+];
+let sc,stepIdx,score,answered;
+function init(){sc=SCENARIOS[Math.floor(Math.random()*SCENARIOS.length)];stepIdx=0;score=0;answered=false;document.getElementById('scText').textContent=sc.setup;document.getElementById('endBox').classList.remove('show');document.getElementById('scBox').style.display='';document.getElementById('qBox').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';renderStep();}
+function renderStep(){answered=false;const s=sc.steps[stepIdx];document.getElementById('qNum').textContent='Q'+(stepIdx+1);document.getElementById('qText').textContent=s.q;document.getElementById('opts').innerHTML=s.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){const n=sc.steps.length;document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<div class="dot ${i<stepIdx?'d':i===stepIdx?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const s=sc.steps[stepIdx];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[s.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===s.ans){score++;fb.innerHTML=`<strong>✓ Correct!</strong>${s.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');fb.innerHTML=`<strong>✗ Not quite.</strong>${s.no}`;fb.className='fb no show';}document.getElementById('nextBtn').className='next-btn show';}
+function next(){stepIdx++;if(stepIdx>=sc.steps.length){showEnd();return;}renderStep();}
+function showEnd(){const total=sc.steps.length,pct=Math.round((score/total)*100);document.getElementById('scBox').style.display='none';document.getElementById('qBox').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endBig').textContent=score+'/'+total;document.getElementById('endTitle').textContent=pct===100?'🎯 Perfect Clinical Thinking!':pct>=67?'🌟 Strong Reasoning!':'📚 Keep Practicing!';document.getElementById('endSub').textContent='You applied scientific principles to '+total+' clinical decision steps.';document.getElementById('endBox').classList.add('show');}
+init();
+</script>
+</body>
+</html>

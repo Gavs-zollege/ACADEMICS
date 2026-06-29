@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clinical Scenarios — Nutrition Essentials</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--red-dim:rgba(224,90,58,.12);--text:#ffffff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr auto auto;padding:0 20px;max-width:680px;margin:0 auto;}
+.hdr{text-align:center;padding:16px 0 6px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:2px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:7px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:24px;background:var(--red);}
+.dot.d{background:var(--green);}
+.sc-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin:6px 0;}
+.sc-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.sc-text{font-size:12px;color:var(--text);line-height:1.55;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:7px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.5;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden;justify-content:flex-start;}
+.opt{width:100%;text-align:left;padding:10px 15px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:11px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:9px 14px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:none;margin:6px auto 8px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:34px 48px;text-align:center;grid-row:2/7;align-self:center;}
+.end-box.show{display:flex;}
+.end-big{font-size:50px;font-weight:800;color:var(--red);font-family:'Plus Jakarta Sans',sans-serif;}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);max-width:300px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Nutrition Essentials</div>
+    <h1>Clinical Scenario Simulator</h1>
+    <p>Apply nutrition knowledge to real patient situations.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="sc-box" id="scBox">
+    <div class="sc-label">Clinical Scenario</div>
+    <div class="sc-text" id="scText"></div>
+  </div>
+  <div class="q-box" id="qBox">
+    <div class="q-text" id="qText"></div>
+    <div class="q-num" id="qNum"></div>
+  </div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Step →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-big" id="endBig"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <button class="restart-btn" onclick="init()">Try Another Scenario</button>
+  </div>
+</div>
+<script>
+const SCENARIOS=[
+  {
+    setup:"Maria is a 58-year-old patient with Type 2 Diabetes and hypertension presenting for a routine follow-up. She reports skipping breakfast daily, eating mostly fast food, drinking 3 sodas per day, and has gained 8 lbs since her last visit 3 months ago. HbA1c is 9.2% (was 7.8%) and BP today is 148/92.",
+    steps:[
+      {q:"Which nutritional red flags do you identify during intake?",opts:["None — her diet sounds typical for her age group","High sugar intake (sodas), meal skipping, fast food (high sodium/fat/carbs), weight gain, worsening HbA1c","Only the weight gain is significant — the diet itself is not a concern","High protein intake from fast food is the primary concern"],ans:1,ok:"Multiple red flags: 3 sodas/day = excess sugar + empty calories. Meal skipping → larger glucose spikes when eating. Fast food = high sodium (affecting BP) + refined carbs (affecting HbA1c). Weight gain + rising HbA1c = worsening metabolic control.",no:"Red flags: high sugar (sodas), meal skipping, fast food (high sodium + refined carbs), 8 lb weight gain, and HbA1c rising from 7.8% to 9.2%."},
+      {q:"What is within your scope to document and provide?",opts:["Advise Maria to stop drinking soda and switch to a ketogenic diet immediately","Document weight, BP, and dietary history; reinforce provider's carb/sodium guidelines; offer a MyPlate handout","Create a detailed 7-day meal plan based on DASH and diabetic diet principles","Tell Maria her diet is causing her diabetes to worsen and she needs to make immediate changes"],ans:1,ok:"Document weight, BP, and dietary history accurately. Reinforce what the provider has already instructed. Provide MyPlate or approved diet handouts. Do not create new plans or offer clinical diagnoses.",no:"MA scope: document → reinforce provider instructions → provide approved handouts. Do NOT create meal plans, diagnose, or make clinical statements about dietary causation."},
+      {q:"The worsening HbA1c and BP rise — when should you involve the provider or refer to an RD?",opts:["Only if Maria specifically asks for a referral","Wait until the next scheduled visit to mention the HbA1c change","Notify the provider before they see the patient; the HbA1c jump + BP rise + weight gain warrants provider attention and likely an RD referral","Document it and leave a message for the end of the day"],ans:2,ok:"HbA1c rising from 7.8% to 9.2% + BP rise + weight gain requires immediate provider notification BEFORE the visit. Complex dietary needs (dual diagnosis, poor control) warrant RD referral.",no:"Flag to the provider BEFORE the visit. Rising HbA1c + hypertension + weight gain = provider decision needed. Complex cases = RD referral."},
+    ]
+  },
+  {
+    setup:"A 72-year-old male patient is seen for a follow-up. He is a strict vegan who takes metformin for Type 2 Diabetes. During intake, he reports fatigue, 'pins and needles' in his feet, and occasional memory lapses. He takes no supplements.",
+    steps:[
+      {q:"Based on his history, which nutritional deficiency is MOST likely causing his symptoms?",opts:["Iron deficiency — vegans lack heme iron","Vitamin D deficiency — indoor workers lack sun exposure","Vitamin B12 deficiency — vegans + metformin = double risk; symptoms match neurological manifestations","Calcium deficiency — vegans avoid dairy"],ans:2,ok:"Vegan diet (no B12 from animal sources) + metformin (reduces B12 absorption) + age (reduced absorption) = triple risk. Fatigue + peripheral neuropathy (pins and needles) + memory lapses = classic B12 deficiency presentation.",no:"B12 deficiency: vegan (no animal sources) + metformin (impairs absorption) + elderly (reduced intrinsic factor). Peripheral neuropathy + fatigue + cognitive changes = B12 until proven otherwise."},
+      {q:"What is the MA's correct action based on this intake information?",opts:["Recommend he start B12 supplements immediately at the pharmacy","Document the symptoms and dietary history; flag for the provider before the visit","Tell him to add meat to his diet to solve the problem","Reassure him that these symptoms are normal for his age"],ans:1,ok:"Document the symptoms and dietary history accurately, then flag for the provider BEFORE they see the patient. Do not recommend supplements — that is outside MA scope.",no:"Document symptoms + dietary history → flag to provider. Never recommend specific supplements — that requires a lab confirmation and provider order."},
+      {q:"The provider confirms B12 deficiency via labs and orders B12 injections. The patient asks: 'Can't I just take oral B12 supplements?' What is the correct MA response?",opts:["Agree — oral B12 is always just as effective as injections","Tell him oral supplements are fine and to skip the injections","Explain that the provider has determined injections are needed, and encourage him to discuss his concerns with the provider at this visit","Decide independently to allow him to try oral supplements first for 3 months"],ans:2,ok:"Support the provider's order. Acknowledge the patient's concern, validate his question, and encourage him to raise it with the provider. MAs do not override or modify provider orders.",no:"MA role: support the provider's order. Direct the patient's question to the provider. Never independently modify a treatment plan — even if the patient's concern sounds reasonable."},
+    ]
+  },
+  {
+    setup:"A 45-year-old patient with Stage 3 CKD presents for a routine visit. She reports eating large amounts of bananas, tomatoes, and potatoes daily because 'they are healthy.' Her most recent CMP shows elevated potassium (K+ = 5.8 mEq/L). She is not currently under the care of a renal dietitian.",
+    steps:[
+      {q:"Why is her dietary pattern specifically problematic given her diagnosis?",opts:["The high vitamin content of these foods conflicts with her medications","Bananas, tomatoes, and potatoes are all high-potassium foods — in CKD, the kidneys cannot excrete potassium effectively, leading to hyperkalemia","These foods are too high in calories for a patient with CKD","The fiber content of these foods causes constipation in kidney patients"],ans:1,ok:"CKD impairs the kidney's ability to excrete potassium. Hyperkalemia (K+ 5.8) combined with a high-potassium diet is dangerous — it can cause life-threatening cardiac arrhythmias.",no:"CKD = impaired potassium excretion. High-potassium foods (bananas, tomatoes, potatoes) + CKD = hyperkalemia risk. K+ 5.8 is above normal (3.5–5.0) — clinically significant."},
+      {q:"What is the MA's appropriate action regarding the elevated potassium and dietary history?",opts:["Tell the patient to stop eating bananas, tomatoes, and potatoes immediately","Document the dietary history and elevated K+ value; flag for the provider before the visit","Create a renal diet handout restricting potassium for the patient","Wait to see if the next CMP shows improvement before acting"],ans:1,ok:"Document the dietary pattern and the lab value (K+ 5.8), then flag for the provider before the visit. The provider will decide whether dietary modification or additional intervention is needed.",no:"MA action: document dietary history + flag elevated K+ to the provider before the visit. Do not give dietary modification instructions without provider direction."},
+      {q:"Given the complexity of her nutritional needs (Stage 3 CKD + hyperkalemia + no RD care), what should the MA recommend to the provider?",opts:["No referral needed — provide a standard low-potassium handout and send her home","The provider should be informed, and an RD referral is appropriate for individualized renal diet management","Refer the patient to a gastroenterologist","Advise the patient to follow a clear liquid diet until potassium normalizes"],ans:1,ok:"Stage 3 CKD + hyperkalemia + no RD = RD referral is clearly indicated. Renal nutrition is complex (potassium, phosphorus, sodium, protein all need stage-specific adjustment) and requires individualized medical nutrition therapy.",no:"Complex CKD + hyperkalemia + no RD care = flag for provider + RD referral. Renal diet management is beyond MA scope and requires a Registered Dietitian."},
+    ]
+  },
+];
+let sc,stepIdx,score,answered;
+function init(){sc=SCENARIOS[Math.floor(Math.random()*SCENARIOS.length)];stepIdx=0;score=0;answered=false;document.getElementById('scText').textContent=sc.setup;document.getElementById('endBox').classList.remove('show');document.getElementById('scBox').style.display='';document.getElementById('qBox').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';renderStep();}
+function renderStep(){answered=false;const s=sc.steps[stepIdx];document.getElementById('qNum').textContent='Q'+(stepIdx+1);document.getElementById('qText').textContent=s.q;document.getElementById('opts').innerHTML=s.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){const n=sc.steps.length;document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<div class="dot ${i<stepIdx?'d':i===stepIdx?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const s=sc.steps[stepIdx];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[s.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===s.ans){score++;fb.innerHTML=`<strong>✓ Correct!</strong>${s.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');fb.innerHTML=`<strong>✗ Not quite.</strong>${s.no}`;fb.className='fb no show';}document.getElementById('nextBtn').className='next-btn show';}
+function next(){stepIdx++;if(stepIdx>=sc.steps.length){showEnd();return;}renderStep();}
+function showEnd(){const total=sc.steps.length,pct=Math.round((score/total)*100);document.getElementById('scBox').style.display='none';document.getElementById('qBox').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endBig').textContent=score+'/'+total;document.getElementById('endTitle').textContent=pct===100?'🎯 Perfect Clinical Thinking!':pct>=67?'🌟 Strong Reasoning!':'📚 Keep Practicing!';document.getElementById('endSub').textContent='You applied nutrition knowledge to '+total+' clinical decision steps.';document.getElementById('endBox').classList.add('show');}
+init();
+</script>
+</body>
+</html>

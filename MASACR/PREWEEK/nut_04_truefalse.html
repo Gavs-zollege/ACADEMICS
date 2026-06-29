@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>True or False — Nutrition Essentials</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#ffffff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr auto auto;padding:0 20px;max-width:660px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 8px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:8px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:26px;background:var(--red);}
+.dot.d{background:var(--green);}
+.hud{display:flex;gap:10px;justify-content:center;padding:4px 0 8px;}
+.hud-chip{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid;}
+.hud-chip.s{background:rgba(224,90,58,.1);color:var(--red);border-color:rgba(224,90,58,.4);}
+.hud-chip.st{background:rgba(76,175,130,.1);color:var(--green);border-color:rgba(76,175,130,.4);}
+.cat-pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:rgba(59,163,184,.12);color:#3ba3b8;width:fit-content;margin-bottom:6px;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.65;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden;justify-content:center;}
+.opt{width:100%;text-align:left;padding:14px 18px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;display:flex;align-items:center;gap:14px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:10px 16px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:none;margin:8px auto 10px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 48px;text-align:center;grid-row:1/7;align-self:center;}
+.end-box.show{display:flex;}
+.end-pct{font-size:50px;font-weight:800;color:var(--red);font-family:'Plus Jakarta Sans',sans-serif;}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.end-stats{display:flex;gap:14px;}
+.stat{padding:10px 18px;border-radius:10px;text-align:center;}
+.stat.g{background:rgba(76,175,130,.1);}
+.stat.r{background:rgba(224,90,90,.1);}
+.stat-n{font-size:22px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;}
+.stat.g .stat-n{color:var(--green);}
+.stat.r .stat-n{color:var(--rose);}
+.stat-l{font-size:11px;color:var(--muted);margin-top:2px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Nutrition Essentials</div>
+    <h1>True or False</h1>
+    <p>Select the best answer for each question.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="hud">
+    <div class="hud-chip s">Score: <span id="sc">0</span></div>
+    <div class="hud-chip st">🔥 Streak: <span id="str">0</span></div>
+  </div>
+  <div id="qArea">
+    <div class="cat-pill" id="catPill"></div>
+    <div class="q-box">
+      <div class="q-text" id="qText"></div>
+      <div class="q-num" id="qNum"></div>
+    </div>
+  </div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <div class="end-stats">
+      <div class="stat g"><div class="stat-n" id="eOk">0</div><div class="stat-l">Correct</div></div>
+      <div class="stat r"><div class="stat-n" id="eNo">0</div><div class="stat-l">Incorrect</div></div>
+    </div>
+    <button class="restart-btn" onclick="init()">Play Again</button>
+  </div>
+</div>
+<script>
+const QS=[
+  {cat:"Macronutrients",stmt:"Carbohydrates, proteins, and fats all provide the same number of calories per gram.",correct:false,ok:"FALSE — Carbohydrates and protein both provide 4 kcal/g, but fats provide 9 kcal/g — more than double.",no:"Carbs and protein = 4 kcal/g each. Fats = 9 kcal/g. They are NOT equal in caloric density."},
+  {cat:"Macronutrients",stmt:"Fat-soluble vitamins A, D, E, and K are stored in body fat and can accumulate to toxic levels with excessive intake.",correct:true,ok:"TRUE — Fat-soluble vitamins are stored in body fat and liver. Unlike water-soluble vitamins, excess builds up and can cause toxicity.",no:"TRUE — Fat-soluble vitamins (A, D, E, K) are stored in body fat. Unlike water-soluble vitamins, they can accumulate to toxic levels."},
+  {cat:"Macronutrients",stmt:"Complete proteins contain all 9 essential amino acids and are found only in animal products.",correct:false,ok:"FALSE — Soy is a complete plant-based protein. Quinoa is another example. The statement is incorrect because plant sources CAN be complete.",no:"Complete proteins contain all 9 essential amino acids. Soy and quinoa are complete plant proteins — the statement is too absolute."},
+  {cat:"MyPlate",stmt:"According to MyPlate guidelines, half of the plate should be fruits and vegetables.",correct:true,ok:"TRUE — MyPlate: Vegetables 30% + Fruits 20% = 50% of the plate should be produce.",no:"TRUE — MyPlate assigns 30% to vegetables and 20% to fruits = half the plate is produce."},
+  {cat:"MyPlate",stmt:"All sodium in a patient's diet comes from adding table salt at meals.",correct:false,ok:"FALSE — The majority of dietary sodium comes from processed foods, restaurant meals, canned goods, and condiments — not table salt.",no:"Most dietary sodium comes from processed foods and restaurant meals — NOT table salt. Patients often significantly underestimate their sodium intake."},
+  {cat:"Deficiencies",stmt:"Vitamin B12 deficiency is a concern mainly for elderly patients and can be fully corrected with oral supplementation in all cases.",correct:false,ok:"FALSE — B12 deficiency affects vegans, metformin users, and post-gastric bypass patients as well. Severe cases require IM injections when absorption is impaired.",no:"B12 deficiency affects vegans, elderly, metformin users, and post-surgical patients. When absorption is impaired (pernicious anemia), oral supplements are insufficient — IM injections are needed."},
+  {cat:"Deficiencies",stmt:"Folate supplementation before and during early pregnancy can prevent neural tube defects.",correct:true,ok:"TRUE — The neural tube closes in weeks 3–4, often before pregnancy is confirmed. Pre-conceptional folate supplementation is recommended for all women of childbearing age.",no:"TRUE — Folate prevents neural tube defects. The neural tube closes in weeks 3–4 — supplementation must start BEFORE pregnancy to be effective."},
+  {cat:"Deficiencies",stmt:"Poor wound healing in a post-surgical patient is a normal finding and does not require nutritional assessment.",correct:false,ok:"FALSE — Poor wound healing is a red flag for protein-energy malnutrition. Post-surgical patients are at high risk and should be assessed for nutritional status.",no:"Poor wound healing = possible protein-energy malnutrition. Post-surgical patients are high-risk. This requires assessment and possible RD referral — not normalization."},
+  {cat:"Therapeutic Diets",stmt:"In celiac disease, patients can occasionally consume small amounts of gluten without significant harm.",correct:false,ok:"FALSE — Even trace gluten exposure causes intestinal damage in celiac disease. It is an autoimmune condition, not a preference — strict elimination is mandatory.",no:"Celiac disease is autoimmune — even trace gluten causes intestinal damage. There is no safe threshold. Strict, lifelong elimination is required."},
+  {cat:"Therapeutic Diets",stmt:"The DASH diet is an evidence-based dietary approach for reducing blood pressure.",correct:true,ok:"TRUE — DASH (Dietary Approaches to Stop Hypertension) is one of the most well-studied dietary interventions, with strong evidence for blood pressure reduction.",no:"TRUE — DASH is evidence-based, well-researched, and consistently shown to reduce blood pressure. It is recommended for HTN, CAD, and hyperlipidemia."},
+  {cat:"MA Scope",stmt:"Medical Assistants may create individualized meal plans for patients with chronic kidney disease if no RD is available.",correct:false,ok:"FALSE — Creating individualized meal plans is medical nutrition therapy — performed only by Registered Dietitians (RDs). This is outside MA scope regardless of RD availability.",no:"Medical nutrition therapy = RD scope only. MAs document, reinforce, and refer — they do not create meal plans even when an RD is unavailable."},
+  {cat:"MA Scope",stmt:"Documenting a 24-hour food recall during patient intake is within the MA's scope.",correct:true,ok:"TRUE — Documenting dietary history including a 24-hour food recall is within MA scope. The MA records — the provider and/or RD interprets.",no:"TRUE — Recording the 24-hour food recall is within MA scope. The MA documents accurately; interpreting and acting on the data is the provider's or RD's role."},
+  {cat:"Chronic Disease",stmt:"A weight loss of 5–10% body weight in an obese patient with Type 2 Diabetes can significantly improve metabolic markers.",correct:true,ok:"TRUE — Even modest weight loss (5–10%) improves HbA1c, blood pressure, lipids, and insulin sensitivity in patients with Type 2 Diabetes and metabolic syndrome.",no:"TRUE — 5–10% weight loss has outsized metabolic benefits. It is not necessary to reach 'ideal' weight to see significant clinical improvements."},
+];
+let questions=[],cur=0,score=0,streak=0,wrong=0,answered=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function init(){questions=shuffle(QS);cur=0;score=0;streak=0;wrong=0;answered=false;document.getElementById('endBox').classList.remove('show');document.getElementById('qArea').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';updateHUD();render();}
+function render(){answered=false;const q=questions[cur];document.getElementById('catPill').textContent=q.cat;document.getElementById('qText').textContent=q.stmt;document.getElementById('qNum').textContent='Q'+(cur+1);document.getElementById('opts').innerHTML=`<button class="opt" id="optT" onclick="pick(true)"><span class="opt-letter">T</span>True</button><button class="opt" id="optF" onclick="pick(false)"><span class="opt-letter">F</span>False</button>`;document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){document.getElementById('dots').innerHTML=Array.from({length:questions.length},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function pick(userTrue){if(answered)return;answered=true;const q=questions[cur];const isRight=(userTrue===q.correct);document.getElementById('optT').disabled=true;document.getElementById('optF').disabled=true;if(q.correct)document.getElementById('optT').classList.add('correct');else document.getElementById('optF').classList.add('correct');if(!isRight){if(userTrue)document.getElementById('optT').classList.add('wrong');else document.getElementById('optF').classList.add('wrong');}const fb=document.getElementById('fb');if(isRight){score++;streak++;fb.innerHTML=`<strong>✓ Correct!</strong>${q.ok}`;fb.className='fb ok show';}else{wrong++;streak=0;fb.innerHTML=`<strong>✗ Incorrect.</strong>${q.no}`;fb.className='fb no show';}updateHUD();document.getElementById('nextBtn').className='next-btn show';}
+function next(){cur++;if(cur>=questions.length){showEnd();return;}render();}
+function showEnd(){const pct=Math.round((score/questions.length)*100);document.getElementById('qArea').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct===100?'🏆 Perfect!':pct>=80?'🌟 Sharp Thinking!':pct>=60?'👍 Good Work':'📚 Review & Retry';document.getElementById('endSub').textContent='You answered '+questions.length+' true/false statements.';document.getElementById('eOk').textContent=score;document.getElementById('eNo').textContent=wrong;document.getElementById('endBox').classList.add('show');}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('str').textContent=streak;}
+init();
+</script>
+</body>
+</html>

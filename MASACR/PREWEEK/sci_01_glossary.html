@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossary — Science Behind Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0d0d0d; --surface: #141414; --card: #1a1a1a;
+  --border: rgba(255,255,255,0.07);
+  --red: #e05a3a; --red-dim: rgba(224,90,58,0.15);
+  --text: #ffffff; --muted: #6b7280; --muted2: #9ca3af;
+  --pill-bg: rgba(255,255,255,0.06); --pill-border: rgba(255,255,255,0.12);
+}
+html, body { height:100%; overflow:hidden; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; }
+.page { height:100vh; overflow:hidden; display:grid; grid-template-rows:auto auto auto 1fr; max-width:820px; margin:0 auto; padding:0 32px; }
+.hdr { padding:28px 0 14px; }
+.hdr-eye { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--red); margin-bottom:6px; }
+.hdr h1 { font-family:'Plus Jakarta Sans',sans-serif; font-size:38px; font-weight:800; color:var(--text); margin-bottom:3px; line-height:1.05; }
+.hdr-sub { font-size:14px; color:var(--muted2); }
+.search-wrap { padding:12px 0 10px; }
+.search-inner { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--border); border-radius:10px; padding:11px 18px; }
+.search-icon { color:var(--muted); font-size:14px; flex-shrink:0; }
+.search-input { flex:1; background:transparent; border:none; outline:none; color:var(--text); font-size:14px; font-family:'Inter',sans-serif; }
+.search-input::placeholder { color:var(--muted); }
+.filter-area { padding-bottom:8px; }
+.pills { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+.pill { padding:5px 13px; border-radius:999px; border:1px solid var(--pill-border); background:var(--pill-bg); color:var(--muted2); font-size:11px; font-weight:500; cursor:pointer; transition:all .18s; white-space:nowrap; font-family:'Inter',sans-serif; }
+.pill:hover { border-color:rgba(255,255,255,.22); color:var(--text); }
+.pill.active { background:var(--red-dim); border-color:var(--red); color:var(--text); font-weight:600; }
+.term-count { font-size:12px; color:var(--muted); }
+.list-area { min-height:0; background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; display:flex; flex-direction:column; }
+.term-list { flex:1; overflow:hidden; }
+.term-row { display:flex; align-items:center; justify-content:space-between; padding:0 24px; border-bottom:1px solid var(--border); cursor:pointer; transition:background .15s; gap:16px; }
+.term-row:last-child { border-bottom:none; }
+.term-row:hover { background:rgba(255,255,255,.03); }
+.term-left { display:flex; align-items:center; gap:14px; min-width:0; }
+.red-bar { width:3px; border-radius:2px; background:var(--red); flex-shrink:0; }
+.term-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:16px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cat-badge { flex-shrink:0; padding:3px 10px; border-radius:999px; font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; background:var(--red-dim); color:var(--red); white-space:nowrap; }
+.pager { background:var(--card); border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:12px 24px; flex-shrink:0; }
+.pager-btn { padding:7px 18px; border-radius:8px; border:1px solid var(--border); background:var(--surface); color:var(--muted2); font-size:12px; font-weight:600; cursor:pointer; transition:all .18s; font-family:'Inter',sans-serif; }
+.pager-btn:hover:not(:disabled) { border-color:rgba(255,255,255,.2); color:var(--text); }
+.pager-btn:disabled { opacity:.3; cursor:default; }
+.pager-dots { display:flex; align-items:center; gap:5px; flex-wrap:wrap; justify-content:center; max-width:420px; }
+.pdot { width:8px; height:8px; border-radius:50%; background:var(--border); transition:all .2s; cursor:pointer; border:none; padding:0; flex-shrink:0; }
+.pdot.active { background:var(--red); transform:scale(1.2); }
+.pdot.near { background:rgba(255,255,255,.3); }
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.85); z-index:50; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; }
+.overlay.open { opacity:1; pointer-events:all; }
+.modal { background:var(--card); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:28px 32px; max-width:500px; width:90%; transform:translateY(10px); transition:transform .2s; }
+.overlay.open .modal { transform:translateY(0); }
+.m-badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; background:var(--red-dim); color:var(--red); margin-bottom:12px; }
+.m-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:20px; font-weight:800; color:var(--text); margin-bottom:12px; }
+.m-def { font-size:13px; color:var(--muted2); line-height:1.7; margin-bottom:12px; }
+.m-note { background:rgba(224,90,58,.1); border-left:2px solid var(--red); padding:10px 13px; border-radius:0 8px 8px 0; font-size:12px; color:var(--text); line-height:1.6; display:none; }
+.m-note.show { display:block; }
+.m-note strong { color:var(--red); }
+.m-close { margin-top:16px; width:100%; padding:9px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--muted2); font-size:12px; cursor:pointer; transition:all .18s; font-family:'Inter',sans-serif; }
+.m-close:hover { border-color:var(--red); color:var(--red); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Understanding the Science Behind Healthcare</div>
+    <h1>Glossary</h1>
+    <div class="hdr-sub">Scientific Method · EBP · Body Systems · Pathophysiology · Pharmacology</div>
+  </div>
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" id="searchInput" placeholder="Search terms or definitions…" oninput="onSearch()">
+    </div>
+  </div>
+  <div class="filter-area">
+    <div class="pills" id="pills"></div>
+    <div class="term-count" id="termCount"></div>
+  </div>
+  <div class="list-area" id="listArea">
+    <div class="term-list" id="termList"></div>
+    <div class="pager" id="pager">
+      <button class="pager-btn" id="btnPrev" onclick="changePage(-1)">← Prev</button>
+      <div class="pager-dots" id="pagerDots"></div>
+      <button class="pager-btn" id="btnNext" onclick="changePage(1)">Next →</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="overlay" onclick="maybeClose(event)">
+  <div class="modal">
+    <div class="m-badge" id="mBadge"></div>
+    <div class="m-name" id="mName"></div>
+    <div class="m-def" id="mDef"></div>
+    <div class="m-note" id="mNote"></div>
+    <button class="m-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+<script>
+const TERMS=[
+  {cat:"Scientific Method",name:"Scientific Method",def:"A systematic process for building medical knowledge: observation → question → hypothesis → experiment/study → analysis → conclusion. Clinical protocols exist because they have been tested through this process.",note:"<strong>Clinical link:</strong> Every evidence-based guideline you follow was produced through the scientific method."},
+  {cat:"Scientific Method",name:"Hypothesis",def:"A testable, falsifiable prediction made before a study begins. Example: 'Smokers will have higher rates of bronchitis than non-smokers.'",note:"A hypothesis must be testable — it is not a guess, but a specific, measurable prediction."},
+  {cat:"Scientific Method",name:"Randomized Controlled Trial (RCT)",def:"The gold standard study design. Participants are randomly assigned to a treatment or control group, eliminating selection bias and allowing causal conclusions.",note:"<strong>Key feature:</strong> Randomization — it's what separates an RCT from an observational study."},
+  {cat:"Scientific Method",name:"Peer Review",def:"The process by which independent scientists evaluate a study before it is published, ensuring accuracy, methodology, and validity. The quality control system of research.",note:"If a study has not been peer-reviewed, treat its findings with extra skepticism."},
+  {cat:"Scientific Method",name:"Statistical Significance (p-value)",def:"p < 0.05 means there is less than a 5% probability the result occurred by chance alone. Does not mean the effect is clinically large — only that it is unlikely to be random.",note:"<strong>Remember:</strong> Statistical significance ≠ clinical importance. A tiny effect can be statistically significant in a large study."},
+  {cat:"Scientific Method",name:"Double-Blind Study",def:"Neither the participants nor the researchers know who is receiving the treatment or the placebo. Eliminates observer and participant bias from study results.",note:"Double-blind design is considered strongest for drug trials because it removes expectation effects on both sides."},
+  {cat:"Scientific Method",name:"Placebo",def:"An inactive treatment given to the control group that looks identical to the real treatment. Tests whether the drug effect is real or due to patient expectation (the placebo effect).",note:"The placebo effect is real and measurable — that's why placebo controls are necessary in rigorous trials."},
+  {cat:"EBP",name:"Evidence-Based Practice (EBP)",def:"The integration of the best current research evidence, clinical expertise, and patient values to guide healthcare decisions. When better evidence emerges, practice evolves.",note:"<strong>MA role:</strong> Support and follow EBP — never improvise alternatives to provider-issued protocols."},
+  {cat:"EBP",name:"Systematic Review",def:"A comprehensive synthesis of all available research on a specific question, using rigorous methodology to combine and evaluate multiple studies. Highest level of evidence.",note:"Level 1 in the hierarchy of evidence — stronger than any individual study because it synthesizes many."},
+  {cat:"EBP",name:"Meta-Analysis",def:"A statistical method that combines data from multiple studies to produce a single, more powerful estimate of an effect. Often paired with systematic reviews.",note:"More statistical power than individual studies — but only as valid as the studies it combines."},
+  {cat:"EBP",name:"Hierarchy of Evidence",def:"A ranking of study types by their strength: Level 1 (systematic reviews) → Level 2 (RCTs) → Level 3 (cohort/case-control) → Level 4 (case reports) → Level 5 (anecdote).",note:"The higher the level, the more confidence you can place in the findings when applying them to patient care."},
+  {cat:"EBP",name:"Informed Consent",def:"The process of fully informing research participants of risks, benefits, procedures, and their right to withdraw before enrolling in any study. Required ethically and legally.",note:"Informed consent is not just a form — it is an ongoing conversation. Participants must understand what they are agreeing to."},
+  {cat:"Body Systems",name:"Homeostasis",def:"The body's ability to maintain a stable internal environment despite external changes. Temperature, blood glucose, blood pressure, and pH are all homeostatically regulated.",note:"<strong>Clinical link:</strong> Vital signs monitoring IS homeostasis monitoring — you are measuring whether regulatory systems are succeeding."},
+  {cat:"Body Systems",name:"Negative Feedback Loop",def:"The most common homeostatic mechanism — the body corrects a deviation by responding in the opposite direction. Example: rising glucose triggers insulin release to lower it.",note:"Negative feedback = stabilizing. Positive feedback = amplifying (less common — examples include labor contractions, blood clotting)."},
+  {cat:"Body Systems",name:"Cardiovascular System",def:"Pumps blood throughout the body, delivering oxygen and nutrients to tissues and removing metabolic waste. Consists of the heart, arteries, veins, and capillaries.",note:"Vital sign connection: Heart rate and blood pressure directly reflect cardiovascular system function."},
+  {cat:"Body Systems",name:"Respiratory System",def:"Responsible for gas exchange — oxygen enters the bloodstream and carbon dioxide is expelled. Maintains blood oxygen saturation and contributes to pH regulation through CO2.",note:"Pulse oximetry measures respiratory effectiveness. Normal SpO2: 95–100%."},
+  {cat:"Body Systems",name:"Endocrine System",def:"A network of glands that produce and secrete hormones directly into the bloodstream. Regulates metabolism, growth, reproduction, stress response, and mood.",note:"The pancreas (insulin/glucagon) and thyroid are endocrine organs MAs frequently encounter in chronic disease management."},
+  {cat:"Body Systems",name:"Integumentary System",def:"Skin, hair, and nails — the body's outermost barrier. Functions include protection from pathogens, temperature regulation, sensation, and vitamin D synthesis.",note:"Wound healing, pressure injuries, and skin assessment during intake are key MA applications of integumentary knowledge."},
+  {cat:"Pathophysiology",name:"Pathophysiology",def:"The study of how normal physiological processes are disrupted by disease, injury, or dysfunction. The bridge between basic science and clinical medicine.",note:"Understanding pathophysiology helps you document and observe more accurately — you understand WHY symptoms occur."},
+  {cat:"Pathophysiology",name:"Inflammation",def:"The body's immediate protective response to injury or infection — characterized by redness, heat, swelling, and pain. Acute inflammation is protective; chronic inflammation causes tissue damage.",note:"<strong>Chronic inflammation underlies:</strong> atherosclerosis, arthritis, IBD, and many cancers. Not all inflammation is beneficial."},
+  {cat:"Pathophysiology",name:"Ischemia",def:"Reduced or insufficient blood flow to a tissue, causing oxygen deprivation. If complete blockage occurs, it leads to infarction (tissue death). Example: MI (heart attack), CVA (stroke).",note:"Time is tissue in ischemia — the faster blood flow is restored, the more tissue can be saved."},
+  {cat:"Pathophysiology",name:"Infarction",def:"Tissue death (necrosis) caused by complete blockage of blood supply. Myocardial infarction = heart attack; cerebral infarction = ischemic stroke.",note:"MAs must recognize warning signs: chest pain, dyspnea, sudden neurological changes — flag immediately."},
+  {cat:"Pathophysiology",name:"Neoplasia",def:"Uncontrolled, abnormal cell growth due to mutations in cell-cycle regulatory genes. Can be benign (non-invasive) or malignant (invasive, capable of metastasis).",note:"Cancer stages reflect spread: local → regional lymph nodes → distant metastasis. Staging guides treatment decisions."},
+  {cat:"Pathophysiology",name:"Autoimmune Disease",def:"A condition in which the immune system attacks the body's own healthy cells. Examples: rheumatoid arthritis, lupus, Crohn's disease, Type 1 diabetes.",note:"MAs frequently assist with monitoring of autoimmune patients on immunosuppressive medications — infection risk is high."},
+  {cat:"Pharmacology",name:"Pharmacokinetics (ADME)",def:"What the body does to a drug: Absorption (drug enters bloodstream), Distribution (travels to tissues), Metabolism (liver transforms it), Excretion (kidneys/liver remove it).",note:"<strong>ADME</strong> explains why route, dose, and timing matter — oral drugs absorb differently than IM or IV."},
+  {cat:"Pharmacology",name:"Pharmacodynamics",def:"What the drug does to the body — mechanism of action, therapeutic effect, side effects, and dose-response relationships.",note:"Example: Beta blockers slow heart rate by blocking adrenaline receptors (pharmacodynamics). How they're absorbed is pharmacokinetics."},
+  {cat:"Pharmacology",name:"Therapeutic Window",def:"The dose range at which a drug is effective without causing toxicity. Drugs with narrow therapeutic windows (e.g., warfarin, digoxin, lithium) require close monitoring.",note:"<strong>MA role:</strong> Recognize that some medications require regular lab monitoring because their therapeutic window is narrow."},
+  {cat:"Pharmacology",name:"First-Pass Effect",def:"The phenomenon where orally administered drugs are partially metabolized by the liver before reaching systemic circulation, reducing bioavailability compared to IV administration.",note:"This is why some drugs (e.g., nitroglycerin) are given sublingually or transdermally — to bypass first-pass metabolism."},
+  {cat:"Pharmacology",name:"Adverse Drug Reaction",def:"An unexpected, harmful response to a drug at normal doses. Distinct from side effects (predictable, dose-related). MAs must document and report both to the provider.",note:"<strong>Document both:</strong> expected side effects AND unexpected adverse reactions in the patient record."},
+  {cat:"Pharmacology",name:"Drug Classification",def:"The grouping of drugs by their mechanism of action or therapeutic use. Major classes: analgesics, antibiotics, antihypertensives, antidiabetics, anticoagulants, corticosteroids.",note:"MAs administer, document, and educate patients across all major drug classes — knowing the class informs monitoring."},
+  {cat:"Clinical Trials",name:"Clinical Trial Phases",def:"Phase I (safety, ~20–100 people) → Phase II (effectiveness, ~100–300) → Phase III (large-scale RCT, 1,000–3,000) → FDA Review → Phase IV (post-market surveillance).",note:"By the time a drug is approved, it has typically been tested in thousands of patients over many years."},
+  {cat:"Clinical Trials",name:"FDA Approval",def:"The regulatory review process in which all clinical trial data is evaluated before a drug or treatment is authorized for use in the general population.",note:"FDA approval means the benefit-risk profile was judged acceptable — it does not mean the drug is risk-free."},
+  {cat:"Clinical Trials",name:"Phase IV (Post-Market Surveillance)",def:"Ongoing monitoring of an approved drug in the general population after FDA approval. Detects rare adverse effects that only appear in large, diverse populations.",note:"Some drugs are withdrawn post-market when Phase IV surveillance reveals rare but serious risks not seen in trials."},
+  {cat:"Critical Thinking",name:"Misinformation Red Flags",def:"Signs of unreliable health information: no citations, based on anecdotes, promises to cure multiple conditions, uses fear/urgency, source is selling something, not peer-reviewed.",note:"'Doctors don't want you to know this' is a classic misinformation signal — legitimate research is published openly."},
+  {cat:"Critical Thinking",name:"Credible Health Information",def:"Characteristics of reliable sources: published in peer-reviewed journals (NEJM, JAMA, Lancet), transparent methodology, large diverse samples, replicated findings, disclosed conflicts of interest.",note:"<strong>Go to primary sources:</strong> CDC, WHO, NIH, and peer-reviewed journals — not social media or wellness blogs."},
+];
+const CATS=['All','Scientific Method','EBP','Body Systems','Pathophysiology','Pharmacology','Clinical Trials','Critical Thinking'];
+const PER_PAGE=4;
+let activeCat='All',searchQ='',currentPage=0,filtered=[];
+function buildPills(){document.getElementById('pills').innerHTML=CATS.map(c=>`<button class="pill ${c===activeCat?'active':''}" onclick="setFilter('${c}')">${c}</button>`).join('');}
+function setFilter(c){activeCat=c;currentPage=0;buildPills();applyFilter();}
+function onSearch(){searchQ=document.getElementById('searchInput').value.toLowerCase();currentPage=0;applyFilter();}
+function applyFilter(){filtered=TERMS.filter(t=>{const mc=activeCat==='All'||t.cat===activeCat;const mq=!searchQ||t.name.toLowerCase().includes(searchQ)||t.def.toLowerCase().includes(searchQ);return mc&&mq;});renderPage();}
+function renderPage(){
+  const total=filtered.length,totalPages=Math.max(1,Math.ceil(total/PER_PAGE));
+  if(currentPage>=totalPages)currentPage=totalPages-1;
+  const start=currentPage*PER_PAGE,items=filtered.slice(start,start+PER_PAGE);
+  document.getElementById('termCount').textContent=`${total} term${total!==1?'s':''} · Page ${currentPage+1} of ${totalPages}`;
+  const la=document.getElementById('listArea'),pg=document.getElementById('pager');
+  const rowH=Math.floor((la.clientHeight-pg.offsetHeight)/PER_PAGE),barH=Math.floor(rowH*.38);
+  document.getElementById('termList').innerHTML=items.map(t=>`
+    <div class="term-row" style="height:${rowH}px" onclick="openModal(${filtered.indexOf(t)})">
+      <div class="term-left"><div class="red-bar" style="height:${barH}px"></div><div class="term-name">${t.name}</div></div>
+      <div class="cat-badge">${t.cat}</div>
+    </div>`).join('');
+  document.getElementById('pagerDots').innerHTML=Array.from({length:totalPages},(_,i)=>`<button class="pdot${i===currentPage?' active':Math.abs(i-currentPage)<=2?' near':''}" onclick="goPage(${i})"></button>`).join('');
+  document.getElementById('btnPrev').disabled=currentPage===0;
+  document.getElementById('btnNext').disabled=currentPage>=totalPages-1;
+}
+function changePage(d){const tp=Math.max(1,Math.ceil(filtered.length/PER_PAGE));currentPage=Math.max(0,Math.min(tp-1,currentPage+d));renderPage();}
+function goPage(n){currentPage=n;renderPage();}
+function openModal(i){const t=filtered[i];document.getElementById('mBadge').textContent=t.cat;document.getElementById('mName').textContent=t.name;document.getElementById('mDef').textContent=t.def;const n=document.getElementById('mNote');if(t.note){n.innerHTML=t.note;n.className='m-note show';}else{n.className='m-note';}document.getElementById('overlay').classList.add('open');}
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+function maybeClose(e){if(e.target===document.getElementById('overlay'))closeModal();}
+buildPills();applyFilter();
+window.addEventListener('resize',()=>renderPage());
+</script>
+</body>
+</html>

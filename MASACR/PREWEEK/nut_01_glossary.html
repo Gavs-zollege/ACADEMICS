@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossary — Nutrition Essentials</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0d0d0d; --surface:#141414; --card:#1a1a1a; --border:rgba(255,255,255,.07);
+  --red:#e05a3a; --red-dim:rgba(224,90,58,.15); --text:#ffffff; --muted:#6b7280; --muted2:#9ca3af;
+  --pill-bg:rgba(255,255,255,.06); --pill-border:rgba(255,255,255,.12);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr;max-width:820px;margin:0 auto;padding:0 32px;}
+.hdr{padding:28px 0 14px;}
+.hdr-eye{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:38px;font-weight:800;color:var(--text);margin-bottom:3px;line-height:1.05;}
+.hdr-sub{font-size:14px;color:var(--muted2);}
+.search-wrap{padding:12px 0 10px;}
+.search-inner{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 18px;}
+.search-icon{color:var(--muted);font-size:14px;flex-shrink:0;}
+.search-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;}
+.search-input::placeholder{color:var(--muted);}
+.filter-area{padding-bottom:8px;}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.pill{padding:5px 13px;border-radius:999px;border:1px solid var(--pill-border);background:var(--pill-bg);color:var(--muted2);font-size:11px;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap;font-family:'Inter',sans-serif;}
+.pill:hover{border-color:rgba(255,255,255,.22);color:var(--text);}
+.pill.active{background:var(--red-dim);border-color:var(--red);color:var(--text);font-weight:600;}
+.term-count{font-size:12px;color:var(--muted);}
+.list-area{min-height:0;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
+.term-list{flex:1;overflow:hidden;}
+.term-row{display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;gap:16px;}
+.term-row:last-child{border-bottom:none;}
+.term-row:hover{background:rgba(255,255,255,.03);}
+.term-left{display:flex;align-items:center;gap:14px;min-width:0;}
+.red-bar{width:3px;border-radius:2px;background:var(--red);flex-shrink:0;}
+.term-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cat-badge{flex-shrink:0;padding:3px 10px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--red-dim);color:var(--red);white-space:nowrap;}
+.pager{background:var(--card);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:12px 24px;flex-shrink:0;}
+.pager-btn{padding:7px 18px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted2);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;font-family:'Inter',sans-serif;}
+.pager-btn:hover:not(:disabled){border-color:rgba(255,255,255,.2);color:var(--text);}
+.pager-btn:disabled{opacity:.3;cursor:default;}
+.pager-dots{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:center;max-width:420px;}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .2s;cursor:pointer;border:none;padding:0;flex-shrink:0;}
+.pdot.active{background:var(--red);transform:scale(1.2);}
+.pdot.near{background:rgba(255,255,255,.3);}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:50;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:28px 32px;max-width:500px;width:90%;transform:translateY(10px);transition:transform .2s;}
+.overlay.open .modal{transform:translateY(0);}
+.m-badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--red-dim);color:var(--red);margin-bottom:12px;}
+.m-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:12px;}
+.m-def{font-size:13px;color:var(--muted2);line-height:1.7;margin-bottom:12px;}
+.m-note{background:rgba(224,90,58,.1);border-left:2px solid var(--red);padding:10px 13px;border-radius:0 8px 8px 0;font-size:12px;color:var(--text);line-height:1.6;display:none;}
+.m-note.show{display:block;}
+.m-note strong{color:var(--red);}
+.m-close{margin-top:16px;width:100%;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:12px;cursor:pointer;transition:all .18s;font-family:'Inter',sans-serif;}
+.m-close:hover{border-color:var(--red);color:var(--red);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Nutrition Essentials for Medical Assistants</div>
+    <h1>Glossary</h1>
+    <div class="hdr-sub">Nutrients · MyPlate · Deficiencies · Therapeutic Diets · Chronic Disease</div>
+  </div>
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" id="searchInput" placeholder="Search terms or definitions…" oninput="onSearch()">
+    </div>
+  </div>
+  <div class="filter-area">
+    <div class="pills" id="pills"></div>
+    <div class="term-count" id="termCount"></div>
+  </div>
+  <div class="list-area" id="listArea">
+    <div class="term-list" id="termList"></div>
+    <div class="pager" id="pager">
+      <button class="pager-btn" id="btnPrev" onclick="changePage(-1)">← Prev</button>
+      <div class="pager-dots" id="pagerDots"></div>
+      <button class="pager-btn" id="btnNext" onclick="changePage(1)">Next →</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="overlay" onclick="maybeClose(event)">
+  <div class="modal">
+    <div class="m-badge" id="mBadge"></div>
+    <div class="m-name" id="mName"></div>
+    <div class="m-def" id="mDef"></div>
+    <div class="m-note" id="mNote"></div>
+    <button class="m-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+<script>
+const TERMS=[
+  {cat:"Essential Nutrients",name:"Six Essential Nutrients",def:"Carbohydrates, proteins, fats, vitamins, minerals, and water — the six categories the body requires to sustain life, support growth, and prevent disease.",note:"<strong>Remember:</strong> Macronutrients (carbs, protein, fat) provide energy. Micronutrients (vitamins, minerals) regulate body processes. Water supports all functions."},
+  {cat:"Essential Nutrients",name:"Carbohydrates",def:"The body's primary and most immediate energy source. 4 kcal/g. Should make up 45–65% of daily calories. Simple carbs digest rapidly; complex carbs digest slowly.",note:"<strong>Clinical:</strong> Diabetic patients require carb monitoring. Simple carbs cause rapid blood glucose spikes. Complex carbs (fiber-rich) create steadier glucose levels."},
+  {cat:"Essential Nutrients",name:"Proteins",def:"Builds and repairs tissue; makes enzymes and hormones. 4 kcal/g. Daily need: ~0.8 g/kg body weight for healthy adults. Complete proteins contain all 9 essential amino acids.",note:"Complete proteins: meat, eggs, soy. Incomplete: grains, legumes (combine for complete). Critical for wound healing, immune function, and enzyme production."},
+  {cat:"Essential Nutrients",name:"Fats",def:"Most energy-dense macronutrient: 9 kcal/g. Should make up 20–35% of daily calories. Essential for energy storage and absorption of fat-soluble vitamins (A, D, E, K).",note:"Unsaturated (healthy): olive oil, nuts, avocado, fish. Saturated: limit — raises LDL. Trans fats: AVOID — banned in most products, highly atherogenic."},
+  {cat:"Essential Nutrients",name:"Fat-Soluble Vitamins (A, D, E, K)",def:"Stored in body fat and liver. Can accumulate to toxic levels with excess intake. Require dietary fat for absorption — important for patients on very low-fat diets.",note:"A = vision, immune, skin. D = calcium absorption, bone health. E = antioxidant. K = blood clotting, bone metabolism. Monitor patients on warfarin for Vitamin K changes."},
+  {cat:"Essential Nutrients",name:"Water-Soluble Vitamins (B, C)",def:"Not stored in the body — excess is excreted in urine. Must be consumed regularly. Includes B complex (B1, B2, B3, B5, B6, B7, B9, B12) and vitamin C.",note:"Water-soluble vitamins are less likely to cause toxicity but deficiencies develop faster since they are not stored. Vegans are especially at risk for B12 deficiency."},
+  {cat:"Essential Nutrients",name:"Macronutrients",def:"Nutrients needed in large amounts that provide energy: carbohydrates (4 kcal/g), proteins (4 kcal/g), and fats (9 kcal/g).",note:"The caloric density of fat (9 kcal/g) is more than double that of carbs or protein — this is why high-fat diets are calorie-dense."},
+  {cat:"Essential Nutrients",name:"Micronutrients",def:"Vitamins and minerals needed in small amounts that regulate body processes. Do not provide calories. Include fat-soluble vitamins, water-soluble vitamins, and minerals.",note:"Even though needed in small amounts, deficiencies have major clinical consequences — iron deficiency anemia, scurvy (C), rickets (D), neural tube defects (folate)."},
+  {cat:"MyPlate",name:"MyPlate Guidelines",def:"USDA's current framework for balanced daily eating. Divides the plate into four sections: Vegetables (30%), Grains (30%), Fruits (20%), Protein (20%), with a dairy side.",note:"Key rules: half the plate = fruits and vegetables; half of grains should be whole grains; choose unsaturated fats; limit sodium (<2,300 mg/day) and added sugars (<10% calories)."},
+  {cat:"MyPlate",name:"Dietary Fiber",def:"A complex carbohydrate that cannot be digested. Daily recommended intake: 25 g/day for women, 38 g/day for men. Found in whole grains, legumes, fruits, and vegetables.",note:"Fiber aids digestion, lowers LDL cholesterol, stabilizes blood glucose, and reduces colorectal cancer risk. Patients on diabetic diets especially benefit from high-fiber foods."},
+  {cat:"MyPlate",name:"Glycemic Index",def:"A measure of how quickly a carbohydrate-containing food raises blood glucose. High GI = rapid rise (white bread, soda). Low GI = gradual rise (whole grains, legumes).",note:"Low-glycemic eating is recommended for diabetic patients. High-GI foods cause rapid insulin spikes and crashes — document carb quality, not just quantity."},
+  {cat:"Deficiencies",name:"Iron-Deficiency Anemia",def:"Most common nutritional deficiency. Results from insufficient iron for hemoglobin production. Signs: fatigue, pallor, brittle nails, pica, tachycardia.",note:"<strong>At risk:</strong> Women of childbearing age, vegetarians, pregnant patients. MA role: note pallor and fatigue during intake; document dietary iron sources and supplement use."},
+  {cat:"Deficiencies",name:"Vitamin D Deficiency",def:"Insufficient vitamin D for calcium absorption and bone health. Signs: bone pain, muscle weakness, frequent infections, depression. Common in indoor workers and darker skin tones.",note:"<strong>At risk:</strong> Indoor workers, elderly, obese patients, darker skin tones (less UV synthesis). Vitamin D is also critical for immune function and mood regulation."},
+  {cat:"Deficiencies",name:"Vitamin B12 Deficiency",def:"Insufficient B12 for red blood cell formation and nerve function. Signs: fatigue, numbness/tingling, memory issues, glossitis (inflamed tongue).",note:"<strong>At risk:</strong> Vegans/vegetarians (animal sources only), elderly (decreased absorption), metformin users, post-gastric bypass patients. Can cause irreversible neurological damage."},
+  {cat:"Deficiencies",name:"Folate (B9) Deficiency",def:"Insufficient folate for DNA synthesis and red blood cell production. Critical during pregnancy for neural tube development. Signs: megaloblastic anemia, mouth sores.",note:"<strong>Neural tube defects</strong> (spina bifida, anencephaly) occur in the first weeks of pregnancy — before many women know they are pregnant. All women of childbearing age should supplement."},
+  {cat:"Deficiencies",name:"Calcium Deficiency",def:"Insufficient calcium for bone/tooth strength and muscle and nerve function. Signs: muscle cramps, osteoporosis, dental problems, seizures in severe cases.",note:"<strong>At risk:</strong> Post-menopausal women, lactose-intolerant patients, elderly. Chronic deficiency leads to osteoporosis. Calcium requires adequate Vitamin D for absorption."},
+  {cat:"Deficiencies",name:"Protein-Energy Malnutrition (PEM)",def:"Insufficient protein and/or total caloric intake. Signs: muscle wasting, poor wound healing, edema, hair loss, impaired immune function.",note:"<strong>At risk:</strong> Elderly, post-surgical, cancer patients, eating disorder patients. Poor wound healing in a patient = flag for possible protein deficiency."},
+  {cat:"Therapeutic Diets",name:"Diabetic / Carb-Controlled Diet",def:"Prescribed for Type 2 diabetes and pre-diabetes. Goal: control blood glucose by limiting added sugars and refined carbohydrates. Carb counting: ~45–60g per meal.",note:"MA role: document carb intake during dietary history; reinforce glucose monitoring schedule; reinforce provider's carb-counting instructions. Do NOT modify the prescribed plan."},
+  {cat:"Therapeutic Diets",name:"Low-Sodium Diet",def:"Prescribed for hypertension, CHF, CKD, and edema. Goal: reduce fluid retention and blood pressure. Limit sodium to <2,000 mg/day. Avoid processed foods and canned soups.",note:"Hidden sodium: processed foods, restaurant meals, canned goods, condiments are the biggest sources. Patients often underestimate sodium intake."},
+  {cat:"Therapeutic Diets",name:"Renal / CKD Diet",def:"Prescribed for Chronic Kidney Disease. Limits potassium, phosphorus, sodium, and sometimes protein depending on disease stage. Managed by stage — refer to renal dietitian.",note:"<strong>MA role:</strong> Note CMP/BMP lab values; flag dietary non-compliance; reinforce fluid restrictions if ordered. Never modify renal diet restrictions without provider/RD direction."},
+  {cat:"Therapeutic Diets",name:"DASH Diet",def:"Dietary Approaches to Stop Hypertension. Heart-healthy diet for CAD, hypertension, and hyperlipidemia. High in fruits, vegetables, and fiber. Low in saturated fat and sodium.",note:"DASH is evidence-based for blood pressure reduction. MA role: document sodium intake; reinforce heart-healthy food swaps; note lipid panel trends."},
+  {cat:"Therapeutic Diets",name:"Gluten-Free Diet",def:"Elimination of wheat, barley, and rye. Required for celiac disease (autoimmune) and recommended for non-celiac gluten sensitivity. Even trace exposure causes intestinal damage in celiac.",note:"Cross-contamination matters in celiac — shared cooking surfaces, shared utensils, and hidden gluten in sauces/condiments can trigger reactions. This is not a preference diet for celiac patients."},
+  {cat:"Therapeutic Diets",name:"Clear/Full Liquid Diet",def:"Clear liquid (broth, water, gelatin) for pre/post-operative or acute GI illness. Full liquid adds milk, pudding, and cream soups. Goal: ease digestion and maintain hydration.",note:"These diets are temporary and prescribed — document the type (clear vs. full) in intake documentation. Patient tolerance is important to note."},
+  {cat:"Chronic Disease",name:"Type 2 Diabetes — Nutrition",def:"Diet intervention: low-glycemic, carb-controlled, high-fiber eating. Reduces postprandial glucose spikes and improves HbA1c over time.",note:"MA role: document carb intake; reinforce glucose monitoring schedule; reinforce provider's carb-counting instructions; flag HbA1c trends."},
+  {cat:"Chronic Disease",name:"Cardiovascular Disease — Nutrition",def:"DASH or Mediterranean diet. Low in saturated fat and sodium, high in omega-3 fatty acids, fiber, and produce. Reduces LDL cholesterol and blood pressure.",note:"MA role: document sodium intake; note lipid panel (LDL, HDL, triglycerides) trends; reinforce heart-healthy food swaps. Flag patients on anticoagulants if Vitamin K intake changes."},
+  {cat:"Chronic Disease",name:"Obesity & Metabolic Syndrome",def:"Diet intervention: calorie-aware, nutrient-dense eating; limit ultra-processed foods. Weight loss of 5–10% body weight significantly improves metabolic markers.",note:"MA role: record weight at every visit; document dietary history accurately; support without shaming. Weight stigma negatively impacts patient engagement and outcomes."},
+  {cat:"MA Scope",name:"Within MA Nutrition Scope",def:"Document dietary history and 24-hour food recall; reinforce provider education; provide approved printed materials (MyPlate, diet sheets); record height, weight, BMI; note food allergies.",note:"MAs support, document, and reinforce — they do not create meal plans, diagnose deficiencies, or recommend supplements. When in doubt, refer to the provider or RD."},
+  {cat:"MA Scope",name:"Outside MA Nutrition Scope",def:"Creating or modifying individualized meal plans, diagnosing nutritional deficiencies, recommending specific supplements or dosages, contradicting provider-ordered dietary instructions.",note:"Medical Nutrition Therapy is performed only by Registered Dietitians (RDs). If a patient needs a structured, individualized diet plan, refer to an RD."},
+  {cat:"MA Scope",name:"When to Refer to an RD",def:"Complex conditions (CKD, eating disorders, cancer), pregnancy or pediatric nutrition needs, patients requiring a structured individualized meal plan, or any situation where provider-level dietary guidance is needed.",note:"RD referral is appropriate whenever the patient's nutritional needs exceed basic reinforcement. Document the referral recommendation clearly in the patient record."},
+];
+const CATS=['All','Essential Nutrients','MyPlate','Deficiencies','Therapeutic Diets','Chronic Disease','MA Scope'];
+const PER_PAGE=4;
+let activeCat='All',searchQ='',currentPage=0,filtered=[];
+function buildPills(){document.getElementById('pills').innerHTML=CATS.map(c=>`<button class="pill ${c===activeCat?'active':''}" onclick="setFilter('${c}')">${c}</button>`).join('');}
+function setFilter(c){activeCat=c;currentPage=0;buildPills();applyFilter();}
+function onSearch(){searchQ=document.getElementById('searchInput').value.toLowerCase();currentPage=0;applyFilter();}
+function applyFilter(){filtered=TERMS.filter(t=>{const mc=activeCat==='All'||t.cat===activeCat;const mq=!searchQ||t.name.toLowerCase().includes(searchQ)||t.def.toLowerCase().includes(searchQ);return mc&&mq;});renderPage();}
+function renderPage(){
+  const total=filtered.length,totalPages=Math.max(1,Math.ceil(total/PER_PAGE));
+  if(currentPage>=totalPages)currentPage=totalPages-1;
+  const items=filtered.slice(currentPage*PER_PAGE,currentPage*PER_PAGE+PER_PAGE);
+  document.getElementById('termCount').textContent=`${total} term${total!==1?'s':''} · Page ${currentPage+1} of ${totalPages}`;
+  const la=document.getElementById('listArea'),pg=document.getElementById('pager');
+  const rowH=Math.floor((la.clientHeight-pg.offsetHeight)/PER_PAGE),barH=Math.floor(rowH*.38);
+  document.getElementById('termList').innerHTML=items.map(t=>`<div class="term-row" style="height:${rowH}px" onclick="openModal(${filtered.indexOf(t)})"><div class="term-left"><div class="red-bar" style="height:${barH}px"></div><div class="term-name">${t.name}</div></div><div class="cat-badge">${t.cat}</div></div>`).join('');
+  document.getElementById('pagerDots').innerHTML=Array.from({length:totalPages},(_,i)=>`<button class="pdot${i===currentPage?' active':Math.abs(i-currentPage)<=2?' near':''}" onclick="goPage(${i})"></button>`).join('');
+  document.getElementById('btnPrev').disabled=currentPage===0;
+  document.getElementById('btnNext').disabled=currentPage>=totalPages-1;
+}
+function changePage(d){const tp=Math.max(1,Math.ceil(filtered.length/PER_PAGE));currentPage=Math.max(0,Math.min(tp-1,currentPage+d));renderPage();}
+function goPage(n){currentPage=n;renderPage();}
+function openModal(i){const t=filtered[i];document.getElementById('mBadge').textContent=t.cat;document.getElementById('mName').textContent=t.name;document.getElementById('mDef').textContent=t.def;const n=document.getElementById('mNote');if(t.note){n.innerHTML=t.note;n.className='m-note show';}else{n.className='m-note';}document.getElementById('overlay').classList.add('open');}
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+function maybeClose(e){if(e.target===document.getElementById('overlay'))closeModal();}
+buildPills();applyFilter();
+window.addEventListener('resize',()=>renderPage());
+</script>
+</body>
+</html>

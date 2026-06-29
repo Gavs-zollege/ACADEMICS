@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple Choice — Nutrition Essentials</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#ffffff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto 1fr auto auto;padding:0 20px;max-width:660px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 8px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:8px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:26px;background:var(--red);}
+.dot.d{background:var(--green);}
+.hud{display:flex;gap:10px;justify-content:center;padding:4px 0 8px;}
+.hud-chip{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid;}
+.hud-chip.s{background:rgba(224,90,58,.1);color:var(--red);border-color:rgba(224,90,58,.4);}
+.hud-chip.st{background:rgba(76,175,130,.1);color:var(--green);border-color:rgba(76,175,130,.4);}
+.q-area{display:flex;flex-direction:column;gap:6px;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.6;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:hidden;justify-content:flex-start;}
+.opt{width:100%;text-align:left;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:10px 15px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:none;margin:8px auto 10px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 48px;text-align:center;grid-row:2/6;align-self:center;}
+.end-box.show{display:flex;}
+.end-pct{font-size:50px;font-weight:800;color:var(--red);font-family:'Plus Jakarta Sans',sans-serif;}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.end-stats{display:flex;gap:14px;}
+.stat{padding:10px 18px;border-radius:10px;text-align:center;}
+.stat.g{background:rgba(76,175,130,.1);}
+.stat.r{background:rgba(224,90,90,.1);}
+.stat-n{font-size:22px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;}
+.stat.g .stat-n{color:var(--green);}
+.stat.r .stat-n{color:var(--rose);}
+.stat-l{font-size:11px;color:var(--muted);margin-top:2px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Nutrition Essentials</div>
+    <h1>Multiple Choice</h1>
+    <p>Select the best answer for each question.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="hud">
+    <div class="hud-chip s">Score: <span id="sc">0</span></div>
+    <div class="hud-chip st">🔥 Streak: <span id="str">0</span></div>
+  </div>
+  <div class="q-area" id="qArea">
+    <div class="q-box">
+      <div class="q-text" id="qText"></div>
+      <div class="q-num" id="qNum"></div>
+    </div>
+  </div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Question →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <div class="end-stats">
+      <div class="stat g"><div class="stat-n" id="eOk">0</div><div class="stat-l">Correct</div></div>
+      <div class="stat r"><div class="stat-n" id="eNo">0</div><div class="stat-l">Incorrect</div></div>
+    </div>
+    <button class="restart-btn" onclick="init()">Play Again</button>
+  </div>
+</div>
+<script>
+const QS=[
+  {q:"Which macronutrient provides the MOST calories per gram?",opts:["Carbohydrates (4 kcal/g)","Protein (4 kcal/g)","Fats (9 kcal/g)","Fiber (2 kcal/g)"],ans:2,ok:"Fats provide 9 kcal/g — more than double carbohydrates or protein (both 4 kcal/g). This is why high-fat diets are calorie-dense.",no:"Fats = 9 kcal/g. Carbohydrates and protein = 4 kcal/g each. Fat is the most energy-dense macronutrient."},
+  {q:"According to MyPlate guidelines, what fraction of the plate should be fruits and vegetables combined?",opts:["One quarter","One third","One half","Two thirds"],ans:2,ok:"MyPlate: vegetables 30% + fruits 20% = half the plate should be produce. This ensures adequate vitamins, minerals, and fiber.",no:"MyPlate = half the plate fruits and vegetables. Vegetables: 30%, Fruits: 20% = 50% total produce."},
+  {q:"A patient is vegan and takes metformin for Type 2 Diabetes. Which nutritional deficiency is she at HIGHEST risk for?",opts:["Vitamin C","Iron","Vitamin B12","Calcium"],ans:2,ok:"B12 is found only in animal products — vegans are at high risk. Metformin further reduces B12 absorption. Risk is compounded.",no:"Vitamin B12 is found only in animal products. Vegans + metformin users = double risk for B12 deficiency. Monitor for fatigue, numbness, and glossitis."},
+  {q:"The DASH diet is primarily prescribed for:",opts:["Celiac disease — to eliminate gluten","Hypertension, CAD, and hyperlipidemia","Chronic Kidney Disease — to limit potassium","Pre-operative bowel preparation"],ans:1,ok:"DASH (Dietary Approaches to Stop Hypertension) is evidence-based for hypertension, CAD, and hyperlipidemia. High in produce and fiber, low in sodium and saturated fat.",no:"DASH = Dietary Approaches to Stop Hypertension. Used for HTN, CAD, and hyperlipidemia. High produce/fiber, low sodium/saturated fat."},
+  {q:"Which vitamins require dietary fat for absorption?",opts:["Vitamins A, D, E, K","Vitamins B1, B6, B12, C","Vitamins C, D, E, and K only","All vitamins require fat for absorption"],ans:0,ok:"Fat-soluble vitamins A, D, E, and K require dietary fat for absorption. Patients on very low-fat diets may develop deficiencies even with adequate intake.",no:"Fat-soluble = A, D, E, K. They are stored in body fat and require dietary fat for absorption. Water-soluble (B complex, C) do not."},
+  {q:"A patient with Type 2 Diabetes asks you how many carbohydrates they should eat per meal. What is the correct MA response?",opts:["Tell them to limit carbs to 20g per meal","Recommend the ketogenic diet as the most effective approach","Reinforce the provider's carb-counting instructions — approximately 45–60g per meal — and refer any questions to the provider","Advise them to avoid all grains and sugars completely"],ans:2,ok:"Reinforce the provider's instructions (typically 45–60g per meal for most diabetic patients). Do NOT create a new plan or modify the provider's instructions.",no:"MA scope: reinforce provider instructions. Do not modify, create new plans, or recommend diets beyond what the provider has ordered."},
+  {q:"Which therapeutic diet restricts potassium, phosphorus, AND sodium?",opts:["DASH diet","Diabetic diet","Low-sodium diet","Renal / CKD diet"],ans:3,ok:"The renal/CKD diet restricts potassium, phosphorus, sodium, and sometimes protein — all of which the damaged kidneys cannot process normally.",no:"Renal/CKD diet = limits potassium, phosphorus, sodium, and sometimes protein. Stage-dependent. Always refer complex cases to an RD."},
+  {q:"Folate deficiency during pregnancy is associated with:",opts:["Gestational diabetes","Neural tube defects (e.g., spina bifida)","Iron-deficiency anemia only","Preeclampsia"],ans:1,ok:"Folate is critical for neural tube development in the first weeks of pregnancy. Deficiency causes spina bifida and anencephaly — often before the woman knows she is pregnant.",no:"Folate (B9) deficiency → neural tube defects (spina bifida, anencephaly). Neural tube closes in weeks 3–4 — often before pregnancy is confirmed."},
+  {q:"Which finding during patient intake would be a NUTRITIONAL RED FLAG for protein-energy malnutrition?",opts:["Patient reports eating a Mediterranean diet","Patient has a BMI of 22","Patient is a post-surgical oncology patient with poor wound healing and muscle wasting","Patient's HbA1c improved from 9% to 7% since last visit"],ans:2,ok:"Post-surgical + oncology + poor wound healing + muscle wasting = classic presentation of protein-energy malnutrition. Flag for provider and consider RD referral.",no:"Poor wound healing + muscle wasting in a post-surgical cancer patient = protein-energy malnutrition. Document and flag immediately."},
+  {q:"Which action is OUTSIDE the MA's scope in patient nutrition education?",opts:["Documenting a 24-hour food recall","Recording the patient's BMI and weight","Creating an individualized meal plan for a patient with CKD","Providing a MyPlate handout approved by the provider"],ans:2,ok:"Creating individualized meal plans is medical nutrition therapy — performed only by Registered Dietitians (RDs). The MA documents, reinforces, and refers.",no:"Creating meal plans = RD scope only. MA scope: document, reinforce provider instructions, provide approved materials, refer to RD when needed."},
+  {q:"A patient on warfarin reports dramatically increasing her leafy green vegetable intake. What is the clinical concern?",opts:["Excess potassium may affect heart rhythm","Leafy greens are high in Vitamin K which can interfere with warfarin's anticoagulant effect","High fiber from greens will reduce drug absorption","There is no clinical concern — vegetables are always beneficial"],ans:1,ok:"Vitamin K is found in leafy greens and is the cofactor warfarin antagonizes. Sudden increases in Vitamin K intake can reduce warfarin's effectiveness and drop the INR.",no:"Vitamin K (abundant in leafy greens) directly antagonizes warfarin. Sudden dietary Vitamin K changes alter INR — flag for provider immediately."},
+  {q:"Simple carbohydrates differ from complex carbohydrates in that they:",opts:["Contain more fiber per serving","Are digested slowly, producing a steady glucose rise","Are digested rapidly, causing a quick blood glucose rise","Provide more satiety and are preferred for diabetic patients"],ans:2,ok:"Simple carbs (sugars) are digested rapidly, causing quick blood glucose spikes. Complex carbs (starches, fiber) digest more slowly, producing steadier glucose levels.",no:"Simple = rapid absorption, quick glucose spike (candy, white bread, soda). Complex = slower digestion, steadier glucose (whole grains, legumes, vegetables)."},
+];
+let questions=[],cur=0,score=0,streak=0,wrong=0,answered=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function init(){questions=shuffle(QS);cur=0;score=0;streak=0;wrong=0;answered=false;document.getElementById('endBox').classList.remove('show');document.getElementById('qArea').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';updateHUD();render();}
+function render(){answered=false;const q=questions[cur];document.getElementById('qText').textContent=q.q;document.getElementById('qNum').textContent='Q'+(cur+1);document.getElementById('opts').innerHTML=q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){document.getElementById('dots').innerHTML=Array.from({length:questions.length},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const q=questions[cur];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[q.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===q.ans){score++;streak++;fb.innerHTML=`<strong>✓ Correct!</strong>${q.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');wrong++;streak=0;fb.innerHTML=`<strong>✗ Not quite.</strong>${q.no}`;fb.className='fb no show';}updateHUD();document.getElementById('nextBtn').className='next-btn show';}
+function next(){cur++;if(cur>=questions.length){showEnd();return;}render();}
+function showEnd(){const pct=Math.round((score/questions.length)*100);document.getElementById('qArea').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct>=80?'🌟 Excellent!':pct>=60?'👍 Good Work':'📚 Keep Reviewing';document.getElementById('endSub').textContent='You answered '+questions.length+' questions.';document.getElementById('eOk').textContent=score;document.getElementById('eNo').textContent=wrong;document.getElementById('endBox').classList.add('show');}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('str').textContent=streak;}
+init();
+</script>
+</body>
+</html>

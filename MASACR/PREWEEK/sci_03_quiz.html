@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple Choice — Science Behind Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0d0d0d; --surface:#141414; --card:#1a1a1a; --border:rgba(255,255,255,.07);
+  --red:#e05a3a; --text:#ffffff; --muted:#6b7280; --muted2:#9ca3af;
+  --green:#4caf82; --rose:#e05a5a;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto 1fr auto auto;padding:0 20px;max-width:660px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 8px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:8px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:26px;background:var(--red);}
+.dot.d{background:var(--green);}
+.hud{display:flex;gap:10px;justify-content:center;padding:4px 0 8px;}
+.hud-chip{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid;}
+.hud-chip.s{background:rgba(224,90,58,.1);color:var(--red);border-color:rgba(224,90,58,.4);}
+.hud-chip.st{background:rgba(76,175,130,.1);color:var(--green);border-color:rgba(76,175,130,.4);}
+.q-area{display:flex;flex-direction:column;gap:6px;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.6;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:hidden;justify-content:flex-start;}
+.opt{width:100%;text-align:left;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:10px 15px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:none;margin:8px auto 10px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 48px;text-align:center;grid-row:2/6;align-self:center;}
+.end-box.show{display:flex;}
+.end-pct{font-size:50px;font-weight:800;color:var(--red);font-family:'Plus Jakarta Sans',sans-serif;}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.end-stats{display:flex;gap:14px;}
+.stat{padding:10px 18px;border-radius:10px;text-align:center;}
+.stat.g{background:rgba(76,175,130,.1);}
+.stat.r{background:rgba(224,90,90,.1);}
+.stat-n{font-size:22px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;}
+.stat.g .stat-n{color:var(--green);}
+.stat.r .stat-n{color:var(--rose);}
+.stat-l{font-size:11px;color:var(--muted);margin-top:2px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Science Behind Healthcare</div>
+    <h1>Multiple Choice</h1>
+    <p>Select the best answer for each question.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="hud">
+    <div class="hud-chip s">Score: <span id="sc">0</span></div>
+    <div class="hud-chip st">🔥 Streak: <span id="str">0</span></div>
+  </div>
+  <div class="q-area" id="qArea">
+    <div class="q-box">
+      <div class="q-text" id="qText"></div>
+      <div class="q-num" id="qNum"></div>
+    </div>
+  </div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Question →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <div class="end-stats">
+      <div class="stat g"><div class="stat-n" id="eOk">0</div><div class="stat-l">Correct</div></div>
+      <div class="stat r"><div class="stat-n" id="eNo">0</div><div class="stat-l">Incorrect</div></div>
+    </div>
+    <button class="restart-btn" onclick="init()">Play Again</button>
+  </div>
+</div>
+<script>
+const QS=[
+  {q:"What is the gold standard study design in medical research?",opts:["Cohort study","Case report","Randomized Controlled Trial (RCT)","Cross-sectional survey"],ans:2,ok:"RCTs are the gold standard because random assignment eliminates selection bias and allows causal conclusions about treatment effectiveness.",no:"The RCT is the gold standard. Random assignment to treatment or control group eliminates selection bias — making causal conclusions possible."},
+  {q:"A p-value of 0.03 in a study means:",opts:["The treatment works in 97% of patients","There is a 3% chance the result occurred by chance","The study had only 3 participants","The drug has 3% efficacy"],ans:1,ok:"p < 0.05 means less than 5% probability the result was due to chance alone. A p of 0.03 = 3% chance of a chance result.",no:"p-value represents the probability the result occurred by chance. p=0.03 means 3% chance — not related to the number of patients or efficacy."},
+  {q:"Evidence-based practice integrates which THREE elements?",opts:["Patient cost, insurance coverage, and clinical guidelines","Best research evidence, clinical expertise, and patient values","Physician preference, hospital policy, and drug availability","Case reports, anecdotes, and patient feedback"],ans:1,ok:"EBP integrates the best current research + clinical expertise + patient values. All three are required for evidence-based decision-making.",no:"The three pillars of EBP are: best research evidence, clinical expertise, and patient values — not administrative or financial factors."},
+  {q:"Which is the HIGHEST level of evidence in the hierarchy?",opts:["Case reports","Expert opinion","Randomized Controlled Trials (RCTs)","Systematic reviews and meta-analyses"],ans:3,ok:"Systematic reviews and meta-analyses (Level 1) synthesize all available research and are considered the strongest form of evidence.",no:"Systematic reviews and meta-analyses are Level 1 — they combine data from many studies and are the strongest single source of evidence."},
+  {q:"Homeostasis refers to:",opts:["The surgical removal of diseased tissue","The body's ability to maintain a stable internal environment","The process of drug absorption into the bloodstream","The classification of disease by severity"],ans:1,ok:"Homeostasis is the body's ability to maintain stable internal conditions — temperature, blood glucose, pH, blood pressure — despite external changes.",no:"Homeostasis = the body's self-correcting ability to maintain internal stability. Vital signs monitoring IS homeostasis monitoring."},
+  {q:"In a negative feedback loop, when blood glucose rises, the body responds by:",opts:["Releasing glucagon to raise it further","Releasing insulin to lower it","Stopping all glucose production permanently","Increasing appetite to maintain the level"],ans:1,ok:"Rising blood glucose triggers insulin release from the pancreas, which lowers glucose — a classic negative feedback loop.",no:"Negative feedback = correcting in the opposite direction. Rising glucose → insulin release → glucose lowered back to normal range."},
+  {q:"Normal blood pH range is:",opts:["6.80–7.00","7.00–7.20","7.35–7.45","7.50–7.60"],ans:2,ok:"Normal blood pH is 7.35–7.45. Below 7.35 = acidosis; above 7.45 = alkalosis. Regulated by breathing rate and kidney function.",no:"Normal blood pH is 7.35–7.45. This narrow range is maintained by the respiratory system (CO2) and kidneys (bicarbonate)."},
+  {q:"Pathophysiology is best defined as:",opts:["The study of drug interactions with food","The study of how disease disrupts normal physiological processes","The process of performing physical examinations","The classification of surgical procedures"],ans:1,ok:"Pathophysiology studies how disease, injury, or dysfunction disrupts normal body processes — it bridges basic science and clinical medicine.",no:"Pathophysiology = the study of how disease disrupts normal physiological function. It explains WHY clinical signs and symptoms occur."},
+  {q:"Chronic inflammation differs from acute inflammation in that it:",opts:["Resolves quickly and is always protective","Causes long-term tissue damage (atherosclerosis, arthritis, cancer)","Only occurs in response to bacterial infection","Does not cause redness or swelling"],ans:1,ok:"Chronic inflammation is long-term and damaging — it underlies atherosclerosis, arthritis, IBD, and many cancers. Acute inflammation is short-term and protective.",no:"Acute inflammation is short-term and protective. Chronic inflammation is prolonged and causes tissue damage — underlying many serious diseases."},
+  {q:"Ischemia means:",opts:["Uncontrolled cell growth","Reduced blood flow to a tissue","Complete tissue death","An autoimmune attack on joints"],ans:1,ok:"Ischemia = reduced or insufficient blood flow, causing oxygen deprivation. Infarction (tissue death) occurs when blockage is complete.",no:"Ischemia = reduced blood flow. Infarction = tissue death from complete blockage. MI = myocardial infarction; CVA = cerebral vascular accident (stroke)."},
+  {q:"Pharmacokinetics (ADME) describes:",opts:["What the drug does to the body","What the body does to the drug","The drug's mechanism of action","The drug's classification by use"],ans:1,ok:"Pharmacokinetics = what the BODY does to the drug: Absorption, Distribution, Metabolism, Excretion.",no:"Pharmacokinetics (ADME) = what the BODY does to the drug. Pharmacodynamics = what the DRUG does to the body."},
+  {q:"The first-pass effect explains why:",opts:["IV drugs require more frequent dosing","Oral drugs have reduced bioavailability due to liver metabolism before reaching circulation","Drugs are excreted faster when taken with food","IM injections are more painful than SC injections"],ans:1,ok:"The first-pass effect: oral drugs pass through the liver before systemic circulation, reducing bioavailability. IV drugs bypass this.",no:"First-pass effect = liver metabolizes oral drugs before they reach systemic circulation, reducing the amount available to work."},
+  {q:"A drug with a narrow therapeutic window requires:",opts:["Higher doses for effectiveness","Less frequent monitoring","Closer lab monitoring to avoid toxicity","Administration only by IV route"],ans:2,ok:"Drugs with narrow therapeutic windows (warfarin, digoxin, lithium) require close monitoring because the gap between effective dose and toxic dose is small.",no:"Narrow therapeutic window = small margin between effective and toxic dose. Regular lab monitoring (INR, drug levels) is required."},
+  {q:"In clinical trial phases, Phase III involves:",opts:["Lab and animal tests only","20–100 participants for initial safety","1,000–3,000 participants in a large RCT","Post-market surveillance of rare side effects"],ans:2,ok:"Phase III is the large-scale RCT (1,000–3,000 participants), comparing the drug to existing treatments or placebo. It is the pivotal trial for approval.",no:"Phase III = large-scale RCT (1,000–3,000 people). Phase I = small safety study; Phase II = effectiveness; Phase IV = post-market surveillance."},
+  {q:"Which is a RED FLAG for health misinformation?",opts:["The study was published in JAMA and peer-reviewed","The findings were replicated by independent researchers","The source claims 'doctors don't want you to know this'","The study disclosed all conflicts of interest"],ans:2,ok:"'Doctors don't want you to know this' is a classic misinformation signal. Legitimate research is published openly in peer-reviewed journals.",no:"Red flags include: no citations, celebrity endorsements, cures for multiple conditions, fear/urgency tactics, and 'secret' framing."},
+];
+let questions=[],cur=0,score=0,streak=0,wrong=0,answered=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function init(){questions=shuffle(QS);cur=0;score=0;streak=0;wrong=0;answered=false;document.getElementById('endBox').classList.remove('show');document.getElementById('qArea').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';updateHUD();render();}
+function render(){answered=false;const q=questions[cur];document.getElementById('qText').textContent=q.q;document.getElementById('qNum').textContent='Q'+(cur+1);document.getElementById('opts').innerHTML=q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){const n=questions.length;document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const q=questions[cur];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[q.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===q.ans){score++;streak++;fb.innerHTML=`<strong>✓ Correct!</strong>${q.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');wrong++;streak=0;fb.innerHTML=`<strong>✗ Not quite.</strong>${q.no}`;fb.className='fb no show';}updateHUD();document.getElementById('nextBtn').className='next-btn show';}
+function next(){cur++;if(cur>=questions.length){showEnd();return;}render();}
+function showEnd(){const pct=Math.round((score/questions.length)*100);document.getElementById('qArea').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct>=80?'🌟 Excellent!':pct>=60?'👍 Good Work':'📚 Keep Reviewing';document.getElementById('endSub').textContent='You answered '+questions.length+' questions.';document.getElementById('eOk').textContent=score;document.getElementById('eNo').textContent=wrong;document.getElementById('endBox').classList.add('show');}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('str').textContent=streak;}
+init();
+</script>
+</body>
+</html>

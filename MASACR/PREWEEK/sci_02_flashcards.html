@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — Science Behind Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0d0d0d; --surface:#141414; --card:#1a1a1a; --border:rgba(255,255,255,.07);
+  --red:#e05a3a; --text:#ffffff; --muted:#6b7280; --muted2:#9ca3af;
+  --green:#4caf82; --rose:#e05a5a;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr auto;padding:0 20px;max-width:660px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 6px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:8px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:26px;background:var(--red);}
+.dot.d{background:var(--green);}
+.deck-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:10px 0 4px;}
+.deck-btn{padding:4px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;}
+.deck-btn.active{background:rgba(224,90,58,.12);border-color:var(--red);color:var(--text);}
+.card-area{width:100%;display:flex;align-items:center;justify-content:center;padding:6px 0;min-height:0;}
+.card-scene{width:min(540px,96vw);height:clamp(150px,26vh,230px);perspective:1000px;cursor:pointer;}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.card-inner.flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 30px;text-align:center;}
+.card-front{background:var(--surface);border:1px solid var(--border);}
+.card-back{background:var(--card);border:1px solid rgba(224,90,58,.25);transform:rotateY(180deg);}
+.face-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.face-label.back{color:var(--red);}
+.face-term{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(15px,2.8vw,20px);font-weight:800;color:var(--text);line-height:1.2;}
+.face-def{font-size:clamp(11px,1.5vw,13px);color:var(--muted2);line-height:1.55;}
+.face-cat{font-size:10px;color:var(--red);margin-top:8px;font-weight:600;}
+.btn-row{display:flex;align-items:center;gap:12px;justify-content:center;padding:4px 0;}
+.verdict-btn{padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif;}
+.verdict-btn.know{border-color:rgba(76,175,130,.5);color:var(--green);}
+.verdict-btn.know:hover{background:rgba(76,175,130,.1);}
+.verdict-btn.learn{border-color:rgba(224,90,90,.5);color:var(--rose);}
+.verdict-btn.learn:hover{background:rgba(224,90,90,.1);}
+.card-counter{font-size:12px;color:var(--muted);min-width:52px;text-align:center;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:32px 44px;text-align:center;width:min(420px,94vw);margin:0 auto;}
+.end-box.show{display:flex;}
+.end-pct{font-size:46px;font-weight:800;color:var(--red);font-family:'Plus Jakarta Sans',sans-serif;}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.end-btns{display:flex;gap:8px;margin-top:4px;}
+.restart-btn{padding:9px 20px;border-radius:9px;border:none;background:var(--red);color:#fff;font-size:12px;font-weight:800;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.restart-btn.outline{background:transparent;border:1px solid var(--border);color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Science Behind Healthcare</div>
+    <h1>Flashcards</h1>
+    <p>Flip the card — then mark how well you know it.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="deck-row">
+    <button class="deck-btn active" onclick="setDeck('all',this)">All Topics</button>
+    <button class="deck-btn" onclick="setDeck('Scientific Method',this)">Scientific Method</button>
+    <button class="deck-btn" onclick="setDeck('EBP',this)">EBP</button>
+    <button class="deck-btn" onclick="setDeck('Body Systems',this)">Body Systems</button>
+    <button class="deck-btn" onclick="setDeck('Pathophysiology',this)">Pathophysiology</button>
+    <button class="deck-btn" onclick="setDeck('Pharmacology',this)">Pharmacology</button>
+    <button class="deck-btn" onclick="setDeck('Clinical Trials',this)">Clinical Trials</button>
+  </div>
+  <div class="card-area" id="cardArea">
+    <div class="card-scene" onclick="flip()">
+      <div class="card-inner" id="cardInner">
+        <div class="card-face card-front">
+          <div class="face-label">Tap to reveal answer</div>
+          <div class="face-term" id="fTerm"></div>
+        </div>
+        <div class="card-face card-back">
+          <div class="face-label back">Answer</div>
+          <div class="face-def" id="bDef"></div>
+          <div class="face-cat" id="bCat"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row" id="btnRow">
+    <button class="verdict-btn learn" onclick="mark(false)">✗ Still Learning</button>
+    <div class="card-counter" id="counter">1 / 35</div>
+    <button class="verdict-btn know" onclick="mark(true)">✓ Got It</button>
+  </div>
+  <div class="end-box" id="endBox" style="grid-row:3/5;">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <div class="end-btns">
+      <button class="restart-btn" onclick="restart()">Restart</button>
+      <button class="restart-btn outline" onclick="reviewMissed()">Review Missed</button>
+    </div>
+  </div>
+</div>
+<script>
+const ALL=[
+  {cat:"Scientific Method",term:"Scientific Method",def:"Observation → Question → Hypothesis → Experiment/Study → Analysis → Conclusion. The systematic process by which medical knowledge is built and tested."},
+  {cat:"Scientific Method",term:"Hypothesis",def:"A testable, specific prediction made before a study. Must be falsifiable — it can be proven wrong by data."},
+  {cat:"Scientific Method",term:"RCT — Gold Standard",def:"Randomized Controlled Trial. Participants randomly assigned to treatment or control group. Eliminates selection bias and allows causal conclusions."},
+  {cat:"Scientific Method",term:"Peer Review",def:"Independent scientists evaluate a study before publication — the quality control of research. Unpublished or non-peer-reviewed findings are less reliable."},
+  {cat:"Scientific Method",term:"p-value < 0.05",def:"Statistical significance threshold. Less than 5% probability the result occurred by chance. Does NOT mean the effect is clinically large."},
+  {cat:"Scientific Method",term:"Double-Blind Study",def:"Neither participants nor researchers know who receives treatment. Eliminates observer and participant bias — critical for drug trials."},
+  {cat:"Scientific Method",term:"Placebo",def:"Inactive treatment given to the control group. Tests whether the drug effect is real or due to patient expectation (the placebo effect)."},
+  {cat:"EBP",term:"Evidence-Based Practice (EBP)",def:"Integrates best research evidence + clinical expertise + patient values to guide healthcare decisions. Practice evolves when better evidence emerges."},
+  {cat:"EBP",term:"Hierarchy of Evidence",def:"Level 1: Systematic Reviews/Meta-Analyses → Level 2: RCTs → Level 3: Cohort/Case-Control → Level 4: Case Reports → Level 5: Anecdote."},
+  {cat:"EBP",term:"Systematic Review",def:"Comprehensive synthesis of all available research on a specific question. Level 1 evidence — the strongest single source of evidence."},
+  {cat:"EBP",term:"Informed Consent (Research)",def:"Participants must be fully informed of risks, benefits, and right to withdraw before enrolling in any study. Required ethically and legally."},
+  {cat:"Body Systems",term:"Homeostasis",def:"The body's ability to maintain stable internal conditions despite external changes. Regulated parameters: temperature, blood glucose, blood pressure, blood pH."},
+  {cat:"Body Systems",term:"Negative Feedback Loop",def:"The body corrects deviation in the opposite direction. Stimulus → Receptor → Control Center → Effector → Response (balance restored). Most common homeostatic mechanism."},
+  {cat:"Body Systems",term:"Normal Body Temperature",def:"98.6°F / 37°C. Regulated by sweating (too hot) and shivering (too cold). Fever indicates the regulatory set-point has been raised."},
+  {cat:"Body Systems",term:"Normal Blood Glucose",def:"70–100 mg/dL fasting. Insulin is released when glucose rises; glucagon when it falls. Classic negative feedback example."},
+  {cat:"Body Systems",term:"Normal Blood pH",def:"7.35–7.45. Regulated by breathing rate (CO2 changes pH) and kidney bicarbonate adjustment. Deviation causes acidosis or alkalosis."},
+  {cat:"Body Systems",term:"Cardiovascular System Function",def:"Pumps blood, delivers oxygen and nutrients to tissues, removes metabolic waste. Heart rate and blood pressure reflect its function."},
+  {cat:"Body Systems",term:"Respiratory System Function",def:"Gas exchange — oxygen in, carbon dioxide out. Maintains SpO2 and contributes to pH regulation through CO2 exhalation."},
+  {cat:"Pathophysiology",term:"Pathophysiology",def:"The study of how normal physiological processes are disrupted by disease, injury, or dysfunction. Bridges basic science and clinical medicine."},
+  {cat:"Pathophysiology",term:"Inflammation",def:"The body's first response to injury or infection. Redness, heat, swelling, pain. Acute = protective. Chronic = damaging (atherosclerosis, arthritis, cancer)."},
+  {cat:"Pathophysiology",term:"Ischemia vs. Infarction",def:"Ischemia = reduced blood flow (reversible). Infarction = tissue death from complete blockage (irreversible). MI = heart; CVA = brain."},
+  {cat:"Pathophysiology",term:"Neoplasia",def:"Uncontrolled cell growth from mutations in cell-cycle genes. Benign = non-invasive. Malignant = invasive, capable of metastasis. Staging: local → regional → distant."},
+  {cat:"Pathophysiology",term:"Autoimmune Disease",def:"Immune system attacks the body's own healthy cells. Examples: rheumatoid arthritis, lupus, Crohn's disease, Type 1 diabetes."},
+  {cat:"Pathophysiology",term:"Four Causes of Disease",def:"1. Genetic/hereditary (cystic fibrosis) 2. Infectious (bacteria, viruses) 3. Environmental/lifestyle (smoking, obesity) 4. Autoimmune/inflammatory."},
+  {cat:"Pharmacology",term:"Pharmacokinetics — ADME",def:"What the BODY does to the drug: Absorption → Distribution → Metabolism → Excretion. Explains why route, dose, and timing matter."},
+  {cat:"Pharmacology",term:"Pharmacodynamics",def:"What the DRUG does to the body — mechanism of action, therapeutic effect, side effects. Example: beta blockers block adrenaline receptors to slow heart rate."},
+  {cat:"Pharmacology",term:"Therapeutic Window",def:"The dose range that is effective without causing toxicity. Narrow therapeutic window drugs (warfarin, digoxin, lithium) require close lab monitoring."},
+  {cat:"Pharmacology",term:"First-Pass Effect",def:"Orally administered drugs are partially metabolized by the liver before reaching systemic circulation. Reduces bioavailability vs. IV administration."},
+  {cat:"Pharmacology",term:"Adverse Drug Reaction",def:"Unexpected harmful response at normal doses. MAs must document and report both predictable side effects and unexpected adverse reactions to the provider."},
+  {cat:"Clinical Trials",term:"Phase I — Safety",def:"First human tests. ~20–100 participants. Focus: safety, dosage, and side effects. Establishes that the drug is safe enough to proceed."},
+  {cat:"Clinical Trials",term:"Phase III — Large RCT",def:"~1,000–3,000 participants. Compared to existing treatments or placebo. The pivotal trial that determines whether a drug works at scale."},
+  {cat:"Clinical Trials",term:"Phase IV — Post-Market",def:"Ongoing surveillance after FDA approval. Detects rare adverse effects not seen in trials. Some drugs are withdrawn when Phase IV reveals serious risks."},
+  {cat:"Clinical Trials",term:"FDA Approval",def:"Regulatory review of all clinical trial data before a drug is authorized for general use. Approval means the benefit-risk profile was judged acceptable — not risk-free."},
+  {cat:"Clinical Trials",term:"Misinformation Red Flags",def:"No citations, based on anecdotes, promises cures for many conditions, uses fear/urgency, source is selling something, not peer-reviewed, published only on social media."},
+  {cat:"Clinical Trials",term:"Credible Health Sources",def:"Peer-reviewed journals (NEJM, JAMA, Lancet), CDC, WHO, NIH. Transparent methodology, large samples, replicated findings, disclosed conflicts of interest."},
+];
+let deck=[],cur=0,gotCount=0,missed=[],activeDeck='all',flipped=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function setDeck(d,el){document.querySelectorAll('.deck-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');activeDeck=d;initDeck();}
+function initDeck(){deck=activeDeck==='all'?shuffle([...ALL]):shuffle(ALL.filter(c=>c.cat===activeDeck));cur=0;gotCount=0;missed=[];flipped=false;document.getElementById('endBox').classList.remove('show');document.getElementById('cardArea').style.display='';document.getElementById('btnRow').style.display='';renderCard();}
+function renderCard(){if(cur>=deck.length){showEnd();return;}const c=deck[cur];document.getElementById('fTerm').textContent=c.term;document.getElementById('bDef').textContent=c.def;document.getElementById('bCat').textContent=c.cat;document.getElementById('counter').textContent=(cur+1)+' / '+deck.length;flipped=false;document.getElementById('cardInner').classList.remove('flipped');buildDots();}
+function buildDots(){const n=Math.min(deck.length,16);document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function flip(){flipped=!flipped;document.getElementById('cardInner').classList.toggle('flipped',flipped);}
+function mark(known){if(known)gotCount++;else missed.push(deck[cur]);cur++;renderCard();}
+function showEnd(){document.getElementById('cardArea').style.display='none';document.getElementById('btnRow').style.display='none';const pct=Math.round((gotCount/deck.length)*100);document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct>=80?'🎉 Excellent Work!':pct>=60?'👍 Good Progress':'📚 Keep Studying';document.getElementById('endSub').textContent='You completed '+deck.length+' cards this session.';document.getElementById('endBox').classList.add('show');}
+function restart(){initDeck();}
+function reviewMissed(){if(!missed.length){restart();return;}deck=shuffle([...missed]);cur=0;gotCount=0;missed=[];flipped=false;document.getElementById('endBox').classList.remove('show');document.getElementById('cardArea').style.display='';document.getElementById('btnRow').style.display='';renderCard();}
+document.addEventListener('keydown',e=>{if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();flip();}if(e.key==='ArrowRight')mark(true);if(e.key==='ArrowLeft')mark(false);});
+initDeck();
+</script>
+</body>
+</html>

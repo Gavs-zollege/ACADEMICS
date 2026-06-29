@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — Language & Structure of the Human Body</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr auto;padding:0 20px;max-width:660px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 6px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:8px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:26px;background:var(--red);}
+.dot.d{background:var(--green);}
+.deck-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:10px 0 4px;}
+.deck-btn{padding:4px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;}
+.deck-btn.active{background:rgba(224,90,58,.12);border-color:var(--red);color:var(--text);}
+.card-area{width:100%;display:flex;align-items:center;justify-content:center;padding:6px 0;min-height:0;}
+.card-scene{width:min(540px,96vw);height:clamp(150px,26vh,230px);perspective:1000px;cursor:pointer;}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.card-inner.flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 30px;text-align:center;}
+.card-front{background:var(--surface);border:1px solid var(--border);}
+.card-back{background:var(--card);border:1px solid rgba(224,90,58,.25);transform:rotateY(180deg);}
+.face-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.face-label.back{color:var(--red);}
+.face-term{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(15px,2.8vw,22px);font-weight:800;color:var(--text);line-height:1.2;}
+.face-def{font-size:clamp(11px,1.5vw,13px);color:var(--muted2);line-height:1.55;}
+.face-cat{font-size:10px;color:var(--red);margin-top:8px;font-weight:600;}
+.btn-row{display:flex;align-items:center;gap:12px;justify-content:center;padding:4px 0;}
+.verdict-btn{padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.verdict-btn.know{border-color:rgba(76,175,130,.5);color:var(--green);}
+.verdict-btn.know:hover{background:rgba(76,175,130,.1);}
+.verdict-btn.learn{border-color:rgba(224,90,90,.5);color:var(--rose);}
+.verdict-btn.learn:hover{background:rgba(224,90,90,.1);}
+.card-counter{font-size:12px;color:var(--muted);min-width:52px;text-align:center;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:32px 44px;text-align:center;width:min(420px,94vw);margin:0 auto;}
+.end-box.show{display:flex;}
+.end-pct{font-size:46px;font-weight:800;color:var(--red);font-family:'Plus Jakarta Sans',sans-serif;}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.end-btns{display:flex;gap:8px;margin-top:4px;}
+.restart-btn{padding:9px 20px;border-radius:9px;border:none;background:var(--red);color:#fff;font-size:12px;font-weight:800;cursor:pointer;}
+.restart-btn.outline{background:transparent;border:1px solid var(--border);color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Language & Structure of the Human Body</div>
+    <h1>Flashcards</h1>
+    <p>Flip the card — then mark how well you know it.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="deck-row">
+    <button class="deck-btn active" onclick="setDeck('all',this)">All</button>
+    <button class="deck-btn" onclick="setDeck('Roots',this)">Word Roots</button>
+    <button class="deck-btn" onclick="setDeck('Prefixes',this)">Prefixes</button>
+    <button class="deck-btn" onclick="setDeck('Suffixes',this)">Suffixes</button>
+    <button class="deck-btn" onclick="setDeck('Anatomy',this)">Anatomy</button>
+    <button class="deck-btn" onclick="setDeck('Abbreviations',this)">Abbreviations</button>
+  </div>
+  <div class="card-area" id="cardArea">
+    <div class="card-scene" onclick="flip()">
+      <div class="card-inner" id="cardInner">
+        <div class="card-face card-front">
+          <div class="face-label">Tap to reveal</div>
+          <div class="face-term" id="fTerm"></div>
+        </div>
+        <div class="card-face card-back">
+          <div class="face-label back">Answer</div>
+          <div class="face-def" id="bDef"></div>
+          <div class="face-cat" id="bCat"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row" id="btnRow">
+    <button class="verdict-btn learn" onclick="mark(false)">✗ Still Learning</button>
+    <div class="card-counter" id="counter">1 / 32</div>
+    <button class="verdict-btn know" onclick="mark(true)">✓ Got It</button>
+  </div>
+  <div class="end-box" id="endBox" style="grid-row:3/5;">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <div class="end-btns">
+      <button class="restart-btn" onclick="restart()">Restart</button>
+      <button class="restart-btn outline" onclick="reviewMissed()">Review Missed</button>
+    </div>
+  </div>
+</div>
+<script>
+const ALL=[
+  {cat:"Roots",term:"cardi/o",def:"Heart. Example: cardiomegaly (enlarged heart), cardiologist (heart specialist), pericardium (sac around heart)."},
+  {cat:"Roots",term:"nephr/o",def:"Kidney. Example: nephrology (study of kidneys), nephritis (kidney inflammation), nephrectomy (kidney removal)."},
+  {cat:"Roots",term:"neur/o",def:"Nerve. Example: neuropathy (nerve disease), neurology, neuralgia (nerve pain). Common in diabetic complications."},
+  {cat:"Roots",term:"oste/o",def:"Bone. Example: osteoporosis (porous bones), osteomyelitis (bone infection), orthopedic (bone/joint specialist)."},
+  {cat:"Roots",term:"gastr/o",def:"Stomach. Example: gastritis (stomach inflammation), gastroscopy (visual exam of stomach), gastrectomy."},
+  {cat:"Roots",term:"hepat/o",def:"Liver. Example: hepatitis (liver inflammation), hepatomegaly (enlarged liver), hepatotoxic (toxic to the liver)."},
+  {cat:"Roots",term:"derm/o",def:"Skin. Example: dermatology, dermatitis (skin inflammation), dermatologist. Integumentary system root."},
+  {cat:"Roots",term:"thromb/o",def:"Blood clot. Example: thrombosis (clot formation), thrombolysis (clot destruction). DVT = deep vein thrombosis."},
+  {cat:"Roots",term:"pneum/o",def:"Lung or air. Example: pneumonia (lung infection), pneumothorax (air in the chest cavity). Respiratory system root."},
+  {cat:"Prefixes",term:"tachy-",def:"Fast or rapid. Tachycardia = fast heart rate (>100 bpm). Tachypnea = fast breathing. Opposite of brady-."},
+  {cat:"Prefixes",term:"brady-",def:"Slow. Bradycardia = slow heart rate (<60 bpm). Bradypnea = abnormally slow breathing. Opposite of tachy-."},
+  {cat:"Prefixes",term:"hyper-",def:"Above normal / excessive. Hypertension (high BP), hyperglycemia (high blood sugar). Opposite of hypo-."},
+  {cat:"Prefixes",term:"hypo-",def:"Below normal / deficient. Hypoglycemia (low blood sugar), hypotension (low BP). Opposite of hyper-."},
+  {cat:"Prefixes",term:"dys-",def:"Painful / difficult / abnormal. Dyspnea (difficulty breathing), dysphagia (difficulty swallowing), dysuria (painful urination)."},
+  {cat:"Prefixes",name:"a- / an-",term:"a- / an-",def:"Without or not. Apnea (no breathing), anemia (without sufficient RBCs), asymptomatic (without symptoms)."},
+  {cat:"Prefixes",term:"sub-",def:"Below or under. Subcutaneous (below the skin — SC injection), sublingual (under the tongue). Key injection route prefix."},
+  {cat:"Prefixes",term:"intra-",def:"Within. Intravenous (IV — within a vein), intramuscular (IM — within a muscle). Key injection route prefix."},
+  {cat:"Suffixes",term:"-itis",def:"Inflammation. Appendicitis, gastritis, arthritis, hepatitis. Most common suffix for inflammatory conditions."},
+  {cat:"Suffixes",term:"-ectomy",def:"Surgical removal. Appendectomy (remove appendix), hysterectomy (remove uterus), gastrectomy (remove stomach)."},
+  {cat:"Suffixes",term:"-ology / -ologist",def:"-ology = study of. -ologist = specialist. Cardiology/cardiologist, neurology/neurologist, dermatology/dermatologist."},
+  {cat:"Suffixes",term:"-megaly",def:"Enlargement. Cardiomegaly (enlarged heart), splenomegaly (enlarged spleen), hepatomegaly (enlarged liver)."},
+  {cat:"Suffixes",term:"-gram",def:"Record or image. Electrocardiogram (ECG — electrical record of the heart). MAs perform ECGs; providers interpret."},
+  {cat:"Suffixes",term:"-pathy",def:"Disease or suffering. Neuropathy (nerve disease), cardiomyopathy (heart muscle disease), nephropathy (kidney disease)."},
+  {cat:"Suffixes",term:"-algia",def:"Pain. Myalgia (muscle pain), neuralgia (nerve pain), arthralgia (joint pain). Common in patient chief complaints."},
+  {cat:"Anatomy",term:"Anatomical Position",def:"Universal reference standard: body erect, face forward, palms facing forward. ALL directional terms assume this position."},
+  {cat:"Anatomy",term:"Anterior / Posterior",def:"Anterior = front. Posterior = back. Sternum is anterior to the spine. Spine is posterior to the sternum."},
+  {cat:"Anatomy",term:"Superior / Inferior",def:"Superior = above (toward head). Inferior = below (toward feet). Heart is superior to the stomach."},
+  {cat:"Anatomy",term:"Medial / Lateral",def:"Medial = toward midline. Lateral = away from midline. Nose is medial to ears. Ears are lateral to nose."},
+  {cat:"Anatomy",term:"Proximal / Distal",def:"Proximal = closer to origin (trunk). Distal = farther from origin. Elbow is proximal to wrist. Wrist is distal to elbow."},
+  {cat:"Anatomy",term:"Abdominal Quadrants",def:"RUQ: liver/gallbladder. LUQ: stomach/spleen. RLQ: appendix. LLQ: sigmoid colon. RLQ pain = possible appendicitis."},
+  {cat:"Abbreviations",term:"STAT / PRN / NPO",def:"STAT = immediately. PRN = as needed. NPO = nothing by mouth. Critical medication and procedure order abbreviations."},
+  {cat:"Abbreviations",term:"CC / HPI / PMH",def:"CC = Chief Complaint. HPI = History of Present Illness. PMH = Past Medical History. Core chart documentation sections."},
+];
+let deck=[],cur=0,gotCount=0,missed=[],activeDeck='all',flipped=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function setDeck(d,el){document.querySelectorAll('.deck-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');activeDeck=d;initDeck();}
+function initDeck(){deck=activeDeck==='all'?shuffle([...ALL]):shuffle(ALL.filter(c=>c.cat===activeDeck));cur=0;gotCount=0;missed=[];flipped=false;document.getElementById('endBox').classList.remove('show');document.getElementById('cardArea').style.display='';document.getElementById('btnRow').style.display='';renderCard();}
+function renderCard(){if(cur>=deck.length){showEnd();return;}const c=deck[cur];document.getElementById('fTerm').textContent=c.term;document.getElementById('bDef').textContent=c.def;document.getElementById('bCat').textContent=c.cat;document.getElementById('counter').textContent=(cur+1)+' / '+deck.length;flipped=false;document.getElementById('cardInner').classList.remove('flipped');buildDots();}
+function buildDots(){const n=Math.min(deck.length,16);document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function flip(){flipped=!flipped;document.getElementById('cardInner').classList.toggle('flipped',flipped);}
+function mark(known){if(known)gotCount++;else missed.push(deck[cur]);cur++;renderCard();}
+function showEnd(){document.getElementById('cardArea').style.display='none';document.getElementById('btnRow').style.display='none';const pct=Math.round((gotCount/deck.length)*100);document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct>=80?'🎉 Excellent!':pct>=60?'👍 Good Progress':'📚 Keep Studying';document.getElementById('endSub').textContent='Completed '+deck.length+' cards.';document.getElementById('endBox').classList.add('show');}
+function restart(){initDeck();}
+function reviewMissed(){if(!missed.length){restart();return;}deck=shuffle([...missed]);cur=0;gotCount=0;missed=[];flipped=false;document.getElementById('endBox').classList.remove('show');document.getElementById('cardArea').style.display='';document.getElementById('btnRow').style.display='';renderCard();}
+document.addEventListener('keydown',e=>{if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();flip();}if(e.key==='ArrowRight')mark(true);if(e.key==='ArrowLeft')mark(false);});
+initDeck();
+</script>
+</body>
+</html>

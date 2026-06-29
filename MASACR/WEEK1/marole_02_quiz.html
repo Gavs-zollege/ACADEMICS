@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple Choice — Role of the Medical Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto 1fr auto auto;padding:0 20px;max-width:660px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 8px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;margin-bottom:3px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:8px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:26px;background:var(--red);}
+.dot.d{background:var(--green);}
+.hud{display:flex;gap:10px;justify-content:center;padding:4px 0 8px;}
+.hud-chip{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid;}
+.hud-chip.s{background:rgba(224,90,58,.1);color:var(--red);border-color:rgba(224,90,58,.4);}
+.hud-chip.st{background:rgba(76,175,130,.1);color:var(--green);border-color:rgba(76,175,130,.4);}
+.q-area{display:flex;flex-direction:column;gap:6px;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.6;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:hidden;}
+.opt{width:100%;text-align:left;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:10px 15px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;display:none;margin:8px auto 10px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 48px;text-align:center;grid-row:2/6;align-self:center;}
+.end-box.show{display:flex;}
+.end-pct{font-size:50px;font-weight:800;color:var(--red);}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.end-stats{display:flex;gap:14px;}
+.stat{padding:10px 18px;border-radius:10px;text-align:center;}
+.stat.g{background:rgba(76,175,130,.1);}
+.stat.r{background:rgba(224,90,90,.1);}
+.stat-n{font-size:22px;font-weight:800;}
+.stat.g .stat-n{color:var(--green);}
+.stat.r .stat-n{color:var(--rose);}
+.stat-l{font-size:11px;color:var(--muted);margin-top:2px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Role of the Medical Assistant</div>
+    <h1>Multiple Choice</h1>
+    <p>Select the best answer for each question.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="hud"><div class="hud-chip s">Score: <span id="sc">0</span></div><div class="hud-chip st">🔥 Streak: <span id="str">0</span></div></div>
+  <div class="q-area" id="qArea"><div class="q-box"><div class="q-text" id="qText"></div><div class="q-num" id="qNum"></div></div></div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Question →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <div class="end-stats"><div class="stat g"><div class="stat-n" id="eOk">0</div><div class="stat-l">Correct</div></div><div class="stat r"><div class="stat-n" id="eNo">0</div><div class="stat-l">Incorrect</div></div></div>
+    <button class="restart-btn" onclick="init()">Play Again</button>
+  </div>
+</div>
+<script>
+const QS=[
+  {q:"Medical Assistants are classified as which type of healthcare professional?",opts:["Licensed Independent Practitioners","Advanced Practice Providers","Multiskilled Allied Health Professionals","Registered Healthcare Specialists"],ans:2,ok:"MAs are multiskilled allied health professionals — cross-trained in both administrative and clinical functions, working primarily in outpatient settings.",no:"MAs are multiskilled allied health professionals. They are not independently licensed, not advanced practice providers, and not registered specialists."},
+  {q:"Which setting employs the MAJORITY of Medical Assistants?",opts:["Hospitals and health systems","Physician and primary care offices","Urgent care centers","Labs and diagnostic centers"],ans:1,ok:"56% of MAs work in physician and primary care offices — the dominant setting. MAs are central to the ambulatory/outpatient care model.",no:"56% of MAs work in physician/primary care offices. Hospitals employ 13%, specialty clinics 11%. Primary care is the dominant MA setting."},
+  {q:"Which of the following is an ADMINISTRATIVE MA duty?",opts:["Administering injections","Performing an ECG","Verifying insurance and collecting co-pays","Collecting a urine specimen"],ans:2,ok:"Verifying insurance and collecting co-pays are administrative duties. The other options are clinical duties — a key distinction to understand.",no:"Administrative duties = scheduling, check-in, insurance verification, billing. Clinical duties = injections, ECGs, specimen collection, vital signs."},
+  {q:"A patient asks the MA: 'Based on my symptoms, what do you think is wrong with me?' The CORRECT MA response is:",opts:["Share your clinical opinion since you have experience with similar cases","Say: 'I can note your concerns in your chart and the provider will assess you shortly'","Provide a differential diagnosis based on your training","Refer the patient to a medical website for self-diagnosis"],ans:1,ok:"Diagnosing is outside MA scope. Acknowledge the patient's concern, note it for the provider, and redirect appropriately. This protects you and the patient.",no:"Diagnosing is NEVER within MA scope. The correct response: acknowledge, document, and redirect to the provider. Never speculate, even casually."},
+  {q:"Respondeat superior means:",opts:["The MA is always personally liable for any patient harm","Employers are held liable for employees' negligent acts performed within the scope of employment","Providers must personally perform all clinical procedures","Certification supersedes state scope of practice law"],ans:1,ok:"Respondeat superior = 'let the master answer.' Employers share liability for on-the-job errors within scope. Act OUTSIDE scope = individual liability for the MA.",no:"Respondeat superior: employer liability for within-scope acts. If you act outside scope, YOU bear individual liability — the employer's protection does not apply."},
+  {q:"Which MA certification is Zollege's primary pathway?",opts:["CMA (AAMA)","RMA (AMT)","CCMA (NHA)","LPN (NCSBN)"],ans:2,ok:"CCMA (Certified Clinical Medical Assistant) from the National Healthcareer Association (NHA) is Zollege's primary certification pathway. It is the fastest-growing MA credential.",no:"Zollege's primary pathway = CCMA (NHA). CMA (AAMA) is the oldest; RMA (AMT) has broader eligibility. LPN is a nursing credential — not an MA certification."},
+  {q:"An MA is asked by a provider to explain the risks of an upcoming procedure to the patient and have them sign the consent form. What should the MA do?",opts:["Explain the risks as clearly as possible to support the provider","Witness the signature only — explaining risks and obtaining consent is the provider's legal responsibility","Refuse entirely and document the refusal","Have the patient sign without any explanation if the provider is busy"],ans:1,ok:"MAs WITNESS consent signatures only. Explaining risks, benefits, alternatives, and obtaining consent are the provider's legal obligations — not the MA's.",no:"Informed consent = provider responsibility. MAs witness the signature and ensure the patient has had time with the provider. Never explain risks or interpret the form."},
+  {q:"What does scope of practice define for an MA?",opts:["The geographic region where an MA may practice","The range of tasks an MA is legally authorized to perform based on state law, facility policy, and training","The number of patients an MA may see per shift","The income range for MA positions in different states"],ans:1,ok:"Scope of practice = legally authorized tasks, defined by state law, facility policy, provider supervision, and training. It varies by state and may be more restrictive than certification.",no:"Scope of practice defines WHAT tasks are legally authorized. It varies by state — certification does NOT override state law. Facility policy may be even more restrictive."},
+  {q:"Which of the following is OUTSIDE MA scope in any U.S. state?",opts:["Measuring and recording vital signs","Performing venipuncture","Diagnosing conditions and prescribing medications","Administering injections under provider delegation"],ans:2,ok:"Diagnosing and prescribing are ALWAYS outside MA scope — in every state. These are physician/advanced practice functions that require licensure MAs do not hold.",no:"Diagnosing and prescribing are NEVER within MA scope. Vital signs, venipuncture, and delegated injections are within scope with proper training and supervision."},
+  {q:"In the patient visit workflow, when does the MA document and complete post-visit tasks?",opts:["During the provider's examination to save time","Before the patient arrives for the visit","After check-out — completing documentation, sending orders, and calling patients back","Documentation is the provider's responsibility — MAs don't chart"],ans:2,ok:"Post-visit tasks: complete documentation, send orders, and follow up with patients. MAs document throughout the visit, with completion after the patient departs.",no:"MAs document throughout the visit and complete final documentation in the post-visit phase. MAs are primary EHR users — documentation is a core MA responsibility."},
+  {q:"A patient asks the MA to update their insurance information and verify coverage before leaving. Is this within MA scope?",opts:["No — insurance tasks require a billing specialist","Yes — updating insurance and verifying coverage are administrative MA duties","Only if the MA has special billing certification","Only if the office manager authorizes it on a case-by-case basis"],ans:1,ok:"Updating insurance information and verifying coverage are standard administrative MA duties. This is part of the check-out workflow.",no:"Administrative MA duties include insurance verification and updates. This does not require special certification — it is a core administrative function."},
+  {q:"The MA role in healthcare is best described as:",opts:["Primarily administrative, with limited clinical responsibilities","Primarily clinical, with administrative tasks as secondary","Multiskilled, performing both administrative and clinical functions across the entire patient visit","Specialized in either administrative or clinical work, but not both"],ans:2,ok:"MAs are multiskilled, performing both administrative AND clinical functions — from check-in through check-out. This dual role is what makes MAs uniquely valuable in outpatient settings.",no:"MAs perform BOTH administrative and clinical functions. This is the defining characteristic of the MA role — the dual nature creates unique value across the entire patient visit."},
+];
+let questions=[],cur=0,score=0,streak=0,wrong=0,answered=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function init(){questions=shuffle(QS);cur=0;score=0;streak=0;wrong=0;answered=false;document.getElementById('endBox').classList.remove('show');document.getElementById('qArea').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';updateHUD();render();}
+function render(){answered=false;const q=questions[cur];document.getElementById('qText').textContent=q.q;document.getElementById('qNum').textContent='Q'+(cur+1);document.getElementById('opts').innerHTML=q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){document.getElementById('dots').innerHTML=Array.from({length:questions.length},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const q=questions[cur];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[q.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===q.ans){score++;streak++;fb.innerHTML=`<strong>✓ Correct!</strong>${q.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');wrong++;streak=0;fb.innerHTML=`<strong>✗ Not quite.</strong>${q.no}`;fb.className='fb no show';}updateHUD();document.getElementById('nextBtn').className='next-btn show';}
+function next(){cur++;if(cur>=questions.length){showEnd();return;}render();}
+function showEnd(){const pct=Math.round((score/questions.length)*100);document.getElementById('qArea').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct>=80?'🌟 Excellent!':pct>=60?'👍 Good Work':'📚 Keep Reviewing';document.getElementById('endSub').textContent='You answered '+questions.length+' questions.';document.getElementById('eOk').textContent=score;document.getElementById('eNo').textContent=wrong;document.getElementById('endBox').classList.add('show');}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('str').textContent=streak;}
+init();
+</script>
+</body>
+</html>

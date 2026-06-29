@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple Choice — Professionalism</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto 1fr auto auto;padding:0 20px;max-width:660px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 8px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;margin-bottom:3px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:8px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:26px;background:var(--red);}
+.dot.d{background:var(--green);}
+.hud{display:flex;gap:10px;justify-content:center;padding:4px 0 8px;}
+.hud-chip{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid;}
+.hud-chip.s{background:rgba(224,90,58,.1);color:var(--red);border-color:rgba(224,90,58,.4);}
+.hud-chip.st{background:rgba(76,175,130,.1);color:var(--green);border-color:rgba(76,175,130,.4);}
+.q-area{display:flex;flex-direction:column;gap:6px;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.6;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:hidden;}
+.opt{width:100%;text-align:left;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:10px 15px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;display:none;margin:8px auto 10px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 48px;text-align:center;grid-row:2/6;align-self:center;}
+.end-box.show{display:flex;}
+.end-pct{font-size:50px;font-weight:800;color:var(--red);}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.end-stats{display:flex;gap:14px;}
+.stat{padding:10px 18px;border-radius:10px;text-align:center;}
+.stat.g{background:rgba(76,175,130,.1);}
+.stat.r{background:rgba(224,90,90,.1);}
+.stat-n{font-size:22px;font-weight:800;}
+.stat.g .stat-n{color:var(--green);}
+.stat.r .stat-n{color:var(--rose);}
+.stat-l{font-size:11px;color:var(--muted);margin-top:2px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Professionalism in the Clinical Setting</div>
+    <h1>Multiple Choice</h1>
+    <p>Select the best answer for each question.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="hud"><div class="hud-chip s">Score: <span id="sc">0</span></div><div class="hud-chip st">🔥 Streak: <span id="str">0</span></div></div>
+  <div class="q-area" id="qArea"><div class="q-box"><div class="q-text" id="qText"></div><div class="q-num" id="qNum"></div></div></div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Question →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <div class="end-stats"><div class="stat g"><div class="stat-n" id="eOk">0</div><div class="stat-l">Correct</div></div><div class="stat r"><div class="stat-n" id="eNo">0</div><div class="stat-l">Incorrect</div></div></div>
+    <button class="restart-btn" onclick="init()">Play Again</button>
+  </div>
+</div>
+<script>
+const QS=[
+  {q:"What federal law protects individually identifiable patient health information?",opts:["OSHA","The ADA","HIPAA (Health Insurance Portability and Accountability Act)","The Fair Labor Standards Act"],ans:2,ok:"HIPAA (1996) mandates protection of all PHI — any individually identifiable health information. Every MA handles PHI daily and must be fully compliant.",no:"HIPAA = Health Insurance Portability and Accountability Act. It protects PHI (Protected Health Information). Non-compliance can result in fines, termination, and criminal prosecution."},
+  {q:"Which of the following IS protected health information (PHI)?",opts:["The name of the clinic's office manager","A patient's date of birth combined with their diagnosis","General information about a condition posted on a website","Statistical data with all patient identifiers removed"],ans:1,ok:"PHI = any individually identifiable health information. A patient's DOB + diagnosis together can identify a specific person — this is PHI.",no:"PHI includes name, DOB, phone, medical record numbers, diagnoses, photos, and billing data. Fully de-identified data (with all identifiers removed) is not PHI."},
+  {q:"An MA posts on social media: 'Crazy day at work — saw the worst rash I've ever seen!' No patient name is mentioned. Is this a HIPAA violation?",opts:["No — no patient name was used","No — social media posts are personal, not professional","Yes — if the patient could potentially be identified by context, this is a violation","Only if the patient sees it and complains"],ans:2,ok:"Even without a name, if the information could potentially identify a patient (rare condition, location, timing), it is a HIPAA violation. Social media posts about work situations are never safe.",no:"HIPAA violations do not require a name. If a patient could be identified by context (rare rash, specific date, clinic location), it is a violation. Assume all patient details are protected."},
+  {q:"A patient is 10 minutes late to their appointment. The MA should:",opts:["Tell the patient they have forfeited their appointment","Greet the patient warmly, check them in, and notify the provider of the late arrival","Scold the patient for being inconsiderate to staff","Document the tardiness in the patient's permanent medical record"],ans:1,ok:"Greet warmly, check in, and notify the provider. MAs do not make clinical decisions about appointment forfeiture — that is a provider/manager decision.",no:"The MA's role is to check the patient in professionally and notify the provider. Making unilateral decisions to refuse care or scolding patients is outside MA scope."},
+  {q:"An MA receives negative feedback from the supervising provider about their documentation. The MOST professional response is:",opts:["Defend your documentation by explaining why you did it that way","Quietly agree but do not change anything","Listen without interrupting, thank the provider, ask clarifying questions, and apply the feedback","Discuss the feedback with coworkers to get their opinion"],ans:2,ok:"Listen → thank → clarify → apply. This is the professional response to constructive criticism. How you receive feedback is as revealing as your clinical performance.",no:"Becoming defensive, ignoring feedback, or gossiping about it are all unprofessional. Receiving criticism gracefully is a career skill — model it every time."},
+  {q:"According to professional standards, when should an MA arrive for their shift?",opts:["Exactly at the scheduled start time","5–10 minutes after to allow the previous MA to finish their handoff","10–15 minutes before the shift starts","Arrival time is flexible as long as they stay late to compensate"],ans:2,ok:"Healthcare professional standard: arrive 10–15 minutes early. This allows time to receive handoff, review the schedule, and prepare before patients arrive.",no:"10–15 minutes early is the clinical standard. Arriving AT your scheduled time means you have no time to prepare. This is the #1 reason externship placements are lost."},
+  {q:"A patient asks the MA to explain the risks of their upcoming procedure. What should the MA do?",opts:["Explain the risks in simple language to help the patient understand","Tell the patient they'll need to ask the provider — obtaining informed consent is the provider's legal responsibility","Read the consent form aloud to the patient and have them sign","Refuse to engage since it's not an MA task"],ans:1,ok:"Informed consent — explaining risks, benefits, and alternatives — is the provider's legal responsibility. MAs may WITNESS the signature but do not obtain or explain consent.",no:"MAs witness consent signatures but NEVER explain procedures or obtain informed consent — that is the provider's legal obligation. Redirect respectfully to the provider."},
+  {q:"When calling out sick, the most professional approach is to:",opts:["Send a text to your supervisor when you wake up","Call — not text — your supervisor at least 1–2 hours before your shift, state your name and reason briefly","Wait until after your shift starts to see if you feel better","Post on the team group chat"],ans:1,ok:"Call (not text) at least 1–2 hours before shift. State your name, brief reason, and expected return. Follow up with written documentation if required by policy.",no:"Professional call-out = CALL (not text), at least 1–2 hours before shift. Texting, waiting, or using group chats are all unprofessional approaches."},
+  {q:"Which behavior BUILDS professional team relationships?",opts:["Completing only your assigned tasks and nothing more","Gossiping about a difficult coworker to relieve stress","Offering help before being asked and following through on commitments","Pointing out coworkers' errors publicly to maintain standards"],ans:2,ok:"Offering help proactively and following through builds trust. These are the behaviors that make a team succeed — and that define a professional MA.",no:"Doing only minimum work, gossiping, and publicly criticizing coworkers all damage team relationships. A professional MA elevates everyone around them."},
+  {q:"Which of the following requires IMMEDIATE escalation to a supervisor?",opts:["A patient who is 5 minutes late to their appointment","A coworker who takes 10-minute breaks instead of 5","Suspected patient safety compromise or HIPAA violation by a staff member","A scheduling conflict you disagree with"],ans:2,ok:"Patient safety compromise and HIPAA violations require immediate escalation — not later, not after your shift. These are non-negotiable escalation triggers.",no:"Immediate escalation triggers: harassment, workplace violence, patient safety, illegal activity, HIPAA violations. Minor scheduling or policy issues follow normal channels."},
+  {q:"Visible tattoos in the clinical setting should be:",opts:["Proudly displayed — self-expression improves workplace morale","Covered per facility policy — always","Allowed at the MA's discretion","Covered only if patients complain"],ans:1,ok:"Cover visible tattoos per facility policy — always. When in doubt, cover it. Facility policy supersedes personal preference in professional clinical settings.",no:"The standard is always: follow facility policy. In most clinical settings, visible tattoos must be covered. Personal preference does not override professional standards."},
+  {q:"What does 'scope of practice' mean for a Medical Assistant?",opts:["The geographic area in which an MA is licensed to work","The range of tasks an MA is legally authorized to perform, defined by state law, facility policy, and training","The number of patients an MA can see per shift","The certification requirements needed to apply for MA positions"],ans:1,ok:"Scope of practice = tasks legally authorized, defined by state law, facility policy, provider supervision, and the MA's training. Exceeding scope risks patient harm and legal liability.",no:"Scope of practice defines WHAT you can legally do — not where or how many. It varies by state. Never exceed your scope regardless of who asks."},
+];
+let questions=[],cur=0,score=0,streak=0,wrong=0,answered=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function init(){questions=shuffle(QS);cur=0;score=0;streak=0;wrong=0;answered=false;document.getElementById('endBox').classList.remove('show');document.getElementById('qArea').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';updateHUD();render();}
+function render(){answered=false;const q=questions[cur];document.getElementById('qText').textContent=q.q;document.getElementById('qNum').textContent='Q'+(cur+1);document.getElementById('opts').innerHTML=q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){document.getElementById('dots').innerHTML=Array.from({length:questions.length},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const q=questions[cur];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[q.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===q.ans){score++;streak++;fb.innerHTML=`<strong>✓ Correct!</strong>${q.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');wrong++;streak=0;fb.innerHTML=`<strong>✗ Not quite.</strong>${q.no}`;fb.className='fb no show';}updateHUD();document.getElementById('nextBtn').className='next-btn show';}
+function next(){cur++;if(cur>=questions.length){showEnd();return;}render();}
+function showEnd(){const pct=Math.round((score/questions.length)*100);document.getElementById('qArea').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct>=80?'🌟 Professional!':pct>=60?'👍 Good Work':'📚 Keep Reviewing';document.getElementById('endSub').textContent='You answered '+questions.length+' questions.';document.getElementById('eOk').textContent=score;document.getElementById('eNo').textContent=wrong;document.getElementById('endBox').classList.add('show');}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('str').textContent=streak;}
+init();
+</script>
+</body>
+</html>

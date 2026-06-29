@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scenario Simulator — Professionalism</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr auto auto;padding:0 20px;max-width:680px;margin:0 auto;}
+.hdr{text-align:center;padding:16px 0 6px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;margin-bottom:2px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:7px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:24px;background:var(--red);}
+.dot.d{background:var(--green);}
+.sc-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin:6px 0;}
+.sc-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.sc-text{font-size:12px;color:var(--text);line-height:1.55;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:7px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.5;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden;}
+.opt{width:100%;text-align:left;padding:10px 15px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:11px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:9px 14px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;display:none;margin:6px auto 8px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:34px 48px;text-align:center;grid-row:2/7;align-self:center;}
+.end-box.show{display:flex;}
+.end-big{font-size:50px;font-weight:800;color:var(--red);}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);max-width:300px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Professionalism in the Clinical Setting</div>
+    <h1>Scenario Simulator</h1>
+    <p>What would a professional MA do? Choose the best response.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="sc-box" id="scBox"><div class="sc-label">Clinical Scenario</div><div class="sc-text" id="scText"></div></div>
+  <div class="q-box" id="qBox"><div class="q-text" id="qText"></div><div class="q-num" id="qNum"></div></div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Scenario →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-big" id="endBig"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <button class="restart-btn" onclick="init()">Try Another Set</button>
+  </div>
+</div>
+<script>
+const SCENARIOS=[
+  {setup:"You overhear two coworkers discussing a patient's diagnosis loudly in the break room where other patients and visitors can hear them.",steps:[
+    {q:"What is the MOST professionally appropriate response?",opts:["Ignore it — it's not your responsibility","Join the conversation briefly then change the subject","Politely remind them this is a HIPAA-sensitive conversation and suggest moving to a private space","Report them immediately to the medical board without speaking to them first"],ans:2,ok:"Politely redirect to a private space — this protects PHI and models professional behavior without being confrontational.",no:"A professional MA addresses HIPAA violations directly and calmly. Ignoring it makes you complicit. Immediate external reporting skips internal resolution."},
+    {q:"If this situation continues after your reminder, what is the next step?",opts:["Let it go — you've done your part","Document the incident and report to your supervisor or office manager","Post a reminder about HIPAA on the break room bulletin board anonymously","Tell other coworkers about it to build support"],ans:1,ok:"Document and escalate to your supervisor. Repeated HIPAA violations require management intervention — this protects the facility and patients.",no:"After addressing it directly and it continuing, escalate to your supervisor and document. Anonymous notes or gossip are not professional responses."},
+  ]},
+  {setup:"A patient you have been kind to throughout their visit asks for your personal cell phone number so they can 'text you if they have questions.'",steps:[
+    {q:"What is the professionally correct response?",opts:["Give them your number — it shows you care","Politely decline, explain the professional boundary policy, and provide the clinic's main number","Tell them to email the provider directly instead","Say nothing and walk away to avoid an awkward conversation"],ans:1,ok:"Politely decline, explain boundaries, and provide the facility contact number. Document the interaction in the visit notes.",no:"Giving a patient your personal contact information violates professional boundaries regardless of intent. Walking away without addressing it is also unprofessional."},
+    {q:"You also notice the patient has added your personal social media account from the clinic's website. What do you do?",opts:["Accept — they'll see you're a real person","Ignore the request — they'll forget about it","Do not accept; discuss with your supervisor and review your privacy settings","Block them immediately without any professional documentation"],ans:2,ok:"Do not accept. Discuss with your supervisor for guidance and review your privacy settings. This is a boundary issue that needs professional handling.",no:"Accepting patient social media requests violates professional boundaries. Ignoring it (without action) and blocking without documentation are both insufficient."},
+  ]},
+  {setup:"You arrive 5 minutes late to your externship shift because of unexpected traffic. The supervising MA does not say anything, but you can tell she's frustrated.",steps:[
+    {q:"What is the most professional action?",opts:["Say nothing — since she didn't bring it up, neither should you","Apologize sincerely, acknowledge the impact, and share your plan to prevent it going forward","Blame the traffic loudly so everyone knows it wasn't your fault","Send a text message apology later in the day"],ans:1,ok:"Proactively apologize, acknowledge the impact on the team, and commit to a concrete plan. This demonstrates accountability — a pillar of professionalism.",no:"Waiting for her to bring it up, deflecting blame, or sending a text later are all passive or defensive — not professional responses. Own it directly."},
+    {q:"Going forward, what is the professional standard for arrival time in healthcare?",opts:["Arriving at your scheduled time is sufficient","Arriving 10–15 minutes early is the professional standard in healthcare","Only arrive early if you feel like it that day","Arrive 30 minutes early to show extra dedication"],ans:1,ok:"10–15 minutes early is the clinical standard — it gives you time to receive handoff, review the schedule, and prepare before patients arrive.",no:"'On time' in healthcare means 10–15 minutes early. Arriving AT your start time means you are unprepared. Attendance/punctuality is the #1 reason externship placements are lost."},
+  ]},
+  {setup:"You notice a coworker charting a blood pressure reading without having actually taken it from the patient. She says 'it's probably the same as last time.'",steps:[
+    {q:"What is this called, and what is your obligation?",opts:["This is a minor shortcut — let it go since you're not her supervisor","This is fraudulent documentation — report it to your supervisor or office manager immediately","Talk to the patient about it without involving your supervisor","Correct the chart yourself to reflect the true situation"],ans:1,ok:"Charting a value not actually measured is fraudulent documentation — a federal offense. You are obligated to report this immediately. This is a patient safety issue.",no:"Documentation fraud is never a 'minor shortcut.' You cannot correct the chart yourself without authorization. The obligation is to report — patient safety requires it."},
+    {q:"Your coworker is a friend. She asks you not to report it. What do you do?",opts:["Agree not to report — protecting a friend is more important","Report it anyway — professional and legal obligations override personal loyalty","Compromise: mention it anonymously so she doesn't know it was you","Wait to see if the patient has any negative outcomes before deciding"],ans:1,ok:"Professional and legal obligations override personal loyalty. Failure to report documentation fraud makes you complicit and equally liable.",no:"Friendship does not override professional and legal obligations. Anonymous reporting is still reporting, but concealing it entirely creates your own liability."},
+  ]},
+];
+let sc,stepIdx,score,answered;
+function init(){sc=SCENARIOS[Math.floor(Math.random()*SCENARIOS.length)];stepIdx=0;score=0;answered=false;document.getElementById('scText').textContent=sc.setup;document.getElementById('endBox').classList.remove('show');document.getElementById('scBox').style.display='';document.getElementById('qBox').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';renderStep();}
+function renderStep(){answered=false;const s=sc.steps[stepIdx];document.getElementById('qNum').textContent='Q'+(stepIdx+1);document.getElementById('qText').textContent=s.q;document.getElementById('opts').innerHTML=s.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){document.getElementById('dots').innerHTML=Array.from({length:sc.steps.length},(_,i)=>`<div class="dot ${i<stepIdx?'d':i===stepIdx?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const s=sc.steps[stepIdx];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[s.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===s.ans){score++;fb.innerHTML=`<strong>✓ Correct!</strong>${s.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');fb.innerHTML=`<strong>✗ Not quite.</strong>${s.no}`;fb.className='fb no show';}document.getElementById('nextBtn').className='next-btn show';}
+function next(){stepIdx++;if(stepIdx>=sc.steps.length){showEnd();return;}renderStep();}
+function showEnd(){const t=sc.steps.length,pct=Math.round((score/t)*100);document.getElementById('scBox').style.display='none';document.getElementById('qBox').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endBig').textContent=score+'/'+t;document.getElementById('endTitle').textContent=pct===100?'🏆 Perfect Professional!':pct>=50?'🌟 Good Judgment!':'📚 Review & Retry';document.getElementById('endSub').textContent='You navigated '+t+' professional decision steps.';document.getElementById('endBox').classList.add('show');}
+init();
+</script>
+</body>
+</html>

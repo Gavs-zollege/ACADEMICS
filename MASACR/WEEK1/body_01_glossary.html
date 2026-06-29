@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossary — Language & Structure of the Human Body</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--red-dim:rgba(224,90,58,.15);--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--pill-bg:rgba(255,255,255,.06);--pill-border:rgba(255,255,255,.12);}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr;max-width:820px;margin:0 auto;padding:0 32px;}
+.hdr{padding:26px 0 12px;}
+.hdr-eye{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:36px;font-weight:800;color:var(--text);margin-bottom:3px;line-height:1.05;}
+.hdr-sub{font-size:13px;color:var(--muted2);}
+.search-wrap{padding:10px 0 8px;}
+.search-inner{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;}
+.search-icon{color:var(--muted);font-size:14px;flex-shrink:0;}
+.search-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;font-family:'Inter',sans-serif;}
+.search-input::placeholder{color:var(--muted);}
+.filter-area{padding-bottom:8px;}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.pill{padding:4px 12px;border-radius:999px;border:1px solid var(--pill-border);background:var(--pill-bg);color:var(--muted2);font-size:11px;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap;}
+.pill:hover{border-color:rgba(255,255,255,.22);color:var(--text);}
+.pill.active{background:var(--red-dim);border-color:var(--red);color:var(--text);font-weight:600;}
+.term-count{font-size:11px;color:var(--muted);}
+.list-area{min-height:0;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
+.term-list{flex:1;overflow:hidden;}
+.term-row{display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;gap:14px;}
+.term-row:last-child{border-bottom:none;}
+.term-row:hover{background:rgba(255,255,255,.03);}
+.term-left{display:flex;align-items:center;gap:12px;min-width:0;}
+.red-bar{width:3px;border-radius:2px;background:var(--red);flex-shrink:0;}
+.term-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cat-badge{flex-shrink:0;padding:2px 9px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--red-dim);color:var(--red);white-space:nowrap;}
+.pager{background:var(--card);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:11px 22px;flex-shrink:0;}
+.pager-btn{padding:6px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted2);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;}
+.pager-btn:hover:not(:disabled){border-color:rgba(255,255,255,.2);color:var(--text);}
+.pager-btn:disabled{opacity:.3;cursor:default;}
+.pager-dots{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;max-width:420px;}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;border:none;padding:0;transition:all .2s;}
+.pdot.active{background:var(--red);transform:scale(1.3);}
+.pdot.near{background:rgba(255,255,255,.3);}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:50;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 30px;max-width:500px;width:90%;transform:translateY(10px);transition:transform .2s;}
+.overlay.open .modal{transform:translateY(0);}
+.m-badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--red-dim);color:var(--red);margin-bottom:10px;}
+.m-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;color:var(--text);margin-bottom:10px;}
+.m-def{font-size:13px;color:var(--muted2);line-height:1.68;margin-bottom:10px;}
+.m-note{background:rgba(224,90,58,.1);border-left:2px solid var(--red);padding:9px 12px;border-radius:0 7px 7px 0;font-size:12px;color:var(--text);line-height:1.6;display:none;}
+.m-note.show{display:block;}
+.m-note strong{color:var(--red);}
+.m-close{margin-top:14px;width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:12px;cursor:pointer;transition:all .18s;}
+.m-close:hover{border-color:var(--red);color:var(--red);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Week 1 — Language & Structure of the Human Body</div>
+    <h1>Glossary</h1>
+    <div class="hdr-sub">Word Roots · Prefixes · Suffixes · Body Planes · Directional Terms · Abbreviations</div>
+  </div>
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" id="searchInput" placeholder="Search terms or definitions…" oninput="onSearch()">
+    </div>
+  </div>
+  <div class="filter-area">
+    <div class="pills" id="pills"></div>
+    <div class="term-count" id="termCount"></div>
+  </div>
+  <div class="list-area" id="listArea">
+    <div class="term-list" id="termList"></div>
+    <div class="pager" id="pager">
+      <button class="pager-btn" id="btnPrev" onclick="changePage(-1)">← Prev</button>
+      <div class="pager-dots" id="pagerDots"></div>
+      <button class="pager-btn" id="btnNext" onclick="changePage(1)">Next →</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="overlay" onclick="maybeClose(event)">
+  <div class="modal">
+    <div class="m-badge" id="mBadge"></div>
+    <div class="m-name" id="mName"></div>
+    <div class="m-def" id="mDef"></div>
+    <div class="m-note" id="mNote"></div>
+    <button class="m-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+<script>
+const TERMS=[
+  // Word Roots
+  {cat:"Word Roots",name:"cardi/o",def:"Root meaning heart. Example: cardiomegaly (enlargement of the heart), cardiologist (heart specialist).",note:"<strong>Tip:</strong> See 'cardi' in any term → think heart. cardio + -logy = study of the heart."},
+  {cat:"Word Roots",name:"derm/o",def:"Root meaning skin. Example: dermatology (study of the skin), dermatitis (inflammation of the skin).",note:"Patients frequently present with skin complaints — recognizing derm/o helps you document and communicate accurately."},
+  {cat:"Word Roots",name:"encephal/o",def:"Root meaning brain. Example: encephalitis (inflammation of the brain), electroencephalogram (EEG).",note:"Encephal/o appears in neurological documentation — critical for MA charting in neurology settings."},
+  {cat:"Word Roots",name:"gastr/o",def:"Root meaning stomach. Example: gastroscopy (visual examination of the stomach), gastritis (stomach inflammation).",note:"Common in GI complaints — patients with 'gastric' pain have stomach pain."},
+  {cat:"Word Roots",name:"hepat/o",def:"Root meaning liver. Example: hepatitis (liver inflammation), hepatomegaly (enlarged liver).",note:"Hepatic = relating to the liver. Hepatotoxic medications damage the liver — important for MA medication documentation."},
+  {cat:"Word Roots",name:"nephr/o",def:"Root meaning kidney. Example: nephrology (study of the kidneys), nephritis (kidney inflammation).",note:"Nephr/o vs. ren/o — both mean kidney. Renal is the adjective form. CKD = Chronic Kidney Disease."},
+  {cat:"Word Roots",name:"neur/o",def:"Root meaning nerve. Example: neuropathy (disease of the nerves), neurology (study of the nervous system).",note:"Neuropathy is a common complication in diabetic patients — MAs frequently document this in intake."},
+  {cat:"Word Roots",name:"oste/o",def:"Root meaning bone. Example: osteoporosis (porous/fragile bones), osteomyelitis (bone infection).",note:"Osteo + -porosis (porous condition) = porous bones. Common in elderly and post-menopausal patients."},
+  {cat:"Word Roots",name:"thromb/o",def:"Root meaning blood clot. Example: thrombosis (abnormal blood clot formation), thrombolysis (clot destruction).",note:"Deep vein thrombosis (DVT) and pulmonary embolism (PE) are serious clotting conditions MAs must recognize by terminology."},
+  {cat:"Word Roots",name:"pneum/o",def:"Root meaning lung or air. Example: pneumonia (lung infection), pneumothorax (air in the chest cavity).",note:"Pneumo = lung OR air depending on context. Pneumonia ≠ pneumothorax — context determines meaning."},
+  // Prefixes
+  {cat:"Prefixes",name:"tachy-",def:"Prefix meaning fast or rapid. Example: tachycardia (rapid heart rate >100 bpm), tachypnea (rapid breathing).",note:"<strong>vs. brady-</strong> (slow): tachycardia = fast heart; bradycardia = slow heart. Both are vital sign findings MAs must recognize."},
+  {cat:"Prefixes",name:"brady-",def:"Prefix meaning slow. Example: bradycardia (slow heart rate <60 bpm), bradypnea (abnormally slow breathing).",note:"Bradycardia can indicate good cardiovascular fitness (athletes) OR dangerous conduction problems — context matters."},
+  {cat:"Prefixes",name:"hyper-",def:"Prefix meaning above normal, excessive, or elevated. Example: hypertension (elevated blood pressure), hyperglycemia (high blood sugar).",note:"Hyper = high. Hypertension is the #1 chronic condition MAs monitor. Normal BP: <120/80 mmHg."},
+  {cat:"Prefixes",name:"hypo-",def:"Prefix meaning below normal, deficient, or decreased. Example: hypoglycemia (low blood sugar), hypotension (low blood pressure).",note:"Hypo = low. Hypoglycemia symptoms: shakiness, diaphoresis, confusion. Requires immediate intervention."},
+  {cat:"Prefixes",name:"dys-",def:"Prefix meaning painful, difficult, or abnormal. Example: dyspnea (difficulty breathing), dysphagia (difficulty swallowing), dysuria (painful urination).",note:"Dys- appears in many chief complaints. Dyspnea = the patient is struggling to breathe — often urgent."},
+  {cat:"Prefixes",name:"a- / an-",def:"Prefix meaning without or not. Example: apnea (no breathing), anemia (without sufficient red blood cells), asymptomatic (without symptoms).",note:"Apnea = no breathing — as in sleep apnea. Anemia = low red blood cells/hemoglobin. Both very common clinically."},
+  {cat:"Prefixes",name:"bi- / bilateral",def:"Prefix meaning two or both sides. Example: bilateral (both sides), bifurcation (split into two), binocular.",note:"'Bilateral lower extremity edema' = swelling in BOTH legs. Unilateral = only one side — important clinical distinction."},
+  {cat:"Prefixes",name:"sub-",def:"Prefix meaning below or under. Example: subcutaneous (under the skin — SC injection route), sublingual (under the tongue).",note:"Sub- is critical for injection routes: subcutaneous (SC), sublingual (under tongue), subphrenic (below diaphragm)."},
+  {cat:"Prefixes",name:"intra-",def:"Prefix meaning within or inside. Example: intravenous (within a vein — IV), intramuscular (within a muscle — IM injection).",note:"Injection routes: intradermal (ID), subcutaneous (SC), intramuscular (IM), intravenous (IV). MA must know all four."},
+  {cat:"Prefixes",name:"peri-",def:"Prefix meaning surrounding or around. Example: pericardium (sac surrounding the heart), periosteum (layer surrounding bone).",note:"Pericarditis = inflammation of the pericardium (sac around the heart). Presents with chest pain that worsens lying down."},
+  // Suffixes
+  {cat:"Suffixes",name:"-itis",def:"Suffix meaning inflammation. Example: appendicitis (inflamed appendix), gastritis (inflamed stomach), arthritis (inflamed joints).",note:"-itis always means inflammation. Inflammation signs: redness, heat, swelling, pain. Very common suffix in diagnoses."},
+  {cat:"Suffixes",name:"-ectomy",def:"Suffix meaning surgical removal. Example: appendectomy (removal of the appendix), hysterectomy (removal of the uterus), gastrectomy.",note:"Ecto- = outside, -ectomy = cutting out. Any '-ectomy' is a surgery to remove a body part."},
+  {cat:"Suffixes",name:"-ology / -ologist",def:"-ology = the study of; -ologist = a specialist who studies. Example: cardiology (study of the heart), cardiologist (heart specialist).",note:"Every specialty has an '-ologist.' Dermatologist = skin; nephrologist = kidneys; neurologist = nervous system."},
+  {cat:"Suffixes",name:"-algia",def:"Suffix meaning pain. Example: myalgia (muscle pain), neuralgia (nerve pain), arthralgia (joint pain).",note:"-algia vs. -odynia — both mean pain. Myalgia is documented frequently after injections or in flu patients."},
+  {cat:"Suffixes",name:"-gram",def:"Suffix meaning a record or image. Example: electrocardiogram (ECG/EKG — recorded image of heart's electrical activity), mammogram, radiogram.",note:"ECG = electrocardiogram. MAs perform ECGs — knowing this suffix helps you understand exactly what you're creating."},
+  {cat:"Suffixes",name:"-scopy",def:"Suffix meaning visual examination. Example: colonoscopy (visual exam of the colon), bronchoscopy, gastroscopy.",note:"If the suffix is -scopy, a camera/scope is involved. MAs prepare patients for -scopy procedures frequently."},
+  {cat:"Suffixes",name:"-pathy",def:"Suffix meaning disease or suffering. Example: neuropathy (nerve disease), cardiomyopathy (heart muscle disease), nephropathy.",note:"Neuropathy is a major complication of uncontrolled diabetes — document and report when patients describe numbness/tingling."},
+  {cat:"Suffixes",name:"-megaly",def:"Suffix meaning enlargement. Example: cardiomegaly (enlarged heart), splenomegaly (enlarged spleen), hepatomegaly (enlarged liver).",note:"Organomegaly (enlarged organ) is documented by providers on physical exam. MAs should recognize these terms in chart notes."},
+  // Body Planes & Terms
+  {cat:"Body Planes & Terms",name:"Anatomical Position",def:"The universal reference standard: body erect, face forward, eyes ahead, arms at sides with palms facing forward (anterior), feet together and pointing forward.",note:"ALL directional terms assume anatomical position. Left and right are always the PATIENT's left and right — not yours."},
+  {cat:"Body Planes & Terms",name:"Sagittal Plane",def:"A vertical plane that divides the body into left and right halves. The midsagittal (median) plane divides it into equal left and right halves.",note:"Sagittal = left/right division. Example: a brain MRI viewed from the side is a sagittal image."},
+  {cat:"Body Planes & Terms",name:"Frontal (Coronal) Plane",def:"A vertical plane that divides the body into front (anterior) and back (posterior) halves. Also called the coronal plane.",note:"Frontal = front/back division. A PA (posteroanterior) chest X-ray is taken in the frontal plane — beam enters posteriorly."},
+  {cat:"Body Planes & Terms",name:"Transverse Plane",def:"A horizontal plane that divides the body into upper (superior) and lower (inferior) halves. Also called the axial plane.",note:"CT scans produce transverse (axial) images — cross-section 'slices' of the body viewed from above."},
+  {cat:"Body Planes & Terms",name:"Anterior / Posterior",def:"Anterior = toward the front of the body. Posterior = toward the back. Example: the sternum is anterior to the spine; the spine is posterior to the sternum.",note:"Anterior = ventral = front. Posterior = dorsal = back. These terms are interchangeable in clinical use."},
+  {cat:"Body Planes & Terms",name:"Superior / Inferior",def:"Superior = above or toward the head. Inferior = below or toward the feet. Example: the heart is superior to the stomach; the navel is inferior to the sternum.",note:"Superior = cephalic (toward the head). Inferior = caudal (toward the tail). Use these to localize anatomy precisely."},
+  {cat:"Body Planes & Terms",name:"Medial / Lateral",def:"Medial = toward the midline of the body. Lateral = away from the midline. Example: the nose is medial to the ears; the ears are lateral to the nose.",note:"The knee is medial to the hip; the hip is lateral to the knee. These terms localize findings precisely."},
+  {cat:"Body Planes & Terms",name:"Proximal / Distal",def:"Proximal = closer to the point of origin (e.g., trunk or limb attachment). Distal = farther from the point of origin. Example: elbow is proximal to the wrist.",note:"Used especially for limbs: the shoulder is proximal; the fingers are distal. Important for wound and fracture documentation."},
+  // Body Cavities
+  {cat:"Body Cavities",name:"Thoracic Cavity",def:"The ventral body cavity within the chest. Contains the heart, lungs, esophagus, and trachea. Protected by the rib cage.",note:"Thoracic cavity contents = heart + lungs. Chest pain, dyspnea, and heart rhythm issues involve this cavity."},
+  {cat:"Body Cavities",name:"Abdominal Quadrants",def:"The abdomen is divided into 4 quadrants: RUQ (right upper — liver, gallbladder), LUQ (left upper — stomach, spleen), RLQ (right lower — appendix), LLQ (left lower — sigmoid colon).",note:"<strong>Clinical key:</strong> RLQ pain → appendicitis. RUQ pain → gallbladder. MAs document quadrant location of pain during intake."},
+  {cat:"Body Cavities",name:"Cranial Cavity",def:"Part of the dorsal cavity. Contains and protects the brain. Formed by the bones of the skull.",note:"Head trauma, meningitis, and stroke (CVA) involve the cranial cavity. HEENT abbreviation includes the head/cranial region."},
+  {cat:"Body Cavities",name:"Pelvic Cavity",def:"Inferior portion of the ventral cavity. Contains the bladder, reproductive organs, and rectum.",note:"Pelvic pain, urinary symptoms, and OB/GYN complaints localize here. Pelvic inflammatory disease (PID) affects this cavity."},
+  // Abbreviations
+  {cat:"Abbreviations",name:"STAT / PRN / NPO",def:"STAT = immediately (from Latin statim). PRN = as needed (pro re nata). NPO = nothing by mouth (nil per os). All three appear in medication orders and clinical instructions.",note:"<strong>Never guess abbreviations.</strong> STAT means act NOW. PRN = only give if needed. NPO patients cannot eat or drink — critical before procedures and anesthesia."},
+  {cat:"Abbreviations",name:"HEENT",def:"Abbreviation for Head, Eyes, Ears, Nose, Throat — a standard section of the physical examination. Documented during the review of systems.",note:"HEENT is always listed in physical exam documentation. MAs assist with HEENT equipment: otoscope, ophthalmoscope, tongue depressors."},
+  {cat:"Abbreviations",name:"CC / HPI / PMH",def:"CC = Chief Complaint (why the patient is here). HPI = History of Present Illness (details of the CC). PMH = Past Medical History (prior conditions and surgeries).",note:"These form the foundation of every patient visit chart. MAs collect and document CC and HPI during rooming."},
+  {cat:"Abbreviations",name:"RUQ / LUQ / RLQ / LLQ",def:"Abdominal quadrant abbreviations. RUQ = Right Upper Quadrant, LUQ = Left Upper Quadrant, RLQ = Right Lower Quadrant, LLQ = Left Lower Quadrant.",note:"When a patient says 'my stomach hurts here' — document the quadrant. RLQ + rebound tenderness = possible appendicitis."},
+  {cat:"Abbreviations",name:"CBC / BMP / UA",def:"CBC = Complete Blood Count (measures RBCs, WBCs, platelets). BMP = Basic Metabolic Panel (glucose, electrolytes, kidney function). UA = Urinalysis.",note:"MAs collect specimens for all three. UA = urine sample. CBC and BMP = blood draw (venipuncture). Know the collection method for each."},
+];
+const CATS=['All','Word Roots','Prefixes','Suffixes','Body Planes & Terms','Body Cavities','Abbreviations'];
+const PER_PAGE=4;
+let activeCat='All',searchQ='',currentPage=0,filtered=[];
+function buildPills(){document.getElementById('pills').innerHTML=CATS.map(c=>`<button class="pill ${c===activeCat?'active':''}" onclick="setFilter('${c}')">${c}</button>`).join('');}
+function setFilter(c){activeCat=c;currentPage=0;buildPills();applyFilter();}
+function onSearch(){searchQ=document.getElementById('searchInput').value.toLowerCase();currentPage=0;applyFilter();}
+function applyFilter(){filtered=TERMS.filter(t=>{const mc=activeCat==='All'||t.cat===activeCat;const mq=!searchQ||t.name.toLowerCase().includes(searchQ)||t.def.toLowerCase().includes(searchQ);return mc&&mq;});renderPage();}
+function renderPage(){
+  const total=filtered.length,totalPages=Math.max(1,Math.ceil(total/PER_PAGE));
+  if(currentPage>=totalPages)currentPage=totalPages-1;
+  const items=filtered.slice(currentPage*PER_PAGE,currentPage*PER_PAGE+PER_PAGE);
+  document.getElementById('termCount').textContent=`${total} term${total!==1?'s':''} · Page ${currentPage+1} of ${totalPages}`;
+  const la=document.getElementById('listArea'),pg=document.getElementById('pager');
+  const rowH=Math.floor((la.clientHeight-pg.offsetHeight)/PER_PAGE),barH=Math.floor(rowH*.38);
+  document.getElementById('termList').innerHTML=items.map(t=>`<div class="term-row" style="height:${rowH}px" onclick="openModal(${filtered.indexOf(t)})"><div class="term-left"><div class="red-bar" style="height:${barH}px"></div><div class="term-name">${t.name}</div></div><div class="cat-badge">${t.cat}</div></div>`).join('');
+  document.getElementById('pagerDots').innerHTML=Array.from({length:totalPages},(_,i)=>`<button class="pdot${i===currentPage?' active':Math.abs(i-currentPage)<=2?' near':''}" onclick="goPage(${i})"></button>`).join('');
+  document.getElementById('btnPrev').disabled=currentPage===0;document.getElementById('btnNext').disabled=currentPage>=totalPages-1;
+}
+function changePage(d){currentPage=Math.max(0,Math.min(Math.max(1,Math.ceil(filtered.length/PER_PAGE))-1,currentPage+d));renderPage();}
+function goPage(n){currentPage=n;renderPage();}
+function openModal(i){const t=filtered[i];document.getElementById('mBadge').textContent=t.cat;document.getElementById('mName').textContent=t.name;document.getElementById('mDef').textContent=t.def;const n=document.getElementById('mNote');if(t.note){n.innerHTML=t.note;n.className='m-note show';}else{n.className='m-note';}document.getElementById('overlay').classList.add('open');}
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+function maybeClose(e){if(e.target===document.getElementById('overlay'))closeModal();}
+buildPills();applyFilter();
+window.addEventListener('resize',renderPage);
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Term Builder — Language & Structure of the Human Body</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto 1fr auto auto;padding:0 20px;max-width:680px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 6px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:21px;font-weight:800;color:var(--text);margin-bottom:2px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:7px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:24px;background:var(--red);}
+.dot.d{background:var(--green);}
+.hud{display:flex;gap:10px;justify-content:center;padding:4px 0 8px;}
+.hud-chip{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid;}
+.hud-chip.s{background:rgba(224,90,58,.1);color:var(--red);border-color:rgba(224,90,58,.4);}
+.hud-chip.st{background:rgba(76,175,130,.1);color:var(--green);border-color:rgba(76,175,130,.4);}
+/* TERM DISPLAY */
+.term-display{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;display:flex;flex-direction:column;gap:14px;}
+.term-word{font-family:'Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;color:var(--text);text-align:center;letter-spacing:.02em;}
+.term-parts{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;}
+.part-chip{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;border:1px solid;text-align:center;}
+.part-chip.prefix{background:rgba(59,163,184,.12);border-color:rgba(59,163,184,.4);color:#3ba3b8;}
+.part-chip.root{background:rgba(232,184,75,.12);border-color:rgba(232,184,75,.4);color:#e8b84b;}
+.part-chip.suffix{background:rgba(224,90,58,.12);border-color:rgba(224,90,58,.4);color:var(--red);}
+.part-label{font-size:9px;display:block;margin-top:2px;opacity:.7;}
+.task-label{font-size:11px;color:var(--muted);text-align:center;}
+/* OPTIONS */
+.opts-area{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:hidden;}
+.opt{width:100%;text-align:left;padding:11px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:10px 15px;border-radius:10px;font-size:12px;line-height:1.55;display:none;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;cursor:pointer;display:none;margin:8px auto 10px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 48px;text-align:center;grid-row:2/6;align-self:center;}
+.end-box.show{display:flex;}
+.end-pct{font-size:50px;font-weight:800;color:var(--red);font-family:'Plus Jakarta Sans',sans-serif;}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Language & Structure of the Human Body</div>
+    <h1>Term Decoder</h1>
+    <p>Decode each medical term by identifying its meaning.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="hud">
+    <div class="hud-chip s">Score: <span id="sc">0</span></div>
+    <div class="hud-chip st">🔥 Streak: <span id="str">0</span></div>
+  </div>
+  <div class="term-display" id="termDisplay">
+    <div class="term-word" id="termWord"></div>
+    <div class="term-parts" id="termParts"></div>
+    <div class="task-label" id="taskLabel"></div>
+  </div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Term →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <button class="restart-btn" onclick="init()">Play Again</button>
+  </div>
+</div>
+<script>
+// Each question shows a medical term broken into parts and asks about its meaning or a component
+const QS=[
+  {word:"Bradycardia",parts:[{t:"brady-",k:"prefix"},{t:"cardi/o",k:"root"},{t:"-ia",k:"suffix"}],task:"What does this term mean?",opts:["Fast heart rate (above 100 bpm)","Slow heart rate (below 60 bpm)","Irregular heart rhythm","Enlarged heart"],ans:1,ok:"Brady- = slow + cardi/o = heart + -ia = condition → Slow heart condition. Normal: 60–100 bpm. <60 = bradycardia.",no:"Brady- = SLOW. Tachycardia = fast heart. Bradycardia = slow heart. Golden rule: define suffix first (-ia = condition), then prefix (brady- = slow), then root (cardi/o = heart)."},
+  {word:"Dyspnea",parts:[{t:"dys-",k:"prefix"},{t:"pne/o",k:"root"},{t:"-a",k:"suffix"}],task:"What does dyspnea mean?",opts:["Normal breathing","Absence of breathing","Difficulty or painful breathing","Rapid breathing"],ans:2,ok:"Dys- (difficult/painful) + pne/o (breathing) + -a (condition) = difficulty breathing. A critical chief complaint — always document carefully.",no:"Dys- = difficult or painful. Pne/o = breathing. Dyspnea = difficulty breathing. Contrast: eupnea (normal), apnea (no breathing), tachypnea (rapid)."},
+  {word:"Hepatitis",parts:[{t:"hepat/o",k:"root"},{t:"-itis",k:"suffix"}],task:"Which suffix tells you this is an INFLAMMATORY condition?",opts:["-hepat","hepat/o","-itis","hepat-itis together"],ans:2,ok:"-itis always means inflammation. Hepat/o = liver. Hepatitis = inflammation of the liver. The suffix tells you the TYPE of condition.",no:"-itis = inflammation. This is the suffix — it ends the word and tells you it's an inflammatory condition. Hepat/o (root) tells you WHERE."},
+  {word:"Nephrology",parts:[{t:"nephr/o",k:"root"},{t:"-logy",k:"suffix"}],task:"What does the -logy suffix indicate?",opts:["Surgical removal","Inflammation of","The study of","A specialist who treats"],ans:2,ok:"-logy = the study of. Nephrology = the study of kidneys. The specialist is a nephrologist (-ologist). -logy names the field; -ologist names the person.",no:"-logy = study of. -ologist = specialist. Nephro/logy = study of kidneys. A nephrologist studies and treats kidney conditions."},
+  {word:"Subcutaneous",parts:[{t:"sub-",k:"prefix"},{t:"cutane/o",k:"root"},{t:"-ous",k:"suffix"}],task:"What injection route does 'subcutaneous' describe?",opts:["Within a vein (IV)","Within a muscle (IM)","Into the skin (intradermal)","Below the skin / into fatty tissue (SC)"],ans:3,ok:"Sub- (below) + cutane/o (skin) + -ous (pertaining to) = pertaining to below the skin. SC injections go into the fatty tissue just under the skin. Angle: 45°.",no:"Sub- = below. Cutane/o = skin. Subcutaneous = below the skin. SC injections use a 45° angle into fatty tissue — not muscle, not vein."},
+  {word:"Cardiomegaly",parts:[{t:"cardi/o",k:"root"},{t:"-megaly",k:"suffix"}],task:"What does -megaly mean?",opts:["Inflammation","Removal","Enlargement","Disease"],ans:2,ok:"-megaly = enlargement. Cardiomegaly = enlarged heart. Other examples: splenomegaly (spleen), hepatomegaly (liver).",no:"-megaly = enlargement. Cardiomegaly = enlarged heart. -itis = inflammation; -ectomy = removal; -pathy = disease."},
+  {word:"Tachypnea",parts:[{t:"tachy-",k:"prefix"},{t:"pne/o",k:"root"},{t:"-a",k:"suffix"}],task:"A patient's RR is 26. Which term describes this finding?",opts:["Apnea","Bradypnea","Tachypnea","Eupnea"],ans:2,ok:"Tachy- (fast) + pne/o (breathing) = tachypnea = fast breathing. Normal RR: 12–20/min. RR of 26 = tachypnea — abnormally fast. Flag for provider.",no:"Tachy- = fast. RR 26 exceeds normal (12–20). Tachypnea = fast breathing. Apnea = no breathing; bradypnea = slow; eupnea = normal."},
+  {word:"Appendectomy",parts:[{t:"appendic/o",k:"root"},{t:"-ectomy",k:"suffix"}],task:"What does -ectomy mean?",opts:["Cutting into","Surgical removal","Visual examination","Surgical repair"],ans:1,ok:"-ectomy = surgical removal. Appendectomy = surgical removal of the appendix. Most common emergency abdominal surgery.",no:"-ectomy = surgical removal. -otomy = cutting into. -scopy = visual exam. -plasty = surgical repair. Appendectomy removes the appendix."},
+  {word:"Osteoporosis",parts:[{t:"oste/o",k:"root"},{t:"-porosis",k:"suffix"}],task:"What does oste/o mean?",opts:["Joint","Muscle","Bone","Nerve"],ans:2,ok:"Oste/o = bone. Osteoporosis = porous bone condition. Bones become brittle and fracture-prone. Common in elderly and post-menopausal patients.",no:"Oste/o = bone. Not joint (arthr/o), not muscle (my/o), not nerve (neur/o). Osteoporosis = porous (weakened) bones."},
+  {word:"Pericardium",parts:[{t:"peri-",k:"prefix"},{t:"cardi/o",k:"root"},{t:"-um",k:"suffix"}],task:"What does peri- mean?",opts:["Within","Around/surrounding","Below","Above"],ans:1,ok:"Peri- = surrounding. Pericardium = the sac surrounding the heart. Pericarditis = inflammation of that sac.",no:"Peri- = surrounding or around. Pericardium = the protective sac surrounding the heart. Intra- = within; sub- = below; supra- = above."},
+  {word:"Colonoscopy",parts:[{t:"colon/o",k:"root"},{t:"-scopy",k:"suffix"}],task:"What type of procedure is a colonoscopy?",opts:["Surgical removal of the colon","A written record of the colon","Visual examination of the colon","Creation of an opening in the colon"],ans:2,ok:"-scopy = visual examination using a scope/camera. Colonoscopy = visual examination of the colon. MAs frequently prepare patients for colonoscopies.",no:"-scopy = visual examination. -ectomy = removal; -gram = record; -ostomy = opening. Colonoscopy uses a camera to view the interior of the colon."},
+  {word:"Hypertension",parts:[{t:"hyper-",k:"prefix"},{t:"tens/o",k:"root"},{t:"-ion",k:"suffix"}],task:"A patient's BP is 145/92. Which term applies?",opts:["Hypotension","Normotension","Hypertension","Hypoglycemia"],ans:2,ok:"Hyper- (above/excessive) + tension (pressure) = abnormally elevated blood pressure. Normal BP < 120/80. Stage 2 HTN ≥ 140/90.",no:"Hyper- = above normal. BP 145/92 exceeds normal (<120/80) and stage 1 HTN threshold (130/80). This is hypertension. Hypo- = below normal."},
+  {word:"Neuropathy",parts:[{t:"neur/o",k:"root"},{t:"-pathy",k:"suffix"}],task:"What does -pathy mean?",opts:["Study of","Inflammation","Disease or suffering","Surgical removal"],ans:2,ok:"-pathy = disease or suffering. Neuropathy = disease of the nerves. Common in uncontrolled diabetes — presents as numbness or tingling.",no:"-pathy = disease or suffering. Not -logy (study of), not -itis (inflammation), not -ectomy (removal). Neuropathy = nerve disease."},
+  {word:"Electrocardiogram",parts:[{t:"electr/o",k:"root"},{t:"cardi/o",k:"root"},{t:"-gram",k:"suffix"}],task:"An ECG is ordered. What is the MA's role?",opts:["Interpret the ECG rhythm and report findings to the patient","Perform the ECG and ensure proper lead placement; the provider interprets","Diagnose arrhythmias using the ECG tracing","Prescribe treatment based on ECG findings"],ans:1,ok:"MAs PERFORM ECGs — placing 10 leads correctly and running the tracing. Providers INTERPRET the results. MAs document but never diagnose from ECG readings.",no:"MA role in ECGs: perform, not interpret. Proper lead placement is a clinical skill. Interpretation (rhythm diagnosis) is always the provider's responsibility."},
+  {word:"Thrombosis",parts:[{t:"thromb/o",k:"root"},{t:"-osis",k:"suffix"}],task:"What does -osis mean?",opts:["Inflammation","Surgical opening","Abnormal condition","Pain"],ans:2,ok:"-osis = abnormal condition. Thrombosis = abnormal blood clot formation. DVT (deep vein thrombosis) is a serious, potentially fatal clotting condition.",no:"-osis = abnormal condition. Not -itis (inflammation), not -ostomy (surgical opening), not -algia (pain). Thrombosis = abnormal clot condition."},
+];
+let questions=[],cur=0,score=0,streak=0,wrong=0,answered=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function init(){questions=shuffle(QS);cur=0;score=0;streak=0;wrong=0;answered=false;document.getElementById('endBox').classList.remove('show');document.getElementById('termDisplay').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';updateHUD();render();}
+function render(){answered=false;const q=questions[cur];document.getElementById('termWord').textContent=q.word;document.getElementById('termParts').innerHTML=q.parts.map(p=>`<div class="part-chip ${p.k}">${p.t}<span class="part-label">${p.k}</span></div>`).join('');document.getElementById('taskLabel').textContent=q.task;document.getElementById('opts').innerHTML=q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){document.getElementById('dots').innerHTML=Array.from({length:questions.length},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const q=questions[cur];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[q.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===q.ans){score++;streak++;fb.innerHTML=`<strong>✓ Correct!</strong>${q.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');wrong++;streak=0;fb.innerHTML=`<strong>✗ Not quite.</strong>${q.no}`;fb.className='fb no show';}updateHUD();document.getElementById('nextBtn').className='next-btn show';}
+function next(){cur++;if(cur>=questions.length){showEnd();return;}render();}
+function showEnd(){const pct=Math.round((score/questions.length)*100);document.getElementById('termDisplay').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct>=80?'🌟 Sharp Decoder!':pct>=60?'👍 Good Work':'📚 Keep Practicing';document.getElementById('endSub').textContent='You decoded '+questions.length+' medical terms.';document.getElementById('endBox').classList.add('show');}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('str').textContent=streak;}
+init();
+</script>
+</body>
+</html>

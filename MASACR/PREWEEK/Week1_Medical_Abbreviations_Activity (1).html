@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical Abbreviations – Week 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #0d1b2a;
+  --surf:    #142030;
+  --surf2:   #1a2d42;
+  --border:  #253e5c;
+  --gold:    #c9a84c;
+  --gold-lt: #e2c06a;
+  --teal:    #2a8fa3;
+  --teal-lt: #3db3cc;
+  --text:    #e4edf6;
+  --muted:   #6b8daa;
+  --danger:  #e05a5a;
+  --success: #3db38a;
+  --warn:    #e08a3d;
+  --r: 12px;
+  --r-lg: 16px;
+  --bar: 50px;   /* top bar height */
+  --foot: 28px;  /* footer height  */
+  --prog: 3px;   /* progress bar   */
+  --chrome: calc(var(--bar) + var(--foot) + var(--prog));
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ── SCREEN SHELL: every screen = exact 100% viewport ── */
+.screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  flex-direction: column;
+  overflow: hidden;
+}
+.screen.active { display: flex; }
+
+/* ── TOP BAR ── */
+.bar {
+  height: var(--bar);
+  min-height: var(--bar);
+  max-height: var(--bar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.bar-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700;
+}
+.btn-back {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 11px; font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.btn-back:hover { border-color: var(--teal); color: var(--teal-lt); }
+
+/* ── PROGRESS BAR ── */
+.prog-rail {
+  height: var(--prog);
+  min-height: var(--prog);
+  background: var(--border);
+  flex-shrink: 0;
+}
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  transition: width .4s ease;
+  width: 0%;
+}
+
+/* ── CONTENT ZONE: fills remaining space, NO overflow ── */
+.zone {
+  flex: 1;
+  min-height: 0;        /* critical: lets flex child shrink */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 18px;
+  overflow: hidden;
+  gap: 12px;
+}
+
+/* ── FOOTER ── */
+.foot {
+  height: var(--foot);
+  min-height: var(--foot);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  letter-spacing: .06em;
+  color: #1e3350;
+  background: var(--surf);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════ HOME ═══════════════════ */
+#home { background: radial-gradient(ellipse 80% 55% at 25% 20%, #163450 0%, var(--bg) 65%); }
+#home .zone { gap: 14px; }
+
+.pill {
+  background: rgba(42,143,163,.15);
+  border: 1px solid rgba(42,143,163,.45);
+  color: var(--teal-lt);
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: 4px 14px; border-radius: 50px;
+}
+.home-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(22px, 4.5vw, 40px);
+  font-weight: 800; text-align: center; line-height: 1.15;
+}
+.home-title em { color: var(--gold); font-style: normal; }
+.home-sub {
+  font-size: clamp(11px, 1.5vw, 14px);
+  color: var(--muted); text-align: center;
+  max-width: 420px; line-height: 1.55;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  max-width: 680px;
+}
+.mode-card {
+  background: var(--surf);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: clamp(12px, 2vw, 18px) clamp(12px, 2vw, 16px);
+  cursor: pointer;
+  transition: border-color .2s, background .2s, transform .15s;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.mode-card:hover {
+  border-color: var(--gold); background: var(--surf2);
+  transform: translateY(-2px);
+}
+.mode-icon { font-size: clamp(20px, 3vw, 26px); line-height: 1; }
+.mode-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(12px, 1.6vw, 14px); font-weight: 700;
+}
+.mode-desc { font-size: clamp(10px, 1.2vw, 11px); color: var(--muted); line-height: 1.45; }
+.chip {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 50px; margin-top: 2px; width: fit-content;
+}
+.chip-teal  { background: rgba(42,143,163,.2); color: var(--teal-lt); }
+.chip-gold  { background: rgba(201,168,76,.2);  color: var(--gold-lt); }
+.chip-green { background: rgba(61,179,138,.2);  color: #5de0b0; }
+.chip-red   { background: rgba(224,90,90,.2);   color: #f08080; }
+
+/* ═══════════════════ SHARED BUTTONS ═══════════════════ */
+.btn-primary {
+  background: var(--gold); color: #0d1b2a;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700; font-size: 14px;
+  padding: 11px 32px; border: none; border-radius: 10px;
+  cursor: pointer; transition: background .15s, transform .1s;
+  white-space: nowrap;
+}
+.btn-primary:hover { background: var(--gold-lt); transform: translateY(-1px); }
+
+.btn-sec {
+  background: var(--surf); border: 1.5px solid var(--border);
+  color: var(--text);
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px;
+  padding: 9px 20px; border-radius: 10px; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.btn-sec:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+.btn-sec:disabled { opacity: .3; cursor: default; }
+
+.btn-row { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+/* ═══════════════════ FLASHCARDS ═══════════════════ */
+.fc-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 540px;
+}
+.fc-ctr { font-size: 11px; color: var(--muted); font-weight: 600; }
+.fc-cat {
+  font-size: 9px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--teal-lt);
+  background: rgba(42,143,163,.12); padding: 3px 10px; border-radius: 50px;
+}
+
+.fc-scene { perspective: 1000px; width: 100%; max-width: 540px; }
+.fc-card {
+  width: 100%;
+  /* height fills remaining space between meta and buttons */
+  height: clamp(180px, calc(100vh - var(--chrome) - 100px), 240px);
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.4,0,.2,1);
+  cursor: pointer;
+}
+.fc-card.flipped { transform: rotateY(180deg); }
+.fc-face {
+  position: absolute; inset: 0; border-radius: var(--r-lg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  backface-visibility: hidden; padding: 20px;  gap: 8px;
+}
+.fc-front { background: var(--surf); border: 2px solid var(--border); }
+.fc-back {
+  background: linear-gradient(135deg, #142030 0%, #1a3d5a 100%);
+  border: 2px solid var(--teal); transform: rotateY(180deg);
+}
+.fc-abbr {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(32px, 8vw, 58px); font-weight: 800;
+  color: var(--gold); line-height: 1;
+}
+.fc-hint { font-size: 11px; color: var(--muted); }
+.fc-meaning {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(15px, 3vw, 22px); font-weight: 700;
+  text-align: center; line-height: 1.35; color: var(--text);
+}
+.fc-back-hint { font-size: 10px; color: var(--muted); }
+
+/* ═══════════════════ QUIZ ═══════════════════ */
+.quiz-top {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 540px;
+}
+.quiz-num {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--teal-lt);
+}
+.streak-row { display: flex; gap: 3px; }
+.sdot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--border); transition: background .25s;
+}
+.sdot.hit  { background: var(--success); }
+.sdot.miss { background: var(--danger); }
+
+.quiz-q-card {
+  width: 100%; max-width: 540px;
+  background: var(--surf); border: 2px solid var(--border);
+  border-radius: var(--r-lg); padding: 20px 24px; text-align: center;
+}
+.quiz-abbr {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(32px, 7vw, 52px); font-weight: 800;
+  color: var(--gold); line-height: 1;
+}
+.quiz-ctx { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+.opts-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px; width: 100%; max-width: 540px;
+}
+.opt-btn {
+  background: var(--surf); border: 2px solid var(--border);
+  border-radius: var(--r); padding: 11px 14px;
+  font-size: clamp(11px,1.4vw,13px); font-weight: 600;
+  font-family: 'Inter', sans-serif; color: var(--text);
+  cursor: pointer; text-align: left; line-height: 1.4;
+  transition: border-color .12s, background .12s;
+  min-height: 52px; display: flex; align-items: center;
+}
+.opt-btn:hover:not(.locked) { border-color: var(--teal); background: var(--surf2); }
+.opt-btn.correct { border-color: var(--success); background: rgba(61,179,138,.1); color: var(--success); }
+.opt-btn.wrong   { border-color: var(--danger);  background: rgba(224,90,90,.1);  color: var(--danger); }
+.opt-btn.locked  { cursor: default; }
+
+.quiz-fb {
+  font-size: 13px; font-weight: 600; text-align: center; min-height: 18px;
+}
+.fb-ok  { color: var(--success); }
+.fb-err { color: var(--danger); }
+
+/* ═══════════════════ SPEED ROUND ═══════════════════ */
+.speed-stats {
+  display: flex; gap: 24px; justify-content: center;
+}
+.sstat { text-align: center; }
+.sstat-val {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(24px,4vw,30px); font-weight: 800; line-height: 1;
+}
+.sstat-label { font-size: 9px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: 3px; }
+.tv { color: var(--gold); }
+.sv { color: var(--teal-lt); }
+
+.speed-card {
+  background: var(--surf); border: 2px solid var(--border);
+  border-radius: var(--r-lg); padding: 20px 32px; text-align: center;
+  width: 100%; max-width: 460px;
+}
+.speed-abbr {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(38px,9vw,64px); font-weight: 800;
+  color: var(--gold); line-height: 1;
+}
+.speed-cat { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-top: 6px; }
+
+.speed-input {
+  width: 100%; max-width: 460px;
+  background: var(--surf2); border: 2px solid var(--border);
+  border-radius: 10px; padding: 12px 16px;
+  font-size: 15px; font-family: 'Inter', sans-serif;
+  color: var(--text); outline: none; text-align: center;
+  transition: border-color .12s, background .12s;
+}
+.speed-input:focus { border-color: var(--teal); }
+.speed-input.correct { border-color: var(--success); background: rgba(61,179,138,.07); }
+.speed-input.wrong   { border-color: var(--danger);  background: rgba(224,90,90,.07); }
+
+.speed-reveal {
+  font-size: 12px; color: var(--muted); min-height: 18px; text-align: center;
+}
+.speed-reveal.ok { color: var(--success); }
+
+/* speed start overlay */
+.sp-start {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 14px; text-align: center; max-width: 380px;
+}
+.sp-start .icon { font-size: clamp(36px,6vw,52px); }
+.sp-start h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(18px,3vw,22px); font-weight: 800;
+}
+.sp-start p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* speed game layout */
+.sp-game {
+  display: none; flex-direction: column; align-items: center;
+  gap: 10px; width: 100%; max-width: 460px;
+}
+
+/* ═══════════════════ CHART DECODER ═══════════════════ */
+.sc-header {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--warn);
+  align-self: flex-start; max-width: 600px; width: 100%;
+}
+.sc-card {
+  background: var(--surf); border: 2px solid var(--border);
+  border-radius: var(--r-lg); padding: 18px 22px;
+  width: 100%; max-width: 600px;
+  flex-shrink: 1; min-height: 0;
+}
+.sc-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(13px, 2vw, 16px); font-weight: 600;
+  line-height: 1.9; color: var(--text);
+}
+.hl {
+  color: var(--gold); background: rgba(201,168,76,.1);
+  padding: 1px 5px; border-radius: 4px;
+  cursor: pointer; transition: background .12s; display: inline-block;
+}
+.hl:hover  { background: rgba(201,168,76,.22); }
+.hl.popped { color: var(--teal-lt); background: rgba(42,143,163,.15); }
+
+.sc-decode {
+  background: var(--surf2); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 12px 18px;
+  width: 100%; max-width: 600px;
+  font-size: 13px; color: var(--muted); line-height: 1.6;
+  min-height: 46px; flex-shrink: 0;
+}
+.sc-decode strong { color: var(--teal-lt); }
+
+/* ═══════════════════ RESULTS ═══════════════════ */
+.res-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 14px; text-align: center; max-width: 420px;
+}
+.ring-wrap { position: relative; width: 130px; height: 130px; }
+.ring-wrap svg { width: 100%; height: 100%; }
+.ring-bg   { fill: none; stroke: var(--border); stroke-width: 10; }
+.ring-fill {
+  fill: none; stroke: var(--gold); stroke-width: 10;
+  stroke-linecap: round;
+  stroke-dasharray: 339;  /* 2π×54 */
+  stroke-dashoffset: 339;
+  transform: rotate(-90deg); transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1);
+}
+.ring-lbl {
+  position: absolute; inset: 0; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+}
+.ring-pct {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 30px; font-weight: 800; color: var(--gold);
+}
+.ring-sub { font-size: 10px; color: var(--muted); }
+.res-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(18px,3vw,24px); font-weight: 800;
+}
+.res-msg { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 340px; }
+.res-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HOME ═══════════════════════ -->
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 1 · Medical Assistant Training</div>
+    <h1 class="home-title">Master Medical <em>Abbreviations</em></h1>
+    <p class="home-sub">80+ clinical abbreviations across four interactive modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startFC()">
+        <div class="mode-icon">🃏</div>
+        <div class="mode-name">Flashcards</div>
+        <div class="mode-desc">Flip through all abbreviations by category at your own pace.</div>
+        <div class="chip chip-teal">83 cards</div>
+      </div>
+      <div class="mode-card" onclick="startQuiz()">
+        <div class="mode-icon">🧠</div>
+        <div class="mode-name">4-Option Quiz</div>
+        <div class="mode-desc">Pick the correct meaning from four choices. Track your streak.</div>
+        <div class="chip chip-gold">20 questions</div>
+      </div>
+      <div class="mode-card" onclick="startSpeed()">
+        <div class="mode-icon">⚡</div>
+        <div class="mode-name">Speed Round</div>
+        <div class="mode-desc">Type as many correct meanings as you can in 60 seconds.</div>
+        <div class="chip chip-green">60 seconds</div>
+      </div>
+      <div class="mode-card" onclick="startSC()">
+        <div class="mode-icon">📋</div>
+        <div class="mode-name">Chart Decoder</div>
+        <div class="mode-desc">Tap abbreviations inside real clinical notes to decode them.</div>
+        <div class="chip chip-red">⚠ Danger Zone inside</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══════════════════════ FLASHCARDS ═══════════════════════ -->
+<div id="fc-screen" class="screen">
+  <div class="bar">
+    <span class="bar-title">🃏 Flashcards</span>
+    <button class="btn-back" onclick="goHome()">← Home</button>
+  </div>
+  <div class="prog-rail"><div class="prog-fill" id="fc-prog"></div></div>
+  <div class="zone">
+    <div class="fc-meta">
+      <span class="fc-ctr" id="fc-ctr">Card 1 of 83</span>
+      <span class="fc-cat" id="fc-cat">Vital Signs</span>
+    </div>
+    <div class="fc-scene">
+      <div class="fc-card" id="fc-card" onclick="fcFlip()">
+        <div class="fc-face fc-front">
+          <div class="fc-abbr" id="fc-abbr">BP</div>
+          <div class="fc-hint">Tap to reveal · Space/Enter · ← →</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="fc-meaning" id="fc-meaning">Blood Pressure</div>
+          <div class="fc-back-hint">Tap to flip back</div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-sec" id="fc-prev" onclick="fcPrev()">← Prev</button>
+      <button class="btn-sec" id="fc-next" onclick="fcNext()">Next →</button>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══════════════════════ QUIZ ═══════════════════════ -->
+<div id="quiz-screen" class="screen">
+  <div class="bar">
+    <span class="bar-title">🧠 4-Option Quiz</span>
+    <button class="btn-back" onclick="goHome()">← Home</button>
+  </div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top">
+      <span class="quiz-num" id="quiz-num">Question 1 of 20</span>
+      <div class="streak-row" id="streak-row"></div>
+    </div>
+    <div class="quiz-q-card">
+      <div class="quiz-abbr" id="quiz-abbr">BID</div>
+      <div class="quiz-ctx" id="quiz-ctx">Category</div>
+    </div>
+    <div class="opts-grid" id="opts-grid"></div>
+    <div class="quiz-fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next Question →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══════════════════════ SPEED ROUND ═══════════════════════ -->
+<div id="speed-screen" class="screen">
+  <div class="bar">
+    <span class="bar-title">⚡ Speed Round</span>
+    <button class="btn-back" onclick="goHome()">← Home</button>
+  </div>
+  <div class="prog-rail"><div class="prog-fill" id="sp-prog" style="width:100%"></div></div>
+  <div class="zone" id="sp-zone">
+
+    <div class="sp-start" id="sp-start">
+      <div class="icon">⚡</div>
+      <h2>Ready for the Speed Round?</h2>
+      <p>An abbreviation appears — type its full meaning and press <strong>Enter</strong>. Fuzzy matching is on. Hit Skip if you're stuck. 60 seconds on the clock.</p>
+      <button class="btn-primary" onclick="speedBegin()">Start Timer</button>
+    </div>
+
+    <div class="sp-game" id="sp-game">
+      <div class="speed-stats">
+        <div class="sstat"><div class="sstat-val tv" id="sp-time">60</div><div class="sstat-label">seconds</div></div>
+        <div class="sstat"><div class="sstat-val sv" id="sp-score">0</div><div class="sstat-label">correct</div></div>
+        <div class="sstat"><div class="sstat-val" id="sp-skip" style="color:var(--muted)">0</div><div class="sstat-label">skipped</div></div>
+      </div>
+      <div class="speed-card">
+        <div class="speed-abbr" id="sp-abbr">BP</div>
+        <div class="speed-cat" id="sp-cat">Vital Signs</div>
+      </div>
+      <input class="speed-input" id="sp-input" placeholder="Type the meaning…"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" type="text">
+      <div class="speed-reveal" id="sp-reveal"></div>
+      <button class="btn-sec" onclick="speedSkip()">Skip →</button>
+    </div>
+
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══════════════════════ CHART DECODER ═══════════════════════ -->
+<div id="sc-screen" class="screen">
+  <div class="bar">
+    <span class="bar-title">📋 Chart Decoder</span>
+    <button class="btn-back" onclick="goHome()">← Home</button>
+  </div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start; padding-top:14px; gap:10px">
+    <div class="sc-header" id="sc-label">📄 Chart Note · Scenario 1 of 6</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--gold)">highlighted</span> abbreviation to decode it.</div>
+    <div class="btn-row">
+      <button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button>
+      <button class="btn-sec" id="sc-next" onclick="scNext()">Next Scenario →</button>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══════════════════════ RESULTS ═══════════════════════ -->
+<div id="results-screen" class="screen">
+  <div class="bar">
+    <span class="bar-title">Results</span>
+    <button class="btn-back" onclick="goHome()">← Home</button>
+  </div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 120 120">
+          <circle class="ring-bg" cx="60" cy="60" r="54"/>
+          <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/>
+        </svg>
+        <div class="ring-lbl">
+          <div class="ring-pct" id="ring-pct">—</div>
+          <div class="ring-sub" id="ring-sub">score</div>
+        </div>
+      </div>
+      <div class="res-title" id="res-title">Great work!</div>
+      <div class="res-msg" id="res-msg"></div>
+      <div class="res-btns">
+        <button class="btn-sec" onclick="retryMode()">Try Again</button>
+        <button class="btn-primary" onclick="goHome()">Choose Mode</button>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+/* ═══════════ DATA ═══════════ */
+const CARDS = [
+  {a:'BP',       m:'Blood Pressure',                            cat:'Vital Signs'},
+  {a:'HR',       m:'Heart Rate',                                cat:'Vital Signs'},
+  {a:'RR',       m:'Respiratory Rate',                          cat:'Vital Signs'},
+  {a:'T / Temp', m:'Temperature',                               cat:'Vital Signs'},
+  {a:'SpO₂',     m:'Oxygen Saturation',                         cat:'Vital Signs'},
+  {a:'Ht',       m:'Height',                                    cat:'Vital Signs'},
+  {a:'Wt',       m:'Weight',                                    cat:'Vital Signs'},
+  {a:'BMI',      m:'Body Mass Index',                           cat:'Vital Signs'},
+  {a:'VS',       m:'Vital Signs',                               cat:'Vital Signs'},
+  {a:'TPR',      m:'Temperature, Pulse, Respiration',           cat:'Vital Signs'},
+  {a:'MAP',      m:'Mean Arterial Pressure',                    cat:'Vital Signs'},
+  {a:'QD',       m:'Every day (once daily)',                    cat:'Medications'},
+  {a:'BID',      m:'Twice a day',                               cat:'Medications'},
+  {a:'TID',      m:'Three times a day',                         cat:'Medications'},
+  {a:'QID',      m:'Four times a day',                          cat:'Medications'},
+  {a:'q4h',      m:'Every 4 hours',                             cat:'Medications'},
+  {a:'q6h',      m:'Every 6 hours',                             cat:'Medications'},
+  {a:'PRN',      m:'As needed (pro re nata)',                   cat:'Medications'},
+  {a:'ac',       m:'Before meals (ante cibum)',                 cat:'Medications'},
+  {a:'pc',       m:'After meals (post cibum)',                  cat:'Medications'},
+  {a:'hs',       m:'At bedtime (hora somni)',                   cat:'Medications'},
+  {a:'NPO',      m:'Nothing by mouth',                          cat:'Medications'},
+  {a:'Rx',       m:'Prescription / Treatment',                  cat:'Medications'},
+  {a:'Sig',      m:'Directions for use',                        cat:'Medications'},
+  {a:'NKA',      m:'No Known Allergies',                        cat:'Medications'},
+  {a:'NKDA',     m:'No Known Drug Allergies',                   cat:'Medications'},
+  {a:'PO',       m:'By mouth (per os)',                         cat:'Routes'},
+  {a:'SL',       m:'Sublingual (under tongue)',                 cat:'Routes'},
+  {a:'IM',       m:'Intramuscular',                             cat:'Routes'},
+  {a:'IV',       m:'Intravenous',                               cat:'Routes'},
+  {a:'SQ',       m:'Subcutaneous (under skin)',                 cat:'Routes'},
+  {a:'ID',       m:'Intradermal',                               cat:'Routes'},
+  {a:'TOP',      m:'Topical',                                   cat:'Routes'},
+  {a:'INH',      m:'Inhalation',                                cat:'Routes'},
+  {a:'OPTH',     m:'Ophthalmic (eye)',                          cat:'Routes'},
+  {a:'OTIC',     m:'Otic (ear)',                                cat:'Routes'},
+  {a:'PR',       m:'Per rectum (rectal)',                        cat:'Routes'},
+  {a:'CV',       m:'Cardiovascular',                            cat:'Body Systems'},
+  {a:'MI',       m:'Myocardial Infarction',                     cat:'Body Systems'},
+  {a:'CHF',      m:'Congestive Heart Failure',                  cat:'Body Systems'},
+  {a:'HTN',      m:'Hypertension',                              cat:'Body Systems'},
+  {a:'A-fib',    m:'Atrial Fibrillation',                       cat:'Body Systems'},
+  {a:'URI',      m:'Upper Respiratory Infection',               cat:'Body Systems'},
+  {a:'COPD',     m:'Chronic Obstructive Pulmonary Disease',     cat:'Body Systems'},
+  {a:'SOB',      m:'Shortness of Breath',                       cat:'Body Systems'},
+  {a:'Fx',       m:'Fracture',                                  cat:'Body Systems'},
+  {a:'OA',       m:'Osteoarthritis',                            cat:'Body Systems'},
+  {a:'RA',       m:'Rheumatoid Arthritis',                      cat:'Body Systems'},
+  {a:'ROM',      m:'Range of Motion',                           cat:'Body Systems'},
+  {a:'CVA',      m:'Cerebrovascular Accident (Stroke)',         cat:'Body Systems'},
+  {a:'TIA',      m:'Transient Ischemic Attack',                 cat:'Body Systems'},
+  {a:'LOC',      m:'Level of Consciousness',                    cat:'Body Systems'},
+  {a:'N/V',      m:'Nausea and Vomiting',                       cat:'Body Systems'},
+  {a:'GERD',     m:'Gastroesophageal Reflux Disease',           cat:'Body Systems'},
+  {a:'UTI',      m:'Urinary Tract Infection',                   cat:'Body Systems'},
+  {a:'CKD',      m:'Chronic Kidney Disease',                    cat:'Body Systems'},
+  {a:'CBC',      m:'Complete Blood Count',                      cat:'Diagnostics'},
+  {a:'BMP',      m:'Basic Metabolic Panel',                     cat:'Diagnostics'},
+  {a:'CMP',      m:'Comprehensive Metabolic Panel',             cat:'Diagnostics'},
+  {a:'LFT',      m:'Liver Function Tests',                      cat:'Diagnostics'},
+  {a:'TSH',      m:'Thyroid Stimulating Hormone',               cat:'Diagnostics'},
+  {a:'HbA1c',    m:'Glycated Hemoglobin (Diabetes marker)',     cat:'Diagnostics'},
+  {a:'ECG',      m:'Electrocardiogram',                         cat:'Diagnostics'},
+  {a:'CXR',      m:'Chest X-Ray',                               cat:'Diagnostics'},
+  {a:'CT',       m:'Computed Tomography',                       cat:'Diagnostics'},
+  {a:'MRI',      m:'Magnetic Resonance Imaging',                cat:'Diagnostics'},
+  {a:'U/S',      m:'Ultrasound',                                cat:'Diagnostics'},
+  {a:'ABG',      m:'Arterial Blood Gas',                        cat:'Diagnostics'},
+  {a:'UA',       m:'Urinalysis',                                cat:'Diagnostics'},
+  {a:'Bx',       m:'Biopsy',                                    cat:'Diagnostics'},
+  {a:'PPD',      m:'TB Skin Test (Purified Protein Derivative)',cat:'Diagnostics'},
+  {a:'SOAP',     m:'Subjective, Objective, Assessment, Plan',   cat:'Charting'},
+  {a:'CC',       m:'Chief Complaint',                           cat:'Charting'},
+  {a:'HPI',      m:'History of Present Illness',                cat:'Charting'},
+  {a:'PMH',      m:'Past Medical History',                      cat:'Charting'},
+  {a:'Dx',       m:'Diagnosis',                                 cat:'Charting'},
+  {a:'DDx',      m:'Differential Diagnosis',                    cat:'Charting'},
+  {a:'Tx',       m:'Treatment',                                 cat:'Charting'},
+  {a:'Hx',       m:'History',                                   cat:'Charting'},
+  {a:'WNL',      m:'Within Normal Limits',                      cat:'Charting'},
+  {a:'A&O',      m:'Alert and Oriented',                        cat:'Charting'},
+  {a:'NAD',      m:'No Acute Distress',                         cat:'Charting'},
+  {a:'HEENT',    m:'Head, Eyes, Ears, Nose, Throat',            cat:'Charting'},
+  {a:'c/o',      m:'Complains of',                              cat:'Charting'},
+  {a:'s/p',      m:'Status post (after a procedure)',           cat:'Charting'},
+  {a:'r/o',      m:'Rule out',                                  cat:'Charting'},
+  {a:'DM',       m:'Diabetes Mellitus',                         cat:'Diagnoses'},
+  {a:'T2DM',     m:'Type 2 Diabetes Mellitus',                  cat:'Diagnoses'},
+  {a:'CAD',      m:'Coronary Artery Disease',                   cat:'Diagnoses'},
+  {a:'HLD',      m:'Hyperlipidemia',                            cat:'Diagnoses'},
+  {a:'OSA',      m:'Obstructive Sleep Apnea',                   cat:'Diagnoses'},
+  {a:'PTSD',     m:'Post-Traumatic Stress Disorder',            cat:'Diagnoses'},
+  {a:'MDD',      m:'Major Depressive Disorder',                 cat:'Diagnoses'},
+  {a:'GAD',      m:'Generalized Anxiety Disorder',              cat:'Diagnoses'},
+  {a:'ADHD',     m:'Attention Deficit Hyperactivity Disorder',  cat:'Diagnoses'},
+  {a:'DVT',      m:'Deep Vein Thrombosis',                      cat:'Diagnoses'},
+  {a:'PE',       m:'Pulmonary Embolism (or Physical Exam)',     cat:'Diagnoses'},
+  {a:'SLE',      m:'Systemic Lupus Erythematosus',              cat:'Diagnoses'},
+  {a:'CA',       m:'Cancer / Carcinoma',                        cat:'Diagnoses'},
+];
+
+const SCENARIOS = [
+  { label:'📄 ER Triage Note — Scenario 1 of 6', tokens:[
+    {t:'Pt presents with '},{a:'CC',d:'Chief Complaint'},{t:': '},
+    {a:'SOB',d:'Shortness of Breath'},{t:' and chest pain ×3 days. '},
+    {a:'PMH',d:'Past Medical History'},{t:': '},
+    {a:'HTN',d:'Hypertension'},{t:', '},{a:'CAD',d:'Coronary Artery Disease'},{t:'. '},
+    {a:'BP',d:'Blood Pressure'},{t:' 158/94, '},{a:'HR',d:'Heart Rate'},{t:' 102. '},
+    {a:'ECG',d:'Electrocardiogram'},{t:' ordered stat.'},
+  ]},
+  { label:'💊 Prescription — Scenario 2 of 6', tokens:[
+    {t:'Metformin 500 mg '},{a:'PO',d:'By mouth (per os)'},{t:' '},
+    {a:'BID',d:'Twice a day'},{t:' '},{a:'ac',d:'Before meals'},{t:'. '},
+    {t:'Lisinopril 10 mg '},{a:'PO',d:'By mouth'},{t:' '},{a:'QD',d:'Once daily'},{t:'. '},
+    {a:'NKDA',d:'No Known Drug Allergies'},{t:'. '},
+    {a:'NPO',d:'Nothing by mouth'},{t:' after midnight for procedure.'},
+  ]},
+  { label:'🩺 SOAP Note — Scenario 3 of 6', tokens:[
+    {t:'S — Pt '},{a:'c/o',d:'complains of'},{t:' R knee pain. '},
+    {a:'Hx',d:'History'},{t:' of '},{a:'OA',d:'Osteoarthritis'},{t:'. '},
+    {t:'O — '},{a:'VS',d:'Vital Signs'},{t:' stable. '},{a:'ROM',d:'Range of Motion'},{t:' limited. '},
+    {t:'A — '},{a:'Dx',d:'Diagnosis'},{t:': '},{a:'OA',d:'Osteoarthritis'},{t:' exacerbation. '},
+    {t:'P — '},{a:'Tx',d:'Treatment'},{t:': Ibuprofen '},{a:'TID',d:'Three times a day'},{t:' '},{a:'PRN',d:'As needed'},{t:'.'},
+  ]},
+  { label:'🧪 Lab Results — Scenario 4 of 6', tokens:[
+    {a:'CBC',d:'Complete Blood Count'},{t:': '},{a:'WNL',d:'Within Normal Limits'},{t:'. '},
+    {a:'CMP',d:'Comprehensive Metabolic Panel'},{t:': '},{a:'WNL',d:'Within Normal Limits'},{t:'. '},
+    {a:'HbA1c',d:'Glycated Hemoglobin'},{t:' 8.2% — elevated. '},
+    {a:'TSH',d:'Thyroid Stimulating Hormone'},{t:': '},{a:'WNL',d:'Within Normal Limits'},{t:'. '},
+    {a:'UA',d:'Urinalysis'},{t:' positive → '},{a:'r/o',d:'rule out'},{t:' '},{a:'UTI',d:'Urinary Tract Infection'},{t:'.'},
+  ]},
+  { label:'📝 Admission Note — Scenario 5 of 6', tokens:[
+    {t:'Pt '},{a:'A&O',d:'Alert and Oriented'},{t:' ×3, '},{a:'NAD',d:'No Acute Distress'},{t:'. '},
+    {a:'HEENT',d:'Head, Eyes, Ears, Nose, Throat'},{t:': '},{a:'WNL',d:'Within Normal Limits'},{t:'. '},
+    {a:'s/p',d:'Status post (after a procedure)'},{t:' '},{a:'MI',d:'Myocardial Infarction'},{t:' 2 yrs ago. '},
+    {a:'Dx',d:'Diagnosis'},{t:': '},{a:'CHF',d:'Congestive Heart Failure'},{t:'. '},
+    {a:'DDx',d:'Differential Diagnosis'},{t:' includes '},{a:'COPD',d:'Chronic Obstructive Pulmonary Disease'},{t:'.'},
+  ]},
+  { label:'⚠️ Danger Zone (Do NOT Use) — Scenario 6 of 6', tokens:[
+    {t:'These are on The Joint Commission\'s "Do Not Use" list:\u2002'},
+    {a:'U',d:'❌ Write "unit" — mistaken for 0 or 4'},{t:'\u2002'},
+    {a:'IU',d:'❌ Write "international unit" — looks like IV'},{t:'\u2002'},
+    {a:'QD',d:'❌ Write "daily" — confused with QOD'},{t:'\u2002'},
+    {a:'MS',d:'❌ Write "morphine sulfate" or "magnesium sulfate" — dangerously confused'},{t:'\u2002'},
+    {t:'Also avoid trailing zeros (1.0 mg → 1 mg) and naked decimals (.5 mg → 0.5 mg).'},
+  ]},
+];
+
+/* ═══════════ HELPERS ═══════════ */
+const $ = id => document.getElementById(id);
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+function goHome() { clearSpeedTimer(); show('home'); }
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+let currentMode = '';
+
+/* ═══════════ FLASHCARDS ═══════════ */
+let fcIdx = 0;
+function startFC() {
+  currentMode = 'fc'; fcIdx = 0;
+  show('fc-screen'); renderFC();
+}
+function renderFC() {
+  const c = CARDS[fcIdx];
+  $('fc-abbr').textContent  = c.a;
+  $('fc-meaning').textContent = c.m;
+  $('fc-cat').textContent   = c.cat;
+  $('fc-ctr').textContent   = `Card ${fcIdx+1} of ${CARDS.length}`;
+  $('fc-prog').style.width  = `${((fcIdx+1)/CARDS.length)*100}%`;
+  $('fc-card').classList.remove('flipped');
+  $('fc-prev').disabled = fcIdx===0;
+  $('fc-next').disabled = fcIdx===CARDS.length-1;
+}
+function fcFlip() { $('fc-card').classList.toggle('flipped'); }
+function fcPrev() { if(fcIdx>0){fcIdx--;renderFC();} }
+function fcNext() { if(fcIdx<CARDS.length-1){fcIdx++;renderFC();} }
+
+document.addEventListener('keydown', e => {
+  if (!$('fc-screen').classList.contains('active')) return;
+  if (e.key==='ArrowRight'||e.key==='ArrowDown') fcNext();
+  else if (e.key==='ArrowLeft'||e.key==='ArrowUp') fcPrev();
+  else if (e.key===' '||e.key==='Enter') { e.preventDefault(); fcFlip(); }
+});
+
+/* ═══════════ QUIZ ═══════════ */
+const QUIZ_N = 20;
+let qPool=[], qIdx=0, qScore=0, qHist=[];
+function startQuiz() {
+  currentMode='quiz';
+  qPool=shuffle(CARDS).slice(0,QUIZ_N);
+  qIdx=0; qScore=0; qHist=[];
+  show('quiz-screen'); renderQuiz();
+}
+function renderQuiz() {
+  const q = qPool[qIdx];
+  const right = q.m;
+  const wrongs = shuffle(CARDS.filter(c=>c.m!==right)).slice(0,3).map(c=>c.m);
+  const opts = shuffle([right,...wrongs]);
+
+  $('quiz-abbr').textContent = q.a;
+  $('quiz-ctx').textContent  = q.cat+' — What does this abbreviation mean?';
+  $('quiz-num').textContent  = `Question ${qIdx+1} of ${QUIZ_N}`;
+  $('quiz-prog').style.width = `${(qIdx/QUIZ_N)*100}%`;
+  $('quiz-fb').textContent   = '';
+  $('btn-qnext').style.display = 'none';
+
+  $('streak-row').innerHTML = qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+
+  $('opts-grid').innerHTML = opts.map(o => {
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="opt-btn" data-val="${safe}" onclick="quizAnswer(this)">${safe}</button>`;
+  }).join('');
+}
+function quizAnswer(btn) {
+  const chosen  = btn.dataset.val;
+  const correct = qPool[qIdx].m;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.classList.add('locked'));
+  if (chosen===correct) {
+    btn.classList.add('correct'); qScore++;
+    $('quiz-fb').innerHTML = '<span class="fb-ok">✓ Correct!</span>';
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{ if(b.dataset.val===correct) b.classList.add('correct'); });
+    $('quiz-fb').innerHTML = `<span class="fb-err">✗ Answer: <strong>${correct}</strong></span>`;
+  }
+  qHist.push(chosen===correct);
+  $('btn-qnext').style.display='inline-block';
+}
+function quizNext() {
+  qIdx++;
+  if(qIdx>=QUIZ_N) showResults('quiz',qScore,QUIZ_N);
+  else renderQuiz();
+}
+
+/* ═══════════ SPEED ROUND ═══════════ */
+let spPool=[], spIdx=0, spScore=0, spSkips=0, spTimer=null, spLeft=60;
+function startSpeed() {
+  currentMode='speed';
+  show('speed-screen');
+  $('sp-start').style.display='flex';
+  $('sp-game').style.display='none';
+  $('sp-prog').style.width='100%';
+  $('sp-time').style.color='var(--gold)';
+}
+function speedBegin() {
+  spPool=shuffle(CARDS); spIdx=0; spScore=0; spSkips=0; spLeft=60;
+  $('sp-start').style.display='none';
+  $('sp-game').style.display='flex';
+  $('sp-score').textContent='0'; $('sp-skip').textContent='0'; $('sp-time').textContent='60';
+  renderSpCard();
+  $('sp-input').focus();
+  $('sp-input').onkeydown = spKey;
+  spTimer = setInterval(()=>{
+    spLeft--;
+    $('sp-time').textContent=spLeft;
+    $('sp-prog').style.width=`${(spLeft/60)*100}%`;
+    if(spLeft<=10) $('sp-time').style.color='var(--danger)';
+    if(spLeft<=0){ clearSpeedTimer(); showResults('speed',spScore,Math.max(spScore+spSkips,1),true); }
+  },1000);
+}
+function renderSpCard() {
+  if(spIdx>=spPool.length) spIdx=0;
+  const c=spPool[spIdx];
+  $('sp-abbr').textContent=c.a; $('sp-cat').textContent=c.cat;
+  $('sp-input').value=''; $('sp-input').className='speed-input';
+  $('sp-reveal').textContent=''; $('sp-reveal').className='speed-reveal';
+}
+function spKey(e) {
+  if(e.key!=='Enter') return;
+  const val=$('sp-input').value.trim().toLowerCase();
+  if(!val) return;
+  const correct=spPool[spIdx].m.toLowerCase();
+  const words=correct.split(/\s+/).filter(w=>w.length>2);
+  const matched=words.filter(w=>val.includes(w.replace(/[()\/]/g,''))).length;
+  const pass=(matched/Math.max(words.length,1))>=0.6 || (correct.startsWith(val)&&val.length>=4);
+  if(pass){
+    $('sp-input').className='speed-input correct';
+    $('sp-reveal').className='speed-reveal ok';
+    $('sp-reveal').textContent='✓ '+spPool[spIdx].m;
+    spScore++; $('sp-score').textContent=spScore;
+  } else {
+    $('sp-input').className='speed-input wrong';
+    $('sp-reveal').textContent='→ '+spPool[spIdx].m;
+  }
+  spIdx++;
+  setTimeout(renderSpCard,650);
+}
+function speedSkip() {
+  spSkips++; $('sp-skip').textContent=spSkips;
+  $('sp-reveal').textContent='→ '+spPool[spIdx].m;
+  spIdx++; setTimeout(renderSpCard,500);
+}
+function clearSpeedTimer() {
+  if(spTimer){clearInterval(spTimer);spTimer=null;}
+  if($('sp-input')) $('sp-input').onkeydown=null;
+}
+
+/* ═══════════ CHART DECODER ═══════════ */
+let scIdx=0;
+function startSC() {
+  currentMode='scenario'; scIdx=0;
+  show('sc-screen'); renderSC();
+}
+function renderSC() {
+  const sc=SCENARIOS[scIdx];
+  $('sc-label').textContent=sc.label;
+  $('sc-prog').style.width=`${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML='👆 Tap any <span style="color:var(--gold)">highlighted</span> abbreviation to decode it.';
+  $('sc-text').innerHTML=sc.tokens.map(tok=>{
+    if(tok.a){
+      const safe=tok.d.replace(/"/g,'&quot;');
+      return `<span class="hl" data-abbr="${tok.a}" data-def="${safe}" onclick="scDecode(this)">${tok.a}</span>`;
+    }
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled=scIdx===0;
+  $('sc-next').disabled=scIdx===SCENARIOS.length-1;
+}
+function scDecode(el){
+  el.classList.toggle('popped');
+  $('sc-decode').innerHTML=`<strong>${el.dataset.abbr}</strong> = ${el.dataset.def}`;
+}
+function scPrev(){ if(scIdx>0){scIdx--;renderSC();} }
+function scNext(){ if(scIdx<SCENARIOS.length-1){scIdx++;renderSC();} }
+
+/* ═══════════ RESULTS ═══════════ */
+function showResults(mode,score,total,isSpeed=false){
+  currentMode=mode; show('results-screen');
+  const pct=Math.round((score/total)*100);
+  const C=2*Math.PI*54; // circumference for r=54
+  const offset=C-(Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray=C;
+  $('ring-fill').style.strokeDashoffset=C;
+  if(isSpeed){ $('ring-pct').textContent=score; $('ring-sub').textContent='correct'; }
+  else { $('ring-pct').textContent=pct+'%'; $('ring-sub').textContent=`${score} / ${total}`; }
+  setTimeout(()=>{ $('ring-fill').style.strokeDashoffset=offset; },80);
+  const title=isSpeed
+    ? (score>=15?'🔥 Speed Demon!':score>=8?'⚡ Nice Pace!':'💪 Keep Drilling!')
+    : (pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!');
+  const msg=isSpeed
+    ? `You got ${score} abbreviations right in 60 seconds.`
+    : `You scored ${score} / ${total} (${pct}%). ${pct>=80?'Excellent mastery!':'Review the misses and try again.'}`;
+  $('res-title').textContent=title;
+  $('res-msg').textContent=msg;
+}
+function retryMode(){
+  if(currentMode==='quiz') startQuiz();
+  else if(currentMode==='fc') startFC();
+  else if(currentMode==='speed') startSpeed();
+  else if(currentMode==='scenario') startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

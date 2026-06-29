@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — General Patient Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0d1117; --surface: #131b27; --card: #161f2e;
+  --border: rgba(255,255,255,0.08); --gold: #e8b84b;
+  --text: #e8eef5; --muted: #7a8fa6; --green: #4caf82; --red: #e05a5a;
+}
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+
+/* Strict viewport grid — 5 rows, nothing overflows */
+.page {
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  align-items: center;
+  padding: 0 20px;
+}
+
+/* ── ROW 1: HEADER ── */
+.hdr { text-align: center; padding: 20px 0 0; }
+.hdr h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; color: var(--gold); margin-bottom: 4px; }
+.hdr p  { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.dots  { display: flex; align-items: center; gap: 5px; justify-content: center; }
+.dot   { width: 8px; height: 5px; border-radius: 3px; background: var(--border); transition: all 0.3s; }
+.dot.a { width: 28px; background: var(--gold); }
+.dot.d { background: var(--green); }
+
+/* ── ROW 2: DECK SELECTOR ── */
+.deck-row {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  justify-content: center; padding: 12px 0 4px;
+}
+.deck-btn {
+  padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
+  background: transparent; color: var(--muted); font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.deck-btn.active { background: rgba(232,184,75,0.1); border-color: var(--gold); color: var(--gold); }
+
+/* ── ROW 3: CARD — fills available middle space ── */
+.card-area {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  min-height: 0;
+}
+.card-scene {
+  width: min(560px, 96vw);
+  height: clamp(160px, 28vh, 240px);
+  perspective: 1000px;
+  cursor: pointer;
+}
+.card-inner {
+  width: 100%; height: 100%;
+  position: relative; transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+}
+.card-inner.flipped { transform: rotateY(180deg); }
+.card-face {
+  position: absolute; inset: 0; border-radius: 14px;
+  backface-visibility: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 20px 32px; text-align: center;
+}
+.card-front { background: var(--surface); border: 1px solid var(--border); }
+.card-back  { background: var(--card); border: 1px solid rgba(232,184,75,0.22); transform: rotateY(180deg); }
+.face-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.face-label.back { color: var(--gold); }
+.face-term  { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(16px, 3vw, 21px); font-weight: 800; color: var(--text); line-height: 1.2; }
+.face-def   { font-size: clamp(11px, 1.6vw, 13px); color: var(--muted); line-height: 1.55; }
+.face-cat   { font-size: 11px; color: var(--gold); margin-top: 10px; font-weight: 600; }
+
+/* ── ROW 4: BUTTON ROW ── */
+.btn-row {
+  display: flex; align-items: center; gap: 14px;
+  justify-content: center; padding: 4px 0;
+}
+.verdict-btn {
+  padding: 10px 22px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text);
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.verdict-btn.know  { border-color: rgba(76,175,130,0.5); color: var(--green); }
+.verdict-btn.know:hover  { background: rgba(76,175,130,0.1); }
+.verdict-btn.learn { border-color: rgba(224,90,90,0.5); color: var(--red); }
+.verdict-btn.learn:hover { background: rgba(224,90,90,0.1); }
+.card-counter { font-size: 13px; color: var(--muted); min-width: 56px; text-align: center; }
+
+/* ── ROW 5: END SCREEN (replaces rows 3+4) ── */
+.end-box {
+  display: none; flex-direction: column; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 36px 48px; text-align: center;
+  width: min(460px, 94vw); margin: 0 auto;
+}
+.end-box.show { display: flex; }
+.end-pct   { font-size: 48px; font-weight: 800; color: var(--gold); font-family: 'Plus Jakarta Sans', sans-serif; }
+.end-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; }
+.end-sub   { font-size: 12px; color: var(--muted); }
+.end-btns  { display: flex; gap: 10px; margin-top: 6px; }
+.restart-btn {
+  padding: 10px 22px; border-radius: 10px; border: none;
+  background: var(--gold); color: #0d1117;
+  font-size: 13px; font-weight: 800; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.restart-btn.outline {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ROW 1 -->
+  <div class="hdr">
+    <h1>Flashcards</h1>
+    <p>Flip the card — then mark how well you know it.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="deck-row">
+    <button class="deck-btn active" onclick="setDeck('all',this)">All Topics</button>
+    <button class="deck-btn" onclick="setDeck('Exam Room',this)">Exam Room</button>
+    <button class="deck-btn" onclick="setDeck('Positioning',this)">Positioning</button>
+    <button class="deck-btn" onclick="setDeck('Injections',this)">Injections</button>
+    <button class="deck-btn" onclick="setDeck('Medications',this)">Medications</button>
+    <button class="deck-btn" onclick="setDeck('Eye & Ear',this)">Eye & Ear</button>
+    <button class="deck-btn" onclick="setDeck('EHR & Tech',this)">EHR & Tech</button>
+  </div>
+
+  <!-- ROW 3: CARD -->
+  <div class="card-area" id="cardArea">
+    <div class="card-scene" onclick="flip()">
+      <div class="card-inner" id="cardInner">
+        <div class="card-face card-front">
+          <div class="face-label">Tap card to reveal answer</div>
+          <div class="face-term" id="fTerm"></div>
+        </div>
+        <div class="card-face card-back">
+          <div class="face-label back">Answer</div>
+          <div class="face-def" id="bDef"></div>
+          <div class="face-cat" id="bCat"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 4: CONTROLS -->
+  <div class="btn-row" id="btnRow">
+    <button class="verdict-btn learn" onclick="mark(false)">✗ Still Learning</button>
+    <div class="card-counter" id="counter">1 / 32</div>
+    <button class="verdict-btn know"  onclick="mark(true)">✓ Got It</button>
+  </div>
+
+  <!-- END SCREEN — shown across rows 3+4 when done -->
+  <div class="end-box" id="endBox" style="grid-row: 3 / 5;">
+    <div class="end-pct"   id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub"   id="endSub"></div>
+    <div class="end-btns">
+      <button class="restart-btn"         onclick="restart()">Restart</button>
+      <button class="restart-btn outline" onclick="reviewMissed()">Review Missed</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const ALL=[
+  {cat:"Exam Room",term:"Exam Room Setup",def:"Review the schedule first — check patient name and reason for visit to prepare the right room, equipment, and supplies before arrival."},
+  {cat:"Exam Room",term:"Sphygmomanometer",def:"The blood pressure cuff — a calibrated device for measuring blood pressure. Ensure it is functioning before every patient."},
+  {cat:"Exam Room",term:"Between-Patient Disinfection",def:"Disinfect all surfaces, allow to dry, replace table paper, change pillow cover, and discard all disposable supplies after every patient."},
+  {cat:"Exam Room",term:"Two Identifiers",def:"Full legal name and date of birth — both required to verify patient identity before any procedure, medication, or specimen collection."},
+  {cat:"Exam Room",term:"Older Adults — Key Considerations",def:"Allow extra time, speak slowly and clearly, avoid condescending terms, and assist on/off the exam table. Balance challenges are common."},
+  {cat:"Exam Room",term:"Children — Key Considerations",def:"Establish rapport, speak at eye level, avoid baby talk with older children, and never leave a child alone on the exam table or scale."},
+  {cat:"Positioning",term:"Supine",def:"Patient lies flat on back, legs extended. Used for head, chest, abdominal exams, and anterior x-rays. Drape from chest to feet."},
+  {cat:"Positioning",term:"Prone",def:"Patient lies face down, head turned to one side. Used for back exams and some surgical procedures. Drape upper back to over the feet."},
+  {cat:"Positioning",term:"Dorsal Recumbent",def:"Patient on back, knees bent, feet flat. Used for head, neck, chest, vaginal, rectal, and perineal exams. Relaxes abdominal muscles."},
+  {cat:"Positioning",term:"Lithotomy",def:"Patient on back, legs in stirrups, hips at table edge. Used for vaginal exams, Pap tests, and pelvic procedures."},
+  {cat:"Positioning",term:"Fowler's (90°)",def:"Patient sits upright at 90 degrees. For head, neck, upper body exams and patients with breathing difficulty. Drape over lap and legs."},
+  {cat:"Positioning",term:"Left Lateral",def:"Patient lies on left side. Used for rectal exams, enemas, rectal temperatures, and perineal/pelvic exams."},
+  {cat:"Positioning",term:"Knee-Chest",def:"Patient kneels on table, weight on knees and chest, hips elevated. Used for proctologic and sigmoidoscopy exams."},
+  {cat:"Injections",term:"Intradermal (ID)",def:"5–15° angle, 25–27G needle, ≤0.1 mL. Site: inner forearm. Bevel up. A wheal must form. Do NOT massage or bandage."},
+  {cat:"Injections",term:"Subcutaneous (SC)",def:"45° angle, 23–25G, 5/8 inch needle, ≤1.5 mL. Pinch skin. Sites: upper arm, abdomen, thigh. Don't massage. Rotate insulin sites."},
+  {cat:"Injections",term:"Intramuscular (IM)",def:"90° angle, 22–25G, 1–1½ inch needle, up to 3 mL. Stretch skin taut. Deltoid ≤1 mL; ventrogluteal/vastus lateralis ≤3 mL."},
+  {cat:"Injections",term:"Needle Gauge Rule",def:"Higher gauge = smaller, thinner needle. 18G is larger than 25G. Select based on medication viscosity and injection type."},
+  {cat:"Injections",term:"Bevel Position",def:"Always insert bevel-side UP — the angled tip allows smoother penetration and more controlled medication delivery."},
+  {cat:"Injections",term:"Sharps Safety",def:"Used needles go directly into the sharps container. Never recap a used needle. Never place on a counter or in a biohazard bag."},
+  {cat:"Medications",term:"Nine Rights of Medication",def:"Patient, Medication, Form, Dose, Route, Time, Technique, Education, and Documentation — performed every single time without shortcuts."},
+  {cat:"Medications",term:"9th Right — Documentation",def:"Always document AFTER administration, never before. Include date, time, drug, dose, route, provider, and any patient reactions."},
+  {cat:"Medications",term:"Dosage Formula",def:"X = (D ÷ H) × Q. D = desired dose, H = dose on hand, Q = quantity of one unit. Calculate and double-check before preparing."},
+  {cat:"Medications",term:"Multi-dose Vial Rules",def:"Wipe stopper with alcohol before each use. Inject equal air before withdrawing. Write the open date — expires 28 days after opening."},
+  {cat:"Medications",term:"Filter Needle — Ampules",def:"Use a filter needle to draw from glass ampules to prevent glass fragments. Replace the filter needle before injecting the patient."},
+  {cat:"Medications",term:"Controlled Substance Storage",def:"Must be stored under double lock. Daily count by two people. All use must be logged in a logbook or electronic sign-off."},
+  {cat:"Eye & Ear",term:"Eye Drop Instillation",def:"Patient tilts head back, eyes open. Pull lower lid down to expose conjunctival sac. Dispense drops ½ inch above sac — never touch the eye."},
+  {cat:"Eye & Ear",term:"Eye Irrigation Direction",def:"Flow from inner (medial) to outer (lateral) canthus with warmed sterile solution. Use separate sterile equipment for each eye."},
+  {cat:"Eye & Ear",term:"Ear Instillation — Adult vs. Child",def:"Adults: pull pinna outward and UPWARD. Children/infants: pull pinna outward and DOWNWARD. Opposite directions — critical distinction."},
+  {cat:"Eye & Ear",term:"Cerumen",def:"Medical term for earwax. Impacted cerumen may require irrigation. Insert irrigator tip toward the top of the ear canal."},
+  {cat:"EHR & Tech",term:"EMR vs. EHR",def:"EMR = digital record within one organization. EHR = extends across multiple providers, sharing data with specialists, labs, and hospitals."},
+  {cat:"EHR & Tech",term:"CPOE",def:"Computerized Provider Order Entry — electronic orders for meds, labs, radiology, referrals. Provider must authorize all orders."},
+  {cat:"EHR & Tech",term:"Telehealth MA Duties",def:"Confirm tech requirements, test connection, gather history and med list during the visit, remind patients to have self-reported vitals ready."},
+];
+
+let deck=[],cur=0,gotCount=0,missedCards=[],activeDeck='all',flipped=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function setDeck(d,el){
+  document.querySelectorAll('.deck-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active'); activeDeck=d; initDeck();
+}
+function initDeck(){
+  deck=activeDeck==='all'?shuffle([...ALL]):shuffle(ALL.filter(c=>c.cat===activeDeck));
+  cur=0;gotCount=0;missedCards=[];flipped=false;
+  document.getElementById('endBox').classList.remove('show');
+  document.getElementById('cardArea').style.display='';
+  document.getElementById('btnRow').style.display='';
+  renderCard();
+}
+function renderCard(){
+  if(cur>=deck.length){showEnd();return;}
+  const c=deck[cur];
+  document.getElementById('fTerm').textContent=c.term;
+  document.getElementById('bDef').textContent=c.def;
+  document.getElementById('bCat').textContent=c.cat;
+  document.getElementById('counter').textContent=(cur+1)+' / '+deck.length;
+  flipped=false;
+  document.getElementById('cardInner').classList.remove('flipped');
+  buildDots();
+}
+function buildDots(){
+  const n=Math.min(deck.length,16);
+  document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');
+}
+function flip(){flipped=!flipped;document.getElementById('cardInner').classList.toggle('flipped',flipped);}
+function mark(known){if(known)gotCount++;else missedCards.push(deck[cur]);cur++;renderCard();}
+function showEnd(){
+  document.getElementById('cardArea').style.display='none';
+  document.getElementById('btnRow').style.display='none';
+  const pct=Math.round((gotCount/deck.length)*100);
+  document.getElementById('endPct').textContent=pct+'%';
+  document.getElementById('endTitle').textContent=pct>=80?'🎉 Excellent Work!':pct>=60?'👍 Good Progress':'📚 Keep Studying';
+  document.getElementById('endSub').textContent='You completed '+deck.length+' cards this session.';
+  document.getElementById('endBox').classList.add('show');
+}
+function restart(){initDeck();}
+function reviewMissed(){
+  if(!missedCards.length){restart();return;}
+  deck=shuffle([...missedCards]);cur=0;gotCount=0;missedCards=[];flipped=false;
+  document.getElementById('endBox').classList.remove('show');
+  document.getElementById('cardArea').style.display='';
+  document.getElementById('btnRow').style.display='';
+  renderCard();
+}
+document.addEventListener('keydown',e=>{
+  if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();flip();}
+  if(e.key==='ArrowRight')mark(true);
+  if(e.key==='ArrowLeft')mark(false);
+});
+initDeck();
+</script>
+</body>
+</html>

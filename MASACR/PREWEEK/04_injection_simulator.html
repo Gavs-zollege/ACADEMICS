@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Injection Simulator — General Patient Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0d1117; --surface: #131b27; --card: #161f2e;
+  --border: rgba(255,255,255,0.08); --gold: #e8b84b;
+  --text: #e8eef5; --muted: #7a8fa6; --green: #4caf82; --red: #e05a5a;
+}
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+
+/* Full-viewport grid — rows never overflow */
+.page {
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto auto;
+  padding: 0 20px;
+  max-width: 680px;
+  margin: 0 auto;
+  gap: 0;
+}
+
+/* ── ROW 1: HEADER ── */
+.hdr { text-align: center; padding: 18px 0 8px; }
+.hdr h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; color: var(--gold); margin-bottom: 3px; }
+.hdr p  { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.dots  { display: flex; align-items: center; gap: 5px; justify-content: center; }
+.dot   { width: 8px; height: 5px; border-radius: 3px; background: var(--border); transition: all 0.3s; }
+.dot.a { width: 28px; background: var(--gold); }
+.dot.d { background: var(--green); }
+
+/* ── ROW 2: SCENARIO BOX ── */
+.sc-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 18px; margin: 6px 0;
+}
+.sc-label { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.sc-text  { font-size: 13px; color: var(--text); line-height: 1.55; }
+
+/* ── ROW 3: QUESTION BOX ── */
+.q-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 18px;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+  margin-bottom: 8px;
+}
+.q-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+.q-num  { font-size: 11px; color: var(--muted); font-weight: 600; flex-shrink: 0; }
+
+/* ── ROW 4: OPTIONS — fill remaining space ── */
+.opts-area {
+  display: flex; flex-direction: column; gap: 7px;
+  min-height: 0; overflow: hidden;
+  justify-content: flex-start;
+}
+.opt {
+  width: 100%; text-align: left; padding: 11px 16px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--card); color: var(--text);
+  font-size: 13px; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.opt:hover:not(:disabled) { border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.03); }
+.opt:disabled { cursor: default; }
+.opt.correct { border-color: rgba(76,175,130,0.55); background: rgba(76,175,130,0.08); }
+.opt.wrong   { border-color: rgba(224,90,90,0.55);  background: rgba(224,90,90,0.08); }
+.opt-letter {
+  width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--muted); flex-shrink: 0;
+}
+.opt.correct .opt-letter { border-color: var(--green); color: var(--green); background: rgba(76,175,130,0.12); }
+.opt.wrong   .opt-letter { border-color: var(--red);   color: var(--red);   background: rgba(224,90,90,0.12); }
+
+/* ── ROW 5: FEEDBACK ── */
+.fb { padding: 10px 16px; border-radius: 10px; font-size: 12px; line-height: 1.55; display: none; margin: 6px 0 0; }
+.fb.show { display: block; }
+.fb.ok { background: rgba(76,175,130,0.1); border: 1px solid rgba(76,175,130,0.3); }
+.fb.no { background: rgba(224,90,90,0.1);  border: 1px solid rgba(224,90,90,0.3);  }
+.fb strong { display: block; margin-bottom: 3px; font-size: 12px; }
+.fb.ok strong { color: var(--green); }
+.fb.no strong { color: var(--red); }
+
+/* ── ROW 6: NEXT BUTTON ── */
+.next-btn {
+  padding: 11px 28px; border-radius: 10px; border: none;
+  background: var(--gold); color: #0d1117;
+  font-size: 13px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer; display: none; margin: 8px auto 12px; width: fit-content;
+}
+.next-btn.show { display: block; }
+
+/* END SCREEN */
+.end-box {
+  display: none; flex-direction: column; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 36px 48px; text-align: center;
+  grid-row: 2 / 7; align-self: center;
+}
+.end-box.show { display: flex; }
+.end-big   { font-size: 50px; font-weight: 800; color: var(--gold); font-family: 'Plus Jakarta Sans', sans-serif; }
+.end-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; }
+.end-sub   { font-size: 12px; color: var(--muted); max-width: 300px; }
+.restart-btn { padding: 11px 26px; border-radius: 10px; border: none; background: var(--gold); color: #0d1117; font-size: 13px; font-weight: 800; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ROW 1: HEADER -->
+  <div class="hdr">
+    <h1>Injection Simulator</h1>
+    <p>Make the correct clinical decision at each step.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <!-- ROW 2: SCENARIO -->
+  <div class="sc-box" id="scBox">
+    <div class="sc-label">Clinical Scenario</div>
+    <div class="sc-text" id="scText"></div>
+  </div>
+
+  <!-- ROW 3: QUESTION -->
+  <div class="q-box" id="qBox">
+    <div class="q-text" id="qText"></div>
+    <div class="q-num"  id="qNum"></div>
+  </div>
+
+  <!-- ROW 4: OPTIONS -->
+  <div class="opts-area" id="opts"></div>
+
+  <!-- ROW 5: FEEDBACK -->
+  <div class="fb" id="fb"></div>
+
+  <!-- ROW 6: NEXT -->
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Step →</button>
+
+  <!-- END SCREEN -->
+  <div class="end-box" id="endBox">
+    <div class="end-big"   id="endBig"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub"   id="endSub"></div>
+    <button class="restart-btn" onclick="init()">Try Another Scenario</button>
+  </div>
+
+</div>
+
+<script>
+const SCENARIOS=[
+  {
+    setup:"The provider orders a TB test (Mantoux tuberculin skin test) for a new healthcare worker.",
+    steps:[
+      {q:"Which injection type is used for a TB skin test?",opts:["Intradermal (ID) — into the dermis","Subcutaneous (SC) — into fatty tissue","Intramuscular (IM) — into muscle","Intravenous (IV) — into a vein"],ans:0,ok:"TB tests use intradermal (ID) injection, depositing tuberculin into the dermis layer of the skin.",no:"TB tests require intradermal (ID) injection. The tuberculin must enter the dermis — not fat or muscle."},
+      {q:"Which needle and gauge are correct for an intradermal injection?",opts:["22–25G, 1–1½ inch","25–27G, ¼–½ inch","23–25G, 5/8 inch","18–20G, 1 inch"],ans:1,ok:"ID injections use a 25–27 gauge (very thin), ¼–½ inch needle to deposit medication just under the skin surface.",no:"Intradermal requires a small, thin needle: 25–27 gauge and ¼–½ inch length. Longer needles would penetrate past the dermis."},
+      {q:"Where is the correct site for intradermal TB test injection?",opts:["Outer thigh (vastus lateralis)","Upper outer arm (deltoid area)","Inner forearm — one hand width above wrist, one below elbow","Abdomen, 2 inches from navel"],ans:2,ok:"The inner forearm — one hand width above the wrist and one below the elbow — is the standard site for TB testing.",no:"The inner forearm is the standard site for intradermal (TB) injection. The other sites are for IM or SC injections."},
+      {q:"After inserting the needle at 5–15° bevel up and injecting 0.1 mL, what should appear at the injection site?",opts:["A small bruise from capillary disruption","Nothing — the medication absorbs instantly","A wheal (raised blister/bubble) in the skin","A small droplet of blood"],ans:2,ok:"A wheal MUST form for the test to be valid. No wheal means the injection was not intradermal and must be repeated.",no:"A wheal (raised bubble) must form to confirm the medication entered the dermis. No wheal = invalid TB test."},
+      {q:"The wheal has formed. What do you do next?",opts:["Massage the site gently to help absorption","Apply a bandage to protect the wheal","Do not massage, bandage, or apply pressure — document and instruct patient to return in 48–72 hrs","Apply ice for 5 minutes to reduce swelling"],ans:2,ok:"Never massage, bandage, or apply pressure after an ID injection. Document and schedule the reading in 48–72 hours.",no:"Any manipulation of a TB test site can alter the result. No massage, no bandage, no pressure. Document and schedule the reading."},
+    ]
+  },
+  {
+    setup:"A patient with type 1 diabetes needs their daily insulin injection. The provider orders 10 units of U-100 insulin via subcutaneous injection.",
+    steps:[
+      {q:"What angle should you use for a subcutaneous injection?",opts:["5–15° (nearly parallel to skin)","45° angle","90° angle (straight in)","60° angle"],ans:1,ok:"Subcutaneous injections are given at a 45° angle into the fatty tissue just beneath the skin.",no:"Subcutaneous injections use a 45° angle. ID is 5–15°; IM is 90°. The angle ensures the needle reaches the fatty layer without hitting muscle."},
+      {q:"Which syringe should you use to draw up U-100 insulin?",opts:["Standard 3 mL hypodermic syringe","Tuberculin syringe calibrated in 0.01 mL","U-100 insulin syringe calibrated in units","Any available syringe — insulin is the same"],ans:2,ok:"Always use a U-100 insulin syringe (calibrated in units) with U-100 insulin. Mismatching syringes causes serious dosing errors.",no:"You must use a U-100 insulin syringe — calibrated in units — specifically matched to U-100 insulin."},
+      {q:"Which sites are approved for subcutaneous insulin injection?",opts:["Inner forearm or inner wrist","Upper outer arm, abdomen, or upper thigh","Deltoid muscle only","Ventrogluteal or vastus lateralis only"],ans:1,ok:"SC injection sites include the upper outer arm, abdomen, and upper thigh. Rotate sites within the same region to prevent lipodystrophy.",no:"SC sites are the upper outer arm, abdomen, and upper thigh. Inner forearm = ID; deltoid/ventrogluteal = IM."},
+      {q:"Before inserting the needle for a subcutaneous injection, what should you do with the skin?",opts:["Stretch the skin taut like a drum","Pinch at least 1 inch of skin upward","Swab with alcohol and insert immediately","Apply pressure with two fingers to stabilize"],ans:1,ok:"Pinch at least 1 inch of skin to lift the fatty layer away from the muscle. Release the skin after the needle is seated.",no:"Pinch at least 1 inch of skin before inserting — this lifts the fat layer so the medication goes into fatty tissue, not muscle."},
+      {q:"After withdrawing the needle from a subcutaneous insulin injection, what is the correct next step?",opts:["Massage the site vigorously for 30 seconds","Apply direct pressure and massage for absorption","Do not massage; rotate sites within the same region next time","Apply a warm compress to improve absorption"],ans:2,ok:"Do not massage after SC injection. Massaging can alter absorption rates. Rotate to a nearby site next time.",no:"Do not massage after SC injection — especially insulin. Massaging alters absorption rates and can cause inconsistent glucose control."},
+    ]
+  },
+];
+
+let sc,stepIdx,score,answered;
+function init(){
+  sc=SCENARIOS[Math.floor(Math.random()*SCENARIOS.length)];
+  stepIdx=0;score=0;answered=false;
+  document.getElementById('scText').textContent=sc.setup;
+  document.getElementById('endBox').classList.remove('show');
+  document.getElementById('scBox').style.display='';
+  document.getElementById('qBox').style.display='';
+  document.getElementById('opts').style.display='';
+  document.getElementById('fb').className='fb';
+  document.getElementById('nextBtn').className='next-btn';
+  renderStep();
+}
+function renderStep(){
+  answered=false;
+  const s=sc.steps[stepIdx];
+  document.getElementById('qNum').textContent='Q'+(stepIdx+1);
+  document.getElementById('qText').textContent=s.q;
+  document.getElementById('opts').innerHTML=s.opts.map((o,i)=>`
+    <button class="opt" onclick="pick(${i})">
+      <span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}
+    </button>`).join('');
+  document.getElementById('fb').className='fb';
+  document.getElementById('nextBtn').className='next-btn';
+  buildDots();
+}
+function buildDots(){
+  const n=sc.steps.length;
+  document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<div class="dot ${i<stepIdx?'d':i===stepIdx?'a':''}"></div>`).join('');
+}
+function pick(i){
+  if(answered)return;answered=true;
+  const s=sc.steps[stepIdx];
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  document.querySelectorAll('.opt')[s.ans].classList.add('correct');
+  const fb=document.getElementById('fb');
+  if(i===s.ans){score++;fb.innerHTML=`<strong>✓ Correct!</strong>${s.ok}`;fb.className='fb ok show';}
+  else{document.querySelectorAll('.opt')[i].classList.add('wrong');fb.innerHTML=`<strong>✗ Not quite.</strong>${s.no}`;fb.className='fb no show';}
+  document.getElementById('nextBtn').className='next-btn show';
+}
+function next(){
+  stepIdx++;
+  if(stepIdx>=sc.steps.length){showEnd();return;}
+  renderStep();
+}
+function showEnd(){
+  const total=sc.steps.length,pct=Math.round((score/total)*100);
+  document.getElementById('scBox').style.display='none';
+  document.getElementById('qBox').style.display='none';
+  document.getElementById('opts').style.display='none';
+  document.getElementById('fb').className='fb';
+  document.getElementById('nextBtn').className='next-btn';
+  document.getElementById('endBig').textContent=score+'/'+total;
+  document.getElementById('endTitle').textContent=pct===100?'🎯 Perfect Decisions!':pct>=80?'🌟 Strong Clinical Reasoning!':'📚 Keep Practicing!';
+  document.getElementById('endSub').textContent='You correctly navigated '+score+' of '+total+' clinical decision steps.';
+  document.getElementById('endBox').classList.add('show');
+}
+init();
+</script>
+</body>
+</html>

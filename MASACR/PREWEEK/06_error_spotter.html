@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Error Spotter — General Patient Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0d1117; --surface: #131b27; --card: #161f2e;
+  --border: rgba(255,255,255,0.08); --gold: #e8b84b;
+  --text: #e8eef5; --muted: #7a8fa6; --green: #4caf82; --red: #e05a5a;
+}
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+
+/* Full-viewport grid — 6 rows, nothing spills */
+.page {
+  height: 100vh;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto auto;
+  padding: 0 20px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* ── ROW 1: HEADER ── */
+.hdr { text-align: center; padding: 18px 0 8px; }
+.hdr h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 22px; font-weight: 800; color: var(--gold); margin-bottom: 3px; }
+.hdr p  { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.dots  { display: flex; align-items: center; gap: 5px; justify-content: center; }
+.dot   { width: 8px; height: 5px; border-radius: 3px; background: var(--border); transition: all 0.3s; }
+.dot.a { width: 28px; background: var(--gold); }
+.dot.d { background: var(--green); }
+
+/* ── ROW 2: HUD ── */
+.hud { display: flex; gap: 10px; justify-content: center; padding: 4px 0 8px; }
+.hud-chip { padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1px solid; }
+.hud-chip.s  { background: rgba(232,184,75,0.1);  color: var(--gold);  border-color: rgba(232,184,75,0.4); }
+.hud-chip.st { background: rgba(76,175,130,0.1);  color: var(--green); border-color: rgba(76,175,130,0.4); }
+
+/* ── ROW 3: CATEGORY + QUESTION ── */
+.q-area { display: flex; flex-direction: column; gap: 6px; }
+.cat-pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: rgba(59,163,184,0.12); color: #3ba3b8; width: fit-content; }
+.q-box {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 13px 18px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+}
+.q-text { font-size: 13px; color: var(--text); line-height: 1.6; }
+.q-num  { font-size: 11px; color: var(--muted); font-weight: 600; flex-shrink: 0; }
+
+/* ── ROW 4: OPTIONS — fills remaining space ── */
+.opts-area { display: flex; flex-direction: column; gap: 8px; min-height: 0; overflow: hidden; justify-content: center; }
+.opt {
+  width: 100%; text-align: left; padding: 13px 18px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--card); color: var(--text);
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: flex; align-items: center; gap: 14px;
+}
+.opt:hover:not(:disabled) { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.03); }
+.opt:disabled { cursor: default; }
+.opt.correct { border-color: rgba(76,175,130,0.55); background: rgba(76,175,130,0.08); }
+.opt.wrong   { border-color: rgba(224,90,90,0.55);  background: rgba(224,90,90,0.08); }
+.opt-letter {
+  width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--muted); flex-shrink: 0;
+}
+.opt.correct .opt-letter { border-color: var(--green); color: var(--green); background: rgba(76,175,130,0.12); }
+.opt.wrong   .opt-letter { border-color: var(--red);   color: var(--red);   background: rgba(224,90,90,0.12); }
+
+/* ── ROW 5: FEEDBACK ── */
+.fb { padding: 10px 16px; border-radius: 10px; font-size: 12px; line-height: 1.55; display: none; margin: 4px 0 0; }
+.fb.show { display: block; }
+.fb.ok { background: rgba(76,175,130,0.1); border: 1px solid rgba(76,175,130,0.3); }
+.fb.no { background: rgba(224,90,90,0.1);  border: 1px solid rgba(224,90,90,0.3); }
+.fb strong { display: block; margin-bottom: 3px; font-size: 12px; }
+.fb.ok strong { color: var(--green); }
+.fb.no strong { color: var(--red); }
+
+/* ── ROW 6: NEXT BUTTON ── */
+.next-btn {
+  padding: 11px 28px; border-radius: 10px; border: none;
+  background: var(--gold); color: #0d1117;
+  font-size: 13px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif;
+  cursor: pointer; display: none; margin: 8px auto 12px; width: fit-content;
+}
+.next-btn.show { display: block; }
+
+/* END SCREEN — spans all rows */
+.end-box {
+  display: none; flex-direction: column; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 36px 48px; text-align: center;
+  grid-row: 1 / 7; align-self: center;
+}
+.end-box.show { display: flex; }
+.end-pct   { font-size: 50px; font-weight: 800; color: var(--gold); font-family: 'Plus Jakarta Sans', sans-serif; }
+.end-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; font-weight: 800; }
+.end-sub   { font-size: 12px; color: var(--muted); }
+.end-stats { display: flex; gap: 14px; }
+.stat      { padding: 10px 18px; border-radius: 10px; text-align: center; }
+.stat.g    { background: rgba(76,175,130,0.1); }
+.stat.r    { background: rgba(224,90,90,0.1); }
+.stat-n    { font-size: 22px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; }
+.stat.g .stat-n { color: var(--green); }
+.stat.r .stat-n { color: var(--red); }
+.stat-l    { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.restart-btn { padding: 11px 26px; border-radius: 10px; border: none; background: var(--gold); color: #0d1117; font-size: 13px; font-weight: 800; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ROW 1 -->
+  <div class="hdr">
+    <h1>Clinical Error Spotter</h1>
+    <p>Select the best answer for each question.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+
+  <!-- ROW 2 -->
+  <div class="hud">
+    <div class="hud-chip s">Score: <span id="sc">0</span></div>
+    <div class="hud-chip st">🔥 Streak: <span id="str">0</span></div>
+  </div>
+
+  <!-- ROW 3 -->
+  <div class="q-area" id="qArea">
+    <div class="cat-pill" id="catPill"></div>
+    <div class="q-box">
+      <div class="q-text" id="qText"></div>
+      <div class="q-num"  id="qNum"></div>
+    </div>
+  </div>
+
+  <!-- ROW 4 -->
+  <div class="opts-area" id="opts"></div>
+
+  <!-- ROW 5 -->
+  <div class="fb" id="fb"></div>
+
+  <!-- ROW 6 -->
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Scenario →</button>
+
+  <!-- END SCREEN -->
+  <div class="end-box" id="endBox">
+    <div class="end-pct"   id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub"   id="endSub"></div>
+    <div class="end-stats">
+      <div class="stat g"><div class="stat-n" id="eOk">0</div><div class="stat-l">Correct</div></div>
+      <div class="stat r"><div class="stat-n" id="eNo">0</div><div class="stat-l">Incorrect</div></div>
+    </div>
+    <button class="restart-btn" onclick="init()">Play Again</button>
+  </div>
+
+</div>
+
+<script>
+const QS=[
+  {cat:"Exam Room",text:"Before the patient arrives, the MA reviews the morning schedule and sets up the room with a stethoscope, pulse oximeter, and sphygmomanometer for a respiratory checkup.",isCorrect:true,ok:"Correct practice! Reviewing the schedule and preparing the appropriate equipment in advance is exactly right.",no:"This is actually correct — reviewing the schedule and preparing appropriate equipment is the recommended approach."},
+  {cat:"Exam Room",text:"After a patient leaves, the MA wipes the exam table with a disinfectant wipe and immediately places new table paper while the surface is still visibly wet.",isCorrect:false,ok:"Correct — there IS an error. The disinfectant must fully dry before placing new table paper. Wet = still working.",no:"There IS an error: the disinfectant must fully dry before placing new table paper. A wet surface means the agent is still active."},
+  {cat:"Patient Safety",text:"The MA enters the exam room and asks: 'Are you Mr. Johnson?' — then proceeds with the procedure after the patient nods yes.",isCorrect:false,ok:"Correct — this IS an error. Yes/no questions are insufficient. The patient must state their name and date of birth (two identifiers).",no:"There IS an error: asking 'Are you Mr. Johnson?' is a yes/no question. Always ask the patient to state their name and date of birth."},
+  {cat:"Positioning",text:"For a rectal examination, the MA positions the patient in the left lateral position and drapes from the shoulders to below the knees at an angle so the provider can lift a corner for access.",isCorrect:true,ok:"Correct practice! Left lateral with this specific angled draping is exactly right for rectal examinations.",no:"This is actually correct — left lateral with angled draping is the standard for rectal examinations."},
+  {cat:"Positioning",text:"For a vaginal exam with stirrups, the MA positions the patient in the dorsal recumbent position — feet flat on the table, knees bent — and places the stirrups.",isCorrect:false,ok:"Correct — there IS an error. Vaginal exams with stirrups require LITHOTOMY position, not dorsal recumbent.",no:"There IS an error: vaginal exams requiring stirrups use the LITHOTOMY position. Dorsal recumbent has feet flat without stirrups."},
+  {cat:"Injections",text:"For a TB skin test: the MA inserts a 25G needle at 15° bevel up, injects 0.1 mL, confirms a wheal has formed, and does not massage the site.",isCorrect:true,ok:"Correct practice! Correct angle, gauge, volume, bevel up, wheal confirmed, no massage. Textbook technique.",no:"This is actually correct — all elements of intradermal TB test technique are correctly described here."},
+  {cat:"Injections",text:"After giving a subcutaneous insulin injection, the MA gently massages the injection site to help the medication absorb more quickly.",isCorrect:false,ok:"Correct — there IS an error. Never massage after a SC injection, especially insulin. Massage disrupts the intended absorption rate.",no:"There IS an error: never massage after a subcutaneous injection. Massaging alters insulin absorption rates."},
+  {cat:"Injections",text:"When preparing a medication from a glass ampule, the MA draws up the medication with a filter needle, then replaces the filter needle with a standard needle before injecting the patient.",isCorrect:true,ok:"Correct practice! The filter needle catches glass fragments; replacing it prevents glass from being injected into the patient.",no:"This is actually correct — using a filter needle for ampules, then replacing before injection, is the required technique."},
+  {cat:"Injections",text:"After administering an IM injection, the MA recaps the used needle using the two-handed scoop method and places it on the counter to dispose of after charting.",isCorrect:false,ok:"Correct — there ARE two errors. (1) Never recap a used needle. (2) Used needles go DIRECTLY into the sharps container.",no:"There ARE two errors: used needles are never recapped, and they go DIRECTLY into the sharps container — never on a counter."},
+  {cat:"Medications",text:"Before administering a medication, the MA checks the label when picking up the vial, again when drawing up the dose, and a third time before discarding. She also confirms the patient's name and date of birth.",isCorrect:true,ok:"Correct practice! Three-label check (Right Medication) plus two-identifier verification (Right Patient). Both required.",no:"This is actually correct — three-label check plus two-identifier verification are both required safety steps."},
+  {cat:"Medications",text:"The MA calculates the correct dose of amoxicillin, documents the medication as administered in the MAR, and then gives the patient the tablets.",isCorrect:false,ok:"Correct — there IS an error. The 9th Right requires documentation AFTER administration — never before. Documenting first is a patient safety violation.",no:"There IS an error: the 9th Right requires documenting AFTER — not before — administration. Document first, then administer = wrong order."},
+  {cat:"Medications",text:"The MA opens a multi-dose vial, writes the date on it, wipes the stopper with alcohol, injects air equal to the volume she needs to withdraw, and draws up the dose.",isCorrect:true,ok:"Correct practice! Writing the open date, alcohol wipe, injecting equal air — all correct multi-dose vial technique.",no:"This is actually correct — all multi-dose vial steps described here follow proper technique."},
+  {cat:"Eye & Ear",text:"The MA instills ear drops for an adult patient by pulling the pinna outward and downward to straighten the ear canal before dispensing the drops.",isCorrect:false,ok:"Correct — there IS an error. For adults, the pinna is pulled outward and UPWARD. Downward is for children/infants only.",no:"There IS an error: for adults, pull the pinna outward and UPWARD. Downward is only for children and infants — opposite directions."},
+  {cat:"Eye & Ear",text:"During eye irrigation, the MA warms the solution to body temperature, directs the stream from inner (medial) to outer (lateral) canthus, and uses separate sterile equipment for each eye.",isCorrect:true,ok:"Correct practice! Warmed solution, correct direction (inner to outer canthus), and separate sterile equipment — all correct.",no:"This is actually correct — all elements of eye irrigation technique described here are correct."},
+  {cat:"EHR & Tech",text:"After a verbal order from the provider during a telehealth visit, the MA enters the order into the CPOE system and submits it for pharmacy processing without waiting for the provider to authorize it.",isCorrect:false,ok:"Correct — there IS an error. The MA may enter order information, but the provider must authorize/co-sign before processing. MAs do not independently submit orders.",no:"There IS an error: the provider must authorize the order in CPOE before it can be processed. MAs enter information — they do not independently submit."},
+];
+
+let questions=[],cur=0,score=0,streak=0,wrong=0,answered=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function init(){
+  questions=shuffle(QS);cur=0;score=0;streak=0;wrong=0;answered=false;
+  document.getElementById('endBox').classList.remove('show');
+  document.getElementById('qArea').style.display='';
+  document.getElementById('opts').style.display='';
+  document.getElementById('hdr')&&(document.getElementById('hdr').style.display='');
+  document.getElementById('fb').className='fb';
+  document.getElementById('nextBtn').className='next-btn';
+  updateHUD();render();
+}
+function render(){
+  answered=false;
+  const q=questions[cur];
+  document.getElementById('catPill').textContent=q.cat;
+  document.getElementById('qText').textContent=q.text;
+  document.getElementById('qNum').textContent='Q'+(cur+1);
+  document.getElementById('opts').innerHTML=`
+    <button class="opt" id="optA" onclick="pick(true)">
+      <span class="opt-letter">A</span>This is Correct Practice
+    </button>
+    <button class="opt" id="optB" onclick="pick(false)">
+      <span class="opt-letter">B</span>There's an Error Here
+    </button>`;
+  document.getElementById('fb').className='fb';
+  document.getElementById('nextBtn').className='next-btn';
+  buildDots();
+}
+function buildDots(){
+  const n=Math.min(questions.length,15);
+  document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');
+}
+function pick(userSaysCorrect){
+  if(answered)return;answered=true;
+  const q=questions[cur];
+  const isRight=(userSaysCorrect===q.isCorrect);
+  document.getElementById('optA').disabled=true;
+  document.getElementById('optB').disabled=true;
+  // Mark correct answer green
+  if(q.isCorrect)document.getElementById('optA').classList.add('correct');
+  else            document.getElementById('optB').classList.add('correct');
+  // Mark wrong selection red
+  if(!isRight){
+    if(userSaysCorrect)document.getElementById('optA').classList.add('wrong');
+    else               document.getElementById('optB').classList.add('wrong');
+  }
+  const fb=document.getElementById('fb');
+  if(isRight){score++;streak++;fb.innerHTML=`<strong>✓ Correct!</strong>${q.ok}`;fb.className='fb ok show';}
+  else{wrong++;streak=0;fb.innerHTML=`<strong>✗ Incorrect.</strong>${q.no}`;fb.className='fb no show';}
+  updateHUD();
+  document.getElementById('nextBtn').className='next-btn show';
+}
+function next(){cur++;if(cur>=questions.length){showEnd();return;}render();}
+function showEnd(){
+  const pct=Math.round((score/questions.length)*100);
+  document.getElementById('qArea').style.display='none';
+  document.getElementById('opts').style.display='none';
+  document.getElementById('fb').className='fb';
+  document.getElementById('nextBtn').className='next-btn';
+  document.getElementById('endPct').textContent=pct+'%';
+  document.getElementById('endTitle').textContent=pct===100?'🏆 Zero Errors Missed!':pct>=80?'🌟 Sharp Clinical Eye!':pct>=60?'👍 Good Instincts':'📚 Review & Retry';
+  document.getElementById('endSub').textContent='You correctly identified '+score+' of '+questions.length+' clinical scenarios.';
+  document.getElementById('eOk').textContent=score;
+  document.getElementById('eNo').textContent=wrong;
+  document.getElementById('endBox').classList.add('show');
+}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('str').textContent=streak;}
+init();
+</script>
+</body>
+</html>

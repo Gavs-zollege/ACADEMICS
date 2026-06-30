@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSHA for Medical Assistants – Week 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #1a1208;
+  --surf:    #251c10;
+  --surf2:   #2e2314;
+  --border:  #4a3a1f;
+  --gold:    #e0a83a;
+  --gold-lt: #f0c068;
+  --amber:   #d97a2e;
+  --amber-lt:#e89a52;
+  --text:    #f5ecda;
+  --muted:   #ad9a78;
+  --danger:  #e0584f;
+  --success: #4cb87a;
+  --warn:    #e0a83a;
+  --r: 12px;
+  --r-lg: 16px;
+  --bar: 50px;
+  --foot: 28px;
+  --prog: 3px;
+  --chrome: calc(var(--bar) + var(--foot) + var(--prog));
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.screen { display: none; position: fixed; inset: 0; flex-direction: column; overflow: hidden; }
+.screen.active { display: flex; }
+
+.bar {
+  height: var(--bar); min-height: var(--bar); max-height: var(--bar);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px; background: var(--surf);
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.bar-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; }
+.btn-back {
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif;
+  padding: 5px 12px; border-radius: 8px; cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.btn-back:hover { border-color: var(--amber); color: var(--amber-lt); }
+
+.prog-rail { height: var(--prog); min-height: var(--prog); background: var(--border); flex-shrink: 0; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--amber), var(--gold)); transition: width .4s ease; width: 0%; }
+
+.zone {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 16px 18px; overflow: hidden; gap: 12px;
+}
+
+.foot {
+  height: var(--foot); min-height: var(--foot);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; letter-spacing: .06em; color: #3a2d18;
+  background: var(--surf); border-top: 1px solid var(--border); flex-shrink: 0;
+}
+
+/* ═══ HOME ═══ */
+#home { background: radial-gradient(ellipse 80% 55% at 25% 20%, #3a2c14 0%, var(--bg) 65%); }
+#home .zone { gap: 14px; }
+.pill {
+  background: rgba(224,168,58,.15); border: 1px solid rgba(224,168,58,.45);
+  color: var(--gold-lt); font-size: 10px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; padding: 4px 14px; border-radius: 50px;
+}
+.home-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(22px, 4.5vw, 40px); font-weight: 800;
+  text-align: center; line-height: 1.15;
+}
+.home-title em { color: var(--gold); font-style: normal; }
+.home-sub { font-size: clamp(11px, 1.5vw, 14px); color: var(--muted); text-align: center; max-width: 440px; line-height: 1.55; }
+
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 680px; }
+.mode-card {
+  background: var(--surf); border: 1.5px solid var(--border); border-radius: var(--r-lg);
+  padding: clamp(12px, 2vw, 18px) clamp(12px, 2vw, 16px); cursor: pointer;
+  transition: border-color .2s, background .2s, transform .15s;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.mode-card:hover { border-color: var(--gold); background: var(--surf2); transform: translateY(-2px); }
+.mode-icon { font-size: clamp(20px, 3vw, 26px); line-height: 1; }
+.mode-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(12px, 1.6vw, 14px); font-weight: 700; }
+.mode-desc { font-size: clamp(10px, 1.2vw, 11px); color: var(--muted); line-height: 1.45; }
+.chip { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 50px; margin-top: 2px; width: fit-content; }
+.chip-amber { background: rgba(217,122,46,.2); color: var(--amber-lt); }
+.chip-gold  { background: rgba(224,168,58,.2); color: var(--gold-lt); }
+.chip-green { background: rgba(76,184,122,.2); color: #6fe0a0; }
+.chip-red   { background: rgba(224,88,79,.2); color: #f08a82; }
+
+/* ═══ SHARED BUTTONS ═══ */
+.btn-primary {
+  background: var(--gold); color: #1a1208;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px;
+  padding: 11px 32px; border: none; border-radius: 10px; cursor: pointer;
+  transition: background .15s, transform .1s; white-space: nowrap;
+}
+.btn-primary:hover { background: var(--gold-lt); transform: translateY(-1px); }
+.btn-sec {
+  background: var(--surf); border: 1.5px solid var(--border); color: var(--text);
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px;
+  padding: 9px 20px; border-radius: 10px; cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.btn-sec:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+.btn-sec:disabled { opacity: .3; cursor: default; }
+.btn-row { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+/* ═══ STANDARDS MATCH (flashcard-style) ═══ */
+.fc-meta { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 540px; }
+.fc-ctr { font-size: 11px; color: var(--muted); font-weight: 600; }
+.fc-cat { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--amber-lt); background: rgba(217,122,46,.12); padding: 3px 10px; border-radius: 50px; }
+.fc-scene { perspective: 1000px; width: 100%; max-width: 540px; }
+.fc-card {
+  width: 100%; height: clamp(180px, calc(100vh - var(--chrome) - 100px), 240px);
+  position: relative; transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.4,0,.2,1); cursor: pointer;
+}
+.fc-card.flipped { transform: rotateY(180deg); }
+.fc-face { position: absolute; inset: 0; border-radius: var(--r-lg); display: flex; flex-direction: column; align-items: center; justify-content: center; backface-visibility: hidden; padding: 20px; gap: 8px; }
+.fc-front { background: var(--surf); border: 2px solid var(--border); }
+.fc-back { background: linear-gradient(135deg, #251c10 0%, #3a2c14 100%); border: 2px solid var(--amber); transform: rotateY(180deg); }
+.fc-abbr {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(18px, 4vw, 30px); font-weight: 800;
+  color: var(--gold); line-height: 1.2; text-align: center;
+}
+.fc-hint { font-size: 11px; color: var(--muted); }
+.fc-meaning { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(14px, 2.6vw, 19px); font-weight: 700; text-align: center; line-height: 1.4; color: var(--text); }
+.fc-back-hint { font-size: 10px; color: var(--muted); }
+
+/* ═══ QUIZ ═══ */
+.quiz-top { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 540px; }
+.quiz-num { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--amber-lt); }
+.streak-row { display: flex; gap: 3px; }
+.sdot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: background .25s; }
+.sdot.hit { background: var(--success); }
+.sdot.miss { background: var(--danger); }
+
+.quiz-q-card { width: 100%; max-width: 540px; background: var(--surf); border: 2px solid var(--border); border-radius: var(--r-lg); padding: 18px 22px; text-align: center; }
+.quiz-abbr { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(15px, 2.6vw, 20px); font-weight: 700; color: var(--gold); line-height: 1.35; }
+.quiz-ctx { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+.opts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; max-width: 540px; }
+.opt-btn {
+  background: var(--surf); border: 2px solid var(--border); border-radius: var(--r);
+  padding: 11px 14px; font-size: clamp(11px,1.4vw,13px); font-weight: 600;
+  font-family: 'Inter', sans-serif; color: var(--text); cursor: pointer; text-align: left;
+  line-height: 1.4; transition: border-color .12s, background .12s; min-height: 52px; display: flex; align-items: center;
+}
+.opt-btn:hover:not(.locked) { border-color: var(--amber); background: var(--surf2); }
+.opt-btn.correct { border-color: var(--success); background: rgba(76,184,122,.1); color: var(--success); }
+.opt-btn.wrong { border-color: var(--danger); background: rgba(224,88,79,.1); color: var(--danger); }
+.opt-btn.locked { cursor: default; }
+.quiz-fb { font-size: 13px; font-weight: 600; text-align: center; min-height: 18px; }
+.fb-ok { color: var(--success); }
+.fb-err { color: var(--danger); }
+
+/* ═══ PPE SELECTOR ═══ */
+.ppe-scenario {
+  background: var(--surf); border: 2px solid var(--border); border-radius: var(--r-lg);
+  padding: 18px 22px; width: 100%; max-width: 560px; text-align: center;
+}
+.ppe-icon { font-size: clamp(28px, 5vw, 38px); margin-bottom: 6px; }
+.ppe-text {
+  font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(13px, 2vw, 16px);
+  font-weight: 600; line-height: 1.55; color: var(--text);
+}
+.ppe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; max-width: 560px; }
+.ppe-opt {
+  background: var(--surf); border: 2px solid var(--border); border-radius: var(--r);
+  padding: 12px 10px; font-size: clamp(11px,1.4vw,13px); font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text); cursor: pointer; text-align: center;
+  transition: border-color .12s, background .12s; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.ppe-opt:hover:not(.locked) { border-color: var(--amber); background: var(--surf2); }
+.ppe-opt.correct { border-color: var(--success); background: rgba(76,184,122,.1); color: var(--success); }
+.ppe-opt.wrong { border-color: var(--danger); background: rgba(224,88,79,.1); color: var(--danger); }
+.ppe-opt.locked { cursor: default; }
+.ppe-fb { font-size: 12px; color: var(--muted); text-align: center; min-height: 32px; max-width: 540px; line-height: 1.5; }
+
+/* ═══ HAZARD HUNT (scenario decoder reused for OSHA hazards) ═══ */
+.sc-header { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--warn); align-self: flex-start; max-width: 600px; width: 100%; }
+.sc-card { background: var(--surf); border: 2px solid var(--border); border-radius: var(--r-lg); padding: 18px 22px; width: 100%; max-width: 600px; flex-shrink: 1; min-height: 0; }
+.sc-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(12px, 1.9vw, 15px); font-weight: 600; line-height: 1.85; color: var(--text); }
+.hl { color: var(--gold); background: rgba(224,168,58,.1); padding: 1px 5px; border-radius: 4px; cursor: pointer; transition: background .12s; display: inline-block; }
+.hl:hover { background: rgba(224,168,58,.22); }
+.hl.popped { color: var(--amber-lt); background: rgba(217,122,46,.15); }
+.sc-decode { background: var(--surf2); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 18px; width: 100%; max-width: 600px; font-size: 12px; color: var(--muted); line-height: 1.6; min-height: 44px; flex-shrink: 0; }
+.sc-decode strong { color: var(--amber-lt); }
+
+/* ═══ CASE STUDY (decision tree) ═══ */
+.case-card { background: var(--surf); border: 2px solid var(--border); border-radius: var(--r-lg); padding: 16px 22px; width: 100%; max-width: 600px; flex-shrink: 1; min-height: 0; overflow: hidden; }
+.case-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--warn); margin-bottom: 6px; }
+.case-scenario { font-size: clamp(11px,1.7vw,13px); color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+.case-q { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(13px,2vw,15px); font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.case-reveal-btn { align-self: center; }
+.case-answer { background: var(--surf2); border-radius: var(--r); padding: 10px 14px; font-size: clamp(11px,1.6vw,13px); color: var(--text); line-height: 1.55; display: none; }
+.case-answer.shown { display: block; }
+.case-answer strong { color: var(--success); }
+
+/* ═══ RESULTS ═══ */
+.res-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; max-width: 420px; }
+.ring-wrap { position: relative; width: 130px; height: 130px; }
+.ring-wrap svg { width: 100%; height: 100%; }
+.ring-bg { fill: none; stroke: var(--border); stroke-width: 10; }
+.ring-fill { fill: none; stroke: var(--gold); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 339; stroke-dashoffset: 339; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+.ring-lbl { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-pct { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 30px; font-weight: 800; color: var(--gold); }
+.ring-sub { font-size: 10px; color: var(--muted); }
+.res-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(18px,3vw,24px); font-weight: 800; }
+.res-msg { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 340px; }
+.res-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+</style>
+</head>
+<body>
+
+<!-- ═══ HOME ═══ -->
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 2 · Medical Assistant Training</div>
+    <h1 class="home-title">OSHA for <em>Medical Assistants</em></h1>
+    <p class="home-sub">Workplace safety standards, PPE, hazard recognition, and your rights — in four interactive modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startFC()">
+        <div class="mode-icon">📜</div>
+        <div class="mode-name">Standards Match</div>
+        <div class="mode-desc">Flip through OSHA standards, CFR codes, and key facts.</div>
+        <div class="chip chip-amber">24 cards</div>
+      </div>
+      <div class="mode-card" onclick="startQuiz()">
+        <div class="mode-icon">🧠</div>
+        <div class="mode-name">Knowledge Quiz</div>
+        <div class="mode-desc">4-option questions on BBP, HazCom, recordkeeping & rights.</div>
+        <div class="chip chip-gold">15 questions</div>
+      </div>
+      <div class="mode-card" onclick="startPPE()">
+        <div class="mode-icon">🧤</div>
+        <div class="mode-name">PPE Selector</div>
+        <div class="mode-desc">Pick the right protective equipment for each clinical task.</div>
+        <div class="chip chip-green">10 scenarios</div>
+      </div>
+      <div class="mode-card" onclick="startSC()">
+        <div class="mode-icon">⚠️</div>
+        <div class="mode-name">Hazard Hunt</div>
+        <div class="mode-desc">Tap hazards and violations hidden in real clinic scenes.</div>
+        <div class="chip chip-red">Case Study inside</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ STANDARDS MATCH ═══ -->
+<div id="fc-screen" class="screen">
+  <div class="bar"><span class="bar-title">📜 Standards Match</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="fc-prog"></div></div>
+  <div class="zone">
+    <div class="fc-meta">
+      <span class="fc-ctr" id="fc-ctr">Card 1 of 24</span>
+      <span class="fc-cat" id="fc-cat">Standards</span>
+    </div>
+    <div class="fc-scene">
+      <div class="fc-card" id="fc-card" onclick="fcFlip()">
+        <div class="fc-face fc-front">
+          <div class="fc-abbr" id="fc-abbr">29 CFR 1910.1030</div>
+          <div class="fc-hint">Tap to reveal · Space/Enter · ← →</div>
+        </div>
+        <div class="fc-face fc-back">
+          <div class="fc-meaning" id="fc-meaning">Bloodborne Pathogens Standard</div>
+          <div class="fc-back-hint">Tap to flip back</div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-sec" id="fc-prev" onclick="fcPrev()">← Prev</button>
+      <button class="btn-sec" id="fc-next" onclick="fcNext()">Next →</button>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top">
+      <span class="quiz-num" id="quiz-num">Question 1 of 15</span>
+      <div class="streak-row" id="streak-row"></div>
+    </div>
+    <div class="quiz-q-card">
+      <div class="quiz-abbr" id="quiz-abbr">Question text</div>
+      <div class="quiz-ctx" id="quiz-ctx">Category</div>
+    </div>
+    <div class="opts-grid" id="opts-grid"></div>
+    <div class="quiz-fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next Question →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ PPE SELECTOR ═══ -->
+<div id="ppe-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧤 PPE Selector</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="ppe-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top">
+      <span class="quiz-num" id="ppe-num">Scenario 1 of 10</span>
+      <div class="streak-row" id="ppe-streak"></div>
+    </div>
+    <div class="ppe-scenario">
+      <div class="ppe-icon" id="ppe-icon">🩹</div>
+      <div class="ppe-text" id="ppe-text">Scenario text</div>
+    </div>
+    <div class="ppe-grid" id="ppe-grid"></div>
+    <div class="ppe-fb" id="ppe-fb"></div>
+    <button class="btn-primary" id="btn-ppenext" style="display:none" onclick="ppeNext()">Next Scenario →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ HAZARD HUNT ═══ -->
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">⚠️ Hazard Hunt</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start; padding-top:14px; gap:10px">
+    <div class="sc-header" id="sc-label">Scene 1 of 5</div>
+    <div class="sc-card" id="sc-card-wrap"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--gold)">highlighted</span> item to see the OSHA detail.</div>
+    <div class="btn-row">
+      <button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button>
+      <button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ RESULTS ═══ -->
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg>
+        <div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div>
+      </div>
+      <div class="res-title" id="res-title">Great work!</div>
+      <div class="res-msg" id="res-msg"></div>
+      <div class="res-btns">
+        <button class="btn-sec" onclick="retryMode()">Try Again</button>
+        <button class="btn-primary" onclick="goHome()">Choose Mode</button>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+/* ═══════════ DATA ═══════════ */
+const CARDS = [
+  {a:'1970', m:'OSHA founded — Occupational Safety and Health Act signed Dec 29, 1970', cat:'History'},
+  {a:'General Duty Clause', m:'Section 5(a)(1): employer must furnish a workplace free from recognized hazards — applies even with no specific standard', cat:'Law'},
+  {a:'$15,625', m:'Maximum penalty per serious violation (2024 rates)', cat:'Penalties'},
+  {a:'$156,259', m:'Maximum penalty per willful or repeat violation', cat:'Penalties'},
+  {a:'29 CFR 1910.1030', m:'Bloodborne Pathogens Standard', cat:'Standards'},
+  {a:'29 CFR 1910.1200', m:'Hazard Communication (HazCom/GHS)', cat:'Standards'},
+  {a:'29 CFR 1910.132–138', m:'Personal Protective Equipment', cat:'Standards'},
+  {a:'29 CFR 1910.1450', m:'Occupational Exposure to Chemicals', cat:'Standards'},
+  {a:'29 CFR 1910.305', m:'Electrical Safety', cat:'Standards'},
+  {a:'29 CFR 1910.38', m:'Emergency Action Plans', cat:'Standards'},
+  {a:'29 CFR 1904', m:'Recordkeeping requirements — failing to record an injury is a violation of this', cat:'Standards'},
+  {a:'ECP', m:'Exposure Control Plan — written plan reviewed/updated at least annually', cat:'BBP'},
+  {a:'Hierarchy of Controls (BBP) — Step 1', m:'Elimination/Substitution — remove the hazard entirely (e.g., needleless systems)', cat:'BBP'},
+  {a:'Hierarchy of Controls (BBP) — Step 4', m:'PPE — last resort, only when engineering & work practice controls aren\u2019t sufficient', cat:'BBP'},
+  {a:'Post-Exposure Step 1', m:'Wash puncture with soap & water; flush mucous membranes for 15 minutes', cat:'BBP'},
+  {a:'Post-Exposure Step 2', m:'Report to supervisor immediately — same shift, not the next day', cat:'BBP'},
+  {a:'SDS Section 8', m:'Exposure Controls — PELs, TLVs, required PPE (the section the MA uses most)', cat:'HazCom'},
+  {a:'GHS Pictogram: Skull & Bones', m:'Acute toxicity — fatal or toxic', cat:'HazCom'},
+  {a:'GHS Pictogram: Corrosion', m:'Skin burns, eye damage, metal corrosion', cat:'HazCom'},
+  {a:'OSHA 300', m:'Log of Work-Related Injuries & Illnesses — updated within 7 days of incident', cat:'Recordkeeping'},
+  {a:'OSHA 300A', m:'Annual Summary — must be posted Feb 1–Apr 30, signed by an executive', cat:'Recordkeeping'},
+  {a:'OSHA 301', m:'Injury and Illness Incident Report — individual case report', cat:'Recordkeeping'},
+  {a:'Fatality Reporting', m:'Must report to OSHA within 8 hours', cat:'Recordkeeping'},
+  {a:'Hospitalization/Amputation/Eye Loss', m:'Must report to OSHA within 24 hours', cat:'Recordkeeping'},
+];
+
+const QUIZ = [
+  {q:'What does the General Duty Clause require even when no specific OSHA standard exists?', ctx:'OSHA Law', correct:'A workplace free from recognized hazards likely to cause death or serious harm', wrongs:['A written safety manual reviewed annually','Mandatory annual OSHA inspection','A designated safety officer on every shift']},
+  {q:'What is the maximum penalty for a single willful or repeat OSHA violation?', ctx:'Penalties', correct:'$156,259', wrongs:['$15,625','$1,000','$50,000']},
+  {q:'How often must an Exposure Control Plan (ECP) be reviewed and updated?', ctx:'Bloodborne Pathogens', correct:'At least annually, and whenever tasks or procedures change', wrongs:['Every 5 years','Only after an exposure incident','Once, at time of hire']},
+  {q:'What is Step 1 in the Hierarchy of Controls for bloodborne pathogens?', ctx:'Bloodborne Pathogens', correct:'Elimination/Substitution (e.g., needleless systems)', wrongs:['PPE such as gloves and gowns','Work practice controls like hand washing','Engineering controls like sharps containers']},
+  {q:'After a needlestick injury, what is the FIRST required step?', ctx:'Post-Exposure Procedure', correct:'Wash the puncture with soap and water; flush mucous membranes for 15 minutes', wrongs:['Notify the source patient\u2019s family','File the OSHA 301 form','Call OSHA directly']},
+  {q:'A needlestick must be reported to a supervisor —', ctx:'Post-Exposure Procedure', correct:'Immediately, same shift', wrongs:['Within 1 week','At the end of the month','Only if symptoms develop']},
+  {q:'Which SDS section tells the MA exactly what PPE is required for a chemical?', ctx:'Hazard Communication', correct:'Section 8 — Exposure Controls', wrongs:['Section 2 — Hazard Identification','Section 4 — First Aid','Section 11 — Toxicology']},
+  {q:'The GHS skull-and-bones pictogram indicates —', ctx:'Hazard Communication', correct:'Acute toxicity (fatal or toxic)', wrongs:['Flammable liquid or gas','Skin/eye corrosion','Environmental hazard']},
+  {q:'Which type of glove is preferred for most clinical tasks due to allergy concerns?', ctx:'PPE', correct:'Nitrile (latex-free)', wrongs:['Latex','Vinyl, unsterilized','Cloth']},
+  {q:'Fit testing is required before first use and annually for which PPE item?', ctx:'PPE', correct:'N95 respirator', wrongs:['Surgical mask','Safety glasses','Fluid-resistant gown']},
+  {q:'An establishment with how many or more employees must maintain OSHA 300 records?', ctx:'Recordkeeping', correct:'10+ employees', wrongs:['5+ employees','25+ employees','50+ employees']},
+  {q:'The OSHA 300A Summary must be posted during which window?', ctx:'Recordkeeping', correct:'February 1 – April 30', wrongs:['January 1 – January 31','All year, every year','June 1 – August 31']},
+  {q:'A fatality must be reported to OSHA within —', ctx:'Recordkeeping', correct:'8 hours', wrongs:['24 hours','72 hours','7 days']},
+  {q:'Can an employee be disciplined for filing an OSHA complaint?', ctx:'Employee Rights', correct:'No — anti-retaliation protections apply', wrongs:['Yes, if the complaint is unfounded','Yes, with HR approval','Only if filed anonymously']},
+  {q:'What is the HIGHEST priority category for an OSHA inspection?', ctx:'Inspections', correct:'Imminent Danger', wrongs:['Worker Complaints','Planned/Programmed inspections','Follow-up inspections']},
+];
+
+const PPE_SCENARIOS = [
+  {icon:'🩸', text:'You are drawing blood from a patient with no known infection risk.', correct:'Nitrile Gloves', wrongs:['N95 Respirator','Face Shield + Gown','No PPE Needed'], why:'Any contact with blood requires gloves at minimum — standard precautions apply to every patient.'},
+  {icon:'😮‍💨', text:'A patient with suspected active TB needs a sputum sample collected.', correct:'Fit-Tested N95', wrongs:['Surgical Mask','Safety Glasses Only','Nitrile Gloves Only'], why:'TB is airborne — it requires a fit-tested N95 or higher, not a surgical mask.'},
+  {icon:'💦', text:'You are assisting with a procedure that may cause blood splatter to your face.', correct:'Goggles or Face Shield', wrongs:['Surgical Mask Only','Gloves Only','Gown Only'], why:'Splash/spray/spatter risk requires eye protection — face shields don\u2019t replace goggles for high-splash tasks.'},
+  {icon:'🤧', text:'A patient with influenza (droplet precautions) needs vitals checked.', correct:'Surgical Mask', wrongs:['N95 Respirator','No Mask Needed','Face Shield Only'], why:'Droplet illnesses like influenza require a surgical mask; N95 is reserved for airborne pathogens.'},
+  {icon:'🧫', text:'You are cleaning up a large blood spill on the exam room floor.', correct:'Gloves + Fluid-Resistant Gown', wrongs:['Gloves Only','Mask Only','Goggles Only'], why:'Risk of clothing contamination requires a gown in addition to gloves.'},
+  {icon:'🧪', text:'You are handling glutaraldehyde disinfectant per the SDS.', correct:'Check SDS Section 8 for Required PPE', wrongs:['Assume Gloves Are Enough','No PPE Needed for Cleaning Products','Ask a Coworker What They Use'], why:'Section 8 of the SDS specifies the exact PPE required for that chemical — never assume.'},
+  {icon:'🩹', text:'You just removed contaminated exam gloves after a procedure.', correct:'Wash Hands Immediately', wrongs:['Reuse the Same Gloves Later','Wipe Hands on Gown','Apply Hand Sanitizer Only, Skip Washing'], why:'Hand washing after glove removal is a core work practice control — never wash and reuse exam gloves.'},
+  {icon:'🦠', text:'A patient has suspected measles (airborne) in the waiting room.', correct:'N95 + Isolate Patient Immediately', wrongs:['Surgical Mask Is Sufficient','No Action Needed Until Confirmed','Open Windows Only'], why:'Measles is airborne — requires N95-level respiratory protection and prompt isolation.'},
+  {icon:'👓', text:'You wear prescription glasses during a splash-risk procedure.', correct:'Add Goggles or Face Shield Over Glasses', wrongs:['Glasses Alone Are Sufficient','Switch to Contact Lenses','Skip Eye Protection This Time'], why:'Personal eyewear is not rated as PPE — goggles or a face shield must be added.'},
+  {icon:'🧤', text:'You are performing a sterile dressing change.', correct:'Sterile Gloves', wrongs:['Reused Exam Gloves','Bare Hands with Hand Sanitizer','Non-Sterile Gloves'], why:'Sterile procedures require sterile gloves specifically — not standard exam gloves.'},
+];
+
+const SCENARIOS = [
+  { label:'🏥 Exam Room Scene — Scene 1 of 5', tokens:[
+    {t:'You walk into Exam Room 2 and notice: an '},
+    {a:'unlabeled chemical bottle', d:'❌ Violation: every chemical container must be labeled per HazCom/GHS (29 CFR 1910.1200).'},
+    {t:' on the counter, a '},
+    {a:'sharps container', d:'✔ Correct: sharps containers are a required engineering control under the BBP standard.'},
+    {t:' that is over 3/4 full but still in use, and an '},
+    {a:'open biohazard bag', d:'❌ Violation: biohazard waste must be kept closed and properly contained when not actively in use.'},
+    {t:' near the door.'},
+  ]},
+  { label:'💊 Supply Room Scene — Scene 2 of 5', tokens:[
+    {t:'In the supply room you find a '},
+    {a:'frayed power cord', d:'❌ Violation: damaged cords on medical equipment are an electrical hazard (29 CFR 1910.305) — must be reported and removed from service immediately.'},
+    {t:' on the autoclave, an '},
+    {a:'SDS binder', d:'✔ Correct: an accessible SDS library satisfies HazCom requirements — must be available during every shift.'},
+    {t:' on the shelf, and a '},
+    {a:'GFCI outlet', d:'✔ Correct: ground fault circuit interrupters are required near sinks and water sources.'},
+    {t:' near the sink.'},
+  ]},
+  { label:'🦠 Waiting Room Scene — Scene 3 of 5', tokens:[
+    {t:'A coughing patient sits in the waiting room. You notice: '},
+    {a:'no posted droplet precaution signage', d:'❌ Concern: visible signage helps control biological hazard spread per exposure control best practice.'},
+    {t:', a '},
+    {a:'box of surgical masks', d:'✔ Correct: surgical masks are appropriate PPE for droplet-precaution patients.'},
+    {t:' at check-in, and an employee '},
+    {a:'lifting a patient alone without a gait belt', d:'❌ Concern: ergonomic hazard — proper body mechanics and lift assistance are required controls.'},
+    {t:'.'},
+  ]},
+  { label:'📋 Office Manager\u2019s Desk — Scene 4 of 5', tokens:[
+    {t:'You notice the office manager\u2019s desk has: a '},
+    {a:'locked OSHA 300 Log', d:'❌ Violation: the log must be accessible — it cannot be permanently locked away from view, and the 300A summary must be posted Feb 1–Apr 30.'},
+    {t:', a '},
+    {a:'missing "Job Safety and Health" poster', d:'❌ Violation: the OSHA poster must be displayed where employees can see it.'},
+    {t:', and a stack of '},
+    {a:'unsigned BBP training records', d:'❌ Violation: training must be documented — undocumented training cannot be verified during an inspection.'},
+    {t:'.'},
+  ]},
+  { label:'⚠️ Danger Zone — Scene 5 of 5', tokens:[
+    {t:'These situations always warrant action, no exceptions: '},
+    {a:'recapping a used needle', d:'❌ NEVER — recapping increases needlestick risk; the hierarchy of controls calls for needleless/safety-engineered devices instead.'},
+    {t:'  '},
+    {a:'washing and reusing exam gloves', d:'❌ NEVER — single-use exam gloves are discarded after each patient, never washed and reused.'},
+    {t:'  '},
+    {a:'taking contaminated scrubs home to wash', d:'❌ NEVER — contaminated clothing must be removed and laundered on-site or by a contracted service, never taken home.'},
+    {t:'  '},
+    {a:'"don\u2019t worry about filling anything out"', d:'❌ NEVER acceptable — a percutaneous injury is a recordable event under 29 CFR 1904 regardless of what a manager says.'},
+  ]},
+];
+
+/* ═══════════ HELPERS ═══════════ */
+const $ = id => document.getElementById(id);
+function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+function goHome() { show('home'); }
+function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+let currentMode = '';
+
+/* ═══════════ STANDARDS MATCH ═══════════ */
+let fcIdx = 0;
+function startFC() { currentMode='fc'; fcIdx=0; show('fc-screen'); renderFC(); }
+function renderFC() {
+  const c = CARDS[fcIdx];
+  $('fc-abbr').textContent = c.a;
+  $('fc-meaning').textContent = c.m;
+  $('fc-cat').textContent = c.cat;
+  $('fc-ctr').textContent = `Card ${fcIdx+1} of ${CARDS.length}`;
+  $('fc-prog').style.width = `${((fcIdx+1)/CARDS.length)*100}%`;
+  $('fc-card').classList.remove('flipped');
+  $('fc-prev').disabled = fcIdx===0;
+  $('fc-next').disabled = fcIdx===CARDS.length-1;
+}
+function fcFlip() { $('fc-card').classList.toggle('flipped'); }
+function fcPrev() { if(fcIdx>0){fcIdx--;renderFC();} }
+function fcNext() { if(fcIdx<CARDS.length-1){fcIdx++;renderFC();} }
+document.addEventListener('keydown', e => {
+  if (!$('fc-screen').classList.contains('active')) return;
+  if (e.key==='ArrowRight'||e.key==='ArrowDown') fcNext();
+  else if (e.key==='ArrowLeft'||e.key==='ArrowUp') fcPrev();
+  else if (e.key===' '||e.key==='Enter') { e.preventDefault(); fcFlip(); }
+});
+
+/* ═══════════ QUIZ ═══════════ */
+let qPool=[], qIdx=0, qScore=0, qHist=[];
+function startQuiz() {
+  currentMode='quiz'; qPool=shuffle(QUIZ); qIdx=0; qScore=0; qHist=[];
+  show('quiz-screen'); renderQuiz();
+}
+function renderQuiz() {
+  const q = qPool[qIdx];
+  const opts = shuffle([q.correct, ...q.wrongs]);
+  $('quiz-abbr').textContent = q.q;
+  $('quiz-ctx').textContent = q.ctx;
+  $('quiz-num').textContent = `Question ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width = `${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent = '';
+  $('btn-qnext').style.display = 'none';
+  $('streak-row').innerHTML = qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="opt-btn" data-val="${safe}" onclick="quizAnswer(this)">${safe}</button>`;
+  }).join('');
+}
+function quizAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const correct = qPool[qIdx].correct;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.classList.add('locked'));
+  if (chosen===correct) {
+    btn.classList.add('correct'); qScore++;
+    $('quiz-fb').innerHTML = '<span class="fb-ok">✓ Correct!</span>';
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{ if(b.dataset.val===correct) b.classList.add('correct'); });
+    $('quiz-fb').innerHTML = `<span class="fb-err">✗ Answer: <strong>${correct}</strong></span>`;
+  }
+  qHist.push(chosen===correct);
+  $('btn-qnext').style.display='inline-block';
+}
+function quizNext() {
+  qIdx++;
+  if (qIdx>=qPool.length) showResults('quiz', qScore, qPool.length);
+  else renderQuiz();
+}
+
+/* ═══════════ PPE SELECTOR ═══════════ */
+let pPool=[], pIdx=0, pScore=0, pHist=[];
+function startPPE() {
+  currentMode='ppe'; pPool=shuffle(PPE_SCENARIOS); pIdx=0; pScore=0; pHist=[];
+  show('ppe-screen'); renderPPE();
+}
+function renderPPE() {
+  const s = pPool[pIdx];
+  const opts = shuffle([s.correct, ...s.wrongs]);
+  $('ppe-icon').textContent = s.icon;
+  $('ppe-text').textContent = s.text;
+  $('ppe-num').textContent = `Scenario ${pIdx+1} of ${pPool.length}`;
+  $('ppe-prog').style.width = `${(pIdx/pPool.length)*100}%`;
+  $('ppe-fb').textContent = '';
+  $('btn-ppenext').style.display = 'none';
+  $('ppe-streak').innerHTML = pHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('ppe-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="ppe-opt" data-val="${safe}" onclick="ppeAnswer(this)">${safe}</button>`;
+  }).join('');
+}
+function ppeAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const s = pPool[pIdx];
+  document.querySelectorAll('.ppe-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === s.correct;
+  if (ok) { btn.classList.add('correct'); pScore++; }
+  else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.ppe-opt').forEach(b=>{ if(b.dataset.val===s.correct) b.classList.add('correct'); });
+  }
+  $('ppe-fb').innerHTML = (ok?'<span class="fb-ok">✓ Correct.</span> ':'<span class="fb-err">✗ Not quite.</span> ') + s.why;
+  pHist.push(ok);
+  $('btn-ppenext').style.display='inline-block';
+}
+function ppeNext() {
+  pIdx++;
+  if (pIdx>=pPool.length) showResults('ppe', pScore, pPool.length);
+  else renderPPE();
+}
+
+/* ═══════════ HAZARD HUNT ═══════════ */
+let scIdx=0;
+function startSC() { currentMode='scenario'; scIdx=0; show('sc-screen'); renderSC(); }
+function renderSC() {
+  const sc = SCENARIOS[scIdx];
+  $('sc-label').textContent = sc.label;
+  $('sc-prog').style.width = `${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML = '👆 Tap any <span style="color:var(--gold)">highlighted</span> item to see the OSHA detail.';
+  $('sc-text').innerHTML = sc.tokens.map(tok=>{
+    if (tok.a) {
+      const safe = tok.d.replace(/"/g,'&quot;');
+      return `<span class="hl" data-abbr="${tok.a}" data-def="${safe}" onclick="scDecode(this)">${tok.a}</span>`;
+    }
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled = scIdx===0;
+  $('sc-next').disabled = scIdx===SCENARIOS.length-1;
+}
+function scDecode(el) {
+  el.classList.toggle('popped');
+  $('sc-decode').innerHTML = `<strong>${el.dataset.abbr}</strong> — ${el.dataset.def}`;
+}
+function scPrev() { if(scIdx>0){scIdx--;renderSC();} }
+function scNext() { if(scIdx<SCENARIOS.length-1){scIdx++;renderSC();} }
+
+/* ═══════════ RESULTS ═══════════ */
+function showResults(mode, score, total) {
+  currentMode = mode; show('results-screen');
+  const pct = Math.round((score/total)*100);
+  const C = 2*Math.PI*54;
+  const offset = C - (Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray = C;
+  $('ring-fill').style.strokeDashoffset = C;
+  $('ring-pct').textContent = pct+'%';
+  $('ring-sub').textContent = `${score} / ${total}`;
+  setTimeout(()=>{ $('ring-fill').style.strokeDashoffset = offset; }, 80);
+  const title = pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  const msg = `You scored ${score} / ${total} (${pct}%). ${pct>=80?'You know your OSHA standards!':'Review the ones you missed and try again.'}`;
+  $('res-title').textContent = title;
+  $('res-msg').textContent = msg;
+}
+function retryMode() {
+  if (currentMode==='quiz') startQuiz();
+  else if (currentMode==='fc') startFC();
+  else if (currentMode==='ppe') startPPE();
+  else if (currentMode==='scenario') startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

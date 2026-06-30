@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HIPAA for Medical Assistants – Week 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #0d1426;
+  --surf:    #161e36;
+  --surf2:   #1c2745;
+  --border:  #2a3658;
+  --violet:  #7c6cd9;
+  --violet-lt:#9d8fed;
+  --teal:    #2a9d8f;
+  --teal-lt: #4fc4b5;
+  --text:    #e8ebf6;
+  --muted:   #7a85ab;
+  --danger:  #e0585a;
+  --success: #3db38a;
+  --warn:    #d99a3d;
+  --r: 12px;
+  --r-lg: 16px;
+  --bar: 50px;
+  --foot: 28px;
+  --prog: 3px;
+  --chrome: calc(var(--bar) + var(--foot) + var(--prog));
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.screen { display: none; position: fixed; inset: 0; flex-direction: column; overflow: hidden; }
+.screen.active { display: flex; }
+
+.bar {
+  height: var(--bar); min-height: var(--bar); max-height: var(--bar);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px; background: var(--surf);
+  border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.bar-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 700; }
+.btn-back {
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  font-size: 11px; font-weight: 600; font-family: 'Inter', sans-serif;
+  padding: 5px 12px; border-radius: 8px; cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.btn-back:hover { border-color: var(--violet); color: var(--violet-lt); }
+
+.prog-rail { height: var(--prog); min-height: var(--prog); background: var(--border); flex-shrink: 0; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--violet)); transition: width .4s ease; width: 0%; }
+
+.zone {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 16px 18px; overflow: hidden; gap: 12px;
+}
+
+.foot {
+  height: var(--foot); min-height: var(--foot);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; letter-spacing: .06em; color: #1c2540;
+  background: var(--surf); border-top: 1px solid var(--border); flex-shrink: 0;
+}
+
+/* ═══ HOME ═══ */
+#home { background: radial-gradient(ellipse 80% 55% at 25% 20%, #1f2a52 0%, var(--bg) 65%); }
+#home .zone { gap: 14px; }
+.pill {
+  background: rgba(124,108,217,.15); border: 1px solid rgba(124,108,217,.45);
+  color: var(--violet-lt); font-size: 10px; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase; padding: 4px 14px; border-radius: 50px;
+}
+.home-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: clamp(22px, 4.5vw, 40px); font-weight: 800;
+  text-align: center; line-height: 1.15;
+}
+.home-title em { color: var(--violet-lt); font-style: normal; }
+.home-sub { font-size: clamp(11px, 1.5vw, 14px); color: var(--muted); text-align: center; max-width: 440px; line-height: 1.55; }
+
+.mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 680px; }
+.mode-card {
+  background: var(--surf); border: 1.5px solid var(--border); border-radius: var(--r-lg);
+  padding: clamp(12px, 2vw, 18px) clamp(12px, 2vw, 16px); cursor: pointer;
+  transition: border-color .2s, background .2s, transform .15s;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.mode-card:hover { border-color: var(--violet); background: var(--surf2); transform: translateY(-2px); }
+.mode-icon { font-size: clamp(20px, 3vw, 26px); line-height: 1; }
+.mode-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(12px, 1.6vw, 14px); font-weight: 700; }
+.mode-desc { font-size: clamp(10px, 1.2vw, 11px); color: var(--muted); line-height: 1.45; }
+.chip { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 50px; margin-top: 2px; width: fit-content; }
+.chip-violet { background: rgba(124,108,217,.2); color: var(--violet-lt); }
+.chip-teal   { background: rgba(42,157,143,.2); color: var(--teal-lt); }
+.chip-green  { background: rgba(61,179,138,.2); color: #5de0b0; }
+.chip-red    { background: rgba(224,88,90,.2); color: #f08a8c; }
+
+/* ═══ SHARED BUTTONS ═══ */
+.btn-primary {
+  background: var(--violet); color: #0d1426;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px;
+  padding: 11px 32px; border: none; border-radius: 10px; cursor: pointer;
+  transition: background .15s, transform .1s; white-space: nowrap;
+}
+.btn-primary:hover { background: var(--violet-lt); transform: translateY(-1px); }
+.btn-sec {
+  background: var(--surf); border: 1.5px solid var(--border); color: var(--text);
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px;
+  padding: 9px 20px; border-radius: 10px; cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.btn-sec:hover:not(:disabled) { border-color: var(--violet); color: var(--violet-lt); }
+.btn-sec:disabled { opacity: .3; cursor: default; }
+.btn-row { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+/* ═══ PHI HUNT (tap to classify) ═══ */
+.phi-card { background: var(--surf); border: 2px solid var(--border); border-radius: var(--r-lg); padding: 22px 26px; width: 100%; max-width: 540px; text-align: center; }
+.phi-item { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(18px, 4vw, 28px); font-weight: 800; color: var(--violet-lt); line-height: 1.3; }
+.phi-sub { font-size: 11px; color: var(--muted); margin-top: 8px; }
+.phi-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 460px; }
+.phi-btn {
+  border-radius: var(--r-lg); padding: 16px; font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700; cursor: pointer; transition: all .15s; border: 2px solid;
+}
+.phi-yes { background: rgba(61,179,138,.1); border-color: var(--success); color: var(--success); }
+.phi-yes:hover:not(:disabled) { background: rgba(61,179,138,.2); }
+.phi-no { background: rgba(224,88,90,.1); border-color: var(--danger); color: var(--danger); }
+.phi-no:hover:not(:disabled) { background: rgba(224,88,90,.2); }
+.phi-btn:disabled { opacity: .5; cursor: default; }
+.phi-fb { font-size: 12px; color: var(--muted); text-align: center; min-height: 32px; max-width: 480px; line-height: 1.5; }
+
+/* ═══ QUIZ (reused pattern) ═══ */
+.quiz-top { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 540px; }
+.quiz-num { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--teal-lt); }
+.streak-row { display: flex; gap: 3px; }
+.sdot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: background .25s; }
+.sdot.hit { background: var(--success); }
+.sdot.miss { background: var(--danger); }
+
+.quiz-q-card { width: 100%; max-width: 540px; background: var(--surf); border: 2px solid var(--border); border-radius: var(--r-lg); padding: 18px 22px; text-align: center; }
+.quiz-abbr { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(15px, 2.6vw, 20px); font-weight: 700; color: var(--violet-lt); line-height: 1.35; }
+.quiz-ctx { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+.opts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; max-width: 540px; }
+.opt-btn {
+  background: var(--surf); border: 2px solid var(--border); border-radius: var(--r);
+  padding: 11px 14px; font-size: clamp(11px,1.4vw,13px); font-weight: 600;
+  font-family: 'Inter', sans-serif; color: var(--text); cursor: pointer; text-align: left;
+  line-height: 1.4; transition: border-color .12s, background .12s; min-height: 52px; display: flex; align-items: center;
+}
+.opt-btn:hover:not(.locked) { border-color: var(--teal); background: var(--surf2); }
+.opt-btn.correct { border-color: var(--success); background: rgba(61,179,138,.1); color: var(--success); }
+.opt-btn.wrong { border-color: var(--danger); background: rgba(224,88,90,.1); color: var(--danger); }
+.opt-btn.locked { cursor: default; }
+.quiz-fb { font-size: 13px; font-weight: 600; text-align: center; min-height: 18px; }
+.fb-ok { color: var(--success); }
+.fb-err { color: var(--danger); }
+
+/* ═══ SAFEGUARD SORT ═══ */
+.sg-card { background: var(--surf); border: 2px solid var(--border); border-radius: var(--r-lg); padding: 18px 22px; width: 100%; max-width: 560px; text-align: center; }
+.sg-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(13px, 2vw, 16px); font-weight: 600; line-height: 1.55; color: var(--text); }
+.sg-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; width: 100%; max-width: 560px; }
+.sg-opt {
+  background: var(--surf); border: 2px solid var(--border); border-radius: var(--r);
+  padding: 12px 8px; font-size: clamp(11px,1.4vw,12px); font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text); cursor: pointer; text-align: center;
+  transition: border-color .12s, background .12s; min-height: 48px; display: flex; align-items: center; justify-content: center;
+}
+.sg-opt:hover:not(.locked) { border-color: var(--teal); background: var(--surf2); }
+.sg-opt.correct { border-color: var(--success); background: rgba(61,179,138,.1); color: var(--success); }
+.sg-opt.wrong { border-color: var(--danger); background: rgba(224,88,90,.1); color: var(--danger); }
+.sg-opt.locked { cursor: default; }
+.sg-fb { font-size: 12px; color: var(--muted); text-align: center; min-height: 32px; max-width: 540px; line-height: 1.5; }
+
+/* ═══ VIOLATION SCENES ═══ */
+.sc-header { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--warn); align-self: flex-start; max-width: 600px; width: 100%; }
+.sc-card { background: var(--surf); border: 2px solid var(--border); border-radius: var(--r-lg); padding: 18px 22px; width: 100%; max-width: 600px; flex-shrink: 1; min-height: 0; }
+.sc-text { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(12px, 1.9vw, 15px); font-weight: 600; line-height: 1.85; color: var(--text); }
+.hl { color: var(--violet-lt); background: rgba(124,108,217,.12); padding: 1px 5px; border-radius: 4px; cursor: pointer; transition: background .12s; display: inline-block; }
+.hl:hover { background: rgba(124,108,217,.24); }
+.hl.popped { color: var(--teal-lt); background: rgba(42,157,143,.18); }
+.sc-decode { background: var(--surf2); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 18px; width: 100%; max-width: 600px; font-size: 12px; color: var(--muted); line-height: 1.6; min-height: 44px; flex-shrink: 0; }
+.sc-decode strong { color: var(--teal-lt); }
+
+/* ═══ RESULTS ═══ */
+.res-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; max-width: 420px; }
+.ring-wrap { position: relative; width: 130px; height: 130px; }
+.ring-wrap svg { width: 100%; height: 100%; }
+.ring-bg { fill: none; stroke: var(--border); stroke-width: 10; }
+.ring-fill { fill: none; stroke: var(--violet); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 339; stroke-dashoffset: 339; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+.ring-lbl { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ring-pct { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 30px; font-weight: 800; color: var(--violet-lt); }
+.ring-sub { font-size: 10px; color: var(--muted); }
+.res-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: clamp(18px,3vw,24px); font-weight: 800; }
+.res-msg { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 340px; }
+.res-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+</style>
+</head>
+<body>
+
+<!-- ═══ HOME ═══ -->
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 2 · Medical Assistant Training</div>
+    <h1 class="home-title">HIPAA for <em>Medical Assistants</em></h1>
+    <p class="home-sub">Protected Health Information, patient rights, safeguards, and real-world scenarios — in four interactive modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startPHI()">
+        <div class="mode-icon">🔍</div>
+        <div class="mode-name">PHI or Not?</div>
+        <div class="mode-desc">Decide if each item is a protected PHI identifier.</div>
+        <div class="chip chip-violet">18 identifiers</div>
+      </div>
+      <div class="mode-card" onclick="startQuiz()">
+        <div class="mode-icon">🧠</div>
+        <div class="mode-name">Knowledge Quiz</div>
+        <div class="mode-desc">4-option questions on patient rights, breaches & penalties.</div>
+        <div class="chip chip-teal">15 questions</div>
+      </div>
+      <div class="mode-card" onclick="startSG()">
+        <div class="mode-icon">🛡️</div>
+        <div class="mode-name">Safeguard Sort</div>
+        <div class="mode-desc">Sort Security Rule controls: Administrative, Physical, Technical.</div>
+        <div class="chip chip-green">12 controls</div>
+      </div>
+      <div class="mode-card" onclick="startSC()">
+        <div class="mode-icon">⚠️</div>
+        <div class="mode-name">Violation Spotter</div>
+        <div class="mode-desc">Tap real-world slip-ups to see if they\u2019re HIPAA violations.</div>
+        <div class="chip chip-red">Case Study inside</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ PHI OR NOT ═══ -->
+<div id="phi-screen" class="screen">
+  <div class="bar"><span class="bar-title">🔍 PHI or Not?</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="phi-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top">
+      <span class="quiz-num" id="phi-num">Item 1 of 22</span>
+      <div class="streak-row" id="phi-streak"></div>
+    </div>
+    <div class="phi-card">
+      <div class="phi-item" id="phi-item">Patient's email address</div>
+      <div class="phi-sub">Is this one of the 18 PHI identifiers?</div>
+    </div>
+    <div class="phi-btns">
+      <button class="phi-btn phi-yes" onclick="phiAnswer(true)">✔ Yes, it's PHI</button>
+      <button class="phi-btn phi-no" onclick="phiAnswer(false)">✗ No, it's not</button>
+    </div>
+    <div class="phi-fb" id="phi-fb"></div>
+    <button class="btn-primary" id="btn-phinext" style="display:none" onclick="phiNext()">Next Item →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ QUIZ ═══ -->
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top">
+      <span class="quiz-num" id="quiz-num">Question 1 of 15</span>
+      <div class="streak-row" id="streak-row"></div>
+    </div>
+    <div class="quiz-q-card">
+      <div class="quiz-abbr" id="quiz-abbr">Question text</div>
+      <div class="quiz-ctx" id="quiz-ctx">Category</div>
+    </div>
+    <div class="opts-grid" id="opts-grid"></div>
+    <div class="quiz-fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next Question →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ SAFEGUARD SORT ═══ -->
+<div id="sg-screen" class="screen">
+  <div class="bar"><span class="bar-title">🛡️ Safeguard Sort</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sg-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top">
+      <span class="quiz-num" id="sg-num">Control 1 of 12</span>
+      <div class="streak-row" id="sg-streak"></div>
+    </div>
+    <div class="sg-card"><div class="sg-text" id="sg-text">Control description</div></div>
+    <div class="sg-grid">
+      <button class="sg-opt" data-val="Administrative" onclick="sgAnswer(this)">📋 Administrative</button>
+      <button class="sg-opt" data-val="Physical" onclick="sgAnswer(this)">🏥 Physical</button>
+      <button class="sg-opt" data-val="Technical" onclick="sgAnswer(this)">💻 Technical</button>
+    </div>
+    <div class="sg-fb" id="sg-fb"></div>
+    <button class="btn-primary" id="btn-sgnext" style="display:none" onclick="sgNext()">Next Control →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ VIOLATION SPOTTER ═══ -->
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">⚠️ Violation Spotter</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start; padding-top:14px; gap:10px">
+    <div class="sc-header" id="sc-label">Scene 1 of 5</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--violet-lt)">highlighted</span> action to see the HIPAA ruling.</div>
+    <div class="btn-row">
+      <button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button>
+      <button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<!-- ═══ RESULTS ═══ -->
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg>
+        <div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div>
+      </div>
+      <div class="res-title" id="res-title">Great work!</div>
+      <div class="res-msg" id="res-msg"></div>
+      <div class="res-btns">
+        <button class="btn-sec" onclick="retryMode()">Try Again</button>
+        <button class="btn-primary" onclick="goHome()">Choose Mode</button>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+/* ═══════════ DATA ═══════════ */
+const PHI_ITEMS = [
+  {item:"Patient's full name", isPHI:true, why:'Names are identifier #1 of the 18 PHI identifiers.'},
+  {item:'City and state (no smaller detail)', isPHI:false, why:'Geographic data smaller than a state is PHI — state-level alone generally is not.'},
+  {item:"Patient's home street address", isPHI:true, why:'Geographic data smaller than state — street address counts.'},
+  {item:'Year of birth only (no month/day)', isPHI:false, why:'Dates are PHI except the year alone — year-only is not restricted.'},
+  {item:'Full date of birth (month, day, year)', isPHI:true, why:'Specific dates (other than year) are identifier #3.'},
+  {item:"Patient's phone number", isPHI:true, why:'Phone numbers are identifier #4.'},
+  {item:'Social Security Number', isPHI:true, why:'SSNs are identifier #7.'},
+  {item:'Medical record number', isPHI:true, why:'Medical record numbers are identifier #8.'},
+  {item:'A general statement like "patients with diabetes"', isPHI:false, why:'No individually identifiable detail — a general population statement is not PHI.'},
+  {item:'Email address', isPHI:true, why:'Email addresses are identifier #6.'},
+  {item:"Patient's vehicle license plate number", isPHI:true, why:'Vehicle identifiers are identifier #12.'},
+  {item:'Health plan beneficiary number', isPHI:true, why:'Beneficiary numbers are identifier #9.'},
+  {item:'Full-face photograph', isPHI:true, why:'Full-face photos are identifier #17.'},
+  {item:"A clinic's general office hours", isPHI:false, why:'Operational info with no patient link is not PHI.'},
+  {item:'IP address used to access a patient portal', isPHI:true, why:'IP addresses are identifier #15.'},
+  {item:'Fingerprint or voiceprint', isPHI:true, why:'Biometric identifiers are identifier #16.'},
+  {item:'Fax number on file for a patient', isPHI:true, why:'Fax numbers are identifier #5.'},
+  {item:'A de-identified, aggregated statistic (e.g., "30% of patients...")', isPHI:false, why:'Properly de-identified, aggregate data is not PHI.'},
+  {item:'Account number for billing', isPHI:true, why:'Account numbers are identifier #10.'},
+  {item:'Any unique code or characteristic that could re-identify someone', isPHI:true, why:'Identifier #18 is a catch-all for any unique identifying number, characteristic, or code.'},
+  {item:'Certificate or license number (e.g., driver\u2019s license)', isPHI:true, why:'Certificate/license numbers are identifier #11.'},
+  {item:'Web URL specific to a patient\u2019s portal session', isPHI:true, why:'Web URLs are identifier #14.'},
+];
+
+const QUIZ = [
+  {q:'What year was HIPAA enacted?', ctx:'Overview', correct:'1996', wrongs:['1970','2009','2003']},
+  {q:'Which entity must sign a Business Associate Agreement (BAA)?', ctx:'Covered Entities', correct:'An EHR vendor or billing company handling PHI on a provider\u2019s behalf', wrongs:['A patient requesting their own records','A health plan\u2019s patient','Any visitor to the clinic']},
+  {q:'The Minimum Necessary Standard requires —', ctx:'Privacy Rule', correct:'Using or disclosing only the minimum PHI needed for the purpose', wrongs:['Sharing all PHI with any requesting provider','Always requiring written authorization','Limiting PHI access to physicians only']},
+  {q:'Within how many days must a patient\u2019s records request (Right to Access) be fulfilled?', ctx:'Patient Rights', correct:'30 days (one 30-day extension allowed)', wrongs:['7 days','60 days, no extension','90 days']},
+  {q:'A provider may deny a patient\u2019s Right to Amend if —', ctx:'Patient Rights', correct:'The information is accurate and complete', wrongs:['The patient owes a balance','The request is made by phone','More than 10 years have passed']},
+  {q:'Patients can request restrictions on disclosure to a health plan when —', ctx:'Patient Rights', correct:'They pay out-of-pocket in full for that service', wrongs:['They ask politely','The provider agrees verbally only','Never — health plans must always be informed']},
+  {q:'Which of these is a Technical Safeguard under the Security Rule?', ctx:'Security Rule', correct:'Unique user IDs and login credentials', wrongs:['Designating a Security Officer','Shredding paper PHI before disposal','Workforce HIPAA training']},
+  {q:'Which of these is a Physical Safeguard?', ctx:'Security Rule', correct:'Positioning monitors away from public view', wrongs:['Conducting a risk analysis','Encrypting transmitted ePHI','Audit logs of system access']},
+  {q:'Within how many days must affected individuals be notified of a breach?', ctx:'Breach Notification', correct:'60 days of discovery', wrongs:['10 days','24 hours','1 year']},
+  {q:'Breaches affecting 500+ individuals require notification to —', ctx:'Breach Notification', correct:'HHS, simultaneously with individuals, plus prominent media notice', wrongs:['Only the affected individuals','Only local law enforcement','No additional notification required']},
+  {q:'What is the maximum civil penalty per violation category, per year?', ctx:'Penalties', correct:'Up to $1.9 million', wrongs:['$50,000','$100,000','$500,000']},
+  {q:'Looking up a coworker\u2019s chart out of curiosity is —', ctx:'Daily Practice', correct:'A Privacy Rule violation regardless of intent', wrongs:['Acceptable if no information is shared','Fine as long as it\u2019s a coworker','Only a violation if discovered']},
+  {q:'A psychotherapy note requires —', ctx:'Special Protections', correct:'A separate written authorization, always', wrongs:['No special handling beyond standard PHI','Verbal consent only','Authorization only if requested by an attorney']},
+  {q:'What did the HITECH Act extend HIPAA obligations to?', ctx:'HITECH', correct:'Business Associates, not just Covered Entities', wrongs:['Only government health plans','Only hospitals over 500 beds','Patients themselves']},
+  {q:'Sending PHI via standard, unencrypted email is —', ctx:'Daily Practice', correct:'A violation — secure encrypted messaging must be used', wrongs:['Fine if the recipient is a known provider','Acceptable for urgent messages','Only a violation over 10 pages']},
+];
+
+const SAFEGUARDS = [
+  {text:'Designating a Security Officer responsible for HIPAA compliance', cat:'Administrative'},
+  {text:'Workforce HIPAA training documented before staff access PHI', cat:'Administrative'},
+  {text:'Reviewing and removing access when an employee leaves', cat:'Administrative'},
+  {text:'Conducting a regular risk analysis to find ePHI vulnerabilities', cat:'Administrative'},
+  {text:'A sanction policy for employees who violate HIPAA', cat:'Administrative'},
+  {text:'Positioning monitors so screens aren\u2019t visible to patients or visitors', cat:'Physical'},
+  {text:'Automatic log-off after a period of system inactivity', cat:'Physical'},
+  {text:'Encrypting laptops and mobile devices used for ePHI', cat:'Physical'},
+  {text:'Key cards or locks restricting access to ePHI storage areas', cat:'Physical'},
+  {text:'Shredding paper PHI and wiping hard drives before disposal', cat:'Physical'},
+  {text:'Requiring every user to have their own unique login — never shared', cat:'Technical'},
+  {text:'Encrypting ePHI transmitted over networks (secure messaging, not email)', cat:'Technical'},
+];
+
+const SCENARIOS = [
+  { label:'📞 Front Desk Scene — Scene 1 of 5', tokens:[
+    {t:'A caller says she\u2019s the patient\u2019s daughter and asks "what did the doctor find?" You '},
+    {a:'confirm the patient was seen and summarize the visit', d:'❌ Violation: PHI cannot be released to family without the patient\u2019s authorization on file, even to a caller claiming to be family.'},
+    {t:'. A different caller asks you to '},
+    {a:'leave a detailed voicemail with test results', d:'❌ Violation: detailed PHI in a voicemail without verified consent for that communication method is a Privacy Rule violation.'},
+    {t:'.'},
+  ]},
+  { label:'💻 EHR Workstation Scene — Scene 2 of 5', tokens:[
+    {t:'A coworker says she '},
+    {a:'looked up a celebrity patient\u2019s chart "because she looked familiar"', d:'❌ Violation: accessing a record without a treatment/payment/operations need violates the Minimum Necessary Standard, regardless of intent — audit logs will show it.'},
+    {t:'. Meanwhile your own screen is '},
+    {a:'angled so the waiting room can see patient data', d:'❌ Violation: Physical Safeguard requirement — workstations must not be visible to patients or visitors.'},
+    {t:'.'},
+  ]},
+  { label:'📱 Break Room Scene — Scene 3 of 5', tokens:[
+    {t:'A coworker posts on Instagram: '},
+    {a:'"Had the craziest patient today with a really unusual diagnosis"', d:'❌ Violation: even without a name, a detailed description can identify a patient — likely a reportable breach requiring a 4-factor risk assessment.'},
+    {t:'. Separately, staff '},
+    {a:'discuss a patient\u2019s diagnosis in the elevator', d:'❌ Violation: PHI conversations must happen in private spaces — hallways and elevators are not appropriate.'},
+    {t:'.'},
+  ]},
+  { label:'📠 Fax Machine Scene — Scene 4 of 5', tokens:[
+    {t:'A fax containing lab results was '},
+    {a:'sent to the wrong number without confirming it first', d:'❌ Violation: an impermissible disclosure — triggers a required 4-factor risk assessment and possible breach notification.'},
+    {t:'. The office\u2019s standard fax cover sheet '},
+    {a:'was used and the number was verified before sending', d:'✔ Correct practice: always confirm fax numbers and use a cover sheet before transmitting PHI.'},
+    {t:' on a later, separate fax.'},
+  ]},
+  { label:'🗑️ End of Shift Scene — Scene 5 of 5', tokens:[
+    {t:'Before leaving, an MA '},
+    {a:'tosses a sticky note with a patient name and appointment time in the regular trash', d:'❌ Violation: any document containing PHI — even a sticky note — must be shredded, not placed in regular trash.'},
+    {t:'. Another MA '},
+    {a:'shreds printed after-visit summaries in the locked shred bin', d:'✔ Correct practice: proper disposal of paper PHI via a secure shred bin.'},
+    {t:'. The office manager says the OSHA-style "don\u2019t worry about it" line about a missed authorization form — but for HIPAA, '},
+    {a:'undocumented authorizations are still a compliance gap', d:'❌ Concern: even informal dismissals of documentation requirements create compliance risk under HIPAA.'},
+    {t:'.'},
+  ]},
+];
+
+/* ═══════════ HELPERS ═══════════ */
+const $ = id => document.getElementById(id);
+function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+function goHome() { show('home'); }
+function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+let currentMode = '';
+
+/* ═══════════ PHI OR NOT ═══════════ */
+let phiPool=[], phiIdx=0, phiScore=0, phiHist=[];
+function startPHI() {
+  currentMode='phi'; phiPool=shuffle(PHI_ITEMS); phiIdx=0; phiScore=0; phiHist=[];
+  show('phi-screen'); renderPHI();
+}
+function renderPHI() {
+  const p = phiPool[phiIdx];
+  $('phi-item').textContent = p.item;
+  $('phi-num').textContent = `Item ${phiIdx+1} of ${phiPool.length}`;
+  $('phi-prog').style.width = `${(phiIdx/phiPool.length)*100}%`;
+  $('phi-fb').textContent = '';
+  $('btn-phinext').style.display = 'none';
+  $('phi-streak').innerHTML = phiHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  document.querySelectorAll('.phi-btn').forEach(b=>b.disabled=false);
+}
+function phiAnswer(saidYes) {
+  const p = phiPool[phiIdx];
+  document.querySelectorAll('.phi-btn').forEach(b=>b.disabled=true);
+  const ok = saidYes === p.isPHI;
+  if (ok) phiScore++;
+  $('phi-fb').innerHTML = (ok?'<span class="fb-ok">✓ Correct.</span> ':'<span class="fb-err">✗ Not quite.</span> ') + p.why;
+  phiHist.push(ok);
+  $('btn-phinext').style.display='inline-block';
+}
+function phiNext() {
+  phiIdx++;
+  if (phiIdx>=phiPool.length) showResults('phi', phiScore, phiPool.length);
+  else renderPHI();
+}
+
+/* ═══════════ QUIZ ═══════════ */
+let qPool=[], qIdx=0, qScore=0, qHist=[];
+function startQuiz() {
+  currentMode='quiz'; qPool=shuffle(QUIZ); qIdx=0; qScore=0; qHist=[];
+  show('quiz-screen'); renderQuiz();
+}
+function renderQuiz() {
+  const q = qPool[qIdx];
+  const opts = shuffle([q.correct, ...q.wrongs]);
+  $('quiz-abbr').textContent = q.q;
+  $('quiz-ctx').textContent = q.ctx;
+  $('quiz-num').textContent = `Question ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width = `${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent = '';
+  $('btn-qnext').style.display = 'none';
+  $('streak-row').innerHTML = qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="opt-btn" data-val="${safe}" onclick="quizAnswer(this)">${safe}</button>`;
+  }).join('');
+}
+function quizAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const correct = qPool[qIdx].correct;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.classList.add('locked'));
+  if (chosen===correct) {
+    btn.classList.add('correct'); qScore++;
+    $('quiz-fb').innerHTML = '<span class="fb-ok">✓ Correct!</span>';
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.opt-btn').forEach(b=>{ if(b.dataset.val===correct) b.classList.add('correct'); });
+    $('quiz-fb').innerHTML = `<span class="fb-err">✗ Answer: <strong>${correct}</strong></span>`;
+  }
+  qHist.push(chosen===correct);
+  $('btn-qnext').style.display='inline-block';
+}
+function quizNext() {
+  qIdx++;
+  if (qIdx>=qPool.length) showResults('quiz', qScore, qPool.length);
+  else renderQuiz();
+}
+
+/* ═══════════ SAFEGUARD SORT ═══════════ */
+let sgPool=[], sgIdx=0, sgScore=0, sgHist=[];
+function startSG() {
+  currentMode='sg'; sgPool=shuffle(SAFEGUARDS); sgIdx=0; sgScore=0; sgHist=[];
+  show('sg-screen'); renderSG();
+}
+function renderSG() {
+  const s = sgPool[sgIdx];
+  $('sg-text').textContent = s.text;
+  $('sg-num').textContent = `Control ${sgIdx+1} of ${sgPool.length}`;
+  $('sg-prog').style.width = `${(sgIdx/sgPool.length)*100}%`;
+  $('sg-fb').textContent = '';
+  $('btn-sgnext').style.display = 'none';
+  $('sg-streak').innerHTML = sgHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  document.querySelectorAll('.sg-opt').forEach(b=>{ b.classList.remove('correct','wrong','locked'); });
+}
+function sgAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const s = sgPool[sgIdx];
+  document.querySelectorAll('.sg-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === s.cat;
+  if (ok) { btn.classList.add('correct'); sgScore++; }
+  else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.sg-opt').forEach(b=>{ if(b.dataset.val===s.cat) b.classList.add('correct'); });
+  }
+  $('sg-fb').innerHTML = ok ? `<span class="fb-ok">✓ Correct — ${s.cat} Safeguard.</span>` : `<span class="fb-err">✗ This is a ${s.cat} Safeguard.</span>`;
+  sgHist.push(ok);
+  $('btn-sgnext').style.display='inline-block';
+}
+function sgNext() {
+  sgIdx++;
+  if (sgIdx>=sgPool.length) showResults('sg', sgScore, sgPool.length);
+  else renderSG();
+}
+
+/* ═══════════ VIOLATION SPOTTER ═══════════ */
+let scIdx=0;
+function startSC() { currentMode='scenario'; scIdx=0; show('sc-screen'); renderSC(); }
+function renderSC() {
+  const sc = SCENARIOS[scIdx];
+  $('sc-label').textContent = sc.label;
+  $('sc-prog').style.width = `${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML = '👆 Tap any <span style="color:var(--violet-lt)">highlighted</span> action to see the HIPAA ruling.';
+  $('sc-text').innerHTML = sc.tokens.map(tok=>{
+    if (tok.a) {
+      const safe = tok.d.replace(/"/g,'&quot;');
+      return `<span class="hl" data-abbr="${tok.a}" data-def="${safe}" onclick="scDecode(this)">${tok.a}</span>`;
+    }
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled = scIdx===0;
+  $('sc-next').disabled = scIdx===SCENARIOS.length-1;
+}
+function scDecode(el) {
+  el.classList.toggle('popped');
+  $('sc-decode').innerHTML = `<strong>Ruling:</strong> ${el.dataset.def}`;
+}
+function scPrev() { if(scIdx>0){scIdx--;renderSC();} }
+function scNext() { if(scIdx<SCENARIOS.length-1){scIdx++;renderSC();} }
+
+/* ═══════════ RESULTS ═══════════ */
+function showResults(mode, score, total) {
+  currentMode = mode; show('results-screen');
+  const pct = Math.round((score/total)*100);
+  const C = 2*Math.PI*54;
+  const offset = C - (Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray = C;
+  $('ring-fill').style.strokeDashoffset = C;
+  $('ring-pct').textContent = pct+'%';
+  $('ring-sub').textContent = `${score} / ${total}`;
+  setTimeout(()=>{ $('ring-fill').style.strokeDashoffset = offset; }, 80);
+  const title = pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  const msg = `You scored ${score} / ${total} (${pct}%). ${pct>=80?'You know your HIPAA rules!':'Review the ones you missed and try again.'}`;
+  $('res-title').textContent = title;
+  $('res-msg').textContent = msg;
+}
+function retryMode() {
+  if (currentMode==='quiz') startQuiz();
+  else if (currentMode==='phi') startPHI();
+  else if (currentMode==='sg') startSG();
+  else if (currentMode==='scenario') startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

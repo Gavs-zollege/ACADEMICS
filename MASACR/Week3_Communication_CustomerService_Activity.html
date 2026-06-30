@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communication & Customer Service – Week 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#1a0f1a; --surf:#261829; --surf2:#301f34; --border:#4a2f4d;
+  --pink:#d9608f; --pink-lt:#ec85ab; --rose:#c2487a;
+  --text:#f5e9f0; --muted:#a98da3; --danger:#e0585a; --success:#4cb87a; --warn:#e0a83a;
+  --r:12px; --r-lg:16px; --bar:50px; --foot:28px; --prog:3px;
+  --chrome: calc(var(--bar) + var(--foot) + var(--prog));
+}
+html, body { width:100%; height:100%; overflow:hidden; font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); }
+.screen { display:none; position:fixed; inset:0; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+.bar { height:var(--bar); min-height:var(--bar); max-height:var(--bar); display:flex; align-items:center; justify-content:space-between; padding:0 18px; background:var(--surf); border-bottom:1px solid var(--border); flex-shrink:0; }
+.bar-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; }
+.btn-back { background:none; border:1px solid var(--border); color:var(--muted); font-size:11px; font-weight:600; padding:5px 12px; border-radius:8px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.btn-back:hover { border-color:var(--pink); color:var(--pink-lt); }
+.prog-rail { height:var(--prog); min-height:var(--prog); background:var(--border); flex-shrink:0; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--rose),var(--pink)); transition:width .4s ease; width:0%; }
+.zone { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px 18px; overflow:hidden; gap:12px; }
+.foot { height:var(--foot); min-height:var(--foot); display:flex; align-items:center; justify-content:center; font-size:10px; letter-spacing:.06em; color:#2e1c30; background:var(--surf); border-top:1px solid var(--border); flex-shrink:0; }
+
+#home { background: radial-gradient(ellipse 80% 55% at 25% 20%, #3a2040 0%, var(--bg) 65%); }
+#home .zone { gap:14px; }
+.pill { background:rgba(217,96,143,.15); border:1px solid rgba(217,96,143,.45); color:var(--pink-lt); font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:4px 14px; border-radius:50px; }
+.home-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(20px,4.2vw,38px); font-weight:800; text-align:center; line-height:1.15; }
+.home-title em { color:var(--pink); font-style:normal; }
+.home-sub { font-size:clamp(11px,1.5vw,14px); color:var(--muted); text-align:center; max-width:460px; line-height:1.55; }
+.mode-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:680px; }
+.mode-card { background:var(--surf); border:1.5px solid var(--border); border-radius:var(--r-lg); padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px); cursor:pointer; transition:border-color .2s,background .2s,transform .15s; display:flex; flex-direction:column; gap:6px; }
+.mode-card:hover { border-color:var(--pink); background:var(--surf2); transform:translateY(-2px); }
+.mode-icon { font-size:clamp(20px,3vw,26px); line-height:1; }
+.mode-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(12px,1.6vw,14px); font-weight:700; }
+.mode-desc { font-size:clamp(10px,1.2vw,11px); color:var(--muted); line-height:1.45; }
+.chip { display:inline-block; font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:50px; margin-top:2px; width:fit-content; }
+.chip-pink { background:rgba(217,96,143,.2); color:var(--pink-lt); }
+.chip-gold { background:rgba(224,168,58,.2); color:#f0c068; }
+.chip-green { background:rgba(76,184,122,.2); color:#6fe0a0; }
+.chip-red { background:rgba(224,88,90,.2); color:#f08a8c; }
+
+.btn-primary { background:var(--pink); color:#1a0f1a; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; padding:11px 32px; border:none; border-radius:10px; cursor:pointer; transition:background .15s,transform .1s; white-space:nowrap; }
+.btn-primary:hover { background:var(--pink-lt); transform:translateY(-1px); }
+.btn-sec { background:var(--surf); border:1.5px solid var(--border); color:var(--text); font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:9px 20px; border-radius:10px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.btn-sec:hover:not(:disabled) { border-color:var(--pink); color:var(--pink-lt); }
+.btn-sec:disabled { opacity:.3; cursor:default; }
+.btn-row { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; }
+
+.quiz-top { display:flex; align-items:center; justify-content:space-between; width:100%; max-width:540px; }
+.quiz-num { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--pink-lt); }
+.streak-row { display:flex; gap:3px; }
+.sdot { width:7px; height:7px; border-radius:50%; background:var(--border); transition:background .25s; }
+.sdot.hit { background:var(--success); } .sdot.miss { background:var(--danger); }
+
+/* FRAMEWORK BUILDER (HEART/LAST sequencer) */
+.fw-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:18px 22px; width:100%; max-width:560px; text-align:center; }
+.fw-quote { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(13px,2vw,16px); font-weight:600; line-height:1.6; color:var(--text); }
+.fw-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:560px; }
+.fw-opt { background:var(--surf); border:2px solid var(--border); border-radius:var(--r); padding:12px 10px; font-size:clamp(11px,1.4vw,13px); font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; color:var(--text); cursor:pointer; text-align:center; transition:border-color .12s,background .12s; min-height:48px; display:flex; align-items:center; justify-content:center; }
+.fw-opt:hover:not(.locked) { border-color:var(--pink); background:var(--surf2); }
+.fw-opt.correct { border-color:var(--success); background:rgba(76,184,122,.1); color:var(--success); }
+.fw-opt.wrong { border-color:var(--danger); background:rgba(224,88,90,.1); color:var(--danger); }
+.fw-opt.locked { cursor:default; }
+.fw-fb { font-size:12px; color:var(--muted); text-align:center; min-height:32px; max-width:540px; line-height:1.5; }
+
+/* SERVICE LADDER SORT */
+.ladder-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:18px 22px; width:100%; max-width:560px; text-align:center; }
+.ladder-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(13px,2vw,16px); font-weight:600; line-height:1.6; color:var(--text); }
+.ladder-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:560px; }
+.ladder-opt { background:var(--surf); border:2px solid var(--border); border-radius:var(--r); padding:13px 10px; font-size:clamp(11px,1.5vw,13px); font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; color:var(--text); cursor:pointer; text-align:center; transition:border-color .12s,background .12s; min-height:50px; display:flex; align-items:center; justify-content:center; }
+.ladder-opt:hover:not(.locked) { border-color:var(--pink); background:var(--surf2); }
+.ladder-opt.correct { border-color:var(--success); background:rgba(76,184,122,.1); color:var(--success); }
+.ladder-opt.wrong { border-color:var(--danger); background:rgba(224,88,90,.1); color:var(--danger); }
+.ladder-opt.locked { cursor:default; }
+.ladder-fb { font-size:12px; color:var(--muted); text-align:center; min-height:32px; max-width:540px; line-height:1.5; }
+
+/* SCENARIO DECODER */
+.sc-header { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--warn); align-self:flex-start; max-width:600px; width:100%; }
+.sc-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:18px 22px; width:100%; max-width:600px; flex-shrink:1; min-height:0; }
+.sc-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(12px,1.9vw,15px); font-weight:600; line-height:1.85; color:var(--text); }
+.hl { color:var(--pink-lt); background:rgba(217,96,143,.12); padding:1px 5px; border-radius:4px; cursor:pointer; transition:background .12s; display:inline-block; }
+.hl:hover { background:rgba(217,96,143,.24); }
+.hl.popped { color:#6fe0a0; background:rgba(76,184,122,.15); }
+.sc-decode { background:var(--surf2); border:1px solid var(--border); border-radius:var(--r); padding:12px 18px; width:100%; max-width:600px; font-size:12px; color:var(--muted); line-height:1.6; min-height:44px; flex-shrink:0; }
+.sc-decode strong { color:var(--pink-lt); }
+
+.res-wrap { display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; max-width:420px; }
+.ring-wrap { position:relative; width:130px; height:130px; }
+.ring-wrap svg { width:100%; height:100%; }
+.ring-bg { fill:none; stroke:var(--border); stroke-width:10; }
+.ring-fill { fill:none; stroke:var(--pink); stroke-width:10; stroke-linecap:round; stroke-dasharray:339; stroke-dashoffset:339; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+.ring-lbl { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.ring-pct { font-family:'Plus Jakarta Sans',sans-serif; font-size:30px; font-weight:800; color:var(--pink-lt); }
+.ring-sub { font-size:10px; color:var(--muted); }
+.res-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(18px,3vw,24px); font-weight:800; }
+.res-msg { font-size:13px; color:var(--muted); line-height:1.6; max-width:340px; }
+.res-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+</style>
+</head>
+<body>
+
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 3 · Medical Assistant Training</div>
+    <h1 class="home-title">Communication & <em>Customer Service</em></h1>
+    <p class="home-sub">Service recovery, de-escalation, professionalism & the service ladder — in four interactive modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startFW()">
+        <div class="mode-icon">❤️</div>
+        <div class="mode-name">HEART & LAST Builder</div>
+        <div class="mode-desc">Match service recovery phrases to the right framework step.</div>
+        <div class="chip chip-pink">12 phrases</div>
+      </div>
+      <div class="mode-card" onclick="startQuiz()">
+        <div class="mode-icon">🧠</div>
+        <div class="mode-name">Knowledge Quiz</div>
+        <div class="mode-desc">HCAHPS, first impressions, de-escalation & social media rules.</div>
+        <div class="chip chip-gold">15 questions</div>
+      </div>
+      <div class="mode-card" onclick="startLadder()">
+        <div class="mode-icon">🪜</div>
+        <div class="mode-name">Service Ladder</div>
+        <div class="mode-desc">Sort behaviors into Compliant, Competent, Committed, Excellent.</div>
+        <div class="chip chip-green">12 behaviors</div>
+      </div>
+      <div class="mode-card" onclick="startSC()">
+        <div class="mode-icon">😠</div>
+        <div class="mode-name">De-escalation Lab</div>
+        <div class="mode-desc">Tap responses in real upset-patient scenes to see what works.</div>
+        <div class="chip chip-red">Case Study inside</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="fw-screen" class="screen">
+  <div class="bar"><span class="bar-title">❤️ HEART & LAST Builder</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="fw-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="fw-num">Phrase 1 of 12</span><div class="streak-row" id="fw-streak"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="fw-quote">Quote text</div></div>
+    <div class="fw-grid" id="fw-grid"></div>
+    <div class="fw-fb" id="fw-fb"></div>
+    <button class="btn-primary" id="btn-fwnext" style="display:none" onclick="fwNext()">Next Phrase →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Question 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="quiz-abbr">Question text</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="fw-grid" id="opts-grid" style="grid-template-columns:1fr 1fr"></div>
+    <div class="fw-fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next Question →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="ladder-screen" class="screen">
+  <div class="bar"><span class="bar-title">🪜 Service Ladder</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="ladder-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="ladder-num">Behavior 1 of 12</span><div class="streak-row" id="ladder-streak"></div></div>
+    <div class="ladder-card"><div class="ladder-text" id="ladder-text">Behavior description</div></div>
+    <div class="ladder-grid">
+      <button class="ladder-opt" data-val="Compliant" onclick="ladderAnswer(this)">Level 1: Compliant</button>
+      <button class="ladder-opt" data-val="Competent" onclick="ladderAnswer(this)">Level 2: Competent</button>
+      <button class="ladder-opt" data-val="Committed" onclick="ladderAnswer(this)">Level 3: Committed</button>
+      <button class="ladder-opt" data-val="Excellent" onclick="ladderAnswer(this)">Level 4: Excellent</button>
+    </div>
+    <div class="ladder-fb" id="ladder-fb"></div>
+    <button class="btn-primary" id="btn-laddernext" style="display:none" onclick="ladderNext()">Next Behavior →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">😠 De-escalation Lab</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start; padding-top:14px; gap:10px">
+    <div class="sc-header" id="sc-label">Scene 1 of 5</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--pink-lt)">highlighted</span> response to see the verdict.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div>
+      <div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+const FW_ITEMS = [
+  {quote:'"I completely understand why you\u2019re frustrated — that should not have happened."', correct:'Empathize (HEART)', wrongs:['Hear (HEART)','Apologize (HEART)','Resolve (HEART)']},
+  {quote:'"Here\u2019s what I\u2019m going to do right now…"', correct:'Resolve (HEART)', wrongs:['Hear (HEART)','Thank (HEART)','Listen (LAST)']},
+  {quote:'"Thank you for telling us — this helps us improve care for everyone."', correct:'Thank (HEART)', wrongs:['Apologize (HEART)','Solve (LAST)','Thank (LAST)']},
+  {quote:'Letting the patient tell their complete story without interrupting', correct:'Hear (HEART)', wrongs:['Listen (LAST)','Empathize (HEART)','Apologize (HEART)']},
+  {quote:'"I\u2019m so sorry for this inconvenience."', correct:'Apologize (HEART)', wrongs:['Apologize (LAST)','Empathize (HEART)','Thank (HEART)']},
+  {quote:'Stop, give full attention, don\u2019t interrupt or defend', correct:'Listen (LAST)', wrongs:['Hear (HEART)','Solve (LAST)','Apologize (LAST)']},
+  {quote:'Apologizing for the experience — not an admission of fault', correct:'Apologize (LAST)', wrongs:['Apologize (HEART)','Empathize (HEART)','Resolve (HEART)']},
+  {quote:'Take specific action: fix it, find who can, or escalate', correct:'Solve (LAST)', wrongs:['Resolve (HEART)','Listen (LAST)','Hear (HEART)']},
+  {quote:'"Thank you for letting us know" — closes with dignity', correct:'Thank (LAST)', wrongs:['Thank (HEART)','Apologize (LAST)','Solve (LAST)']},
+  {quote:'"That\u2019s our policy." (said without explaining why)', correct:'A phrase that ESCALATES — never say this', wrongs:['Resolve (HEART)','Solve (LAST)','Apologize (LAST)']},
+  {quote:'"Calm down."', correct:'A phrase that ESCALATES — never say this', wrongs:['Empathize (HEART)','Listen (LAST)','Thank (HEART)']},
+  {quote:'A patient threatens legal action against the practice', correct:'Escalate beyond your authority', wrongs:['Resolve (HEART)','Solve (LAST)','Apologize (LAST)']},
+];
+
+const QUIZ = [
+  {q:'What percentage of patients switch providers due to poor customer service, not clinical quality?', ctx:'Why Service Matters', correct:'70%', wrongs:['25%','50%','90%']},
+  {q:'According to Mehrabian\u2019s model, what percentage of a first impression comes from appearance & body language?', ctx:'First Impressions', correct:'55%', wrongs:['7%','38%','20%']},
+  {q:'How quickly should you acknowledge a patient who walks into the waiting room?', ctx:'Waiting Room', correct:'Within 30 seconds', wrongs:['Within 5 minutes','Only when they approach the desk','Within 1 minute, unless busy']},
+  {q:'What does HCAHPS stand for in practice?', ctx:'HCAHPS', correct:'A standardized national patient survey tied to CMS reimbursement', wrongs:['A required staff certification','An internal complaint log','A scheduling software platform']},
+  {q:'What is the "service recovery paradox"?', ctx:'Complaints', correct:'A complaint handled well can create more loyalty than if nothing went wrong', wrongs:['Complaints always reduce patient loyalty','Service recovery only works for minor issues','Apologizing makes the practice liable']},
+  {q:'In the HEART framework, what comes immediately after Hear?', ctx:'HEART Framework', correct:'Empathize', wrongs:['Apologize','Resolve','Thank']},
+  {q:'In the LAST framework, what comes immediately after Listen?', ctx:'LAST Framework', correct:'Apologize', wrongs:['Solve','Thank','Empathize']},
+  {q:'Why is anger in an upset patient usually considered a "secondary emotion"?', ctx:'De-escalation', correct:'It often masks fear, pain, or feeling unheard', wrongs:['It means the patient is being unreasonable','It only happens with demanding patients','It is unrelated to their visit']},
+  {q:'When de-escalating an angry patient, you should —', ctx:'De-escalation', correct:'Lower your voice and move to a private space', wrongs:['Match their energy to show you understand','Tell them to calm down directly','Leave them alone to cool off']},
+  {q:'If a patient displays a weapon or makes threats of physical harm, you should —', ctx:'Safety', correct:'Disengage calmly, create distance, and alert a colleague/supervisor immediately', wrongs:['Continue de-escalation techniques calmly','Try to disarm the situation alone','Ignore it and continue the visit']},
+  {q:'Posting "Had the craziest patient today with an unusual diagnosis" on social media, even without a name, is —', ctx:'Social Media', correct:'A potential HIPAA violation — descriptions can identify a patient', wrongs:['Acceptable since no name was used','Fine if posted on a personal account','Only a problem if a coworker reports it']},
+  {q:'What is the correct way to handle a public negative online review?', ctx:'Social Media', correct:'A manager/provider responds without referencing PHI and invites direct contact', wrongs:['The MA who interacted with the patient should respond directly','Ignore it — responding makes it worse','Argue the facts of the visit publicly']},
+  {q:'Reliability, Assurance, Tangibles, Empathy, and Responsiveness are the —', ctx:'Service Dimensions', correct:'5 Dimensions of Service patients care about most', wrongs:['HCAHPS survey domains','HEART framework steps','Levels of the Service Ladder']},
+  {q:'What is Level 3 on the Service Ladder?', ctx:'Service Ladder', correct:'Committed — takes ownership beyond the task', wrongs:['Compliant — does the minimum','Competent — technically skilled and reliable','Excellent — patients write reviews by name']},
+  {q:'A patient is demanding and making requests beyond your authority. You should —', ctx:'De-escalation', correct:'Set clear expectations and involve the provider', wrongs:['Promise to deliver what they\u2019re asking for','Ignore the request and hope it goes away','Tell them it\u2019s against policy and walk away']},
+];
+
+const LADDER_ITEMS = [
+  {text:'Shows up on time, follows the rules, doesn\u2019t cause problems — patients notice nothing special.', level:'Compliant'},
+  {text:'Technically skilled and reliable. Patients feel they are in capable hands. Good reviews, no complaints.', level:'Competent'},
+  {text:'Notices a patient in the waiting room who looks anxious and checks in without being asked.', level:'Committed'},
+  {text:'Patients write online reviews about this MA by name. Colleagues cite them as a model.', level:'Excellent'},
+  {text:'Follows through without being asked — owns a problem even though they didn\u2019t cause it.', level:'Committed'},
+  {text:'Does what\u2019s expected, consistently, but doesn\u2019t go beyond the task at hand.', level:'Competent'},
+  {text:'Proactively improves systems so patients feel seen, not processed.', level:'Excellent'},
+  {text:'Does the minimum required and shows up — that\u2019s the extent of their engagement.', level:'Compliant'},
+  {text:'Names the patient twice per visit and ends every visit with "anything else?"', level:'Excellent'},
+  {text:'Patients feel they are in capable, consistent hands — but nothing more.', level:'Competent'},
+  {text:'Takes ownership beyond their assigned task without waiting to be asked.', level:'Committed'},
+  {text:'Follows the rules and avoids causing problems — the baseline expectation.', level:'Compliant'},
+];
+
+const SCENARIOS = [
+  { label:'😠 Mr. Torres at the Desk — Scene 1 of 4', tokens:[
+    {t:'Mr. Torres, waiting 55 minutes, approaches angrily: "This is ridiculous... terrible service." You respond: '},
+    {a:'"Sir, I understand, but we are very busy today."', d:'❌ Weak: minimizes his experience and centers your workload instead of his frustration — doesn\u2019t apply LAST.'},
+    {t:' OR you say: '},
+    {a:'"Mr. Torres, I am so sorry. A 55-minute wait with no update is unacceptable, and I understand why you\u2019re frustrated."', d:'✔ Correct: this is the Apologize step of LAST — genuine, specific, no defensiveness.'},
+  ]},
+  { label:'🙅 Phrases That Escalate — Scene 2 of 4', tokens:[
+    {t:'A frustrated patient asks for a refund you can\u2019t approve. You say: '},
+    {a:'"There\u2019s nothing I can do."', d:'❌ Escalates: almost never true, and shuts down the conversation entirely.'},
+    {t:' OR you say: '},
+    {a:'"That\u2019s outside what I can approve directly — let me get my manager so we can solve this together."', d:'✔ Correct: stays with the patient, takes ownership of finding the right person — this is escalation done correctly.'},
+  ]},
+  { label:'😢 Crying Patient Scene — Scene 3 of 4', tokens:[
+    {t:'A patient receiving difficult news starts crying. You: '},
+    {a:'rush through the remaining vitals to "keep things moving"', d:'❌ Wrong: rushing a distressed patient through tasks ignores their emotional state entirely.'},
+    {t:' OR you '},
+    {a:'sit at her level, offer tissues, and say "take all the time you need — I\u2019m right here"', d:'✔ Correct: small gestures and presence matter enormously; notify the provider before continuing clinical tasks.'},
+  ]},
+  { label:'📋 The Demanding Patient — Scene 4 of 4', tokens:[
+    {t:'A patient insists on a same-day specialist referral you can\u2019t authorize. You say: '},
+    {a:'"Sure, I\u2019ll get that done for you today" (without checking if it\u2019s possible)', d:'❌ Wrong: promising something you can\u2019t deliver damages trust further when it falls through.'},
+    {t:' OR you say: '},
+    {a:'"I want to help you with this — here\u2019s exactly what I can do, and I\u2019ll involve the provider for the rest."', d:'✔ Correct: acknowledges the need, sets clear expectations, and follows through within your actual authority.'},
+  ]},
+];
+
+const $ = id => document.getElementById(id);
+function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+function goHome() { show('home'); }
+function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+let currentMode = '';
+
+let fwPool=[], fwIdx=0, fwScore=0, fwHist=[];
+function startFW() { currentMode='fw'; fwPool=shuffle(FW_ITEMS); fwIdx=0; fwScore=0; fwHist=[]; show('fw-screen'); renderFW(); }
+function renderFW() {
+  const it = fwPool[fwIdx];
+  const opts = shuffle([it.correct, ...it.wrongs]);
+  $('fw-quote').textContent = it.quote;
+  $('fw-num').textContent = `Phrase ${fwIdx+1} of ${fwPool.length}`;
+  $('fw-prog').style.width = `${(fwIdx/fwPool.length)*100}%`;
+  $('fw-fb').textContent = '';
+  $('btn-fwnext').style.display = 'none';
+  $('fw-streak').innerHTML = fwHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('fw-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="fw-opt" data-val="${safe}" onclick="fwAnswer(this)">${safe}</button>`;
+  }).join('');
+}
+function fwAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const it = fwPool[fwIdx];
+  document.querySelectorAll('.fw-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === it.correct;
+  if (ok) { btn.classList.add('correct'); fwScore++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('.fw-opt').forEach(b=>{ if(b.dataset.val===it.correct) b.classList.add('correct'); }); }
+  $('fw-fb').innerHTML = ok ? '<span style="color:var(--success)">✓ Correct!</span>' : `<span style="color:var(--danger)">✗ Answer: ${it.correct}</span>`;
+  fwHist.push(ok);
+  $('btn-fwnext').style.display='inline-block';
+}
+function fwNext() { fwIdx++; if(fwIdx>=fwPool.length) showResults('fw',fwScore,fwPool.length); else renderFW(); }
+
+let qPool=[], qIdx=0, qScore=0, qHist=[];
+function startQuiz() { currentMode='quiz'; qPool=shuffle(QUIZ); qIdx=0; qScore=0; qHist=[]; show('quiz-screen'); renderQuiz(); }
+function renderQuiz() {
+  const q = qPool[qIdx];
+  const opts = shuffle([q.correct, ...q.wrongs]);
+  $('quiz-abbr').textContent = q.q;
+  $('quiz-ctx').textContent = q.ctx;
+  $('quiz-num').textContent = `Question ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width = `${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent = '';
+  $('btn-qnext').style.display = 'none';
+  $('streak-row').innerHTML = qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="fw-opt" data-val="${safe}" onclick="quizAnswer(this)" style="text-align:left;justify-content:flex-start;min-height:60px">${safe}</button>`;
+  }).join('');
+}
+function quizAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const correct = qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .fw-opt').forEach(b=>b.classList.add('locked'));
+  if (chosen===correct) { btn.classList.add('correct'); qScore++; $('quiz-fb').innerHTML='<span style="color:var(--success)">✓ Correct!</span>'; }
+  else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('#opts-grid .fw-opt').forEach(b=>{ if(b.dataset.val===correct) b.classList.add('correct'); });
+    $('quiz-fb').innerHTML = `<span style="color:var(--danger)">✗ Answer: ${correct}</span>`;
+  }
+  qHist.push(chosen===correct);
+  $('btn-qnext').style.display='inline-block';
+}
+function quizNext() { qIdx++; if(qIdx>=qPool.length) showResults('quiz',qScore,qPool.length); else renderQuiz(); }
+
+let ladPool=[], ladIdx=0, ladScore=0, ladHist=[];
+function startLadder() { currentMode='ladder'; ladPool=shuffle(LADDER_ITEMS); ladIdx=0; ladScore=0; ladHist=[]; show('ladder-screen'); renderLadder(); }
+function renderLadder() {
+  const it = ladPool[ladIdx];
+  $('ladder-text').textContent = it.text;
+  $('ladder-num').textContent = `Behavior ${ladIdx+1} of ${ladPool.length}`;
+  $('ladder-prog').style.width = `${(ladIdx/ladPool.length)*100}%`;
+  $('ladder-fb').textContent = '';
+  $('btn-laddernext').style.display = 'none';
+  $('ladder-streak').innerHTML = ladHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  document.querySelectorAll('.ladder-opt').forEach(b=>b.classList.remove('correct','wrong','locked'));
+}
+function ladderAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const it = ladPool[ladIdx];
+  document.querySelectorAll('.ladder-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === it.level;
+  if (ok) { btn.classList.add('correct'); ladScore++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('.ladder-opt').forEach(b=>{ if(b.dataset.val===it.level) b.classList.add('correct'); }); }
+  $('ladder-fb').innerHTML = ok ? `<span style="color:var(--success)">✓ Correct — ${it.level}.</span>` : `<span style="color:var(--danger)">✗ This is ${it.level}.</span>`;
+  ladHist.push(ok);
+  $('btn-laddernext').style.display='inline-block';
+}
+function ladderNext() { ladIdx++; if(ladIdx>=ladPool.length) showResults('ladder',ladScore,ladPool.length); else renderLadder(); }
+
+let scIdx=0;
+function startSC() { currentMode='scenario'; scIdx=0; show('sc-screen'); renderSC(); }
+function renderSC() {
+  const sc = SCENARIOS[scIdx];
+  $('sc-label').textContent = sc.label;
+  $('sc-prog').style.width = `${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML = '👆 Tap any <span style="color:var(--pink-lt)">highlighted</span> response to see the verdict.';
+  $('sc-text').innerHTML = sc.tokens.map(tok=>{
+    if (tok.a) { const safe = tok.d.replace(/"/g,'&quot;'); return `<span class="hl" data-abbr="${tok.a}" data-def="${safe}" onclick="scDecode(this)">${tok.a}</span>`; }
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled = scIdx===0;
+  $('sc-next').disabled = scIdx===SCENARIOS.length-1;
+}
+function scDecode(el) { el.classList.toggle('popped'); $('sc-decode').innerHTML = `<strong>Verdict:</strong> ${el.dataset.def}`; }
+function scPrev() { if(scIdx>0){scIdx--;renderSC();} }
+function scNext() { if(scIdx<SCENARIOS.length-1){scIdx++;renderSC();} }
+
+function showResults(mode, score, total) {
+  currentMode = mode; show('results-screen');
+  const pct = Math.round((score/total)*100);
+  const C = 2*Math.PI*54;
+  const offset = C - (Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray = C;
+  $('ring-fill').style.strokeDashoffset = C;
+  $('ring-pct').textContent = pct+'%';
+  $('ring-sub').textContent = `${score} / ${total}`;
+  setTimeout(()=>{ $('ring-fill').style.strokeDashoffset = offset; }, 80);
+  const title = pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  const msg = `You scored ${score} / ${total} (${pct}%). ${pct>=80?'You\u2019ve got service excellence down!':'Review the ones you missed and try again.'}`;
+  $('res-title').textContent = title;
+  $('res-msg').textContent = msg;
+}
+function retryMode() {
+  if (currentMode==='quiz') startQuiz();
+  else if (currentMode==='fw') startFW();
+  else if (currentMode==='ladder') startLadder();
+  else if (currentMode==='scenario') startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

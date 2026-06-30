@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scenario Simulator — Keeping Patients Safe</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr auto auto;padding:0 20px;max-width:680px;margin:0 auto;}
+.hdr{text-align:center;padding:16px 0 6px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;margin-bottom:2px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:7px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:24px;background:var(--red);}
+.dot.d{background:var(--green);}
+.sc-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin:6px 0;}
+.sc-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.sc-text{font-size:12px;color:var(--text);line-height:1.55;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:7px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.5;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden;}
+.opt{width:100%;text-align:left;padding:10px 15px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:11px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:9px 14px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;display:none;margin:6px auto 8px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:34px 48px;text-align:center;grid-row:2/7;align-self:center;}
+.end-box.show{display:flex;}
+.end-big{font-size:50px;font-weight:800;color:var(--red);}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);max-width:300px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Keeping Patients Safe: Infection Control Practices</div>
+    <h1>Scenario Simulator</h1>
+    <p>Apply infection control principles to clinical situations.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="sc-box" id="scBox"><div class="sc-label">Clinical Scenario</div><div class="sc-text" id="scText"></div></div>
+  <div class="q-box" id="qBox"><div class="q-text" id="qText"></div><div class="q-num" id="qNum"></div></div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Step →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-big" id="endBig"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <button class="restart-btn" onclick="init()">Try Another Scenario</button>
+  </div>
+</div>
+<script>
+const SCENARIOS=[
+  {setup:"You are the only MA in a busy urgent care center. Room 3 just finished with a patient flagged for C. difficile after a recent hospitalization. While cleaning Room 3, you notice a used needle has been left on the countertop.",steps:[
+    {q:"What is different about cleaning a room after a C. diff patient compared to standard cleaning?",opts:["No difference — standard disinfectant works the same way","Use ABHR liberally on all surfaces for fastest results","Use soap and water hand hygiene ONLY — ABHR does not kill C. diff spores; use 1:10 bleach or EPA-approved sporicidal disinfectant on surfaces","Skip hand hygiene since gloves provide full protection"],ans:2,ok:"C. diff forms spores that alcohol-based hand rub cannot kill. Soap and water mechanically removes spores. Surfaces require bleach (1:10) or a sporicidal disinfectant — not standard products.",no:"C. diff spores are resistant to ABHR. Hand hygiene must be soap and water. Surface disinfection requires bleach (1:10 dilution) or an EPA-approved sporicidal agent."},
+    {q:"What PPE sequence is required before entering and after leaving this room?",opts:["Gloves only — gown is optional for short visits","Gown + gloves donned before entering; both doffed before leaving the room","N95 respirator only since this is a spore-forming organism","No PPE needed if you wash your hands well afterward"],ans:1,ok:"Contact Precautions (C. diff) require gown + gloves, donned before entering and doffed before leaving the room — every single entry and exit.",no:"C. diff requires Contact Precautions: gown + gloves, donned before entry, doffed before exit. This is non-negotiable regardless of visit duration."},
+    {q:"How do you handle the used needle left on the countertop?",opts:["Recap it carefully by hand to make it safer to move","Pick it up barehanded quickly and place it in the sharps container","Use a one-handed scoop technique or forceps/tongs to place it directly into the sharps container — never recap, never pick up barehanded","Leave it for the next person who has gloves on"],ans:2,ok:"Never recap a used needle. Never handle sharps barehanded. Use a one-handed scoop or forceps/tongs to transfer it directly into the sharps container.",no:"Sharps safety rules: never recap, never pass hand-to-hand, never leave unaddressed. Use one-handed scoop technique or forceps to safely dispose of it immediately."},
+  ]},
+  {setup:"During a routine specimen collection, you notice the urine specimen container is filled above the fill line and was pre-labeled before the patient even arrived. The lab requisition is tucked inside the same bag as the specimen.",steps:[
+    {q:"What is wrong with this specimen handling so far?",opts:["Nothing is wrong — this is efficient processing","Container overfilled, pre-labeled before collection (ID risk), and requisition inside the bag (should be in outside pocket)","Only the requisition placement is incorrect","Pre-labeling is fine as long as the right patient eventually uses it"],ans:1,ok:"Three errors: overfilling above the fill line, pre-labeling before confirming patient identity (a major mislabeling risk), and placing the requisition inside the bag instead of an outside pocket.",no:"Multiple errors here: never fill above the line, never pre-label (always label at bedside after confirming ID), and the requisition must go in an OUTSIDE pocket — never inside with the specimen."},
+    {q:"What is the correct labeling protocol for any specimen?",opts:["Label immediately at bedside, with patient name, DOB, date, time, and collector initials, after confirming patient identity","Label whenever convenient during the shift","Have the patient label their own specimen","Pre-label all containers each morning to save time"],ans:0,ok:"Label at bedside — never pre-label. Required elements: patient name, DOB, date, time, and collector initials. Confirm patient ID before labeling, every time.",no:"Labeling must happen at bedside, after confirming patient ID, never before. Pre-labeling is one of the most common causes of specimen misidentification errors."},
+  ]},
+  {setup:"Within the same week, three patients from the same exam room report onset of vomiting and diarrhea within 24 hours of their visit. A staff member also calls in sick with similar symptoms.",steps:[
+    {q:"Does this situation meet the threshold to be treated as a possible outbreak?",opts:["No — wait for at least 10 cases before taking any action","No — this is likely coincidental and doesn't need reporting","Yes — even 2–3 linked cases of similar illness can constitute an outbreak requiring immediate action","Only if a lab test confirms the same pathogen in all cases first"],ans:2,ok:"Even 2–3 linked cases of the same illness in a facility setting can constitute an outbreak. You do not need lab confirmation before acting — recognize the pattern and respond immediately.",no:"The threshold is low — 2–3 linked cases is enough to act. Waiting for confirmation or a higher case count delays critical containment action."},
+    {q:"What is the correct MA response sequence for this situation?",opts:["Document only — wait for the provider to notice the pattern","Recognize the pattern → Report to provider/infection control immediately → Isolate symptomatic patients → Reinforce hygiene/cleaning → Document everything","Tell other staff members informally so they're aware","Close the affected exam room indefinitely without notifying anyone"],ans:1,ok:"RRIRD: Recognize → Report → Isolate → Reinforce → Document. This structured response drives investigation and stops further spread quickly.",no:"The correct sequence is Recognize, Report, Isolate, Reinforce, Document — in that order. Reporting must happen immediately, not after informal warnings to coworkers."},
+  ]},
+];
+let sc,stepIdx,score,answered;
+function init(){sc=SCENARIOS[Math.floor(Math.random()*SCENARIOS.length)];stepIdx=0;score=0;answered=false;document.getElementById('scText').textContent=sc.setup;document.getElementById('endBox').classList.remove('show');document.getElementById('scBox').style.display='';document.getElementById('qBox').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';renderStep();}
+function renderStep(){answered=false;const s=sc.steps[stepIdx];document.getElementById('qNum').textContent='Q'+(stepIdx+1);document.getElementById('qText').textContent=s.q;document.getElementById('opts').innerHTML=s.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){document.getElementById('dots').innerHTML=Array.from({length:sc.steps.length},(_,i)=>`<div class="dot ${i<stepIdx?'d':i===stepIdx?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const s=sc.steps[stepIdx];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[s.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===s.ans){score++;fb.innerHTML=`<strong>✓ Correct!</strong>${s.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');fb.innerHTML=`<strong>✗ Not quite.</strong>${s.no}`;fb.className='fb no show';}document.getElementById('nextBtn').className='next-btn show';}
+function next(){stepIdx++;if(stepIdx>=sc.steps.length){showEnd();return;}renderStep();}
+function showEnd(){const t=sc.steps.length,pct=Math.round((score/t)*100);document.getElementById('scBox').style.display='none';document.getElementById('qBox').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endBig').textContent=score+'/'+t;document.getElementById('endTitle').textContent=pct===100?'🏆 Perfect Infection Control!':pct>=50?'🌟 Good Judgment!':'📚 Review & Retry';document.getElementById('endSub').textContent='You navigated '+t+' infection control decision steps.';document.getElementById('endBox').classList.add('show');}
+init();
+</script>
+</body>
+</html>

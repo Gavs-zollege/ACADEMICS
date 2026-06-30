@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multiple Choice — Law & Ethics in Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto 1fr auto auto;padding:0 20px;max-width:660px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 8px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;margin-bottom:3px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:8px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:26px;background:var(--red);}
+.dot.d{background:var(--green);}
+.hud{display:flex;gap:10px;justify-content:center;padding:4px 0 8px;}
+.hud-chip{padding:4px 13px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid;}
+.hud-chip.s{background:rgba(224,90,58,.1);color:var(--red);border-color:rgba(224,90,58,.4);}
+.hud-chip.st{background:rgba(76,175,130,.1);color:var(--green);border-color:rgba(76,175,130,.4);}
+.q-area{display:flex;flex-direction:column;gap:6px;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.6;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:7px;min-height:0;overflow:hidden;}
+.opt{width:100%;text-align:left;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:10px 15px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;display:none;margin:8px auto 10px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 48px;text-align:center;grid-row:2/6;align-self:center;}
+.end-box.show{display:flex;}
+.end-pct{font-size:50px;font-weight:800;color:var(--red);}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.end-stats{display:flex;gap:14px;}
+.stat{padding:10px 18px;border-radius:10px;text-align:center;}
+.stat.g{background:rgba(76,175,130,.1);}
+.stat.r{background:rgba(224,90,90,.1);}
+.stat-n{font-size:22px;font-weight:800;}
+.stat.g .stat-n{color:var(--green);}
+.stat.r .stat-n{color:var(--rose);}
+.stat-l{font-size:11px;color:var(--muted);margin-top:2px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Doing the Right Thing: Law & Ethics in Healthcare</div>
+    <h1>Multiple Choice</h1>
+    <p>Select the best answer for each question.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="hud"><div class="hud-chip s">Score: <span id="sc">0</span></div><div class="hud-chip st">🔥 Streak: <span id="str">0</span></div></div>
+  <div class="q-area" id="qArea"><div class="q-box"><div class="q-text" id="qText"></div><div class="q-num" id="qNum"></div></div></div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Question →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <div class="end-stats"><div class="stat g"><div class="stat-n" id="eOk">0</div><div class="stat-l">Correct</div></div><div class="stat r"><div class="stat-n" id="eNo">0</div><div class="stat-l">Incorrect</div></div></div>
+    <button class="restart-btn" onclick="init()">Play Again</button>
+  </div>
+</div>
+<script>
+const QS=[
+  {q:"Which statement best distinguishes law from ethics?",opts:["Law and ethics are always identical in healthcare","Law is enforced externally by courts/agencies; ethics is enforced internally through conscience and professional codes","Ethics applies only to providers, not MAs","Law always sets a higher standard than ethics"],ans:1,ok:"Law is externally enforced (courts, agencies, licensing boards). Ethics is internally enforced (conscience, professional codes, colleagues). The law sets the floor; ethics sets a higher ceiling.",no:"Law = external enforcement (courts, regulatory bodies). Ethics = internal enforcement (professional codes, personal conscience). They are related but distinct."},
+  {q:"Which source of law has historically established negligence and malpractice standards?",opts:["Constitutional law","Statutory law","Administrative/regulatory law","Common law (case law)"],ans:3,ok:"Common law (case law) — created by court decisions over time — has established negligence and malpractice standards through accumulated precedent.",no:"Common law (court decisions/precedent) is the primary source of negligence and malpractice standards, not statutes or administrative rules."},
+  {q:"What are the four elements a patient must prove to win a malpractice claim?",opts:["Intent, action, harm, recovery","Duty, breach, causation, damages","Negligence, malice, injury, settlement","Diagnosis, treatment, outcome, satisfaction"],ans:1,ok:"Duty (provider-patient relationship existed), Breach (failed standard of care), Causation (breach caused harm), Damages (measurable harm occurred). All four must be proven.",no:"The four elements are Duty, Breach, Causation, and Damages. Missing any one of these four defeats a malpractice claim."},
+  {q:"What is the MA's role in obtaining informed consent?",opts:["Explain all risks and benefits to the patient in detail","Obtain the patient's signature and explain the procedure if the provider is busy","Present the consent form and witness the signature only — never explain risks or obtain consent independently","Decide whether the patient understands enough to sign"],ans:2,ok:"MAs present the form and WITNESS the signature only. Explaining risks/benefits and obtaining consent are the provider's legal responsibility — never the MA's.",no:"The MA never explains risks or obtains consent independently — that is the provider's legal obligation. The MA's role is limited to presenting the form and witnessing the signature."},
+  {q:"A competent adult patient refuses a treatment the provider strongly recommends. Which bioethical principle takes priority?",opts:["Beneficence — the provider must act in the patient's best interest regardless","Autonomy — the patient's right to make their own informed decision, even if you disagree","Justice — fairness to other patients waiting for care","Non-maleficence — preventing harm by overriding the refusal"],ans:1,ok:"Autonomy respects a competent adult's right to refuse treatment, even when the provider disagrees. This is one of the clearest applications of the principle in clinical ethics.",no:"A competent adult's autonomy includes the right to refuse any treatment. The provider must respect this even when they believe a different choice would be beneficial."},
+  {q:"Which scenario represents 'non-maleficence' in practice?",opts:["Advocating for a patient's access to a specialist","Honoring a patient's right to refuse treatment","Speaking up when you observe an unsafe clinical practice that could harm a patient","Treating every patient with equal respect regardless of background"],ans:2,ok:"Non-maleficence = 'first, do no harm.' Speaking up about unsafe practices directly prevents harm — a clear non-maleficence action.",no:"Non-maleficence centers on preventing harm. Speaking up about unsafe practices directly avoids patient injury. The other options relate more to beneficence, autonomy, or justice."},
+  {q:"Which of the following is a legal exception that overrides patient confidentiality?",opts:["The patient is a public figure","The MA personally disagrees with the patient's lifestyle choices","Suspected child abuse — mandatory reporting requirement","The patient hasn't paid their bill"],ans:2,ok:"Mandatory reporting of suspected child abuse overrides confidentiality in all 50 states. Reasonable suspicion is sufficient — proof is not required. Failure to report is a crime.",no:"Mandatory reporting (child abuse, elder abuse, communicable disease, violence-related wounds) legally overrides confidentiality. The other options are never valid exceptions."},
+  {q:"A patient asks the MA: 'Did the doctor make a mistake with my treatment?' What should the MA do?",opts:["Reassure the patient that mistakes never happen at this facility","Speculate based on what the MA observed during the visit","Tell the patient honestly that this question should be directed to the provider, who is responsible for disclosure of any errors","Avoid answering and change the subject"],ans:2,ok:"Veracity (truth-telling) requires honest information about errors — but disclosure is the provider's responsibility. The MA should never speculate or mislead; redirect to the provider.",no:"MAs must never mislead patients, but they also should not speculate about clinical matters. The appropriate response redirects the patient to the provider for an honest, accurate answer."},
+  {q:"An ethical dilemma is best defined as:",opts:["Any disagreement between staff members","A situation where the law clearly states what to do","A situation where two or more ethical principles conflict and there is no obviously 'right' answer","A scenario covered explicitly by facility policy"],ans:2,ok:"An ethical dilemma occurs when ethical principles conflict (e.g., autonomy vs. beneficence) and there is no clear, universally correct answer — requiring careful reasoning.",no:"Ethical dilemmas specifically involve conflicting ethical principles with no obvious correct answer — not simple disagreements or clearly policy-covered situations."},
+  {q:"What is the correct first step in the ethical decision-making framework?",opts:["Decide immediately based on gut instinct","Identify the ethical issue, who is affected, and the competing values","Apply the four bioethical principles without first identifying the issue","Document and reflect after taking action"],ans:1,ok:"The framework begins with IDENTIFY: clarify the ethical issue, who is affected, and what values are in conflict. This grounds the rest of the decision-making process.",no:"The six-step framework is: Identify → Gather → Apply → Consider → Decide → Act & Reflect. Identifying the issue and competing values always comes first."},
+  {q:"Which document represents a portable, actionable medical order that travels with the patient across care settings?",opts:["Living Will","Healthcare Proxy","POLST/MOLST","HIPAA authorization form"],ans:2,ok:"POLST/MOLST (Physician/Medical Orders for Life-Sustaining Treatment) is a portable, actionable medical order that travels with the patient across different care settings.",no:"POLST/MOLST is the portable order form. A Living Will states wishes but isn't itself a portable physician order. Healthcare Proxy designates a decision-maker, not an order."},
+  {q:"Whistleblower protections exist to:",opts:["Allow employees to break HIPAA freely when reporting concerns","Protect healthcare workers who report illegal, unethical, or dangerous practices in good faith from retaliation","Guarantee a financial reward for every report made","Apply only to physicians, not to MAs or other staff"],ans:1,ok:"Whistleblower protections shield healthcare workers — at all levels, including MAs — from retaliation when they report illegal, unethical, or dangerous practices in good faith.",no:"These protections apply broadly to healthcare workers (not just physicians) and protect against retaliation for good-faith reporting — they do not authorize HIPAA violations or guarantee financial rewards."},
+];
+let questions=[],cur=0,score=0,streak=0,wrong=0,answered=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function init(){questions=shuffle(QS);cur=0;score=0;streak=0;wrong=0;answered=false;document.getElementById('endBox').classList.remove('show');document.getElementById('qArea').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';updateHUD();render();}
+function render(){answered=false;const q=questions[cur];document.getElementById('qText').textContent=q.q;document.getElementById('qNum').textContent='Q'+(cur+1);document.getElementById('opts').innerHTML=q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){document.getElementById('dots').innerHTML=Array.from({length:questions.length},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const q=questions[cur];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[q.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===q.ans){score++;streak++;fb.innerHTML=`<strong>✓ Correct!</strong>${q.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');wrong++;streak=0;fb.innerHTML=`<strong>✗ Not quite.</strong>${q.no}`;fb.className='fb no show';}updateHUD();document.getElementById('nextBtn').className='next-btn show';}
+function next(){cur++;if(cur>=questions.length){showEnd();return;}render();}
+function showEnd(){const pct=Math.round((score/questions.length)*100);document.getElementById('qArea').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct>=80?'🌟 Excellent!':pct>=60?'👍 Good Work':'📚 Keep Reviewing';document.getElementById('endSub').textContent='You answered '+questions.length+' questions.';document.getElementById('eOk').textContent=score;document.getElementById('eNo').textContent=wrong;document.getElementById('endBox').classList.add('show');}
+function updateHUD(){document.getElementById('sc').textContent=score;document.getElementById('str').textContent=streak;}
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossary — Doing the Right Thing: Law & Ethics in Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--red-dim:rgba(224,90,58,.15);--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--pill-bg:rgba(255,255,255,.06);--pill-border:rgba(255,255,255,.12);}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr;max-width:820px;margin:0 auto;padding:0 32px;}
+.hdr{padding:24px 0 12px;}
+.hdr-eye{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:6px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:34px;font-weight:800;color:var(--text);margin-bottom:3px;line-height:1.05;}
+.hdr-sub{font-size:13px;color:var(--muted2);}
+.search-wrap{padding:10px 0 8px;}
+.search-inner{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;}
+.search-icon{color:var(--muted);font-size:14px;}
+.search-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:13px;}
+.search-input::placeholder{color:var(--muted);}
+.filter-area{padding-bottom:8px;}
+.pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;}
+.pill{padding:4px 12px;border-radius:999px;border:1px solid var(--pill-border);background:var(--pill-bg);color:var(--muted2);font-size:11px;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap;}
+.pill:hover{border-color:rgba(255,255,255,.22);color:var(--text);}
+.pill.active{background:var(--red-dim);border-color:var(--red);color:var(--text);font-weight:600;}
+.term-count{font-size:11px;color:var(--muted);}
+.list-area{min-height:0;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
+.term-list{flex:1;overflow:hidden;}
+.term-row{display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;gap:14px;}
+.term-row:last-child{border-bottom:none;}
+.term-row:hover{background:rgba(255,255,255,.03);}
+.term-left{display:flex;align-items:center;gap:12px;min-width:0;}
+.red-bar{width:3px;border-radius:2px;background:var(--red);flex-shrink:0;}
+.term-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cat-badge{flex-shrink:0;padding:2px 9px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--red-dim);color:var(--red);white-space:nowrap;}
+.pager{background:var(--card);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:11px 22px;flex-shrink:0;}
+.pager-btn{padding:6px 16px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted2);font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;}
+.pager-btn:hover:not(:disabled){border-color:rgba(255,255,255,.2);color:var(--text);}
+.pager-btn:disabled{opacity:.3;cursor:default;}
+.pager-dots{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center;max-width:420px;}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;border:none;padding:0;transition:all .2s;}
+.pdot.active{background:var(--red);transform:scale(1.3);}
+.pdot.near{background:rgba(255,255,255,.3);}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:50;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:26px 30px;max-width:500px;width:90%;transform:translateY(10px);transition:transform .2s;}
+.overlay.open .modal{transform:translateY(0);}
+.m-badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--red-dim);color:var(--red);margin-bottom:10px;}
+.m-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;color:var(--text);margin-bottom:10px;}
+.m-def{font-size:13px;color:var(--muted2);line-height:1.68;margin-bottom:10px;}
+.m-note{background:rgba(224,90,58,.1);border-left:2px solid var(--red);padding:9px 12px;border-radius:0 7px 7px 0;font-size:12px;color:var(--text);line-height:1.6;display:none;}
+.m-note.show{display:block;}
+.m-note strong{color:var(--red);}
+.m-close{margin-top:14px;width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:12px;cursor:pointer;transition:all .18s;}
+.m-close:hover{border-color:var(--red);color:var(--red);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Week 2 — Doing the Right Thing: Law & Ethics in Healthcare</div>
+    <h1>Glossary</h1>
+    <div class="hdr-sub">Law vs. Ethics · Consent · Bioethics · Patient Rights · Dilemmas</div>
+  </div>
+  <div class="search-wrap">
+    <div class="search-inner">
+      <span class="search-icon">⌕</span>
+      <input class="search-input" id="searchInput" placeholder="Search terms or definitions…" oninput="onSearch()">
+    </div>
+  </div>
+  <div class="filter-area">
+    <div class="pills" id="pills"></div>
+    <div class="term-count" id="termCount"></div>
+  </div>
+  <div class="list-area" id="listArea">
+    <div class="term-list" id="termList"></div>
+    <div class="pager" id="pager">
+      <button class="pager-btn" id="btnPrev" onclick="changePage(-1)">← Prev</button>
+      <div class="pager-dots" id="pagerDots"></div>
+      <button class="pager-btn" id="btnNext" onclick="changePage(1)">Next →</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="overlay" onclick="maybeClose(event)">
+  <div class="modal">
+    <div class="m-badge" id="mBadge"></div>
+    <div class="m-name" id="mName"></div>
+    <div class="m-def" id="mDef"></div>
+    <div class="m-note" id="mNote"></div>
+    <button class="m-close" onclick="closeModal()">Close</button>
+  </div>
+</div>
+<script>
+const TERMS=[
+  {cat:"Law vs Ethics",name:"Law",def:"A system of rules created and enforced by government through courts and regulatory agencies. Violations result in legal consequences — externally enforced.",note:"'I was just following orders' is NOT a legal defense. Performing a procedure outside your scope, failing to report abuse, or violating HIPAA are all illegal."},
+  {cat:"Law vs Ethics",name:"Ethics",def:"A system of moral principles that guide behavior beyond legal requirements. Based on values, duties, and character — internally enforced through conscience and professional codes.",note:"Ethics asks not just 'Can I?' but 'Should I?' Being honest about a mistake even when no one would find out is an ethical (not legal) obligation."},
+  {cat:"Law vs Ethics",name:"The Overlap Zone",def:"When something is both illegal AND unethical (e.g., fraud, abuse, assault) — consequences are both legal AND professional. Not all unethical acts are illegal, and not all illegal acts are necessarily seen as deeply unethical.",note:"'The law sets the floor. Ethics sets the ceiling. The best healthcare professionals live closer to the ceiling.'"},
+  {cat:"Sources of Law",name:"Statutory Law",def:"Laws passed by federal and state legislatures. Examples: HIPAA, ADA, EMTALA, and state Medical Practice Acts. Your state's Medical Practice Act defines what MAs can legally do.",note:"State Medical Practice Acts vary significantly — what is permitted for an MA in one state may be prohibited in another."},
+  {cat:"Sources of Law",name:"Administrative/Regulatory Law",def:"Rules created by government agencies such as OSHA, CMS, and state licensing boards. Most day-to-day healthcare regulation comes from this source.",note:"Violations of administrative law can result in fines, loss of license, or facility closure — these agencies have direct enforcement power."},
+  {cat:"Sources of Law",name:"Common Law (Case Law)",def:"Law created by court decisions over time, establishing precedent. Negligence and malpractice standards largely come from common law rulings in past cases.",note:"Common law evolves as courts rule on new cases — this is why malpractice standards can shift over time even without new statutes."},
+  {cat:"Negligence",name:"Negligence",def:"Failure to exercise the degree of care that a reasonably prudent person would use under similar circumstances. Does not require intent — accidents can be negligent.",note:"Example: forgetting to document a medication allergy the patient reported, leading to an adverse reaction."},
+  {cat:"Negligence",name:"Malpractice",def:"Professional negligence — negligence by a licensed professional acting in their professional capacity. A higher standard applies due to the professional's expertise.",note:"Example: an MA administers the wrong dose because they failed to follow the rights of medication administration."},
+  {cat:"Negligence",name:"Four Elements of Malpractice",def:"Duty (a provider-patient relationship existed), Breach (failure to meet standard of care), Causation (the breach caused the harm), Damages (patient suffered measurable harm).",note:"A patient must prove ALL FOUR elements to succeed in a malpractice claim — missing even one element defeats the claim."},
+  {cat:"Informed Consent",name:"Elements of Valid Informed Consent",def:"Disclosure, Comprehension, Voluntariness, Capacity, and Authorization. All five elements must be present for consent to be legally valid.",note:"<strong>MA role:</strong> present the form and witness the signature ONLY. MAs never explain risks or obtain consent — that is the provider's legal responsibility."},
+  {cat:"Informed Consent",name:"Implied Consent",def:"Consent assumed in emergency situations when delay risks serious harm and the patient is unable to consent. Applies when immediate treatment is necessary to prevent death or serious injury.",note:"Implied consent is an exception, not the rule — it only applies in true emergencies where waiting for explicit consent would cause harm."},
+  {cat:"Informed Consent",name:"Advance Directives",def:"Living Will (instructions for incapacitation), Healthcare Proxy/POA (designated decision-maker), DNR/DNI (must be in chart and honored), POLST/MOLST (portable medical orders).",note:"DNR/DNI orders MUST be honored if properly documented in the chart — this is both a legal and ethical obligation."},
+  {cat:"Bioethics",name:"Autonomy",def:"Respect the patient's right to make their own informed decisions about their care — even if you disagree with that decision. Includes honoring informed consent and the right to refuse.",note:"Tension: when a patient's autonomous choice may harm themselves or others."},
+  {cat:"Bioethics",name:"Beneficence",def:"Act in the patient's best interest — take positive steps to promote their wellbeing, not just avoid harm. Includes ensuring thorough care and advocating for the patient.",note:"Tension: when what the provider thinks is 'best' conflicts with what the patient actually wants."},
+  {cat:"Bioethics",name:"Non-Maleficence",def:"'First, do no harm' (primum non nocere). Avoid causing unnecessary injury, pain, suffering, or risk through action or inaction.",note:"Tension: when a treatment that causes harm (chemotherapy, surgery) is necessary to achieve benefit."},
+  {cat:"Bioethics",name:"Justice",def:"Treat all patients fairly and equitably. Distribute healthcare resources in a fair and nondiscriminatory manner regardless of race, gender, income, status, or beliefs.",note:"Tension: when resources are limited and not everyone can receive everything they need."},
+  {cat:"Patient Rights",name:"Patient Bill of Rights",def:"Core protections including: respectful non-discriminatory care, complete information, participation in treatment decisions, right to refuse treatment, privacy/confidentiality, access to records, safe environment, complaint filing without retaliation.",note:"These rights apply to every patient interaction and are both legal obligations and ethical requirements."},
+  {cat:"Patient Rights",name:"Confidentiality Exceptions",def:"Mandatory reporting (abuse), public health threats (communicable disease), valid court order/subpoena, and serious imminent threat to an identifiable third party (Tarasoff duty).",note:"Confidentiality is an ethical duty predating HIPAA by centuries — but it has clear legal exceptions that override it."},
+  {cat:"Patient Rights",name:"Veracity (Truth-Telling)",def:"Patients have a right to truthful information about diagnosis and prognosis, disclosure of medical errors affecting their care, and honest answers about treatment options.",note:"MAs must NEVER mislead a patient — always refer clinical questions to the provider rather than guessing or reassuring inaccurately."},
+  {cat:"Patient Rights",name:"Mandatory Reporting Categories",def:"Child abuse/neglect (all 50 states), elder/vulnerable adult abuse (most states), communicable diseases (TB, STIs, COVID), and gunshot/stab wounds (most states).",note:"These legal duties override confidentiality. Reasonable suspicion is sufficient — you do not need proof. Failure to report is itself a crime."},
+  {cat:"Decision-Making",name:"Ethical Dilemma",def:"A situation where two or more ethical principles conflict and there is no obviously 'right' answer. Examples: autonomy vs. beneficence, confidentiality vs. duty to warn.",note:"Common dilemmas in the medical office often pit patient autonomy against provider judgment, or confidentiality against safety obligations."},
+  {cat:"Decision-Making",name:"Ethical Decision-Making Framework",def:"Identify (the issue and competing values) → Gather (relevant facts) → Apply (the four bioethical principles) → Consider (possible actions/consequences) → Decide → Act & Reflect.",note:"This six-step framework provides a structured approach for navigating any ethical dilemma encountered in clinical practice."},
+  {cat:"Decision-Making",name:"Whistleblower Protections",def:"Federal and state laws that protect healthcare workers who report illegal, unethical, or dangerous practices in good faith from retaliation.",note:"Reporting chain: Supervisor → Medical Director → Compliance Officer → State Licensing Board → External agencies (OSHA, OCR) as appropriate."},
+];
+const CATS=['All','Law vs Ethics','Sources of Law','Negligence','Informed Consent','Bioethics','Patient Rights','Decision-Making'];
+const PER_PAGE=4;
+let activeCat='All',searchQ='',currentPage=0,filtered=[];
+function buildPills(){document.getElementById('pills').innerHTML=CATS.map(c=>`<button class="pill ${c===activeCat?'active':''}" onclick="setFilter('${c}')">${c}</button>`).join('');}
+function setFilter(c){activeCat=c;currentPage=0;buildPills();applyFilter();}
+function onSearch(){searchQ=document.getElementById('searchInput').value.toLowerCase();currentPage=0;applyFilter();}
+function applyFilter(){filtered=TERMS.filter(t=>{const mc=activeCat==='All'||t.cat===activeCat;const mq=!searchQ||t.name.toLowerCase().includes(searchQ)||t.def.toLowerCase().includes(searchQ);return mc&&mq;});renderPage();}
+function renderPage(){
+  const total=filtered.length,totalPages=Math.max(1,Math.ceil(total/PER_PAGE));
+  if(currentPage>=totalPages)currentPage=totalPages-1;
+  const items=filtered.slice(currentPage*PER_PAGE,currentPage*PER_PAGE+PER_PAGE);
+  document.getElementById('termCount').textContent=`${total} term${total!==1?'s':''} · Page ${currentPage+1} of ${totalPages}`;
+  const la=document.getElementById('listArea'),pg=document.getElementById('pager');
+  const rowH=Math.floor((la.clientHeight-pg.offsetHeight)/PER_PAGE),barH=Math.floor(rowH*.38);
+  document.getElementById('termList').innerHTML=items.map(t=>`<div class="term-row" style="height:${rowH}px" onclick="openModal(${filtered.indexOf(t)})"><div class="term-left"><div class="red-bar" style="height:${barH}px"></div><div class="term-name">${t.name}</div></div><div class="cat-badge">${t.cat}</div></div>`).join('');
+  document.getElementById('pagerDots').innerHTML=Array.from({length:totalPages},(_,i)=>`<button class="pdot${i===currentPage?' active':Math.abs(i-currentPage)<=2?' near':''}" onclick="goPage(${i})"></button>`).join('');
+  document.getElementById('btnPrev').disabled=currentPage===0;document.getElementById('btnNext').disabled=currentPage>=totalPages-1;
+}
+function changePage(d){currentPage=Math.max(0,Math.min(Math.max(1,Math.ceil(filtered.length/PER_PAGE))-1,currentPage+d));renderPage();}
+function goPage(n){currentPage=n;renderPage();}
+function openModal(i){const t=filtered[i];document.getElementById('mBadge').textContent=t.cat;document.getElementById('mName').textContent=t.name;document.getElementById('mDef').textContent=t.def;const n=document.getElementById('mNote');if(t.note){n.innerHTML=t.note;n.className='m-note show';}else{n.className='m-note';}document.getElementById('overlay').classList.add('open');}
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+function maybeClose(e){if(e.target===document.getElementById('overlay'))closeModal();}
+buildPills();applyFilter();
+window.addEventListener('resize',renderPage);
+</script>
+</body>
+</html>

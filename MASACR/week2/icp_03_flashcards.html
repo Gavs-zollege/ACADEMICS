@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flashcards — Keeping Patients Safe: Infection Control Practices</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr auto;padding:0 20px;max-width:660px;margin:0 auto;}
+.hdr{text-align:center;padding:18px 0 6px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:4px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;margin-bottom:3px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:8px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:26px;background:var(--red);}
+.dot.d{background:var(--green);}
+.deck-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;padding:10px 0 4px;}
+.deck-btn{padding:4px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:10px;font-weight:600;cursor:pointer;transition:all .2s;}
+.deck-btn.active{background:rgba(224,90,58,.12);border-color:var(--red);color:var(--text);}
+.card-area{width:100%;display:flex;align-items:center;justify-content:center;padding:6px 0;min-height:0;}
+.card-scene{width:min(540px,96vw);height:clamp(150px,26vh,230px);perspective:1000px;cursor:pointer;}
+.card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);}
+.card-inner.flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;border-radius:14px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 30px;text-align:center;}
+.card-front{background:var(--surface);border:1px solid var(--border);}
+.card-back{background:var(--card);border:1px solid rgba(224,90,58,.25);transform:rotateY(180deg);}
+.face-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+.face-label.back{color:var(--red);}
+.face-term{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(14px,2.6vw,20px);font-weight:800;color:var(--text);line-height:1.2;}
+.face-def{font-size:clamp(11px,1.5vw,13px);color:var(--muted2);line-height:1.55;}
+.face-cat{font-size:10px;color:var(--red);margin-top:8px;font-weight:600;}
+.btn-row{display:flex;align-items:center;gap:12px;justify-content:center;padding:4px 0;}
+.verdict-btn{padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.verdict-btn.know{border-color:rgba(76,175,130,.5);color:var(--green);}
+.verdict-btn.know:hover{background:rgba(76,175,130,.1);}
+.verdict-btn.learn{border-color:rgba(224,90,90,.5);color:var(--rose);}
+.verdict-btn.learn:hover{background:rgba(224,90,90,.1);}
+.card-counter{font-size:12px;color:var(--muted);min-width:52px;text-align:center;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:32px 44px;text-align:center;width:min(420px,94vw);margin:0 auto;}
+.end-box.show{display:flex;}
+.end-pct{font-size:46px;font-weight:800;color:var(--red);}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);}
+.end-btns{display:flex;gap:8px;margin-top:4px;}
+.restart-btn{padding:9px 20px;border-radius:9px;border:none;background:var(--red);color:#fff;font-size:12px;font-weight:800;cursor:pointer;}
+.restart-btn.outline{background:transparent;border:1px solid var(--border);color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Keeping Patients Safe: Infection Control Practices</div>
+    <h1>Flashcards</h1>
+    <p>Flip the card — then mark how well you know it.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="deck-row">
+    <button class="deck-btn active" onclick="setDeck('all',this)">All</button>
+    <button class="deck-btn" onclick="setDeck('Cleaning',this)">Cleaning</button>
+    <button class="deck-btn" onclick="setDeck('Spaulding',this)">Spaulding</button>
+    <button class="deck-btn" onclick="setDeck('Isolation',this)">Isolation</button>
+    <button class="deck-btn" onclick="setDeck('Specimens',this)">Specimens</button>
+    <button class="deck-btn" onclick="setDeck('Sharps & Waste',this)">Sharps & Waste</button>
+  </div>
+  <div class="card-area" id="cardArea">
+    <div class="card-scene" onclick="flip()">
+      <div class="card-inner" id="cardInner">
+        <div class="card-face card-front">
+          <div class="face-label">Tap to reveal</div>
+          <div class="face-term" id="fTerm"></div>
+        </div>
+        <div class="card-face card-back">
+          <div class="face-label back">Answer</div>
+          <div class="face-def" id="bDef"></div>
+          <div class="face-cat" id="bCat"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row" id="btnRow">
+    <button class="verdict-btn learn" onclick="mark(false)">✗ Still Learning</button>
+    <div class="card-counter" id="counter">1 / 28</div>
+    <button class="verdict-btn know" onclick="mark(true)">✓ Got It</button>
+  </div>
+  <div class="end-box" id="endBox" style="grid-row:3/5;">
+    <div class="end-pct" id="endPct"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <div class="end-btns">
+      <button class="restart-btn" onclick="restart()">Restart</button>
+      <button class="restart-btn outline" onclick="reviewMissed()">Review Missed</button>
+    </div>
+  </div>
+</div>
+<script>
+const ALL=[
+  {cat:"Cleaning",term:"Contact Time",def:"Length of time disinfectant must remain wet to be effective — 1–10 min depending on product. Wiping dry early = no disinfection. Reapply if surface dries early."},
+  {cat:"Cleaning",term:"Remove Soiling First",def:"Wipe gross contamination with a disposable cloth before applying disinfectant. Disinfectants cannot penetrate organic matter like blood or debris."},
+  {cat:"Cleaning",term:"Clean to Dirty Workflow",def:"Start cleaning at the cleanest area (counter, supply tray) and move toward the dirtiest (exam table, floor) to avoid spreading contamination."},
+  {cat:"Cleaning",term:"High-Touch Surfaces",def:"Priority cleaning targets: light switches, door handles, exam table, BP cuff, stethoscope, keyboards, faucet handles. Common fomite transmission points."},
+  {cat:"Cleaning",term:"Table Paper & Pillow Cover",def:"Replace after disinfecting the table — roll new paper top to foot and apply fresh pillow protector before the next patient."},
+  {cat:"Spaulding",term:"Critical Items",def:"Enter sterile tissue/bloodstream. Require STERILIZATION (destroys all microorganisms including spores). Examples: surgical instruments, IV catheters, implants."},
+  {cat:"Spaulding",term:"Semi-Critical Items",def:"Contact mucous membranes/non-intact skin. Require HIGH-LEVEL DISINFECTION (kills all except high-load spores). Examples: endoscopes, vaginal probes."},
+  {cat:"Spaulding",term:"Non-Critical Items",def:"Contact intact skin only. Require LOW/INTERMEDIATE disinfection or cleaning. Examples: stethoscopes, BP cuffs, exam tables, floors."},
+  {cat:"Spaulding",term:"Spaulding Rule of Thumb",def:"When in doubt, go UP a level. Over-reprocessing is always safer than under-reprocessing an instrument."},
+  {cat:"Isolation",term:"Contact Precautions — PPE",def:"Gown + gloves, donned before entering, doffed before leaving. Private room preferred with dedicated equipment. C. diff requires soap/water — not ABHR."},
+  {cat:"Isolation",term:"Droplet Precautions — PPE",def:"Surgical mask within 3–6 feet. Door closed. Patient wears mask during transport. Examples: influenza, pertussis, mumps."},
+  {cat:"Isolation",term:"Airborne Precautions — PPE",def:"Fit-tested N95 or higher, donned BEFORE entering. Negative-pressure room with HEPA exhaust. Examples: TB, measles, varicella."},
+  {cat:"Isolation",term:"No Negative-Pressure Room Available",def:"If airborne precautions are needed but no negative-pressure room exists: place a surgical mask on the patient immediately and notify the provider."},
+  {cat:"Specimens",term:"Label at Bedside",def:"Never pre-label specimen containers. Label after confirming patient ID with name, DOB, date, time, and collector initials."},
+  {cat:"Specimens",term:"Fill Line Rule",def:"Never fill specimen containers over the fill line. Overfilling risks leakage and contamination during transport."},
+  {cat:"Specimens",term:"Triple Packaging System",def:"Primary container (leak-proof) → secondary bag with absorbent material → rigid outer packaging. Requisition goes in outside pocket only."},
+  {cat:"Specimens",term:"Blood Culture Transport",def:"Transport ASAP — within 30 minutes. Delays degrade specimen viability and can produce inaccurate culture results."},
+  {cat:"Specimens",term:"No Mouth Pipetting",def:"Never use mouth pipetting under any circumstance. Use mechanical pipetting devices only — this is a foundational lab safety rule."},
+  {cat:"Outbreak",term:"Outbreak Threshold",def:"An occurrence of illness greater than expected. Even 2–3 linked cases in a facility can constitute an outbreak requiring immediate action."},
+  {cat:"Outbreak",term:"RRIRD Response Sequence",def:"Recognize → Report → Isolate → Reinforce → Document. The five-step MA response when an outbreak is suspected."},
+  {cat:"Sharps & Waste",term:"Never Recap",def:"Never recap a used needle. If absolutely necessary for an unused needle, use one-handed scoop technique only."},
+  {cat:"Sharps & Waste",term:"Neutral Zone Passing",def:"Never pass sharps hand-to-hand. Place in a neutral zone and let the receiver pick it up to avoid accidental puncture."},
+  {cat:"Sharps & Waste",term:"3/4 Full Rule",def:"Seal sharps containers when 3/4 full — never compress contents to fit more in. Never reach into a sharps container."},
+  {cat:"Sharps & Waste",term:"Red Bag (Biohazard)",def:"For blood-soaked materials, dressings, contaminated gloves, tissue, specimen containers. Distinct from sharps containers."},
+  {cat:"Sharps & Waste",term:"Regular Trash Criteria",def:"Uncontaminated paper, packaging, unused gloves, clean table paper. Must have NO blood or body fluids to qualify as regular trash."},
+  {cat:"Sharps & Waste",term:"Spill Response Sequence",def:"Don PPE → contain spill (outside edge in) → apply 1:10 bleach (full contact time) → wipe & dispose in red bag → doff PPE → hand hygiene → report/document."},
+  {cat:"Sharps & Waste",term:"1:10 Bleach Solution",def:"1 part bleach to 9 parts water. Standard dilution for blood/body fluid spill disinfection, or an EPA-approved sporicidal alternative."},
+  {cat:"Sharps & Waste",term:"Hand Hygiene After Gloves",def:"Gloves are not a substitute for hand hygiene. Hands can become contaminated immediately after doffing — always wash or sanitize after removing gloves."},
+];
+let deck=[],cur=0,gotCount=0,missed=[],activeDeck='all',flipped=false;
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function setDeck(d,el){document.querySelectorAll('.deck-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');activeDeck=d;initDeck();}
+function initDeck(){deck=activeDeck==='all'?shuffle([...ALL]):shuffle(ALL.filter(c=>c.cat===activeDeck));cur=0;gotCount=0;missed=[];flipped=false;document.getElementById('endBox').classList.remove('show');document.getElementById('cardArea').style.display='';document.getElementById('btnRow').style.display='';renderCard();}
+function renderCard(){if(cur>=deck.length){showEnd();return;}const c=deck[cur];document.getElementById('fTerm').textContent=c.term;document.getElementById('bDef').textContent=c.def;document.getElementById('bCat').textContent=c.cat;document.getElementById('counter').textContent=(cur+1)+' / '+deck.length;flipped=false;document.getElementById('cardInner').classList.remove('flipped');buildDots();}
+function buildDots(){const n=Math.min(deck.length,16);document.getElementById('dots').innerHTML=Array.from({length:n},(_,i)=>`<div class="dot ${i<cur?'d':i===cur?'a':''}"></div>`).join('');}
+function flip(){flipped=!flipped;document.getElementById('cardInner').classList.toggle('flipped',flipped);}
+function mark(known){if(known)gotCount++;else missed.push(deck[cur]);cur++;renderCard();}
+function showEnd(){document.getElementById('cardArea').style.display='none';document.getElementById('btnRow').style.display='none';const pct=Math.round((gotCount/deck.length)*100);document.getElementById('endPct').textContent=pct+'%';document.getElementById('endTitle').textContent=pct>=80?'🎉 Excellent!':pct>=60?'👍 Good Progress':'📚 Keep Studying';document.getElementById('endSub').textContent='Completed '+deck.length+' cards.';document.getElementById('endBox').classList.add('show');}
+function restart(){initDeck();}
+function reviewMissed(){if(!missed.length){restart();return;}deck=shuffle([...missed]);cur=0;gotCount=0;missed=[];flipped=false;document.getElementById('endBox').classList.remove('show');document.getElementById('cardArea').style.display='';document.getElementById('btnRow').style.display='';renderCard();}
+document.addEventListener('keydown',e=>{if(e.key===' '||e.key==='ArrowUp'){e.preventDefault();flip();}if(e.key==='ArrowRight')mark(true);if(e.key==='ArrowLeft')mark(false);});
+initDeck();
+</script>
+</body>
+</html>

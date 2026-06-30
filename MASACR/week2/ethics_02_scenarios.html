@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scenario Simulator — Law & Ethics in Healthcare</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0d0d0d;--surface:#141414;--card:#1a1a1a;--border:rgba(255,255,255,.07);--red:#e05a3a;--text:#fff;--muted:#6b7280;--muted2:#9ca3af;--green:#4caf82;--rose:#e05a5a;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.page{height:100vh;overflow:hidden;display:grid;grid-template-rows:auto auto auto 1fr auto auto;padding:0 20px;max-width:680px;margin:0 auto;}
+.hdr{text-align:center;padding:16px 0 6px;}
+.hdr-eye{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+.hdr h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;margin-bottom:2px;}
+.hdr p{font-size:12px;color:var(--muted2);margin-bottom:7px;}
+.dots{display:flex;align-items:center;gap:5px;justify-content:center;}
+.dot{width:8px;height:5px;border-radius:3px;background:var(--border);transition:all .3s;}
+.dot.a{width:24px;background:var(--red);}
+.dot.d{background:var(--green);}
+.sc-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin:6px 0;}
+.sc-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.sc-text{font-size:12px;color:var(--text);line-height:1.55;}
+.q-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:7px;}
+.q-text{font-size:13px;color:var(--text);line-height:1.5;}
+.q-num{font-size:11px;color:var(--muted);font-weight:600;flex-shrink:0;}
+.opts-area{display:flex;flex-direction:column;gap:6px;min-height:0;overflow:hidden;}
+.opt{width:100%;text-align:left;padding:10px 15px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:11px;}
+.opt:hover:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.03);}
+.opt:disabled{cursor:default;}
+.opt.correct{border-color:rgba(76,175,130,.55);background:rgba(76,175,130,.08);}
+.opt.wrong{border-color:rgba(224,90,90,.55);background:rgba(224,90,90,.08);}
+.opt-letter{width:22px;height:22px;border-radius:5px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0;}
+.opt.correct .opt-letter{border-color:var(--green);color:var(--green);background:rgba(76,175,130,.12);}
+.opt.wrong .opt-letter{border-color:var(--rose);color:var(--rose);background:rgba(224,90,90,.12);}
+.fb{padding:9px 14px;border-radius:10px;font-size:12px;line-height:1.55;display:none;margin:4px 0 0;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(76,175,130,.1);border:1px solid rgba(76,175,130,.3);}
+.fb.no{background:rgba(224,90,90,.1);border:1px solid rgba(224,90,90,.3);}
+.fb strong{display:block;margin-bottom:3px;font-size:12px;}
+.fb.ok strong{color:var(--green);}
+.fb.no strong{color:var(--rose);}
+.next-btn{padding:10px 26px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;display:none;margin:6px auto 8px;width:fit-content;}
+.next-btn.show{display:block;}
+.end-box{display:none;flex-direction:column;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:34px 48px;text-align:center;grid-row:2/7;align-self:center;}
+.end-box.show{display:flex;}
+.end-big{font-size:50px;font-weight:800;color:var(--red);}
+.end-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;}
+.end-sub{font-size:12px;color:var(--muted);max-width:300px;}
+.restart-btn{padding:10px 24px;border-radius:10px;border:none;background:var(--red);color:#fff;font-size:13px;font-weight:800;cursor:pointer;margin-top:4px;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-eye">Doing the Right Thing: Law & Ethics in Healthcare</div>
+    <h1>Scenario Simulator</h1>
+    <p>Apply legal and ethical principles to real situations.</p>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="sc-box" id="scBox"><div class="sc-label">Clinical Scenario</div><div class="sc-text" id="scText"></div></div>
+  <div class="q-box" id="qBox"><div class="q-text" id="qText"></div><div class="q-num" id="qNum"></div></div>
+  <div class="opts-area" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <button class="next-btn" id="nextBtn" onclick="next()">Next Step →</button>
+  <div class="end-box" id="endBox">
+    <div class="end-big" id="endBig"></div>
+    <div class="end-title" id="endTitle"></div>
+    <div class="end-sub" id="endSub"></div>
+    <button class="restart-btn" onclick="init()">Try Another Scenario</button>
+  </div>
+</div>
+<script>
+const SCENARIOS=[
+  {setup:"A 16-year-old patient comes in alone requesting birth control and asks you not to tell her parents. While rooming her, she mentions feeling very depressed and sometimes thinking about 'not being here anymore.'",steps:[
+    {q:"What is the correct approach to her request for confidentiality about birth control?",opts:["Automatically tell her parents — she's a minor and they have a right to know everything","Most states allow minors to consent to contraceptive services without parental notification; respect her autonomy if your state and office policy permit it","Refuse to room her until a parent is present","Tell her you'll keep it secret no matter what she discloses going forward"],ans:1,ok:"Most states allow minors to consent to contraceptive services without parental notification. Her autonomy must be respected within your state's mature minor laws and office policy.",no:"State minor consent laws vary, but many permit minors to consent to contraceptive services confidentially. Check your state's law and office policy — don't assume automatic parental notification is required."},
+    {q:"She has disclosed suicidal ideation. What is your obligation?",opts:["This is a mandatory clinical response — report to the provider immediately; this is not optional and is not something you decide is 'not serious'","Wait until the end of the visit to mention it casually","Only document it if she says it again more clearly","Reassure her everything will be fine and move on with rooming"],ans:0,ok:"Suicidal ideation must be reported to the provider IMMEDIATELY — non-maleficence and beneficence require it. This overrides general confidentiality concerns. The MA cannot independently decide it isn't serious.",no:"Any disclosure of suicidal ideation requires immediate escalation to the provider. This is never optional, and the MA does not have the authority to assess severity independently."},
+  ]},
+  {setup:"After the appointment, the provider tells you the diagnosis but says 'don't document the mental health part — her parents might see it.' You also overhear a coworker telling another patient that the 16-year-old 'has been coming in a lot lately — teenage stuff.'",steps:[
+    {q:"How should you respond to the provider's instruction not to document the mental health finding?",opts:["Comply — the provider outranks you and gave a direct instruction","Respectfully clarify that documentation is legally and ethically required; if the provider insists, document your own factual observations and consult compliance/supervisor","Document it anyway without telling the provider you did so","Ask the patient what she wants documented and follow her preference instead"],ans:1,ok:"Omitting clinically relevant information is both a legal and ethical violation — it compromises patient safety and can constitute fraud. Respectfully clarify the requirement; escalate to compliance if the provider insists on omission.",no:"Documentation of clinically relevant findings is required regardless of provider preference. Silently complying or silently working around the provider are both problematic — clarify directly and escalate if needed."},
+    {q:"What should you do about the coworker's comment to another patient?",opts:["Ignore it — it's not specific enough to be a real violation","This is a HIPAA Privacy Rule violation and must be reported through proper channels","Confront the coworker loudly in front of the patient to correct it immediately","Mention it to the 16-year-old patient so she knows to be careful"],ans:1,ok:"Disclosing patient visit information to another patient — even vaguely — is a HIPAA Privacy Rule violation. This must be reported through your facility's proper reporting channel.",no:"Even vague references to a patient's visit pattern shared with another patient constitute a HIPAA violation. This requires formal reporting — not silence, and not public confrontation in front of patients."},
+  ]},
+  {setup:"A patient with a documented DNR/DNI order in their chart begins to experience respiratory distress. A family member who just arrived insists 'do everything possible, don't let her die' and asks staff to ignore the DNR.",steps:[
+    {q:"What is the correct legal and ethical action regarding the DNR order?",opts:["Honor the family's wishes since they are present and advocating loudly","The DNR/DNI order MUST be honored as documented — it reflects the patient's own advance directive and legal wishes, which take precedence over family preference","Perform resuscitation first and sort out the paperwork afterward","Ask the family to leave so staff can decide independently"],ans:1,ok:"A properly documented DNR/DNI order MUST be honored — it represents the patient's own legally binding advance directive. Family wishes, however well-intentioned, do not override a valid DNR unless the patient's own authorized decision-maker formally revokes it through proper channels.",no:"DNR/DNI orders are physician orders reflecting the patient's documented wishes and must be honored. Family members cannot override a valid DNR simply by requesting it verbally in the moment — proper revocation requires the patient's legal decision-maker and appropriate documentation."},
+    {q:"Which bioethical principle is most directly being honored by following the DNR order?",opts:["Justice — fair distribution of resources","Autonomy — respecting the patient's own informed decision about their care, made in advance","Beneficence only, with no regard for the patient's own wishes","Non-maleficence, since resuscitation is inherently harmful"],ans:1,ok:"Autonomy is the core principle here — honoring the DNR respects the patient's own prior informed decision about their care, even when it conflicts with what others in the moment might prefer.",no:"This scenario centers on autonomy — the patient documented their wishes in advance through a valid advance directive. Justice and resource allocation aren't the central issue; honoring the patient's own decision is."},
+  ]},
+];
+let sc,stepIdx,score,answered;
+function init(){sc=SCENARIOS[Math.floor(Math.random()*SCENARIOS.length)];stepIdx=0;score=0;answered=false;document.getElementById('scText').textContent=sc.setup;document.getElementById('endBox').classList.remove('show');document.getElementById('scBox').style.display='';document.getElementById('qBox').style.display='';document.getElementById('opts').style.display='';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';renderStep();}
+function renderStep(){answered=false;const s=sc.steps[stepIdx];document.getElementById('qNum').textContent='Q'+(stepIdx+1);document.getElementById('qText').textContent=s.q;document.getElementById('opts').innerHTML=s.opts.map((o,i)=>`<button class="opt" onclick="pick(${i})"><span class="opt-letter">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';buildDots();}
+function buildDots(){document.getElementById('dots').innerHTML=Array.from({length:sc.steps.length},(_,i)=>`<div class="dot ${i<stepIdx?'d':i===stepIdx?'a':''}"></div>`).join('');}
+function pick(i){if(answered)return;answered=true;const s=sc.steps[stepIdx];document.querySelectorAll('.opt').forEach(b=>b.disabled=true);document.querySelectorAll('.opt')[s.ans].classList.add('correct');const fb=document.getElementById('fb');if(i===s.ans){score++;fb.innerHTML=`<strong>✓ Correct!</strong>${s.ok}`;fb.className='fb ok show';}else{document.querySelectorAll('.opt')[i].classList.add('wrong');fb.innerHTML=`<strong>✗ Not quite.</strong>${s.no}`;fb.className='fb no show';}document.getElementById('nextBtn').className='next-btn show';}
+function next(){stepIdx++;if(stepIdx>=sc.steps.length){showEnd();return;}renderStep();}
+function showEnd(){const t=sc.steps.length,pct=Math.round((score/t)*100);document.getElementById('scBox').style.display='none';document.getElementById('qBox').style.display='none';document.getElementById('opts').style.display='none';document.getElementById('fb').className='fb';document.getElementById('nextBtn').className='next-btn';document.getElementById('endBig').textContent=score+'/'+t;document.getElementById('endTitle').textContent=pct===100?'🏆 Sound Ethical Judgment!':pct>=50?'🌟 Good Reasoning!':'📚 Review & Retry';document.getElementById('endSub').textContent='You navigated '+t+' legal/ethical decision steps.';document.getElementById('endBox').classList.add('show');}
+init();
+</script>
+</body>
+</html>

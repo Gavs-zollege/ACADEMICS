@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Educating & Assisting Patients – Week 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#1c1408; --surf:#291f10; --surf2:#352815; --border:#4f3c1f;
+  --orange:#e08838; --orange-lt:#f0aa64; --rust:#c46a2a;
+  --text:#f7ecdc; --muted:#b09572; --danger:#e0585a; --success:#4cb87a; --warn:#e0a83a;
+  --r:12px; --r-lg:16px; --bar:50px; --foot:28px; --prog:3px;
+  --chrome: calc(var(--bar) + var(--foot) + var(--prog));
+}
+html, body { width:100%; height:100%; overflow:hidden; font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); }
+.screen { display:none; position:fixed; inset:0; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+.bar { height:var(--bar); min-height:var(--bar); max-height:var(--bar); display:flex; align-items:center; justify-content:space-between; padding:0 18px; background:var(--surf); border-bottom:1px solid var(--border); flex-shrink:0; }
+.bar-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; }
+.btn-back { background:none; border:1px solid var(--border); color:var(--muted); font-size:11px; font-weight:600; padding:5px 12px; border-radius:8px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.btn-back:hover { border-color:var(--orange); color:var(--orange-lt); }
+.prog-rail { height:var(--prog); min-height:var(--prog); background:var(--border); flex-shrink:0; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--rust),var(--orange)); transition:width .4s ease; width:0%; }
+.zone { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px 18px; overflow:hidden; gap:12px; }
+.foot { height:var(--foot); min-height:var(--foot); display:flex; align-items:center; justify-content:center; font-size:10px; letter-spacing:.06em; color:#332612; background:var(--surf); border-top:1px solid var(--border); flex-shrink:0; }
+
+#home { background: radial-gradient(ellipse 80% 55% at 25% 20%, #3d2e14 0%, var(--bg) 65%); }
+#home .zone { gap:14px; }
+.pill { background:rgba(224,136,56,.15); border:1px solid rgba(224,136,56,.45); color:var(--orange-lt); font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:4px 14px; border-radius:50px; }
+.home-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(20px,4.2vw,38px); font-weight:800; text-align:center; line-height:1.15; }
+.home-title em { color:var(--orange-lt); font-style:normal; }
+.home-sub { font-size:clamp(11px,1.5vw,14px); color:var(--muted); text-align:center; max-width:460px; line-height:1.55; }
+.mode-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:680px; }
+.mode-card { background:var(--surf); border:1.5px solid var(--border); border-radius:var(--r-lg); padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px); cursor:pointer; transition:border-color .2s,background .2s,transform .15s; display:flex; flex-direction:column; gap:6px; }
+.mode-card:hover { border-color:var(--orange); background:var(--surf2); transform:translateY(-2px); }
+.mode-icon { font-size:clamp(20px,3vw,26px); line-height:1; }
+.mode-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(12px,1.6vw,14px); font-weight:700; }
+.mode-desc { font-size:clamp(10px,1.2vw,11px); color:var(--muted); line-height:1.45; }
+.chip { display:inline-block; font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:50px; margin-top:2px; width:fit-content; }
+.chip-orange { background:rgba(224,136,56,.2); color:var(--orange-lt); }
+.chip-gold { background:rgba(224,168,58,.2); color:#f0c068; }
+.chip-green { background:rgba(76,184,122,.2); color:#6fe0a0; }
+.chip-red { background:rgba(224,88,90,.2); color:#f08a8c; }
+
+.btn-primary { background:var(--orange); color:#1c1408; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; padding:11px 32px; border:none; border-radius:10px; cursor:pointer; transition:background .15s,transform .1s; white-space:nowrap; }
+.btn-primary:hover { background:var(--orange-lt); transform:translateY(-1px); }
+.btn-sec { background:var(--surf); border:1.5px solid var(--border); color:var(--text); font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:9px 20px; border-radius:10px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.btn-sec:hover:not(:disabled) { border-color:var(--orange); color:var(--orange-lt); }
+.btn-sec:disabled { opacity:.3; cursor:default; }
+.btn-row { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; }
+
+.quiz-top { display:flex; align-items:center; justify-content:space-between; width:100%; max-width:540px; }
+.quiz-num { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--orange-lt); }
+.streak-row { display:flex; gap:3px; }
+.sdot { width:7px; height:7px; border-radius:50%; background:var(--border); transition:background .25s; }
+.sdot.hit { background:var(--success); } .sdot.miss { background:var(--danger); }
+
+.fw-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:18px 22px; width:100%; max-width:560px; text-align:center; }
+.fw-quote { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(13px,2vw,16px); font-weight:600; line-height:1.6; color:var(--text); }
+.fw-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:560px; }
+.fw-opt { background:var(--surf); border:2px solid var(--border); border-radius:var(--r); padding:12px 10px; font-size:clamp(11px,1.4vw,13px); font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; color:var(--text); cursor:pointer; text-align:center; transition:border-color .12s,background .12s; min-height:48px; display:flex; align-items:center; justify-content:center; }
+.fw-opt:hover:not(.locked) { border-color:var(--orange); background:var(--surf2); }
+.fw-opt.correct { border-color:var(--success); background:rgba(76,184,122,.1); color:var(--success); }
+.fw-opt.wrong { border-color:var(--danger); background:rgba(224,88,90,.1); color:var(--danger); }
+.fw-opt.locked { cursor:default; }
+.fw-fb { font-size:12px; color:var(--muted); text-align:center; min-height:32px; max-width:540px; line-height:1.5; }
+
+.sc-header { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--warn); align-self:flex-start; max-width:600px; width:100%; }
+.sc-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:18px 22px; width:100%; max-width:600px; flex-shrink:1; min-height:0; }
+.sc-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(12px,1.9vw,15px); font-weight:600; line-height:1.85; color:var(--text); }
+.hl { color:var(--orange-lt); background:rgba(224,136,56,.12); padding:1px 5px; border-radius:4px; cursor:pointer; transition:background .12s; display:inline-block; }
+.hl:hover { background:rgba(224,136,56,.24); }
+.hl.popped { color:#6fe0a0; background:rgba(76,184,122,.15); }
+.sc-decode { background:var(--surf2); border:1px solid var(--border); border-radius:var(--r); padding:12px 18px; width:100%; max-width:600px; font-size:12px; color:var(--muted); line-height:1.6; min-height:44px; flex-shrink:0; }
+.sc-decode strong { color:var(--orange-lt); }
+
+.res-wrap { display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; max-width:420px; }
+.ring-wrap { position:relative; width:130px; height:130px; }
+.ring-wrap svg { width:100%; height:100%; }
+.ring-bg { fill:none; stroke:var(--border); stroke-width:10; }
+.ring-fill { fill:none; stroke:var(--orange); stroke-width:10; stroke-linecap:round; stroke-dasharray:339; stroke-dashoffset:339; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+.ring-lbl { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.ring-pct { font-family:'Plus Jakarta Sans',sans-serif; font-size:30px; font-weight:800; color:var(--orange-lt); }
+.ring-sub { font-size:10px; color:var(--muted); }
+.res-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(18px,3vw,24px); font-weight:800; }
+.res-msg { font-size:13px; color:var(--muted); line-height:1.6; max-width:340px; }
+.res-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+</style>
+</head>
+<body>
+
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 3 · Medical Assistant Training</div>
+    <h1 class="home-title">Educating & <em>Assisting Patients</em></h1>
+    <p class="home-sub">Scope of practice, Tell-Show-Do, the 5 Rights & discharge red flags — in four interactive modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startScope()">
+        <div class="mode-icon">✔️</div>
+        <div class="mode-name">Scope Check</div>
+        <div class="mode-desc">Decide if a teaching topic is within the MA\u2019s scope.</div>
+        <div class="chip chip-orange">16 topics</div>
+      </div>
+      <div class="mode-card" onclick="startQuiz()">
+        <div class="mode-icon">🧠</div>
+        <div class="mode-name">Knowledge Quiz</div>
+        <div class="mode-desc">Adult learning, Tell-Show-Do, ADA access & documentation.</div>
+        <div class="chip chip-gold">15 questions</div>
+      </div>
+      <div class="mode-card" onclick="startRights()">
+        <div class="mode-icon">💊</div>
+        <div class="mode-name">5 Rights Match</div>
+        <div class="mode-desc">Match medication teaching phrases to the correct "Right."</div>
+        <div class="chip chip-green">10 phrases</div>
+      </div>
+      <div class="mode-card" onclick="startSC()">
+        <div class="mode-icon">🚪</div>
+        <div class="mode-name">Discharge Red Flags</div>
+        <div class="mode-desc">Tap symptoms to sort: call the office, go to ER, or call 911.</div>
+        <div class="chip chip-red">Case Study inside</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="scope-screen" class="screen">
+  <div class="bar"><span class="bar-title">✔️ Scope Check</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="scope-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="scope-num">Topic 1 of 16</span><div class="streak-row" id="scope-streak"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="scope-item">Topic text</div><div style="font-size:11px;color:var(--muted);margin-top:8px">Can the MA teach this?</div></div>
+    <div class="fw-grid" id="scope-grid" style="grid-template-columns:1fr 1fr; max-width:420px">
+      <button class="fw-opt" data-val="yes" onclick="scopeAnswer(this)">✔ Within MA Scope</button>
+      <button class="fw-opt" data-val="no" onclick="scopeAnswer(this)">✗ Provider Only</button>
+    </div>
+    <div class="fw-fb" id="scope-fb"></div>
+    <button class="btn-primary" id="btn-scopenext" style="display:none" onclick="scopeNext()">Next Topic →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Question 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="quiz-abbr">Question text</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="fw-grid" id="opts-grid" style="grid-template-columns:1fr 1fr"></div>
+    <div class="fw-fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next Question →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="rights-screen" class="screen">
+  <div class="bar"><span class="bar-title">💊 5 Rights Match</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="rights-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="rights-num">Phrase 1 of 10</span><div class="streak-row" id="rights-streak"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="rights-quote">Phrase text</div></div>
+    <div class="fw-grid" id="rights-grid"></div>
+    <div class="fw-fb" id="rights-fb"></div>
+    <button class="btn-primary" id="btn-rightsnext" style="display:none" onclick="rightsNext()">Next Phrase →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">🚪 Discharge Red Flags</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start; padding-top:14px; gap:10px">
+    <div class="sc-header" id="sc-label">Scene 1 of 4</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--orange-lt)">highlighted</span> symptom to see where it belongs.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div>
+      <div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+const SCOPE_ITEMS = [
+  {item:'How and when to take a prescribed medication (per provider order)', can:true, why:'Reinforcing the provider\u2019s existing order is within MA scope.'},
+  {item:'Interpreting lab results for the patient', can:false, why:'Clinical interpretation belongs to the provider.'},
+  {item:'How to use a glucometer or inhaler', can:true, why:'Equipment use instruction is within MA scope.'},
+  {item:'Explaining a new diagnosis to the patient', can:false, why:'Delivering or explaining a diagnosis is the provider\u2019s role.'},
+  {item:'General healthy lifestyle guidance (diet, exercise)', can:true, why:'General wellness education is within MA scope.'},
+  {item:'Counseling on a medication dosage change without an order', can:false, why:'Dosage changes require a provider order — never improvised by the MA.'},
+  {item:'What to expect from an upcoming procedure (logistics, not interpretation)', can:true, why:'Procedural expectations (not clinical interpretation) are within MA scope.'},
+  {item:'Advising on drug interactions or contraindications', can:false, why:'This requires clinical judgment reserved for the provider.'},
+  {item:'How to access the patient portal or request a refill', can:true, why:'Administrative/process education is within MA scope.'},
+  {item:'Reassuring a patient that test results are "normal"', can:false, why:'Only the provider can confirm results are normal after review.'},
+  {item:'When to call the office vs. when to go to the ER', can:true, why:'This is standard discharge education within MA scope.'},
+  {item:'Modifying or overriding a provider\u2019s instructions', can:false, why:'The MA cannot change provider instructions under any circumstance.'},
+  {item:'Preventive screenings that are due and how to schedule them', can:true, why:'Scheduling and reminders for preventive care are within MA scope.'},
+  {item:'Offering a clinical opinion on whether a symptom is serious', can:false, why:'Clinical judgment about symptom severity belongs to the provider.'},
+  {item:'Appointment preparation instructions (NPO status, bring insurance card)', can:true, why:'Logistical prep instructions are within MA scope.'},
+  {item:'Providing education on a condition the provider has not yet addressed', can:false, why:'The MA cannot introduce clinical topics the provider hasn\u2019t covered with the patient.'},
+];
+
+const QUIZ = [
+  {q:'What should you say when a patient asks a question beyond your scope?', ctx:'Scope of Practice', correct:'"That\u2019s a great question for the doctor — I\u2019ll make sure they address it today."', wrongs:['"I don\u2019t know."','"That\u2019s probably nothing to worry about."','"I think it means..." (offer your best guess)']},
+  {q:'According to andragogy, why must adults understand before they engage in learning?', ctx:'Adult Learning Theory', correct:'Adults need to know "why" before they\u2019re ready to learn', wrongs:['Adults learn passively, like children','Adults prefer not to be asked questions','Adults retain information regardless of relevance']},
+  {q:'What retention rate does "Telling" alone produce?', ctx:'Tell-Show-Do', correct:'Less than 10%', wrongs:['25%','50%','75%']},
+  {q:'What retention rate does "Doing" (return demonstration) produce?', ctx:'Tell-Show-Do', correct:'Up to 90%', wrongs:['20%','40%','60%']},
+  {q:'What should you NEVER accept as confirmation of understanding?', ctx:'Tell-Show-Do', correct:'A nod or "I understand"', wrongs:['A return demonstration','A teach-back explanation','Written confirmation']},
+  {q:'What is the correct non-judgmental way to assess health literacy?', ctx:'Health Literacy', correct:'Watch for behavioral clues and use universal precautions', wrongs:['Directly ask "Can you read?"','Assume literacy based on education level','Skip literacy assessment entirely']},
+  {q:'What are the "5 Rights" of medication education?', ctx:'Medication Education', correct:'Drug, Dose, Time, Route, Education', wrongs:['Drug, Dose, Doctor, Date, Documentation','Right patient, right drug, right time, right route, right reason','Name, Strength, Frequency, Cost, Storage']},
+  {q:'What should every after-visit summary include regarding medications?', ctx:'Discharge Instructions', correct:'Full current list with changes highlighted — new, stopped, changed', wrongs:['Only new medications','A general statement that medications were discussed','Just the prescription numbers']},
+  {q:'When should a follow-up appointment be booked?', ctx:'Discharge Instructions', correct:'Before the patient leaves the office', wrongs:['The patient should call to book it themselves','Within a week of discharge','Only if the patient requests one']},
+  {q:'Under Title VI of the Civil Rights Act, what must federally funded providers do for LEP patients?', ctx:'ADA & Language Access', correct:'Provide professional interpreters for language access', wrongs:['Provide written English materials only','Rely on bilingual family members','Offer language access only if requested in writing']},
+  {q:'What is a "warm handoff" in referral assistance?', ctx:'Community Resources', correct:'Making the call with the patient present or pre-filling their referral info', wrongs:['Giving the patient a phone number to call later','Emailing the referral after the visit','Mentioning the referral verbally only']},
+  {q:'Why is "Patient educated" considered poor documentation?', ctx:'Documentation', correct:'It doesn\u2019t specify topic, method, or the patient\u2019s response', wrongs:['It\u2019s too long for the chart','It uses too much medical terminology','It should be written in the patient\u2019s own words instead']},
+  {q:'What must never be done with patient education documentation?', ctx:'Documentation', correct:'Pre-documenting or back-documenting education that hasn\u2019t happened', wrongs:['Documenting incomplete sessions honestly','Including the patient\u2019s exact teach-back words','Noting materials given to the patient']},
+  {q:'Why should a family member never serve as a medical interpreter for patient education?', ctx:'ADA & Language Access', correct:'Power dynamics, accuracy, and privacy concerns', wrongs:['Family members are usually too busy','It costs more than a professional interpreter','It takes too long to involve a family member']},
+  {q:'What is the FAST acronym used for in discharge education?', ctx:'Discharge Red Flags', correct:'Stroke symptoms: Face drooping, Arm weakness, Speech difficulty, Time to call', wrongs:['Steps for medication administration','A fall-risk assessment tool','A documentation checklist']},
+];
+
+const RIGHTS_ITEMS = [
+  {quote:'"This is metformin. It helps your body use insulin more effectively."', correct:'Right Drug', wrongs:['Right Dose','Right Time','Right Route']},
+  {quote:'"You take 500mg — that\u2019s one tablet. Never double up if you miss a dose."', correct:'Right Dose', wrongs:['Right Drug','Right Route','Right Education']},
+  {quote:'"Take it twice a day — with breakfast and dinner."', correct:'Right Time', wrongs:['Right Dose','Right Route','Right Drug']},
+  {quote:'"Swallow this tablet whole with a full glass of water — don\u2019t crush it."', correct:'Right Route', wrongs:['Right Time','Right Drug','Right Dose']},
+  {quote:'"Common side effects are nausea and diarrhea — call us if you have severe stomach pain."', correct:'Right Education', wrongs:['Right Drug','Right Dose','Right Time']},
+  {quote:'"This lowers your blood pressure to protect your heart and kidneys."', correct:'Right Drug', wrongs:['Right Route','Right Time','Right Dose']},
+  {quote:'"One tablet every morning."', correct:'Right Time', wrongs:['Right Dose','Right Drug','Right Route']},
+  {quote:'"Some people get a dry cough — if it bothers you, call us, don\u2019t just stop taking it."', correct:'Right Education', wrongs:['Right Dose','Right Drug','Right Time']},
+  {quote:'"You inject this in your outer thigh — never in a vein."', correct:'Right Route', wrongs:['Right Drug','Right Education','Right Dose']},
+  {quote:'"Order a refill when you have 7 days left — never wait until empty."', correct:'Right Education (adherence strategy)', wrongs:['Right Dose','Right Drug','Right Route']},
+];
+
+const SCENARIOS = [
+  { label:'🤒 Fever and Wound Symptoms — Scene 1 of 4', tokens:[
+    {t:'A discharged patient is told to watch for: '},
+    {a:'fever over 101°F', d:'📞 Call the office — a fever flag, not an ER-level emergency unless combined with other red flags.'},
+    {t:', '},
+    {a:'wound redness or swelling', d:'📞 Call the office — early infection signs that need provider evaluation, not emergent.'},
+    {t:', and '},
+    {a:'worsening pain not controlled by medication', d:'📞 Call the office — escalating symptom that needs reassessment.'},
+  ]},
+  { label:'🚨 Cardiac & Respiratory Symptoms — Scene 2 of 4', tokens:[
+    {t:'These symptoms after discharge mean: '},
+    {a:'chest pain', d:'🏥 Go to the ER — a classic emergency symptom requiring immediate evaluation.'},
+    {t:', '},
+    {a:'difficulty breathing', d:'🏥 Go to the ER — respiratory distress is an emergency-level symptom.'},
+    {t:', and '},
+    {a:'sudden severe headache', d:'🏥 Go to the ER — can indicate a serious neurological event requiring urgent imaging/evaluation.'},
+  ]},
+  { label:'☎️ Call 911 Now — Scene 3 of 4', tokens:[
+    {t:'These symptoms mean call 911 immediately: '},
+    {a:'unconscious or not breathing', d:'☎️ Call 911 — life-threatening emergency requiring immediate EMS response.'},
+    {t:', '},
+    {a:'choking', d:'☎️ Call 911 — airway emergency requiring immediate intervention.'},
+    {t:', '},
+    {a:'severe allergic reaction', d:'☎️ Call 911 — anaphylaxis can progress rapidly and is life-threatening.'},
+    {t:', and signs of stroke ('},
+    {a:'Face drooping, Arm weakness, Speech difficulty — Time to call', d:'☎️ Call 911 — the FAST acronym signals possible stroke, a time-critical emergency.'},
+    {t:').'},
+  ]},
+  { label:'💊 Medication Adherence Education — Scene 4 of 4', tokens:[
+    {t:'During discharge, the MA: '},
+    {a:'hands over the AVS and says "call if you have questions" without walking through it', d:'❌ Wrong: discharge instructions must be walked through page by page, not just handed over.'},
+    {t:'. Instead, the MA: '},
+    {a:'sits down, summarizes the visit, and performs teach-back on the critical warning signs', d:'✔ Correct: this is the proper step-by-step discharge process — sit, summarize, walk through, teach-back, confirm follow-up.'},
+  ]},
+];
+
+const $ = id => document.getElementById(id);
+function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+function goHome() { show('home'); }
+function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+let currentMode = '';
+
+let scopePool=[], scopeIdx=0, scopeScore=0, scopeHist=[];
+function startScope() { currentMode='scope'; scopePool=shuffle(SCOPE_ITEMS); scopeIdx=0; scopeScore=0; scopeHist=[]; show('scope-screen'); renderScope(); }
+function renderScope() {
+  const it = scopePool[scopeIdx];
+  $('scope-item').textContent = it.item;
+  $('scope-num').textContent = `Topic ${scopeIdx+1} of ${scopePool.length}`;
+  $('scope-prog').style.width = `${(scopeIdx/scopePool.length)*100}%`;
+  $('scope-fb').textContent = '';
+  $('btn-scopenext').style.display = 'none';
+  $('scope-streak').innerHTML = scopeHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  document.querySelectorAll('#scope-grid .fw-opt').forEach(b=>b.classList.remove('correct','wrong','locked'));
+}
+function scopeAnswer(btn) {
+  const chosen = btn.dataset.val === 'yes';
+  const it = scopePool[scopeIdx];
+  document.querySelectorAll('#scope-grid .fw-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === it.can;
+  if (ok) { btn.classList.add('correct'); scopeScore++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('#scope-grid .fw-opt').forEach(b=>{ if((b.dataset.val==='yes')===it.can) b.classList.add('correct'); }); }
+  $('scope-fb').innerHTML = (ok?'✓ Correct. ':'✗ Not quite. ') + it.why;
+  scopeHist.push(ok);
+  $('btn-scopenext').style.display='inline-block';
+}
+function scopeNext() { scopeIdx++; if(scopeIdx>=scopePool.length) showResults('scope',scopeScore,scopePool.length); else renderScope(); }
+
+let qPool=[], qIdx=0, qScore=0, qHist=[];
+function startQuiz() { currentMode='quiz'; qPool=shuffle(QUIZ); qIdx=0; qScore=0; qHist=[]; show('quiz-screen'); renderQuiz(); }
+function renderQuiz() {
+  const q = qPool[qIdx];
+  const opts = shuffle([q.correct, ...q.wrongs]);
+  $('quiz-abbr').textContent = q.q;
+  $('quiz-ctx').textContent = q.ctx;
+  $('quiz-num').textContent = `Question ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width = `${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent = '';
+  $('btn-qnext').style.display = 'none';
+  $('streak-row').innerHTML = qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="fw-opt" data-val="${safe}" onclick="quizAnswer(this)" style="text-align:left;justify-content:flex-start;min-height:60px">${safe}</button>`;
+  }).join('');
+}
+function quizAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const correct = qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .fw-opt').forEach(b=>b.classList.add('locked'));
+  if (chosen===correct) { btn.classList.add('correct'); qScore++; $('quiz-fb').innerHTML='<span style="color:var(--success)">✓ Correct!</span>'; }
+  else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('#opts-grid .fw-opt').forEach(b=>{ if(b.dataset.val===correct) b.classList.add('correct'); });
+    $('quiz-fb').innerHTML = `<span style="color:var(--danger)">✗ Answer: ${correct}</span>`;
+  }
+  qHist.push(chosen===correct);
+  $('btn-qnext').style.display='inline-block';
+}
+function quizNext() { qIdx++; if(qIdx>=qPool.length) showResults('quiz',qScore,qPool.length); else renderQuiz(); }
+
+let rPool=[], rIdx=0, rScore=0, rHist=[];
+function startRights() { currentMode='rights'; rPool=shuffle(RIGHTS_ITEMS); rIdx=0; rScore=0; rHist=[]; show('rights-screen'); renderRights(); }
+function renderRights() {
+  const it = rPool[rIdx];
+  const opts = shuffle([it.correct, ...it.wrongs]);
+  $('rights-quote').textContent = it.quote;
+  $('rights-num').textContent = `Phrase ${rIdx+1} of ${rPool.length}`;
+  $('rights-prog').style.width = `${(rIdx/rPool.length)*100}%`;
+  $('rights-fb').textContent = '';
+  $('btn-rightsnext').style.display = 'none';
+  $('rights-streak').innerHTML = rHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('rights-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="fw-opt" data-val="${safe}" onclick="rightsAnswer(this)">${safe}</button>`;
+  }).join('');
+}
+function rightsAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const it = rPool[rIdx];
+  document.querySelectorAll('#rights-grid .fw-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === it.correct;
+  if (ok) { btn.classList.add('correct'); rScore++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('#rights-grid .fw-opt').forEach(b=>{ if(b.dataset.val===it.correct) b.classList.add('correct'); }); }
+  $('rights-fb').innerHTML = ok ? '<span style="color:var(--success)">✓ Correct!</span>' : `<span style="color:var(--danger)">✗ Answer: ${it.correct}</span>`;
+  rHist.push(ok);
+  $('btn-rightsnext').style.display='inline-block';
+}
+function rightsNext() { rIdx++; if(rIdx>=rPool.length) showResults('rights',rScore,rPool.length); else renderRights(); }
+
+let scIdx=0;
+function startSC() { currentMode='scenario'; scIdx=0; show('sc-screen'); renderSC(); }
+function renderSC() {
+  const sc = SCENARIOS[scIdx];
+  $('sc-label').textContent = sc.label;
+  $('sc-prog').style.width = `${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML = '👆 Tap any <span style="color:var(--orange-lt)">highlighted</span> symptom to see where it belongs.';
+  $('sc-text').innerHTML = sc.tokens.map(tok=>{
+    if (tok.a) { const safe = tok.d.replace(/"/g,'&quot;'); return `<span class="hl" data-abbr="${tok.a}" data-def="${safe}" onclick="scDecode(this)">${tok.a}</span>`; }
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled = scIdx===0;
+  $('sc-next').disabled = scIdx===SCENARIOS.length-1;
+}
+function scDecode(el) { el.classList.toggle('popped'); $('sc-decode').innerHTML = el.dataset.def; }
+function scPrev() { if(scIdx>0){scIdx--;renderSC();} }
+function scNext() { if(scIdx<SCENARIOS.length-1){scIdx++;renderSC();} }
+
+function showResults(mode, score, total) {
+  currentMode = mode; show('results-screen');
+  const pct = Math.round((score/total)*100);
+  const C = 2*Math.PI*54;
+  const offset = C - (Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray = C;
+  $('ring-fill').style.strokeDashoffset = C;
+  $('ring-pct').textContent = pct+'%';
+  $('ring-sub').textContent = `${score} / ${total}`;
+  setTimeout(()=>{ $('ring-fill').style.strokeDashoffset = offset; }, 80);
+  const title = pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  const msg = `You scored ${score} / ${total} (${pct}%). ${pct>=80?'You know patient education inside and out!':'Review the ones you missed and try again.'}`;
+  $('res-title').textContent = title;
+  $('res-msg').textContent = msg;
+}
+function retryMode() {
+  if (currentMode==='quiz') startQuiz();
+  else if (currentMode==='scope') startScope();
+  else if (currentMode==='rights') startRights();
+  else if (currentMode==='scenario') startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

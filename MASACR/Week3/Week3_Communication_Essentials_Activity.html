@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communication Essentials – Week 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0c1a17; --surf:#142822; --surf2:#1a342b; --border:#27483c;
+  --green:#3fae7e; --green-lt:#5fd4a0; --jade:#2e8f6d;
+  --text:#e7f3ec; --muted:#7fa897; --danger:#e0585a; --success:#4cb87a; --warn:#e0a83a;
+  --r:12px; --r-lg:16px; --bar:50px; --foot:28px; --prog:3px;
+  --chrome: calc(var(--bar) + var(--foot) + var(--prog));
+}
+html, body { width:100%; height:100%; overflow:hidden; font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); }
+.screen { display:none; position:fixed; inset:0; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+.bar { height:var(--bar); min-height:var(--bar); max-height:var(--bar); display:flex; align-items:center; justify-content:space-between; padding:0 18px; background:var(--surf); border-bottom:1px solid var(--border); flex-shrink:0; }
+.bar-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; }
+.btn-back { background:none; border:1px solid var(--border); color:var(--muted); font-size:11px; font-weight:600; padding:5px 12px; border-radius:8px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.btn-back:hover { border-color:var(--green); color:var(--green-lt); }
+.prog-rail { height:var(--prog); min-height:var(--prog); background:var(--border); flex-shrink:0; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--jade),var(--green)); transition:width .4s ease; width:0%; }
+.zone { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px 18px; overflow:hidden; gap:12px; }
+.foot { height:var(--foot); min-height:var(--foot); display:flex; align-items:center; justify-content:center; font-size:10px; letter-spacing:.06em; color:#1c3329; background:var(--surf); border-top:1px solid var(--border); flex-shrink:0; }
+
+#home { background: radial-gradient(ellipse 80% 55% at 25% 20%, #1d3d31 0%, var(--bg) 65%); }
+#home .zone { gap:14px; }
+.pill { background:rgba(63,174,126,.15); border:1px solid rgba(63,174,126,.45); color:var(--green-lt); font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:4px 14px; border-radius:50px; }
+.home-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(20px,4.2vw,38px); font-weight:800; text-align:center; line-height:1.15; }
+.home-title em { color:var(--green-lt); font-style:normal; }
+.home-sub { font-size:clamp(11px,1.5vw,14px); color:var(--muted); text-align:center; max-width:460px; line-height:1.55; }
+.mode-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:680px; }
+.mode-card { background:var(--surf); border:1.5px solid var(--border); border-radius:var(--r-lg); padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px); cursor:pointer; transition:border-color .2s,background .2s,transform .15s; display:flex; flex-direction:column; gap:6px; }
+.mode-card:hover { border-color:var(--green); background:var(--surf2); transform:translateY(-2px); }
+.mode-icon { font-size:clamp(20px,3vw,26px); line-height:1; }
+.mode-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(12px,1.6vw,14px); font-weight:700; }
+.mode-desc { font-size:clamp(10px,1.2vw,11px); color:var(--muted); line-height:1.45; }
+.chip { display:inline-block; font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:50px; margin-top:2px; width:fit-content; }
+.chip-green { background:rgba(63,174,126,.2); color:var(--green-lt); }
+.chip-gold { background:rgba(224,168,58,.2); color:#f0c068; }
+.chip-teal { background:rgba(42,157,143,.2); color:#4fc4b5; }
+.chip-red { background:rgba(224,88,90,.2); color:#f08a8c; }
+
+.btn-primary { background:var(--green); color:#0c1a17; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; padding:11px 32px; border:none; border-radius:10px; cursor:pointer; transition:background .15s,transform .1s; white-space:nowrap; }
+.btn-primary:hover { background:var(--green-lt); transform:translateY(-1px); }
+.btn-sec { background:var(--surf); border:1.5px solid var(--border); color:var(--text); font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:9px 20px; border-radius:10px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.btn-sec:hover:not(:disabled) { border-color:var(--green); color:var(--green-lt); }
+.btn-sec:disabled { opacity:.3; cursor:default; }
+.btn-row { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; }
+
+.quiz-top { display:flex; align-items:center; justify-content:space-between; width:100%; max-width:540px; }
+.quiz-num { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--green-lt); }
+.streak-row { display:flex; gap:3px; }
+.sdot { width:7px; height:7px; border-radius:50%; background:var(--border); transition:background .25s; }
+.sdot.hit { background:var(--success); } .sdot.miss { background:var(--danger); }
+
+.fw-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:18px 22px; width:100%; max-width:560px; text-align:center; }
+.fw-quote { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(13px,2vw,16px); font-weight:600; line-height:1.6; color:var(--text); }
+.fw-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:560px; }
+.fw-opt { background:var(--surf); border:2px solid var(--border); border-radius:var(--r); padding:12px 10px; font-size:clamp(11px,1.4vw,13px); font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; color:var(--text); cursor:pointer; text-align:center; transition:border-color .12s,background .12s; min-height:48px; display:flex; align-items:center; justify-content:center; }
+.fw-opt:hover:not(.locked) { border-color:var(--green); background:var(--surf2); }
+.fw-opt.correct { border-color:var(--success); background:rgba(76,184,122,.1); color:var(--success); }
+.fw-opt.wrong { border-color:var(--danger); background:rgba(224,88,90,.1); color:var(--danger); }
+.fw-opt.locked { cursor:default; }
+.fw-fb { font-size:12px; color:var(--muted); text-align:center; min-height:32px; max-width:540px; line-height:1.5; }
+
+/* PLAIN LANGUAGE TRANSLATOR */
+.pl-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:22px 26px; width:100%; max-width:540px; text-align:center; }
+.pl-term { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(20px,4.5vw,30px); font-weight:800; color:var(--green-lt); line-height:1.3; }
+.pl-sub { font-size:11px; color:var(--muted); margin-top:8px; }
+.pl-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:480px; }
+.pl-opt { border-radius:var(--r-lg); padding:14px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; border:2px solid var(--border); background:var(--surf); color:var(--text); }
+.pl-opt:hover:not(.locked) { border-color:var(--green); background:var(--surf2); }
+.pl-opt.correct { background:rgba(76,184,122,.12); border-color:var(--success); color:var(--success); }
+.pl-opt.wrong { background:rgba(224,88,90,.12); border-color:var(--danger); color:var(--danger); }
+.pl-opt.locked { cursor:default; }
+.pl-fb { font-size:12px; color:var(--muted); text-align:center; min-height:24px; max-width:480px; }
+
+.sc-header { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--warn); align-self:flex-start; max-width:600px; width:100%; }
+.sc-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:18px 22px; width:100%; max-width:600px; flex-shrink:1; min-height:0; }
+.sc-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(12px,1.9vw,15px); font-weight:600; line-height:1.85; color:var(--text); }
+.hl { color:var(--green-lt); background:rgba(63,174,126,.12); padding:1px 5px; border-radius:4px; cursor:pointer; transition:background .12s; display:inline-block; }
+.hl:hover { background:rgba(63,174,126,.24); }
+.hl.popped { color:#4fc4b5; background:rgba(42,157,143,.18); }
+.sc-decode { background:var(--surf2); border:1px solid var(--border); border-radius:var(--r); padding:12px 18px; width:100%; max-width:600px; font-size:12px; color:var(--muted); line-height:1.6; min-height:44px; flex-shrink:0; }
+.sc-decode strong { color:var(--green-lt); }
+
+.res-wrap { display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; max-width:420px; }
+.ring-wrap { position:relative; width:130px; height:130px; }
+.ring-wrap svg { width:100%; height:100%; }
+.ring-bg { fill:none; stroke:var(--border); stroke-width:10; }
+.ring-fill { fill:none; stroke:var(--green); stroke-width:10; stroke-linecap:round; stroke-dasharray:339; stroke-dashoffset:339; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+.ring-lbl { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.ring-pct { font-family:'Plus Jakarta Sans',sans-serif; font-size:30px; font-weight:800; color:var(--green-lt); }
+.ring-sub { font-size:10px; color:var(--muted); }
+.res-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(18px,3vw,24px); font-weight:800; }
+.res-msg { font-size:13px; color:var(--muted); line-height:1.6; max-width:340px; }
+.res-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+</style>
+</head>
+<body>
+
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 3 · Medical Assistant Training</div>
+    <h1 class="home-title">Communication <em>Essentials</em></h1>
+    <p class="home-sub">SOLER, plain language, therapeutic communication & SBAR — in four interactive modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startFW()">
+        <div class="mode-icon">👂</div>
+        <div class="mode-name">SOLER & Techniques</div>
+        <div class="mode-desc">Match listening behaviors to SOLER and therapeutic technique.</div>
+        <div class="chip chip-green">12 items</div>
+      </div>
+      <div class="mode-card" onclick="startQuiz()">
+        <div class="mode-icon">🧠</div>
+        <div class="mode-name">Knowledge Quiz</div>
+        <div class="mode-desc">Health literacy, interpreters, difficult conversations & SBAR.</div>
+        <div class="chip chip-gold">15 questions</div>
+      </div>
+      <div class="mode-card" onclick="startPL()">
+        <div class="mode-icon">💬</div>
+        <div class="mode-name">Plain Language Translator</div>
+        <div class="mode-desc">Convert medical jargon into language patients understand.</div>
+        <div class="chip chip-teal">12 terms</div>
+      </div>
+      <div class="mode-card" onclick="startSC()">
+        <div class="mode-icon">📋</div>
+        <div class="mode-name">SBAR Scenes</div>
+        <div class="mode-desc">Tap real handoff lines to see if they follow SBAR correctly.</div>
+        <div class="chip chip-red">Case Study inside</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="fw-screen" class="screen">
+  <div class="bar"><span class="bar-title">👂 SOLER & Techniques</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="fw-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="fw-num">Item 1 of 12</span><div class="streak-row" id="fw-streak"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="fw-quote">Item text</div></div>
+    <div class="fw-grid" id="fw-grid"></div>
+    <div class="fw-fb" id="fw-fb"></div>
+    <button class="btn-primary" id="btn-fwnext" style="display:none" onclick="fwNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Question 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="quiz-abbr">Question text</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="fw-grid" id="opts-grid" style="grid-template-columns:1fr 1fr"></div>
+    <div class="fw-fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next Question →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="pl-screen" class="screen">
+  <div class="bar"><span class="bar-title">💬 Plain Language Translator</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="pl-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="pl-num">Term 1 of 12</span><div class="streak-row" id="pl-streak"></div></div>
+    <div class="pl-card"><div class="pl-term" id="pl-term">Medical Term</div><div class="pl-sub">How would you say this to a patient?</div></div>
+    <div class="pl-grid" id="pl-grid"></div>
+    <div class="pl-fb" id="pl-fb"></div>
+    <button class="btn-primary" id="btn-plnext" style="display:none" onclick="plNext()">Next Term →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">📋 SBAR Scenes</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start; padding-top:14px; gap:10px">
+    <div class="sc-header" id="sc-label">Scene 1 of 5</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--green-lt)">highlighted</span> line to see the breakdown.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div>
+      <div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+const FW_ITEMS = [
+  {quote:'Position your body directly toward the patient', correct:'S — Squarely face', wrongs:['O — Open posture','L — Lean in','E — Eye contact']},
+  {quote:'Arms uncrossed, relaxed', correct:'O — Open posture', wrongs:['S — Squarely face','R — Relax','L — Lean in']},
+  {quote:'A slight forward lean shows engagement', correct:'L — Lean slightly in', wrongs:['S — Squarely face','E — Eye contact','R — Relax']},
+  {quote:'Natural, comfortable contact — not a stare, not avoidance', correct:'E — Eye contact', wrongs:['O — Open posture','L — Lean in','R — Relax']},
+  {quote:'Stay calm and unhurried — your anxiety becomes theirs', correct:'R — Relax', wrongs:['S — Squarely face','O — Open posture','E — Eye contact']},
+  {quote:'"What brings you in today?"', correct:'Open-ended question', wrongs:['Reflection','Clarification','Summarizing']},
+  {quote:'"You\u2019ve had the pain three days?"', correct:'Reflection', wrongs:['Clarification','Empathy statement','Open-ended question']},
+  {quote:'"Can you tell me more about what you mean by dizzy?"', correct:'Clarification', wrongs:['Reflection','Silence','Summarizing']},
+  {quote:'"So what I\u2019m hearing is… am I understanding correctly?"', correct:'Summarizing', wrongs:['Reflection','Open-ended question','Empathy statement']},
+  {quote:'Pausing after an emotional disclosure instead of filling the space', correct:'Silence', wrongs:['Reflection','Clarification','Open-ended question']},
+  {quote:'"I\u2019m sure everything will be fine."', correct:'Barrier: False reassurance', wrongs:['Empathy statement','Reflection','Silence']},
+  {quote:'Asking "Why did you stop taking it?"', correct:'Barrier: accusatory "why" — ask "what led to" instead', wrongs:['Open-ended question','Clarification','Reflection']},
+];
+
+const QUIZ = [
+  {q:'What percentage of communication is estimated to be nonverbal?', ctx:'Communication Channels', correct:'Up to 55%', wrongs:['10%','25%','90%']},
+  {q:'What reading level should patient education materials target?', ctx:'Health Literacy', correct:'5th–6th grade', wrongs:['8th grade','10th grade','12th grade']},
+  {q:'What percentage of US adults have basic or below-basic health literacy?', ctx:'Health Literacy', correct:'36%', wrongs:['10%','60%','85%']},
+  {q:'What is the correct teach-back phrasing?', ctx:'Teach-Back', correct:'"Can you tell me what you\u2019ll do when you get home?"', wrongs:['"Do you understand?"','"Any questions?"','"Does that make sense?"']},
+  {q:'Who should NEVER be used as a medical interpreter?', ctx:'Interpreters', correct:'A family member, especially a child', wrongs:['A certified phone interpreter','A qualified video interpreter','An in-person medical interpreter']},
+  {q:'When speaking to a patient through an interpreter, you should —', ctx:'Interpreters', correct:'Speak directly to the patient, not the interpreter', wrongs:['Speak louder than normal','Speak only to the interpreter','Use longer, more detailed sentences']},
+  {q:'What is the MA\u2019s role when difficult news is being delivered?', ctx:'Difficult Conversations', correct:'Support the provider and patient — never share diagnoses independently', wrongs:['Deliver the news if the provider is busy','Reassure the patient the news isn\u2019t serious','Explain what the diagnosis means clinically']},
+  {q:'"At least it\u2019s treatable" is an example of —', ctx:'Difficult Conversations', correct:'Minimizing language that can feel dismissive', wrongs:['An appropriate empathy statement','Correct use of silence','A proper teach-back question']},
+  {q:'What does the "S" in SBAR stand for?', ctx:'SBAR', correct:'Situation', wrongs:['Symptoms','Severity','Summary']},
+  {q:'What does the "R" in SBAR stand for?', ctx:'SBAR', correct:'Recommendation', wrongs:['Reflection','Reaction','Review']},
+  {q:'"You want 4mg of ondansetron IM — confirming" is an example of —', ctx:'Team Communication', correct:'Closed-loop communication', wrongs:['CUS words','SOLER','Teach-back']},
+  {q:'"I\u2019m Concerned. I\u2019m Uncomfortable. This is a Safety issue." is an example of —', ctx:'Team Communication', correct:'CUS words — escalation language', wrongs:['SBAR','Closed-loop communication','Reflection']},
+  {q:'What should you do if "non-compliant" appears in a chart but a language barrier is suspected?', ctx:'Communication Breakdown', correct:'Flag it to the provider and suggest neutral, objective language', wrongs:['Leave it — it\u2019s the provider\u2019s documentation','Delete the entry','Confront the patient about their compliance']},
+  {q:'Which of these is an appropriate way to document a patient\u2019s exact words?', ctx:'Documentation', correct:'Quote them directly: "I drink a little" + note for provider to clarify', wrongs:['Paraphrase into clinical terms','Summarize as "social drinker"','Omit it since it\u2019s subjective']},
+  {q:'A patient nods after provider instructions but looks confused. You should —', ctx:'Communication Breakdown', correct:'Step in after the provider leaves and ask a teach-back question', wrongs:['Assume they understood since they nodded','Interrupt the provider mid-explanation','Document "patient understood"']},
+];
+
+const PL_ITEMS = [
+  {term:'Hypertension', correct:'High blood pressure', wrongs:['Heart attack','Swelling','Shortness of breath']},
+  {term:'Myocardial Infarction', correct:'Heart attack', wrongs:['High blood pressure','Stroke','Irregular heartbeat']},
+  {term:'Void / Micturate', correct:'Urinate / pee', wrongs:['Have a bowel movement','Vomit','Sweat']},
+  {term:'NPO', correct:'Nothing to eat or drink', wrongs:['No pain observed','Take with food','Normal physical output']},
+  {term:'Edema', correct:'Swelling', wrongs:['Bruising','Rash','Numbness']},
+  {term:'Dyspnea', correct:'Shortness of breath / hard to breathe', wrongs:['Chest pain','Dizziness','Coughing']},
+  {term:'Prognosis', correct:'What to expect / outlook', wrongs:['The diagnosis itself','The treatment plan','The test results']},
+  {term:'Tachycardia', correct:'Fast heart rate', wrongs:['Slow heart rate','High blood pressure','Irregular breathing']},
+  {term:'Hematuria', correct:'Blood in the urine', wrongs:['Blood in the stool','Low blood count','High blood sugar']},
+  {term:'Syncope', correct:'Fainting', wrongs:['Seizure','Dizziness only','Confusion']},
+  {term:'Pruritus', correct:'Itching', wrongs:['Burning','Numbness','Swelling']},
+  {term:'Lethargic', correct:'Very tired / low energy', wrongs:['In pain','Confused','Nauseous']},
+];
+
+const SCENARIOS = [
+  { label:'📋 Chest Discomfort Handoff — Scene 1 of 4', tokens:[
+    {t:'An MA tells the provider: '},
+    {a:'"Room 4 patient doesn\u2019t look great, you might want to check on her."', d:'❌ Weak: vague, no structure, no actionable data — does not follow SBAR.'},
+    {t:' OR the MA says: '},
+    {a:'"Mrs. Chen in Room 4 is reporting chest tightness that started 10 minutes ago. She\u2019s a 62-year-old with hypertension and hyperlipidemia. Her BP is 178/98, HR 92, and she appears diaphoretic and anxious. I think you need to see her now."', d:'✔ Correct: complete SBAR — Situation, Background, Assessment, Recommendation, in order.'},
+  ]},
+  { label:'🔄 Verbal Order Confirmation — Scene 2 of 4', tokens:[
+    {t:'A provider gives a verbal medication order. The MA responds: '},
+    {a:'"Okay, got it."', d:'❌ Weak: no closed-loop confirmation — the order is not repeated back for verification.'},
+    {t:' OR the MA says: '},
+    {a:'"You want 4mg of ondansetron IM — confirming."', d:'✔ Correct: closed-loop communication — repeats the exact order back for the provider to acknowledge.'},
+  ]},
+  { label:'⚡ Speaking Up About a Concern — Scene 3 of 4', tokens:[
+    {t:'An MA notices a dosage that seems unusually high. The MA: '},
+    {a:'says nothing, assuming the provider knows best', d:'❌ Wrong: staying silent on a safety concern can allow a preventable error to occur.'},
+    {t:' OR the MA says: '},
+    {a:'"I\u2019m concerned about this dose — I\u2019m uncomfortable, and I want to flag this as a safety issue before we proceed."', d:'✔ Correct: CUS words — Concerned, Uncomfortable, Safety issue — clear escalation language that demands a response.'},
+  ]},
+  { label:'📝 Documentation After the Visit — Scene 4 of 4', tokens:[
+    {t:'After a tense visit, the MA documents: '},
+    {a:'"Patient seemed difficult and possibly drug-seeking."', d:'❌ Wrong: a subjective judgment/label, not an objective clinical observation — creates liability.'},
+    {t:' OR the MA documents: '},
+    {a:'"Patient reports 9/10 chest pain, diaphoretic. Provider notified at 2:14 PM."', d:'✔ Correct: objective, factual, flags the finding without interpreting it — exactly what good documentation should do.'},
+  ]},
+];
+
+const $ = id => document.getElementById(id);
+function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+function goHome() { show('home'); }
+function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+let currentMode = '';
+
+let fwPool=[], fwIdx=0, fwScore=0, fwHist=[];
+function startFW() { currentMode='fw'; fwPool=shuffle(FW_ITEMS); fwIdx=0; fwScore=0; fwHist=[]; show('fw-screen'); renderFW(); }
+function renderFW() {
+  const it = fwPool[fwIdx];
+  const opts = shuffle([it.correct, ...it.wrongs]);
+  $('fw-quote').textContent = it.quote;
+  $('fw-num').textContent = `Item ${fwIdx+1} of ${fwPool.length}`;
+  $('fw-prog').style.width = `${(fwIdx/fwPool.length)*100}%`;
+  $('fw-fb').textContent = '';
+  $('btn-fwnext').style.display = 'none';
+  $('fw-streak').innerHTML = fwHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('fw-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="fw-opt" data-val="${safe}" onclick="fwAnswer(this)">${safe}</button>`;
+  }).join('');
+}
+function fwAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const it = fwPool[fwIdx];
+  document.querySelectorAll('.fw-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === it.correct;
+  if (ok) { btn.classList.add('correct'); fwScore++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('.fw-opt').forEach(b=>{ if(b.dataset.val===it.correct) b.classList.add('correct'); }); }
+  $('fw-fb').innerHTML = ok ? '<span style="color:var(--success)">✓ Correct!</span>' : `<span style="color:var(--danger)">✗ Answer: ${it.correct}</span>`;
+  fwHist.push(ok);
+  $('btn-fwnext').style.display='inline-block';
+}
+function fwNext() { fwIdx++; if(fwIdx>=fwPool.length) showResults('fw',fwScore,fwPool.length); else renderFW(); }
+
+let qPool=[], qIdx=0, qScore=0, qHist=[];
+function startQuiz() { currentMode='quiz'; qPool=shuffle(QUIZ); qIdx=0; qScore=0; qHist=[]; show('quiz-screen'); renderQuiz(); }
+function renderQuiz() {
+  const q = qPool[qIdx];
+  const opts = shuffle([q.correct, ...q.wrongs]);
+  $('quiz-abbr').textContent = q.q;
+  $('quiz-ctx').textContent = q.ctx;
+  $('quiz-num').textContent = `Question ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width = `${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent = '';
+  $('btn-qnext').style.display = 'none';
+  $('streak-row').innerHTML = qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="fw-opt" data-val="${safe}" onclick="quizAnswer(this)" style="text-align:left;justify-content:flex-start;min-height:60px">${safe}</button>`;
+  }).join('');
+}
+function quizAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const correct = qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .fw-opt').forEach(b=>b.classList.add('locked'));
+  if (chosen===correct) { btn.classList.add('correct'); qScore++; $('quiz-fb').innerHTML='<span style="color:var(--success)">✓ Correct!</span>'; }
+  else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('#opts-grid .fw-opt').forEach(b=>{ if(b.dataset.val===correct) b.classList.add('correct'); });
+    $('quiz-fb').innerHTML = `<span style="color:var(--danger)">✗ Answer: ${correct}</span>`;
+  }
+  qHist.push(chosen===correct);
+  $('btn-qnext').style.display='inline-block';
+}
+function quizNext() { qIdx++; if(qIdx>=qPool.length) showResults('quiz',qScore,qPool.length); else renderQuiz(); }
+
+let plPool=[], plIdx=0, plScore=0, plHist=[];
+function startPL() { currentMode='pl'; plPool=shuffle(PL_ITEMS); plIdx=0; plScore=0; plHist=[]; show('pl-screen'); renderPL(); }
+function renderPL() {
+  const it = plPool[plIdx];
+  const opts = shuffle([it.correct, ...it.wrongs]);
+  $('pl-term').textContent = it.term;
+  $('pl-num').textContent = `Term ${plIdx+1} of ${plPool.length}`;
+  $('pl-prog').style.width = `${(plIdx/plPool.length)*100}%`;
+  $('pl-fb').textContent = '';
+  $('btn-plnext').style.display = 'none';
+  $('pl-streak').innerHTML = plHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('pl-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="pl-opt" data-val="${safe}" onclick="plAnswer(this)">${safe}</button>`;
+  }).join('');
+}
+function plAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const it = plPool[plIdx];
+  document.querySelectorAll('.pl-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === it.correct;
+  if (ok) { btn.classList.add('correct'); plScore++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('.pl-opt').forEach(b=>{ if(b.dataset.val===it.correct) b.classList.add('correct'); }); }
+  $('pl-fb').innerHTML = ok ? '✓ Correct!' : `✗ Answer: ${it.correct}`;
+  plHist.push(ok);
+  $('btn-plnext').style.display='inline-block';
+}
+function plNext() { plIdx++; if(plIdx>=plPool.length) showResults('pl',plScore,plPool.length); else renderPL(); }
+
+let scIdx=0;
+function startSC() { currentMode='scenario'; scIdx=0; show('sc-screen'); renderSC(); }
+function renderSC() {
+  const sc = SCENARIOS[scIdx];
+  $('sc-label').textContent = sc.label;
+  $('sc-prog').style.width = `${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML = '👆 Tap any <span style="color:var(--green-lt)">highlighted</span> line to see the breakdown.';
+  $('sc-text').innerHTML = sc.tokens.map(tok=>{
+    if (tok.a) { const safe = tok.d.replace(/"/g,'&quot;'); return `<span class="hl" data-abbr="${tok.a}" data-def="${safe}" onclick="scDecode(this)">${tok.a}</span>`; }
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled = scIdx===0;
+  $('sc-next').disabled = scIdx===SCENARIOS.length-1;
+}
+function scDecode(el) { el.classList.toggle('popped'); $('sc-decode').innerHTML = `<strong>Breakdown:</strong> ${el.dataset.def}`; }
+function scPrev() { if(scIdx>0){scIdx--;renderSC();} }
+function scNext() { if(scIdx<SCENARIOS.length-1){scIdx++;renderSC();} }
+
+function showResults(mode, score, total) {
+  currentMode = mode; show('results-screen');
+  const pct = Math.round((score/total)*100);
+  const C = 2*Math.PI*54;
+  const offset = C - (Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray = C;
+  $('ring-fill').style.strokeDashoffset = C;
+  $('ring-pct').textContent = pct+'%';
+  $('ring-sub').textContent = `${score} / ${total}`;
+  setTimeout(()=>{ $('ring-fill').style.strokeDashoffset = offset; }, 80);
+  const title = pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  const msg = `You scored ${score} / ${total} (${pct}%). ${pct>=80?'Your communication skills are sharp!':'Review the ones you missed and try again.'}`;
+  $('res-title').textContent = title;
+  $('res-msg').textContent = msg;
+}
+function retryMode() {
+  if (currentMode==='quiz') startQuiz();
+  else if (currentMode==='fw') startFW();
+  else if (currentMode==='pl') startPL();
+  else if (currentMode==='scenario') startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

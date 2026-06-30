@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Interviews & Telehealth – Week 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0c1620; --surf:#13212f; --surf2:#182a3c; --border:#243d52;
+  --blue:#3d8fd9; --blue-lt:#6cb3ec; --cyan:#2eb8c4;
+  --text:#e6f0fa; --muted:#7a9bb8; --danger:#e0585a; --success:#4cb87a; --warn:#e0a83a;
+  --r:12px; --r-lg:16px; --bar:50px; --foot:28px; --prog:3px;
+  --chrome: calc(var(--bar) + var(--foot) + var(--prog));
+}
+html, body { width:100%; height:100%; overflow:hidden; font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); }
+.screen { display:none; position:fixed; inset:0; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+.bar { height:var(--bar); min-height:var(--bar); max-height:var(--bar); display:flex; align-items:center; justify-content:space-between; padding:0 18px; background:var(--surf); border-bottom:1px solid var(--border); flex-shrink:0; }
+.bar-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; }
+.btn-back { background:none; border:1px solid var(--border); color:var(--muted); font-size:11px; font-weight:600; padding:5px 12px; border-radius:8px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.btn-back:hover { border-color:var(--blue); color:var(--blue-lt); }
+.prog-rail { height:var(--prog); min-height:var(--prog); background:var(--border); flex-shrink:0; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--cyan),var(--blue)); transition:width .4s ease; width:0%; }
+.zone { flex:1; min-height:0; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px 18px; overflow:hidden; gap:12px; }
+.foot { height:var(--foot); min-height:var(--foot); display:flex; align-items:center; justify-content:center; font-size:10px; letter-spacing:.06em; color:#1a2e40; background:var(--surf); border-top:1px solid var(--border); flex-shrink:0; }
+
+#home { background: radial-gradient(ellipse 80% 55% at 25% 20%, #1c3450 0%, var(--bg) 65%); }
+#home .zone { gap:14px; }
+.pill { background:rgba(61,143,217,.15); border:1px solid rgba(61,143,217,.45); color:var(--blue-lt); font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:4px 14px; border-radius:50px; }
+.home-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(20px,4.2vw,38px); font-weight:800; text-align:center; line-height:1.15; }
+.home-title em { color:var(--blue-lt); font-style:normal; }
+.home-sub { font-size:clamp(11px,1.5vw,14px); color:var(--muted); text-align:center; max-width:460px; line-height:1.55; }
+.mode-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:680px; }
+.mode-card { background:var(--surf); border:1.5px solid var(--border); border-radius:var(--r-lg); padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px); cursor:pointer; transition:border-color .2s,background .2s,transform .15s; display:flex; flex-direction:column; gap:6px; }
+.mode-card:hover { border-color:var(--blue); background:var(--surf2); transform:translateY(-2px); }
+.mode-icon { font-size:clamp(20px,3vw,26px); line-height:1; }
+.mode-name { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(12px,1.6vw,14px); font-weight:700; }
+.mode-desc { font-size:clamp(10px,1.2vw,11px); color:var(--muted); line-height:1.45; }
+.chip { display:inline-block; font-size:9px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:2px 8px; border-radius:50px; margin-top:2px; width:fit-content; }
+.chip-blue { background:rgba(61,143,217,.2); color:var(--blue-lt); }
+.chip-gold { background:rgba(224,168,58,.2); color:#f0c068; }
+.chip-cyan { background:rgba(46,184,196,.2); color:#5fd6e0; }
+.chip-red { background:rgba(224,88,90,.2); color:#f08a8c; }
+
+.btn-primary { background:var(--blue); color:#0c1620; font-family:'Plus Jakarta Sans',sans-serif; font-weight:700; font-size:14px; padding:11px 32px; border:none; border-radius:10px; cursor:pointer; transition:background .15s,transform .1s; white-space:nowrap; }
+.btn-primary:hover { background:var(--blue-lt); transform:translateY(-1px); }
+.btn-sec { background:var(--surf); border:1.5px solid var(--border); color:var(--text); font-family:'Inter',sans-serif; font-weight:600; font-size:13px; padding:9px 20px; border-radius:10px; cursor:pointer; transition:all .15s; white-space:nowrap; }
+.btn-sec:hover:not(:disabled) { border-color:var(--blue); color:var(--blue-lt); }
+.btn-sec:disabled { opacity:.3; cursor:default; }
+.btn-row { display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap; }
+
+.quiz-top { display:flex; align-items:center; justify-content:space-between; width:100%; max-width:540px; }
+.quiz-num { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--blue-lt); }
+.streak-row { display:flex; gap:3px; }
+.sdot { width:7px; height:7px; border-radius:50%; background:var(--border); transition:background .25s; }
+.sdot.hit { background:var(--success); } .sdot.miss { background:var(--danger); }
+
+.fw-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:18px 22px; width:100%; max-width:560px; text-align:center; }
+.fw-quote { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(13px,2vw,16px); font-weight:600; line-height:1.6; color:var(--text); }
+.fw-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; max-width:560px; }
+.fw-opt { background:var(--surf); border:2px solid var(--border); border-radius:var(--r); padding:12px 10px; font-size:clamp(11px,1.4vw,13px); font-weight:700; font-family:'Plus Jakarta Sans',sans-serif; color:var(--text); cursor:pointer; text-align:center; transition:border-color .12s,background .12s; min-height:48px; display:flex; align-items:center; justify-content:center; }
+.fw-opt:hover:not(.locked) { border-color:var(--blue); background:var(--surf2); }
+.fw-opt.correct { border-color:var(--success); background:rgba(76,184,122,.1); color:var(--success); }
+.fw-opt.wrong { border-color:var(--danger); background:rgba(224,88,90,.1); color:var(--danger); }
+.fw-opt.locked { cursor:default; }
+.fw-fb { font-size:12px; color:var(--muted); text-align:center; min-height:32px; max-width:540px; line-height:1.5; }
+
+.sc-header { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--warn); align-self:flex-start; max-width:600px; width:100%; }
+.sc-card { background:var(--surf); border:2px solid var(--border); border-radius:var(--r-lg); padding:18px 22px; width:100%; max-width:600px; flex-shrink:1; min-height:0; }
+.sc-text { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(12px,1.9vw,15px); font-weight:600; line-height:1.85; color:var(--text); }
+.hl { color:var(--blue-lt); background:rgba(61,143,217,.12); padding:1px 5px; border-radius:4px; cursor:pointer; transition:background .12s; display:inline-block; }
+.hl:hover { background:rgba(61,143,217,.24); }
+.hl.popped { color:#5fd6e0; background:rgba(46,184,196,.18); }
+.sc-decode { background:var(--surf2); border:1px solid var(--border); border-radius:var(--r); padding:12px 18px; width:100%; max-width:600px; font-size:12px; color:var(--muted); line-height:1.6; min-height:44px; flex-shrink:0; }
+.sc-decode strong { color:var(--blue-lt); }
+
+.res-wrap { display:flex; flex-direction:column; align-items:center; gap:14px; text-align:center; max-width:420px; }
+.ring-wrap { position:relative; width:130px; height:130px; }
+.ring-wrap svg { width:100%; height:100%; }
+.ring-bg { fill:none; stroke:var(--border); stroke-width:10; }
+.ring-fill { fill:none; stroke:var(--blue); stroke-width:10; stroke-linecap:round; stroke-dasharray:339; stroke-dashoffset:339; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+.ring-lbl { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.ring-pct { font-family:'Plus Jakarta Sans',sans-serif; font-size:30px; font-weight:800; color:var(--blue-lt); }
+.ring-sub { font-size:10px; color:var(--muted); }
+.res-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:clamp(18px,3vw,24px); font-weight:800; }
+.res-msg { font-size:13px; color:var(--muted); line-height:1.6; max-width:340px; }
+.res-btns { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+</style>
+</head>
+<body>
+
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 3 · Medical Assistant Training</div>
+    <h1 class="home-title">Patient Interviews & <em>Telehealth</em></h1>
+    <p class="home-sub">SAMPLE, OPQRST, motivational interviewing & telehealth etiquette — in four interactive modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startFW()">
+        <div class="mode-icon">🩺</div>
+        <div class="mode-name">SAMPLE & OPQRST</div>
+        <div class="mode-desc">Match interview questions to the right history-taking letter.</div>
+        <div class="chip chip-blue">12 items</div>
+      </div>
+      <div class="mode-card" onclick="startQuiz()">
+        <div class="mode-icon">🧠</div>
+        <div class="mode-name">Knowledge Quiz</div>
+        <div class="mode-desc">Interview structure, OARS, rooming & telehealth rules.</div>
+        <div class="chip chip-gold">15 questions</div>
+      </div>
+      <div class="mode-card" onclick="startVitals()">
+        <div class="mode-icon">🚨</div>
+        <div class="mode-name">Critical Vitals Check</div>
+        <div class="mode-desc">Decide if a vital sign reading requires immediate notification.</div>
+        <div class="chip chip-cyan">10 readings</div>
+      </div>
+      <div class="mode-card" onclick="startSC()">
+        <div class="mode-icon">💻</div>
+        <div class="mode-name">Telehealth Trouble</div>
+        <div class="mode-desc">Tap real telehealth moments to see the correct protocol.</div>
+        <div class="chip chip-red">Case Study inside</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="fw-screen" class="screen">
+  <div class="bar"><span class="bar-title">🩺 SAMPLE & OPQRST</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="fw-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="fw-num">Item 1 of 12</span><div class="streak-row" id="fw-streak"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="fw-quote">Item text</div></div>
+    <div class="fw-grid" id="fw-grid"></div>
+    <div class="fw-fb" id="fw-fb"></div>
+    <button class="btn-primary" id="btn-fwnext" style="display:none" onclick="fwNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Question 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="quiz-abbr">Question text</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="fw-grid" id="opts-grid" style="grid-template-columns:1fr 1fr"></div>
+    <div class="fw-fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next Question →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="vitals-screen" class="screen">
+  <div class="bar"><span class="bar-title">🚨 Critical Vitals Check</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="vitals-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="vitals-num">Reading 1 of 10</span><div class="streak-row" id="vitals-streak"></div></div>
+    <div class="fw-card"><div class="fw-quote" id="vitals-reading" style="font-size:clamp(20px,4vw,30px);color:var(--cyan)">BP 178/98</div><div style="font-size:11px;color:var(--muted);margin-top:8px">Does this require immediate provider notification?</div></div>
+    <div class="fw-grid" id="vitals-grid" style="grid-template-columns:1fr 1fr; max-width:380px">
+      <button class="fw-opt" data-val="yes" onclick="vitalsAnswer(this)">🚨 Yes, notify now</button>
+      <button class="fw-opt" data-val="no" onclick="vitalsAnswer(this)">✔ No, normal range</button>
+    </div>
+    <div class="fw-fb" id="vitals-fb"></div>
+    <button class="btn-primary" id="btn-vitalsnext" style="display:none" onclick="vitalsNext()">Next Reading →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">💻 Telehealth Trouble</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start; padding-top:14px; gap:10px">
+    <div class="sc-header" id="sc-label">Scene 1 of 5</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--blue-lt)">highlighted</span> moment to see the protocol.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div>
+      <div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+const FW_ITEMS = [
+  {quote:'"What brings you in today?" — patient\u2019s own words', correct:'S — Signs & Symptoms (SAMPLE)', wrongs:['O — Onset (OPQRST)','A — Allergies (SAMPLE)','E — Events (SAMPLE)']},
+  {quote:'"You said penicillin — what happened when you took it?"', correct:'A — Allergies (SAMPLE)', wrongs:['S — Signs & Symptoms (SAMPLE)','M — Medications (SAMPLE)','P — Provocation (OPQRST)']},
+  {quote:'"Are you taking your medications as prescribed?"', correct:'M — Medications (SAMPLE)', wrongs:['A — Allergies (SAMPLE)','L — Last Oral Intake (SAMPLE)','E — Events (OPQRST)']},
+  {quote:'"Have you ever had this before?"', correct:'P — Pertinent Past History (SAMPLE)', wrongs:['S — Signs & Symptoms (SAMPLE)','O — Onset (OPQRST)','E — Events (SAMPLE)']},
+  {quote:'"When did you last eat or drink?"', correct:'L — Last Oral Intake (SAMPLE)', wrongs:['M — Medications (SAMPLE)','T — Time (OPQRST)','E — Events (SAMPLE)']},
+  {quote:'"What were you doing when it started?"', correct:'E — Events Leading Up (SAMPLE)', wrongs:['O — Onset (OPQRST)','P — Provocation (OPQRST)','S — Signs & Symptoms (SAMPLE)']},
+  {quote:'"Was it sudden or gradual?"', correct:'O — Onset (OPQRST)', wrongs:['E — Events (SAMPLE)','T — Time (OPQRST)','S — Severity (OPQRST)']},
+  {quote:'"What makes it better? What makes it worse?"', correct:'P — Provocation/Palliation (OPQRST)', wrongs:['Q — Quality (OPQRST)','O — Onset (OPQRST)','R — Radiation (OPQRST)']},
+  {quote:'"Describe it in your own words — sharp, dull, burning?"', correct:'Q — Quality (OPQRST)', wrongs:['P — Provocation (OPQRST)','R — Radiation (OPQRST)','S — Signs & Symptoms (SAMPLE)']},
+  {quote:'"Can you point to it with one finger? Does it move?"', correct:'R — Radiation/Region (OPQRST)', wrongs:['Q — Quality (OPQRST)','O — Onset (OPQRST)','T — Time (OPQRST)']},
+  {quote:'"On a scale of 0–10, where are you now?"', correct:'S — Severity (OPQRST)', wrongs:['Q — Quality (OPQRST)','R — Radiation (OPQRST)','P — Pertinent History (SAMPLE)']},
+  {quote:'"How long has it been going on? Constant or comes and goes?"', correct:'T — Time/Timing (OPQRST)', wrongs:['O — Onset (OPQRST)','E — Events (SAMPLE)','L — Last Oral Intake (SAMPLE)']},
+];
+
+const QUIZ = [
+  {q:'What is the critical boundary between the MA and the provider during an interview?', ctx:'Interview Structure', correct:'MA gathers data; provider performs clinical assessment', wrongs:['MA can diagnose minor issues','Provider only handles vitals','MA decides treatment, provider documents']},
+  {q:'What are the two patient identifiers used to confirm identity?', ctx:'Rooming', correct:'Name and date of birth', wrongs:['Room number and chief complaint','Insurance ID and name','Phone number and address']},
+  {q:'In motivational interviewing, what does the "R" in RULE stand for?', ctx:'Motivational Interviewing', correct:'Resist the urge to tell the patient what to do', wrongs:['Reflect their concerns back','Repeat their goals','Reassure them everything is fine']},
+  {q:'In OARS, what is an "Affirmation"?', ctx:'Motivational Interviewing', correct:'Genuine acknowledgment of the patient\u2019s strengths or effort', wrongs:['Repeating what the patient said','An open-ended question','A brief recap of the conversation']},
+  {q:'What is the correct vital signs sequence in rooming?', ctx:'Rooming Workflow', correct:'Weight → Height → BP → HR → Temp → RR → O2 sat', wrongs:['BP → Weight → Temp → HR → RR → O2 sat','O2 sat → BP → HR → Weight → Temp → RR','Temp → BP → Weight → RR → HR → O2 sat']},
+  {q:'How should the chief complaint be documented?', ctx:'Documentation', correct:'Verbatim, in the patient\u2019s own words, in quotes', wrongs:['Paraphrased into medical terminology','Summarized by the MA','Left for the provider to determine']},
+  {q:'Which of these is a documentation error that creates liability?', ctx:'Documentation', correct:'Pre-documenting vitals before they are taken', wrongs:['Documenting the chief complaint in quotes','Flagging an abnormal finding for the provider','Time-stamping when the provider was notified']},
+  {q:'What BP reading requires immediate provider notification?', ctx:'Critical Vitals', correct:'>180/120 or <90/60', wrongs:['>140/90','>160/100','<120/80']},
+  {q:'What O2 saturation level requires immediate notification?', ctx:'Critical Vitals', correct:'<94%', wrongs:['<98%','<99%','<96%']},
+  {q:'Where should the camera be positioned for a telehealth visit?', ctx:'Telehealth Setup', correct:'At eye level', wrongs:['Above eye level, looking down','Below eye level, looking up','Anywhere — position doesn\u2019t matter']},
+  {q:'Where should your light source be during a telehealth visit?', ctx:'Telehealth Setup', correct:'In front of your face', wrongs:['Behind you','Directly overhead only','Turned off for a more natural look']},
+  {q:'What counts as "eye contact" on a telehealth video call?', ctx:'Telehealth Presence', correct:'Looking at the camera lens, not the screen', wrongs:['Looking at the patient\u2019s image on screen','Looking slightly off to the side','Alternating between screen and notes']},
+  {q:'Which platforms are appropriate for a telehealth visit?', ctx:'Telehealth Privacy', correct:'Only HIPAA-compliant platforms', wrongs:['Personal FaceTime is fine for quick visits','Any video app the patient prefers','WhatsApp if the patient requests it']},
+  {q:'A patient has chest pain, exertional pattern, and no home BP cuff during a telehealth visit. You should —', ctx:'Telehealth Escalation', correct:'Escalate to in-person or emergency care immediately', wrongs:['Continue the visit and document the missing vitals','Reschedule for next week','Ask the patient to self-monitor and call back']},
+  {q:'If a telehealth patient\u2019s video freezes but audio continues, you should —', ctx:'Technical Difficulties', correct:'Continue audio-only if clinically appropriate and document the interruption', wrongs:['End the visit immediately','Ignore the issue since audio still works','Reschedule automatically without asking the patient']},
+];
+
+const VITALS_ITEMS = [
+  {reading:'BP 178/98', critical:true, why:'Systolic >180 or diastolic >120 needs notification — 178/98 is elevated but does NOT meet the >180/120 threshold; still worth flagging for trend, but not an automatic critical alert. Treat with clinical judgment — borderline, monitor closely.'},
+  {reading:'BP 192/126', critical:true, why:'Exceeds the >180/120 critical threshold — notify the provider immediately.'},
+  {reading:'HR 134 bpm', critical:true, why:'Exceeds >120 bpm threshold — notify immediately.'},
+  {reading:'HR 78 bpm', critical:false, why:'Within normal range (50–120) — no immediate notification needed.'},
+  {reading:'O2 Sat 91%', critical:true, why:'Below the <94% threshold — notify the provider immediately.'},
+  {reading:'O2 Sat 98%', critical:false, why:'Normal oxygen saturation — no action needed.'},
+  {reading:'Temp 39.4°C (103°F)', critical:true, why:'Exceeds >38.9°C threshold — notify immediately.'},
+  {reading:'Temp 37.0°C (98.6°F)', critical:false, why:'Normal body temperature — no notification needed.'},
+  {reading:'Pain 9/10, sudden onset', critical:true, why:'Pain >8/10 or sudden severe onset requires immediate notification.'},
+  {reading:'RR 26/min', critical:true, why:'Exceeds the >24/min threshold — notify immediately.'},
+];
+
+const SCENARIOS = [
+  { label:'💻 Telehealth Setup — Scene 1 of 4', tokens:[
+    {t:'Before a telehealth visit, an MA: '},
+    {a:'sits with a bright window directly behind them', d:'❌ Wrong: a light source behind you creates a silhouette — light should be in front of your face.'},
+    {t:'. Another MA: '},
+    {a:'tests audio, video, and the platform 5 minutes before the visit starts', d:'✔ Correct: testing ahead of time avoids troubleshooting while the patient waits.'},
+  ]},
+  { label:'🔒 Privacy Check — Scene 2 of 4', tokens:[
+    {t:'A patient connects with a noisy background and a family member visible behind them. The MA: '},
+    {a:'proceeds with clinical questions without addressing it', d:'❌ Wrong: privacy must be confirmed before sharing or discussing clinical information.'},
+    {t:'. Instead, the MA should: '},
+    {a:'ask "Is someone nearby who can hear us?" and confirm if the family member\u2019s presence is okay', d:'✔ Correct: confirms private space and documents consent for any third party present.'},
+  ]},
+  { label:'⚠️ Chest Discomfort on Video — Scene 3 of 4', tokens:[
+    {t:'A telehealth patient mentions exertional chest discomfort with no home BP cuff available. The MA: '},
+    {a:'continues the full intake and tells the patient to mention it to the doctor at the next visit', d:'❌ Dangerous: exertional chest discomfort with cardiac risk factors and no vitals is an escalation trigger — must notify the provider immediately.'},
+    {t:'. Instead: '},
+    {a:'pauses the intake and notifies the provider immediately, flagging the inability to obtain vitals', d:'✔ Correct: this combination meets the criteria to escalate to in-person or emergency care.'},
+  ]},
+  { label:'📵 Technical Failure — Scene 4 of 4', tokens:[
+    {t:'A telehealth patient\u2019s connection drops mid-visit. The MA: '},
+    {a:'waits for the patient to reconnect on their own with no follow-up', d:'❌ Wrong: a sudden disconnect should prompt an immediate callback attempt.'},
+    {t:'. Instead, the MA: '},
+    {a:'calls back immediately, documents the disconnection attempt, and notifies the provider', d:'✔ Correct: follows the technical difficulties protocol for sudden disconnection.'},
+  ]},
+];
+
+const $ = id => document.getElementById(id);
+function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+function goHome() { show('home'); }
+function shuffle(arr) { const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+let currentMode = '';
+
+let fwPool=[], fwIdx=0, fwScore=0, fwHist=[];
+function startFW() { currentMode='fw'; fwPool=shuffle(FW_ITEMS); fwIdx=0; fwScore=0; fwHist=[]; show('fw-screen'); renderFW(); }
+function renderFW() {
+  const it = fwPool[fwIdx];
+  const opts = shuffle([it.correct, ...it.wrongs]);
+  $('fw-quote').textContent = it.quote;
+  $('fw-num').textContent = `Item ${fwIdx+1} of ${fwPool.length}`;
+  $('fw-prog').style.width = `${(fwIdx/fwPool.length)*100}%`;
+  $('fw-fb').textContent = '';
+  $('btn-fwnext').style.display = 'none';
+  $('fw-streak').innerHTML = fwHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('fw-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="fw-opt" data-val="${safe}" onclick="fwAnswer(this)">${safe}</button>`;
+  }).join('');
+}
+function fwAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const it = fwPool[fwIdx];
+  document.querySelectorAll('.fw-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === it.correct;
+  if (ok) { btn.classList.add('correct'); fwScore++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('.fw-opt').forEach(b=>{ if(b.dataset.val===it.correct) b.classList.add('correct'); }); }
+  $('fw-fb').innerHTML = ok ? '<span style="color:var(--success)">✓ Correct!</span>' : `<span style="color:var(--danger)">✗ Answer: ${it.correct}</span>`;
+  fwHist.push(ok);
+  $('btn-fwnext').style.display='inline-block';
+}
+function fwNext() { fwIdx++; if(fwIdx>=fwPool.length) showResults('fw',fwScore,fwPool.length); else renderFW(); }
+
+let qPool=[], qIdx=0, qScore=0, qHist=[];
+function startQuiz() { currentMode='quiz'; qPool=shuffle(QUIZ); qIdx=0; qScore=0; qHist=[]; show('quiz-screen'); renderQuiz(); }
+function renderQuiz() {
+  const q = qPool[qIdx];
+  const opts = shuffle([q.correct, ...q.wrongs]);
+  $('quiz-abbr').textContent = q.q;
+  $('quiz-ctx').textContent = q.ctx;
+  $('quiz-num').textContent = `Question ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width = `${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent = '';
+  $('btn-qnext').style.display = 'none';
+  $('streak-row').innerHTML = qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML = opts.map(o=>{
+    const safe = o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+    return `<button class="fw-opt" data-val="${safe}" onclick="quizAnswer(this)" style="text-align:left;justify-content:flex-start;min-height:60px">${safe}</button>`;
+  }).join('');
+}
+function quizAnswer(btn) {
+  const chosen = btn.dataset.val;
+  const correct = qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .fw-opt').forEach(b=>b.classList.add('locked'));
+  if (chosen===correct) { btn.classList.add('correct'); qScore++; $('quiz-fb').innerHTML='<span style="color:var(--success)">✓ Correct!</span>'; }
+  else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('#opts-grid .fw-opt').forEach(b=>{ if(b.dataset.val===correct) b.classList.add('correct'); });
+    $('quiz-fb').innerHTML = `<span style="color:var(--danger)">✗ Answer: ${correct}</span>`;
+  }
+  qHist.push(chosen===correct);
+  $('btn-qnext').style.display='inline-block';
+}
+function quizNext() { qIdx++; if(qIdx>=qPool.length) showResults('quiz',qScore,qPool.length); else renderQuiz(); }
+
+let vPool=[], vIdx=0, vScore=0, vHist=[];
+function startVitals() { currentMode='vitals'; vPool=shuffle(VITALS_ITEMS); vIdx=0; vScore=0; vHist=[]; show('vitals-screen'); renderVitals(); }
+function renderVitals() {
+  const it = vPool[vIdx];
+  $('vitals-reading').textContent = it.reading;
+  $('vitals-num').textContent = `Reading ${vIdx+1} of ${vPool.length}`;
+  $('vitals-prog').style.width = `${(vIdx/vPool.length)*100}%`;
+  $('vitals-fb').textContent = '';
+  $('btn-vitalsnext').style.display = 'none';
+  $('vitals-streak').innerHTML = vHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  document.querySelectorAll('#vitals-grid .fw-opt').forEach(b=>b.classList.remove('correct','wrong','locked'));
+}
+function vitalsAnswer(btn) {
+  const chosen = btn.dataset.val === 'yes';
+  const it = vPool[vIdx];
+  document.querySelectorAll('#vitals-grid .fw-opt').forEach(b=>b.classList.add('locked'));
+  const ok = chosen === it.critical;
+  if (ok) { btn.classList.add('correct'); vScore++; }
+  else { btn.classList.add('wrong'); document.querySelectorAll('#vitals-grid .fw-opt').forEach(b=>{ if((b.dataset.val==='yes')===it.critical) b.classList.add('correct'); }); }
+  $('vitals-fb').innerHTML = (ok?'✓ Correct. ':'✗ Not quite. ') + it.why;
+  vHist.push(ok);
+  $('btn-vitalsnext').style.display='inline-block';
+}
+function vitalsNext() { vIdx++; if(vIdx>=vPool.length) showResults('vitals',vScore,vPool.length); else renderVitals(); }
+
+let scIdx=0;
+function startSC() { currentMode='scenario'; scIdx=0; show('sc-screen'); renderSC(); }
+function renderSC() {
+  const sc = SCENARIOS[scIdx];
+  $('sc-label').textContent = sc.label;
+  $('sc-prog').style.width = `${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML = '👆 Tap any <span style="color:var(--blue-lt)">highlighted</span> moment to see the protocol.';
+  $('sc-text').innerHTML = sc.tokens.map(tok=>{
+    if (tok.a) { const safe = tok.d.replace(/"/g,'&quot;'); return `<span class="hl" data-abbr="${tok.a}" data-def="${safe}" onclick="scDecode(this)">${tok.a}</span>`; }
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled = scIdx===0;
+  $('sc-next').disabled = scIdx===SCENARIOS.length-1;
+}
+function scDecode(el) { el.classList.toggle('popped'); $('sc-decode').innerHTML = `<strong>Protocol:</strong> ${el.dataset.def}`; }
+function scPrev() { if(scIdx>0){scIdx--;renderSC();} }
+function scNext() { if(scIdx<SCENARIOS.length-1){scIdx++;renderSC();} }
+
+function showResults(mode, score, total) {
+  currentMode = mode; show('results-screen');
+  const pct = Math.round((score/total)*100);
+  const C = 2*Math.PI*54;
+  const offset = C - (Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray = C;
+  $('ring-fill').style.strokeDashoffset = C;
+  $('ring-pct').textContent = pct+'%';
+  $('ring-sub').textContent = `${score} / ${total}`;
+  setTimeout(()=>{ $('ring-fill').style.strokeDashoffset = offset; }, 80);
+  const title = pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  const msg = `You scored ${score} / ${total} (${pct}%). ${pct>=80?'You\u2019ve got clinical communication down!':'Review the ones you missed and try again.'}`;
+  $('res-title').textContent = title;
+  $('res-msg').textContent = msg;
+}
+function retryMode() {
+  if (currentMode==='quiz') startQuiz();
+  else if (currentMode==='fw') startFW();
+  else if (currentMode==='vitals') startVitals();
+  else if (currentMode==='scenario') startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

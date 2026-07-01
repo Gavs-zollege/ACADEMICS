@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scheduling Fundamentals - Week 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#081618;--surf:#0e2225;--surf2:#142c30;--border:#1a4048;--cyan:#28b8c8;--cyan-lt:#54d8e8;--teal:#1a9080;--text:#e0f5f8;--muted:#6aa8b0;--danger:#e05a5a;--success:#3db88a;--warn:#e0a83a;--r:12px;--r-lg:16px;--bar:50px;--foot:28px;--prog:3px}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+.screen{display:none;position:fixed;inset:0;flex-direction:column;overflow:hidden}.screen.active{display:flex}
+.bar{height:var(--bar);min-height:var(--bar);max-height:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0}
+.bar-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700}
+.btn-back{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-back:hover{border-color:var(--cyan);color:var(--cyan-lt)}
+.prog-rail{height:var(--prog);min-height:var(--prog);background:var(--border);flex-shrink:0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--cyan));transition:width .4s ease;width:0%}
+.zone{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 18px;overflow:hidden;gap:12px}
+.foot{height:var(--foot);min-height:var(--foot);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.06em;color:#0e2830;background:var(--surf);border-top:1px solid var(--border);flex-shrink:0}
+#home{background:radial-gradient(ellipse 80% 55% at 25% 20%,#143440 0%,var(--bg) 65%)}
+.pill{background:rgba(40,184,200,.15);border:1px solid rgba(40,184,200,.45);color:var(--cyan-lt);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 14px;border-radius:50px}
+.home-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(20px,4.2vw,38px);font-weight:800;text-align:center;line-height:1.15}
+.home-title em{color:var(--cyan-lt);font-style:normal}
+.home-sub{font-size:clamp(11px,1.5vw,14px);color:var(--muted);text-align:center;max-width:460px;line-height:1.55}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:680px}
+.mode-card{background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px);cursor:pointer;transition:border-color .2s,background .2s,transform .15s;display:flex;flex-direction:column;gap:6px}
+.mode-card:hover{border-color:var(--cyan);background:var(--surf2);transform:translateY(-2px)}
+.mode-icon{font-size:clamp(20px,3vw,26px);line-height:1}
+.mode-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.6vw,14px);font-weight:700}
+.mode-desc{font-size:clamp(10px,1.2vw,11px);color:var(--muted);line-height:1.45}
+.chip{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:50px;margin-top:2px;width:fit-content}
+.chip-cyan{background:rgba(40,184,200,.2);color:var(--cyan-lt)}.chip-gold{background:rgba(224,168,58,.2);color:#f0c068}.chip-green{background:rgba(61,184,138,.2);color:#5de0b0}.chip-red{background:rgba(224,90,90,.2);color:#f08080}
+.btn-primary{background:var(--cyan);color:#081618;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;padding:11px 32px;border:none;border-radius:10px;cursor:pointer;transition:background .15s,transform .1s;white-space:nowrap}.btn-primary:hover{background:var(--cyan-lt);transform:translateY(-1px)}
+.btn-sec{background:var(--surf);border:1.5px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;padding:9px 20px;border-radius:10px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-sec:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan-lt)}.btn-sec:disabled{opacity:.3;cursor:default}
+.btn-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:540px}
+.quiz-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--cyan-lt)}
+.streak-row{display:flex;gap:3px}.sdot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .25s}.sdot.hit{background:var(--success)}.sdot.miss{background:var(--danger)}
+.card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:560px;text-align:center}
+.card-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(13px,2vw,16px);font-weight:600;line-height:1.6;color:var(--text)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:560px}
+.opt{background:var(--surf);border:2px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:clamp(11px,1.4vw,12px);font-weight:600;font-family:'Inter',sans-serif;color:var(--text);cursor:pointer;text-align:left;transition:border-color .12s,background .12s;min-height:52px;display:flex;align-items:center}
+.opt:hover:not(.locked){border-color:var(--cyan);background:var(--surf2)}.opt.correct{border-color:var(--success);background:rgba(61,184,138,.1);color:var(--success)}.opt.wrong{border-color:var(--danger);background:rgba(224,90,90,.1);color:var(--danger)}.opt.locked{cursor:default}
+.fb{font-size:12px;color:var(--muted);text-align:center;min-height:28px;max-width:540px;line-height:1.5}
+.sc-header{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--warn);align-self:flex-start;max-width:600px;width:100%}
+.sc-card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:600px;flex-shrink:1;min-height:0}
+.sc-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.9vw,15px);font-weight:600;line-height:1.85;color:var(--text)}
+.hl{color:var(--cyan-lt);background:rgba(40,184,200,.12);padding:1px 5px;border-radius:4px;cursor:pointer;transition:background .12s;display:inline-block}.hl:hover{background:rgba(40,184,200,.24)}.hl.popped{color:#5de0b0;background:rgba(61,184,138,.15)}
+.sc-decode{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;width:100%;max-width:600px;font-size:12px;color:var(--muted);line-height:1.6;min-height:44px;flex-shrink:0}.sc-decode strong{color:var(--cyan-lt)}
+.res-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;max-width:420px}
+.ring-wrap{position:relative;width:130px;height:130px}.ring-wrap svg{width:100%;height:100%}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:10}.ring-fill{fill:none;stroke:var(--cyan);stroke-width:10;stroke-linecap:round;stroke-dasharray:339;stroke-dashoffset:339;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)}
+.ring-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.ring-pct{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;color:var(--cyan-lt)}.ring-sub{font-size:10px;color:var(--muted)}
+.res-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:800}.res-msg{font-size:13px;color:var(--muted);line-height:1.6;max-width:340px}.res-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+</style>
+</head>
+<body>
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 4 - Medical Assistant Training</div>
+    <h1 class="home-title">Scheduling <em>Fundamentals</em></h1>
+    <p class="home-sub">Appointment types, scheduling methods, prior auth, no-shows and patient flow in four modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startMethod()"><div class="mode-icon">&#x1F4C5;</div><div class="mode-name">Method Matcher</div><div class="mode-desc">Match scheduling scenarios to Stream, Wave, Cluster, Double-Book, or Open Access.</div><div class="chip chip-cyan">10 scenarios</div></div>
+      <div class="mode-card" onclick="startQuiz()"><div class="mode-icon">&#x1F9E0;</div><div class="mode-name">Knowledge Quiz</div><div class="mode-desc">PA process, referrals, no-shows, matrix setup and phone protocol.</div><div class="chip chip-gold">15 questions</div></div>
+      <div class="mode-card" onclick="startAppt()"><div class="mode-icon">&#x1F3E5;</div><div class="mode-name">Appointment Type</div><div class="mode-desc">Classify visits as NP, EP, Well Visit, Urgent, Procedure, or Telehealth.</div><div class="chip chip-green">10 visits</div></div>
+      <div class="mode-card" onclick="startSC()"><div class="mode-icon">&#x1F4DE;</div><div class="mode-name">Call Triage Lab</div><div class="mode-desc">Tap real incoming calls to see the correct scheduling protocol.</div><div class="chip chip-red">Scenarios</div></div>
+    </div>
+  </div>
+  <div class="foot">&#169;2026 ZOLLEGE</div>
+</div>
+<div id="method-screen" class="screen">
+  <div class="bar"><span class="bar-title">&#x1F4C5; Method Matcher</span><button class="btn-back" onclick="goHome()">&#x2190; Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="method-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="method-num">Scenario 1 of 10</span><div class="streak-row" id="method-streak"></div></div>
+    <div class="card"><div class="card-text" id="method-item">Scenario</div></div>
+    <div class="opts" id="method-grid" style="grid-template-columns:1fr 1fr 1fr;max-width:560px"></div>
+    <div class="fb" id="method-fb"></div>
+    <button class="btn-primary" id="btn-methodnext" style="display:none" onclick="methodNext()">Next &#x2192;</button>
+  </div>
+  <div class="foot">&#169;2026 ZOLLEGE</div>
+</div>
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">&#x1F9E0; Knowledge Quiz</span><button class="btn-back" onclick="goHome()">&#x2190; Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Q 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="card"><div class="card-text" id="quiz-q">Q</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="opts" id="opts-grid"></div>
+    <div class="fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next &#x2192;</button>
+  </div>
+  <div class="foot">&#169;2026 ZOLLEGE</div>
+</div>
+<div id="appt-screen" class="screen">
+  <div class="bar"><span class="bar-title">&#x1F3E5; Appointment Type</span><button class="btn-back" onclick="goHome()">&#x2190; Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="appt-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="appt-num">Visit 1 of 10</span><div class="streak-row" id="appt-streak"></div></div>
+    <div class="card"><div class="card-text" id="appt-item">Visit description</div></div>
+    <div class="opts" id="appt-grid" style="grid-template-columns:1fr 1fr 1fr;max-width:560px"></div>
+    <div class="fb" id="appt-fb"></div>
+    <button class="btn-primary" id="btn-apptnext" style="display:none" onclick="apptNext()">Next &#x2192;</button>
+  </div>
+  <div class="foot">&#169;2026 ZOLLEGE</div>
+</div>
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">&#x1F4DE; Call Triage Lab</span><button class="btn-back" onclick="goHome()">&#x2190; Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start;padding-top:14px;gap:10px">
+    <div class="sc-header" id="sc-label">Call 1 of 4</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">Tap highlighted action to see correct protocol.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">&#x2190; Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next &#x2192;</button></div>
+  </div>
+  <div class="foot">&#169;2026 ZOLLEGE</div>
+</div>
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">&#x2190; Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">-</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div><div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">&#169;2026 ZOLLEGE</div>
+</div>
+<script>
+const METHOD_ITEMS=[
+  {item:'Specialty orthopedics - one patient per 20-minute slot, predictable flow',correct:'Stream / Fixed',wrongs:['Wave','Open Access']},
+  {item:'Busy family medicine - 4 patients at top of each hour, seen in order of arrival',correct:'Wave',wrongs:['Stream / Fixed','Modified Wave']},
+  {item:'2 patients at :00, 1 at :20, 1 at :40 - reduces wait and bunching',correct:'Modified Wave',wrongs:['Wave','Double-Booking']},
+  {item:'2 patients scheduled in the same 15-minute slot - compensates for no-shows',correct:'Double-Booking',wrongs:['Wave','Cluster / Block']},
+  {item:'All diabetic patients grouped every Tuesday afternoon for efficiency',correct:'Cluster / Block',wrongs:['Wave','Modified Wave']},
+  {item:'Urgent care - most slots held daily for same-day walk-ins',correct:'Open Access',wrongs:['Stream / Fixed','Cluster / Block']},
+  {item:'OB/GYN office grouping prenatal visits in morning blocks',correct:'Cluster / Block',wrongs:['Open Access','Modified Wave']},
+  {item:'Procedure room - one colonoscopy per 45-minute slot, no flexibility',correct:'Stream / Fixed',wrongs:['Double-Booking','Wave']},
+  {item:'High no-show rate practice adds a second patient to high-risk slots',correct:'Double-Booking',wrongs:['Open Access','Cluster / Block']},
+  {item:'Primary care holds first 10 slots each morning for same-day acute calls',correct:'Open Access',wrongs:['Wave','Modified Wave']},
+];
+const QUIZ=[
+  {q:'What is a schedule matrix?',ctx:'Matrix',correct:'An EHR template defining provider availability and appointment types per slot',wrongs:['A spreadsheet of patient demographics','A daily list of confirmed appointments','A billing report of visit codes']},
+  {q:'Prior authorization must be obtained -',ctx:'Prior Authorization',correct:'Before performing the procedure, specialist visit, or prescribing the drug',wrongs:['Within 30 days after the service','Only for Medicare patients','Only for surgeries over $5,000']},
+  {q:'A no-show must be documented as -',ctx:'No-Shows',correct:'No-Show in EHR immediately - never left blank',wrongs:['A cancellation for billing purposes','A late arrival if rescheduled same day','Removed from EHR to save space']},
+  {q:'HMO plans typically require -',ctx:'Referrals',correct:'A PCP referral before seeing a specialist',wrongs:['No referrals for any specialist','Prior authorization from the patient only','Referrals only for surgical procedures']},
+  {q:'When should the copay be collected?',ctx:'Check-In',correct:'Before the clinical encounter - at check-in',wrongs:['After the visit when billing is complete','Only when the patient can afford it','Within 30 days of the visit']},
+  {q:'Eligibility verification confirms -',ctx:'Insurance',correct:'Patient insurance is active and covers the scheduled service',wrongs:['Patient identity and date of birth','The provider NPI number','The diagnosis code for billing']},
+  {q:'A routine PA takes how long to process?',ctx:'Prior Authorization',correct:'3-5 business days (urgent: 24-72 hours)',wrongs:['Same day','7-10 business days','30 days minimum']},
+  {q:'What is a warm handoff for referrals?',ctx:'Referrals',correct:'Calling the specialist, sending records, and confirming the patient has an appointment',wrongs:['Giving the patient a phone number to call','Faxing records without confirming receipt','Emailing the referral and closing the task']},
+  {q:'What should the MA do at check-out?',ctx:'Patient Flow',correct:'Collect balance, schedule follow-up, print AVS, initiate referral if ordered',wrongs:['Only collect the copay','Ask the patient to call back to schedule','Print the insurance card only']},
+  {q:'Appointment reminders should be sent -',ctx:'Recall',correct:'48 hours and 24 hours before the appointment',wrongs:['Only the morning of the appointment','One week in advance only','Only if patient requests them']},
+  {q:'A caller reports chest pain and trouble breathing. You should -',ctx:'Phone Triage',correct:'Tell the patient to call 911 - never place on hold',wrongs:['Schedule an urgent same-day appointment','Ask them to come in and wait','Transfer to the nurse to assess by phone']},
+  {q:'Open access scheduling is best for -',ctx:'Scheduling Methods',correct:'High-volume urgent or primary care with high same-day demand',wrongs:['Specialty offices with complex procedure scheduling','Hospitals with fixed shift assignments','Telehealth-only practices']},
+  {q:'The EHR recall module is used to -',ctx:'Recall',correct:'Track when patients are due for preventive care and generate reminders',wrongs:['Bill patients for overdue balances','Recall defective medical devices','Track staff vacation schedules']},
+  {q:'What must be documented when a slot opens from a cancellation?',ctx:'Cancellations',correct:'Cancellation reason, date/time, and mark slot as available for rebooking',wrongs:['Only update the billing record','Delete the appointment entirely','Charge the patient the full visit fee immediately']},
+  {q:'A wave scheduling method means -',ctx:'Scheduling Methods',correct:'Multiple patients booked at the hour start, seen in order of arrival',wrongs:['One patient per fixed time slot','All patients booked same day only','Provider schedules from home the night before']},
+];
+const APPT_ITEMS=[
+  {item:'First-ever visit to the practice - full intake, history, consent forms, 50-minute block',correct:'New Patient',wrongs:['Well Visit','Established Patient']},
+  {item:'Patient on file following up on controlled hypertension - 20-minute slot',correct:'Established Patient',wrongs:['New Patient','Well Visit']},
+  {item:'Annual adult physical - preventive, billed separately from problems',correct:'Well Visit',wrongs:['Established Patient','Procedure']},
+  {item:'Patient calls with acute knee injury needing same-day evaluation',correct:'Urgent / Same-Day',wrongs:['New Patient','Procedure']},
+  {item:'Cortisone injection booked with confirmed prior authorization',correct:'Procedure / Specialist',wrongs:['Established Patient','Urgent / Same-Day']},
+  {item:'Patient prefers video visit for medication refill - insurance coverage confirmed',correct:'Telehealth',wrongs:['Established Patient','Procedure']},
+  {item:'12-year wellness exam with immunizations - not a problem-focused visit',correct:'Well Visit',wrongs:['New Patient','Established Patient']},
+  {item:'Patient with chronic diabetes seen every 3 months for A1C follow-up',correct:'Established Patient',wrongs:['Well Visit','New Patient']},
+  {item:'Procedure room visit: EKG and spirometry for pre-op clearance',correct:'Procedure / Specialist',wrongs:['Urgent / Same-Day','Established Patient']},
+  {item:'New referral from PCP to cardiologist - first cardiology visit',correct:'New Patient',wrongs:['Established Patient','Urgent / Same-Day']},
+];
+const SCENARIOS=[
+  {label:'Urgent Triage - Call 1 of 4',tokens:[
+    {t:'A caller says: I have chest pain for 20 minutes. You: '},
+    {a:'place them on hold to check the schedule',d:'Wrong: never place a possible emergency on hold. Direct to call 911 immediately.'},
+    {t:'. Instead, you: '},
+    {a:'immediately tell them to call 911 and notify the provider',d:'Correct: chest pain is a potential cardiac emergency - 911 every time. Notify provider and document the call.'},
+  ]},
+  {label:'PA Before Scheduling - Call 2 of 4',tokens:[
+    {t:'A provider orders an MRI. Without checking PA status, the MA: '},
+    {a:'schedules the MRI for next Tuesday',d:'Wrong: scheduling a PA-required procedure without authorization risks a denied claim and patient being billed the full cost.'},
+    {t:'. Instead, the MA: '},
+    {a:'submits the PA request, waits for approval, then schedules and documents the PA number',d:'Correct: never schedule PA-required services until authorization is confirmed and documented in the EHR.'},
+  ]},
+  {label:'No-Show Protocol - Call 3 of 4',tokens:[
+    {t:'A patient does not show for their diabetes follow-up. The MA: '},
+    {a:'leaves the slot blank in the EHR',d:'Wrong: no-shows must be documented as No-Show immediately - a blank slot creates a documentation gap.'},
+    {t:'. Then the MA: '},
+    {a:'calls the patient, offers to reschedule, and flags the chart for provider awareness',d:'Correct: document, contact, reschedule, and flag for urgent conditions - a missed diabetes visit may indicate a care gap.'},
+  ]},
+  {label:'Eligibility Check - Call 4 of 4',tokens:[
+    {t:'A patient arrives for a specialist visit. The MA skips insurance check: '},
+    {a:'the visit proceeds without eligibility verification',d:'Wrong: insurance must be verified before every visit - plans change, coverage lapses, and referrals expire.'},
+    {t:'. Before the next patient, the MA: '},
+    {a:'runs eligibility in EHR, confirms group number, member ID, copay, and referral requirement',d:'Correct: eligibility verification confirms active coverage, copay amount, and whether prior auth or referral was needed.'},
+  ]},
+];
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function goHome(){show('home')}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let currentMode='';
+let mPool=[],mIdx=0,mScore=0,mHist=[];
+function startMethod(){currentMode='method';mPool=shuffle(METHOD_ITEMS);mIdx=0;mScore=0;mHist=[];show('method-screen');renderMethod()}
+function renderMethod(){
+  const it=mPool[mIdx];const opts=shuffle([it.correct,...it.wrongs]);
+  $('method-item').textContent=it.item;
+  $('method-num').textContent='Scenario '+(mIdx+1)+' of '+mPool.length;
+  $('method-prog').style.width=(mIdx/mPool.length*100)+'%';
+  $('method-fb').textContent='';$('btn-methodnext').style.display='none';
+  $('method-streak').innerHTML=mHist.map(h=>'<div class="sdot '+(h?'hit':'miss')+'"></div>').join('');
+  $('method-grid').innerHTML=opts.map(o=>'<button class="opt" data-val="'+o.replace(/"/g,'&quot;')+'" onclick="methodAnswer(this)" style="justify-content:center;text-align:center;font-size:10px">'+o+'</button>').join('');
+}
+function methodAnswer(btn){
+  const chosen=btn.dataset.val,it=mPool[mIdx];
+  document.querySelectorAll('#method-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.correct;
+  if(ok){btn.classList.add('correct');mScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#method-grid .opt').forEach(b=>{if(b.dataset.val===it.correct)b.classList.add('correct')})}
+  $('method-fb').innerHTML=ok?'<span style="color:var(--success)">Correct!</span>':'<span style="color:var(--danger)">Answer: '+it.correct+'</span>';
+  mHist.push(ok);$('btn-methodnext').style.display='inline-block';
+}
+function methodNext(){mIdx++;if(mIdx>=mPool.length)showResults('method',mScore,mPool.length);else renderMethod()}
+let qPool=[],qIdx=0,qScore=0,qHist=[];
+function startQuiz(){currentMode='quiz';qPool=shuffle(QUIZ);qIdx=0;qScore=0;qHist=[];show('quiz-screen');renderQuiz()}
+function renderQuiz(){
+  const q=qPool[qIdx];const opts=shuffle([q.correct,...q.wrongs]);
+  $('quiz-q').textContent=q.q;$('quiz-ctx').textContent=q.ctx;
+  $('quiz-num').textContent='Q '+(qIdx+1)+' of '+qPool.length;
+  $('quiz-prog').style.width=(qIdx/qPool.length*100)+'%';
+  $('quiz-fb').textContent='';$('btn-qnext').style.display='none';
+  $('streak-row').innerHTML=qHist.map(h=>'<div class="sdot '+(h?'hit':'miss')+'"></div>').join('');
+  $('opts-grid').innerHTML=opts.map(o=>'<button class="opt" data-val="'+o.replace(/"/g,'&quot;')+'" onclick="quizAnswer(this)">'+o+'</button>').join('');
+}
+function quizAnswer(btn){
+  const chosen=btn.dataset.val,correct=qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .opt').forEach(b=>b.classList.add('locked'));
+  if(chosen===correct){btn.classList.add('correct');qScore++;$('quiz-fb').innerHTML='<span style="color:var(--success)">Correct!</span>';}
+  else{btn.classList.add('wrong');document.querySelectorAll('#opts-grid .opt').forEach(b=>{if(b.dataset.val===correct)b.classList.add('correct')});$('quiz-fb').innerHTML='<span style="color:var(--danger)">Answer: '+correct+'</span>';}
+  qHist.push(chosen===correct);$('btn-qnext').style.display='inline-block';
+}
+function quizNext(){qIdx++;if(qIdx>=qPool.length)showResults('quiz',qScore,qPool.length);else renderQuiz()}
+let aPool=[],aIdx=0,aScore=0,aHist=[];
+function startAppt(){currentMode='appt';aPool=shuffle(APPT_ITEMS);aIdx=0;aScore=0;aHist=[];show('appt-screen');renderAppt()}
+function renderAppt(){
+  const it=aPool[aIdx];const opts=shuffle([it.correct,...it.wrongs]);
+  $('appt-item').textContent=it.item;
+  $('appt-num').textContent='Visit '+(aIdx+1)+' of '+aPool.length;
+  $('appt-prog').style.width=(aIdx/aPool.length*100)+'%';
+  $('appt-fb').textContent='';$('btn-apptnext').style.display='none';
+  $('appt-streak').innerHTML=aHist.map(h=>'<div class="sdot '+(h?'hit':'miss')+'"></div>').join('');
+  $('appt-grid').innerHTML=opts.map(o=>'<button class="opt" data-val="'+o.replace(/"/g,'&quot;')+'" onclick="apptAnswer(this)" style="justify-content:center;text-align:center;font-size:10px">'+o+'</button>').join('');
+}
+function apptAnswer(btn){
+  const chosen=btn.dataset.val,it=aPool[aIdx];
+  document.querySelectorAll('#appt-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.correct;
+  if(ok){btn.classList.add('correct');aScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#appt-grid .opt').forEach(b=>{if(b.dataset.val===it.correct)b.classList.add('correct')})}
+  $('appt-fb').innerHTML=ok?'<span style="color:var(--success)">Correct!</span>':'<span style="color:var(--danger)">Answer: '+it.correct+'</span>';
+  aHist.push(ok);$('btn-apptnext').style.display='inline-block';
+}
+function apptNext(){aIdx++;if(aIdx>=aPool.length)showResults('appt',aScore,aPool.length);else renderAppt()}
+let scIdx=0;
+function startSC(){currentMode='scenario';scIdx=0;show('sc-screen');renderSC()}
+function renderSC(){
+  const sc=SCENARIOS[scIdx];
+  $('sc-label').textContent=sc.label;
+  $('sc-prog').style.width=((scIdx+1)/SCENARIOS.length*100)+'%';
+  $('sc-decode').innerHTML='Tap any <span style="color:var(--cyan-lt)">highlighted</span> action to see correct protocol.';
+  $('sc-text').innerHTML=sc.tokens.map(tok=>{
+    if(tok.a){const s=tok.d.replace(/"/g,'&quot;');return'<span class="hl" data-abbr="'+tok.a.replace(/"/g,'&quot;')+'" data-def="'+s+'" onclick="scDecode(this)">'+tok.a+'</span>'}
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled=scIdx===0;$('sc-next').disabled=scIdx===SCENARIOS.length-1;
+}
+function scDecode(el){el.classList.toggle('popped');$('sc-decode').innerHTML='<strong>Protocol:</strong> '+el.dataset.def}
+function scPrev(){if(scIdx>0){scIdx--;renderSC()}}
+function scNext(){if(scIdx<SCENARIOS.length-1){scIdx++;renderSC()}}
+function showResults(mode,score,total){
+  currentMode=mode;show('results-screen');
+  const pct=Math.round(score/total*100),C=2*Math.PI*54,offset=C-(Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray=C;$('ring-fill').style.strokeDashoffset=C;
+  $('ring-pct').textContent=pct+'%';$('ring-sub').textContent=score+' / '+total;
+  setTimeout(()=>{$('ring-fill').style.strokeDashoffset=offset},80);
+  $('res-title').textContent=pct>=90?'Outstanding!':pct>=75?'Great Work!':pct>=60?'Good Effort!':'Keep Studying!';
+  $('res-msg').textContent='You scored '+score+' / '+total+' ('+pct+'%). '+(pct>=80?'Scheduling mastered!':'Review and try again.');
+}
+function retryMode(){
+  if(currentMode==='method')startMethod();
+  else if(currentMode==='quiz')startQuiz();
+  else if(currentMode==='appt')startAppt();
+  else if(currentMode==='scenario')startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

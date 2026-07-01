@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medical Records – Week 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#160a0a;--surf:#221010;--surf2:#2c1414;--border:#4a1f1f;--red:#d94040;--red-lt:#f07070;--rust:#b83030;--text:#f5e8e8;--muted:#b08080;--danger:#e05a5a;--success:#3db88a;--warn:#e0a83a;--r:12px;--r-lg:16px;--bar:50px;--foot:28px;--prog:3px}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+.screen{display:none;position:fixed;inset:0;flex-direction:column;overflow:hidden}.screen.active{display:flex}
+.bar{height:var(--bar);min-height:var(--bar);max-height:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0}
+.bar-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700}
+.btn-back{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-back:hover{border-color:var(--red);color:var(--red-lt)}
+.prog-rail{height:var(--prog);min-height:var(--prog);background:var(--border);flex-shrink:0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--rust),var(--red));transition:width .4s ease;width:0%}
+.zone{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 18px;overflow:hidden;gap:12px}
+.foot{height:var(--foot);min-height:var(--foot);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.06em;color:#2e1010;background:var(--surf);border-top:1px solid var(--border);flex-shrink:0}
+#home{background:radial-gradient(ellipse 80% 55% at 25% 20%,#3c1616 0%,var(--bg) 65%)}
+.pill{background:rgba(217,64,64,.15);border:1px solid rgba(217,64,64,.45);color:var(--red-lt);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 14px;border-radius:50px}
+.home-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(20px,4.2vw,38px);font-weight:800;text-align:center;line-height:1.15}
+.home-title em{color:var(--red-lt);font-style:normal}
+.home-sub{font-size:clamp(11px,1.5vw,14px);color:var(--muted);text-align:center;max-width:460px;line-height:1.55}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:680px}
+.mode-card{background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px);cursor:pointer;transition:border-color .2s,background .2s,transform .15s;display:flex;flex-direction:column;gap:6px}
+.mode-card:hover{border-color:var(--red);background:var(--surf2);transform:translateY(-2px)}
+.mode-icon{font-size:clamp(20px,3vw,26px);line-height:1}
+.mode-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.6vw,14px);font-weight:700}
+.mode-desc{font-size:clamp(10px,1.2vw,11px);color:var(--muted);line-height:1.45}
+.chip{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:50px;margin-top:2px;width:fit-content}
+.chip-red{background:rgba(217,64,64,.2);color:var(--red-lt)}.chip-gold{background:rgba(224,168,58,.2);color:#f0c068}.chip-green{background:rgba(61,184,138,.2);color:#5de0b0}.chip-teal{background:rgba(40,168,126,.2);color:#60d4a8}
+.btn-primary{background:var(--red);color:#160a0a;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;padding:11px 32px;border:none;border-radius:10px;cursor:pointer;transition:background .15s,transform .1s;white-space:nowrap}.btn-primary:hover{background:var(--red-lt);transform:translateY(-1px)}
+.btn-sec{background:var(--surf);border:1.5px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;padding:9px 20px;border-radius:10px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-sec:hover:not(:disabled){border-color:var(--red);color:var(--red-lt)}.btn-sec:disabled{opacity:.3;cursor:default}
+.btn-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:540px}
+.quiz-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--red-lt)}
+.streak-row{display:flex;gap:3px}.sdot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .25s}.sdot.hit{background:var(--success)}.sdot.miss{background:var(--danger)}
+.card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:560px;text-align:center}
+.card-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(13px,2vw,16px);font-weight:600;line-height:1.6;color:var(--text)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:560px}
+.opt{background:var(--surf);border:2px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:clamp(11px,1.4vw,12px);font-weight:600;font-family:'Inter',sans-serif;color:var(--text);cursor:pointer;text-align:left;transition:border-color .12s,background .12s;min-height:52px;display:flex;align-items:center}
+.opt:hover:not(.locked){border-color:var(--red);background:var(--surf2)}.opt.correct{border-color:var(--success);background:rgba(61,184,138,.1);color:var(--success)}.opt.wrong{border-color:var(--danger);background:rgba(224,90,90,.1);color:var(--danger)}.opt.locked{cursor:default}
+.fb{font-size:12px;color:var(--muted);text-align:center;min-height:28px;max-width:540px;line-height:1.5}
+.sc-header{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--warn);align-self:flex-start;max-width:600px;width:100%}
+.sc-card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:600px;flex-shrink:1;min-height:0}
+.sc-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.9vw,15px);font-weight:600;line-height:1.85;color:var(--text)}
+.hl{color:var(--red-lt);background:rgba(217,64,64,.12);padding:1px 5px;border-radius:4px;cursor:pointer;transition:background .12s;display:inline-block}.hl:hover{background:rgba(217,64,64,.24)}.hl.popped{color:#5de0b0;background:rgba(61,184,138,.15)}
+.sc-decode{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;width:100%;max-width:600px;font-size:12px;color:var(--muted);line-height:1.6;min-height:44px;flex-shrink:0}.sc-decode strong{color:var(--red-lt)}
+.res-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;max-width:420px}
+.ring-wrap{position:relative;width:130px;height:130px}.ring-wrap svg{width:100%;height:100%}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:10}.ring-fill{fill:none;stroke:var(--red);stroke-width:10;stroke-linecap:round;stroke-dasharray:339;stroke-dashoffset:339;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)}
+.ring-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.ring-pct{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;color:var(--red-lt)}.ring-sub{font-size:10px;color:var(--muted)}
+.res-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:800}.res-msg{font-size:13px;color:var(--muted);line-height:1.6;max-width:340px}.res-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+</style>
+</head>
+<body>
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 4 · Medical Assistant Training</div>
+    <h1 class="home-title">Medical <em>Records</em></h1>
+    <p class="home-sub">Record types, legal standards, patient rights, subpoenas & interoperability in four modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startType()"><div class="mode-icon">📁</div><div class="mode-name">Record Type Match</div><div class="mode-desc">Match descriptions to the correct medical record type (H&P, DS, MAR, etc.).</div><div class="chip chip-red">9 types</div></div>
+      <div class="mode-card" onclick="startQuiz()"><div class="mode-icon">🧠</div><div class="mode-name">Knowledge Quiz</div><div class="mode-desc">Patient rights, subpoenas, breach rules, interoperability & legal holds.</div><div class="chip chip-gold">15 questions</div></div>
+      <div class="mode-card" onclick="startRights()"><div class="mode-icon">⚖️</div><div class="mode-name">Patient Rights Check</div><div class="mode-desc">Decide if each patient request must be honored under HIPAA.</div><div class="chip chip-green">10 scenarios</div></div>
+      <div class="mode-card" onclick="startSC()"><div class="mode-icon">🔏</div><div class="mode-name">Legal Scene Lab</div><div class="mode-desc">Tap legal events (subpoenas, holds, spoliation) to see correct protocol.</div><div class="chip chip-teal">Scenarios</div></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="type-screen" class="screen">
+  <div class="bar"><span class="bar-title">📁 Record Type Match</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="type-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="type-num">Record 1 of 9</span><div class="streak-row" id="type-streak"></div></div>
+    <div class="card"><div class="card-text" id="type-desc">Description</div></div>
+    <div class="opts" id="type-grid" style="grid-template-columns:1fr 1fr 1fr;max-width:520px"></div>
+    <div class="fb" id="type-fb"></div>
+    <button class="btn-primary" id="btn-typenext" style="display:none" onclick="typeNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Q 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="card"><div class="card-text" id="quiz-q">Q</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="opts" id="opts-grid"></div>
+    <div class="fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="rights-screen" class="screen">
+  <div class="bar"><span class="bar-title">⚖️ Patient Rights Check</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="rights-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="rights-num">Scenario 1 of 10</span><div class="streak-row" id="rights-streak"></div></div>
+    <div class="card"><div class="card-text" id="rights-item">Scenario</div><div style="font-size:11px;color:var(--muted);margin-top:8px">Must this request be honored under HIPAA?</div></div>
+    <div class="opts" id="rights-grid" style="grid-template-columns:1fr 1fr;max-width:380px">
+      <button class="opt" data-val="yes" onclick="rightsAnswer(this)" style="justify-content:center">✔ Must Honor</button>
+      <button class="opt" data-val="no" onclick="rightsAnswer(this)" style="justify-content:center">✗ Can Deny</button>
+    </div>
+    <div class="fb" id="rights-fb"></div>
+    <button class="btn-primary" id="btn-rightsnext" style="display:none" onclick="rightsNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">🔏 Legal Scene Lab</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start;padding-top:14px;gap:10px">
+    <div class="sc-header" id="sc-label">Scene 1 of 4</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--red-lt)">highlighted</span> event to see correct protocol.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div><div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+const RECORD_TYPES=[
+  {desc:'Comprehensive initial evaluation: PMH, family history, social history, ROS, physical exam, and initial plan',correct:'H&P',wrongs:['Discharge Summary','Progress Note']},
+  {desc:'Chronological log of every medication given, by whom, and when — legal document in inpatient settings',correct:'MAR',wrongs:['Operative Report','Consent Form']},
+  {desc:'Summary of inpatient stay: admitting diagnosis, treatment, procedures, discharge condition, and follow-up plan',correct:'Discharge Summary',wrongs:['H&P','Consultation Report']},
+  {desc:'Patient\'s end-of-life wishes: Living Will, Healthcare Proxy, DNR orders',correct:'Advance Directive',wrongs:['Consent Form','Discharge Summary']},
+  {desc:'Detailed account of a surgical procedure — required within 24 hours',correct:'Operative Report',wrongs:['H&P','Consultation Report']},
+  {desc:'Written opinion from a specialist: reason for referral, findings, and recommendations',correct:'Consultation Report',wrongs:['Operative Report','Progress Note']},
+  {desc:'Signed agreement before elective procedures — required element of the legal record',correct:'Consent Form',wrongs:['Advance Directive','MAR']},
+  {desc:'Provider-authored SOAP note for each clinical encounter, including follow-up and phone encounters',correct:'Progress Note',wrongs:['H&P','Discharge Summary']},
+  {desc:'Lab results, radiology reports, pathology findings, EKG interpretations — must be reviewed and signed',correct:'Diagnostic Report',wrongs:['Consultation Report','MAR']},
+];
+
+const QUIZ=[
+  {q:'Under HIPAA, a practice must respond to a patient\'s records request within —',ctx:'Patient Rights',correct:'30 days (one 30-day extension allowed)',wrongs:['7 days','60 days','90 days']},
+  {q:'What may a practice withhold from a patient\'s Right to Access?',ctx:'Patient Rights',correct:'Psychotherapy notes kept separately by the therapist',wrongs:['Lab results from last year','Operative reports from prior surgeries','The active problem list']},
+  {q:'A patient requests amendment of their record. The provider may deny if —',ctx:'Patient Rights',correct:'The information is accurate and complete',wrongs:['The record is more than 5 years old','The patient owes a balance','The amendment would help the patient\'s insurance claim']},
+  {q:'What is the Accounting of Disclosures right?',ctx:'Patient Rights',correct:'Patient may request a list of PHI disclosures made in the past 6 years (excluding TPO)',wrongs:['Patient may delete their own records','Patient may request immediate EHR access','Patient may see all billing records']},
+  {q:'A subpoena alone —',ctx:'Legal',correct:'Does NOT override HIPAA — patient must be notified; a judge-signed court order is required',wrongs:['Automatically allows full record release','Must be complied with within 24 hours','Requires the privacy officer to immediately destroy the records']},
+  {q:'What is spoliation of evidence?',ctx:'Legal',correct:'Destruction or alteration of records after litigation is anticipated — carries severe legal penalties',wrongs:['Faxing records to the wrong recipient','Shredding records past their retention period','Filing records in the wrong patient chart']},
+  {q:'A legal hold means —',ctx:'Legal',correct:'Preserve all potentially relevant records — suspends normal destruction schedules',wrongs:['Immediately destroy records to protect the provider','Release records only to the patient','Submit records to HHS for review']},
+  {q:'What is the Designated Record Set (DRS)?',ctx:'EHR Legal',correct:'The group of records an organization maintains that comprises the legal medical record',wrongs:['A backup copy of the EHR stored offsite','The list of all EHR users and their access levels','The billing ledger maintained by the practice']},
+  {q:'Information blocking under the 21st Century Cures Act is penalized up to —',ctx:'Interoperability',correct:'$1 million per violation',wrongs:['$10,000 per violation','$50,000 per violation','$500 per violation']},
+  {q:'42 CFR Part 2 provides extra protections for —',ctx:'Special Records',correct:'Substance abuse treatment records — stricter consent than standard HIPAA',wrongs:['Mental health prescriptions','HIV test results','Genetic information under GINA']},
+  {q:'FHIR is used for —',ctx:'Interoperability',correct:'Exchanging electronic health records between different EHR systems',wrongs:['Filing paper records in large practices','Calculating E&M billing codes','Encrypting email containing PHI']},
+  {q:'The statute of limitations for medical malpractice typically starts —',ctx:'Legal',correct:'From when the injury was discovered or reasonably should have been discovered',wrongs:['From the patient\'s date of birth','From the date the record was created','Always from the date of the procedure, no exceptions']},
+  {q:'For minors, the malpractice statute of limitations clock usually starts —',ctx:'Legal',correct:'At the age of majority — not at the date of the incident',wrongs:['At the date of the procedure','When the parents discover the injury','At age 10, regardless of discovery']},
+  {q:'A CCD (Continuity of Care Document) is used for —',ctx:'Interoperability',correct:'Transitions of care — standardized patient summary shared between providers',wrongs:['Billing claims to insurance carriers','Subpoena responses to court orders','Internal staff communication about a patient']},
+  {q:'When releasing records for workers\' compensation, you should —',ctx:'ROI',correct:'Release only treatment relevant to the work-related injury — not the entire chart',wrongs:['Release the full chart for any workers\' comp request','Refuse all release without a judge\'s order','Require dual signatures from two providers']},
+];
+
+const RIGHTS_ITEMS=[
+  {item:'Patient requests a copy of their lab results in electronic format',mustHonor:true,why:'HIPAA Right of Access — must accommodate electronic format requests. Cannot charge extra.'},
+  {item:'Patient requests copies of their therapist\'s separately maintained psychotherapy notes',mustHonor:false,why:'Psychotherapy notes kept separately by the therapist may be withheld — they are explicitly excluded from the Right of Access.'},
+  {item:'Patient requests amendment of a lab result they believe is incorrect',mustHonor:false,why:'Provider may deny if the record is accurate and complete — not all amendment requests must be honored.'},
+  {item:'Adult patient (age 30) requests their own medical records',mustHonor:true,why:'HIPAA Right of Access — patients 18+ have an enforceable right to access their own records within 30 days.'},
+  {item:'Patient with an unpaid balance requests their records',mustHonor:true,why:'Records cannot be denied due to non-payment of bills — HIPAA explicitly prohibits withholding records for unpaid balances.'},
+  {item:'Patient requests restriction on disclosure to their health plan for a cash-paid service',mustHonor:true,why:'Providers MUST honor requests to restrict disclosure to a health plan if the patient pays out-of-pocket in full.'},
+  {item:'Patient requests communication via their cell phone only — not home number',mustHonor:true,why:'Right to Confidential Communications — must be accommodated if reasonable.'},
+  {item:'Patient requests accounting of all treatment disclosures in the past 2 years',mustHonor:false,why:'TPO disclosures are excluded from the accounting of disclosures — only non-TPO disclosures are logged.'},
+  {item:'18-year-old requests access to records from when they were a minor (STI treatment at age 16)',mustHonor:true,why:'Once a minor reaches the age of majority, they control their own record — including records from minor-authorized care.'},
+  {item:'Parent requests full access to their 19-year-old\'s medical records',mustHonor:false,why:'At age of majority (18), the patient — not the parent — controls their records. Parent access requires patient authorization.'},
+];
+
+const SCENARIOS=[
+  {label:'⚖️ Subpoena vs Court Order — Scene 1 of 4',tokens:[
+    {t:'A subpoena arrives requesting all patient records in a malpractice case. The MA: '},
+    {a:'immediately copies and sends the complete chart to the requesting attorney',d:'❌ Wrong: a subpoena alone does NOT override HIPAA. Notify compliance officer, place records under legal hold, notify the patient before releasing.'},
+    {t:'. The compliance officer reviews and receives a '},
+    {a:'judge-signed court order',d:'✔ A court order signed by a judge DOES override HIPAA — compliance officer reviews scope and releases only what is specifically requested.'},
+  ]},
+  {label:'🔒 Legal Hold — Scene 2 of 4',tokens:[
+    {t:'The practice is notified of pending litigation. The office manager says the records involved are due for destruction next week. You should: '},
+    {a:'destroy the records per the normal schedule — retention period is met',d:'❌ Wrong: a legal hold suspends all normal destruction schedules. Destroying potentially relevant records after litigation is anticipated is spoliation.'},
+    {t:'. Instead, you: '},
+    {a:'immediately place the records under a legal hold and notify the compliance officer in writing',d:'✔ Correct: a legal hold preserves all potentially relevant records and must be documented in writing. No destruction until hold is lifted.'},
+  ]},
+  {label:'🔄 Interoperability — Scene 3 of 4',tokens:[
+    {t:'A new specialist requests the patient\'s records but uses a different EHR system. The practice uses: '},
+    {a:'a CCD (Continuity of Care Document)',d:'✔ Correct: a standardized patient summary used for transitions of care between providers using different EHR systems.'},
+    {t:'. The EHR vendor begins '},
+    {a:'blocking the patient\'s portal access to their own records',d:'❌ Violation: information blocking penalties under the 21st Century Cures Act reach up to $1 million per violation. Patients must have timely access.'},
+  ]},
+  {label:'🩺 Minor Records — Scene 4 of 4',tokens:[
+    {t:'A 17-year-old seeks STI testing and treatment, paying out of pocket. The parent calls requesting the results. You: '},
+    {a:'release results to the parent — they\'re still a minor',d:'❌ Wrong: many states allow minors to authorize care for STIs without parental consent. Those records may not be released to parents without the minor\'s consent.'},
+    {t:'. The same patient turns 18 and calls to request their complete records. You: '},
+    {a:'release the records to the now-adult patient',d:'✔ Correct: once the minor reaches the age of majority, they control their own records, including records from minor-authorized care.'},
+  ]},
+];
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function goHome(){show('home')}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let currentMode='';
+
+const RT_LABELS=['H&P','MAR','Discharge Summary','Advance Directive','Operative Report','Consultation Report','Consent Form','Progress Note','Diagnostic Report'];
+let typePool=[],typeIdx=0,typeScore=0,typeHist=[];
+function startType(){currentMode='type';typePool=shuffle(RECORD_TYPES);typeIdx=0;typeScore=0;typeHist=[];show('type-screen');renderType()}
+function renderType(){
+  const it=typePool[typeIdx];const opts=shuffle([it.correct,...it.wrongs]);
+  $('type-desc').textContent=it.desc;
+  $('type-num').textContent=`Record ${typeIdx+1} of ${typePool.length}`;
+  $('type-prog').style.width=`${(typeIdx/typePool.length)*100}%`;
+  $('type-fb').textContent='';$('btn-typenext').style.display='none';
+  $('type-streak').innerHTML=typeHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('type-grid').innerHTML=opts.map(o=>{const s=o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');return`<button class="opt" data-val="${s}" onclick="typeAnswer(this)" style="justify-content:center;text-align:center;font-size:11px;font-weight:700">${s}</button>`}).join('');
+}
+function typeAnswer(btn){
+  const chosen=btn.dataset.val,it=typePool[typeIdx];
+  document.querySelectorAll('#type-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.correct;
+  if(ok){btn.classList.add('correct');typeScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#type-grid .opt').forEach(b=>{if(b.dataset.val===it.correct)b.classList.add('correct')})}
+  $('type-fb').innerHTML=ok?'<span style="color:var(--success)">✓ Correct!</span>':`<span style="color:var(--danger)">✗ Answer: ${it.correct}</span>`;
+  typeHist.push(ok);$('btn-typenext').style.display='inline-block';
+}
+function typeNext(){typeIdx++;if(typeIdx>=typePool.length)showResults('type',typeScore,typePool.length);else renderType()}
+
+let qPool=[],qIdx=0,qScore=0,qHist=[];
+function startQuiz(){currentMode='quiz';qPool=shuffle(QUIZ);qIdx=0;qScore=0;qHist=[];show('quiz-screen');renderQuiz()}
+function renderQuiz(){
+  const q=qPool[qIdx];const opts=shuffle([q.correct,...q.wrongs]);
+  $('quiz-q').textContent=q.q;$('quiz-ctx').textContent=q.ctx;
+  $('quiz-num').textContent=`Q ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width=`${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent='';$('btn-qnext').style.display='none';
+  $('streak-row').innerHTML=qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML=opts.map(o=>{const s=o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');return`<button class="opt" data-val="${s}" onclick="quizAnswer(this)">${s}</button>`}).join('');
+}
+function quizAnswer(btn){
+  const chosen=btn.dataset.val,correct=qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .opt').forEach(b=>b.classList.add('locked'));
+  if(chosen===correct){btn.classList.add('correct');qScore++;$('quiz-fb').innerHTML='<span style="color:var(--success)">✓ Correct!</span>';}
+  else{btn.classList.add('wrong');document.querySelectorAll('#opts-grid .opt').forEach(b=>{if(b.dataset.val===correct)b.classList.add('correct')});$('quiz-fb').innerHTML=`<span style="color:var(--danger)">✗ Answer: ${correct}</span>`;}
+  qHist.push(chosen===correct);$('btn-qnext').style.display='inline-block';
+}
+function quizNext(){qIdx++;if(qIdx>=qPool.length)showResults('quiz',qScore,qPool.length);else renderQuiz()}
+
+let rPool=[],rIdx=0,rScore=0,rHist=[];
+function startRights(){currentMode='rights';rPool=shuffle(RIGHTS_ITEMS);rIdx=0;rScore=0;rHist=[];show('rights-screen');renderRights()}
+function renderRights(){
+  const it=rPool[rIdx];
+  $('rights-item').textContent=it.item;
+  $('rights-num').textContent=`Scenario ${rIdx+1} of ${rPool.length}`;
+  $('rights-prog').style.width=`${(rIdx/rPool.length)*100}%`;
+  $('rights-fb').textContent='';$('btn-rightsnext').style.display='none';
+  $('rights-streak').innerHTML=rHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  document.querySelectorAll('#rights-grid .opt').forEach(b=>b.classList.remove('correct','wrong','locked'));
+}
+function rightsAnswer(btn){
+  const chosen=btn.dataset.val==='yes',it=rPool[rIdx];
+  document.querySelectorAll('#rights-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.mustHonor;
+  if(ok){btn.classList.add('correct');rScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#rights-grid .opt').forEach(b=>{if((b.dataset.val==='yes')===it.mustHonor)b.classList.add('correct')})}
+  $('rights-fb').innerHTML=(ok?'✓ Correct. ':'✗ Not quite. ')+it.why;
+  rHist.push(ok);$('btn-rightsnext').style.display='inline-block';
+}
+function rightsNext(){rIdx++;if(rIdx>=rPool.length)showResults('rights',rScore,rPool.length);else renderRights()}
+
+let scIdx=0;
+function startSC(){currentMode='scenario';scIdx=0;show('sc-screen');renderSC()}
+function renderSC(){
+  const sc=SCENARIOS[scIdx];
+  $('sc-label').textContent=sc.label;
+  $('sc-prog').style.width=`${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML='👆 Tap any <span style="color:var(--red-lt)">highlighted</span> event to see correct protocol.';
+  $('sc-text').innerHTML=sc.tokens.map(tok=>{
+    if(tok.a){const s=tok.d.replace(/"/g,'&quot;');return`<span class="hl" data-abbr="${tok.a.replace(/"/g,'&quot;')}" data-def="${s}" onclick="scDecode(this)">${tok.a}</span>`}
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled=scIdx===0;$('sc-next').disabled=scIdx===SCENARIOS.length-1;
+}
+function scDecode(el){el.classList.toggle('popped');$('sc-decode').innerHTML=`<strong>Protocol:</strong> ${el.dataset.def}`}
+function scPrev(){if(scIdx>0){scIdx--;renderSC()}}
+function scNext(){if(scIdx<SCENARIOS.length-1){scIdx++;renderSC()}}
+
+function showResults(mode,score,total){
+  currentMode=mode;show('results-screen');
+  const pct=Math.round((score/total)*100),C=2*Math.PI*54,offset=C-(Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray=C;$('ring-fill').style.strokeDashoffset=C;
+  $('ring-pct').textContent=pct+'%';$('ring-sub').textContent=`${score} / ${total}`;
+  setTimeout(()=>{$('ring-fill').style.strokeDashoffset=offset},80);
+  $('res-title').textContent=pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  $('res-msg').textContent=`You scored ${score} / ${total} (${pct}%). ${pct>=80?'You know medical records law!':'Review and try again.'}`;
+}
+function retryMode(){
+  if(currentMode==='type')startType();
+  else if(currentMode==='quiz')startQuiz();
+  else if(currentMode==='rights')startRights();
+  else if(currentMode==='scenario')startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

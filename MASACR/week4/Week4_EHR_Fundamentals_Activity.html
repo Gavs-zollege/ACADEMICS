@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EHR Fundamentals – Week 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0c1a10;--surf:#132218;--surf2:#192c1e;--border:#20402a;--green:#3ab86e;--green-lt:#60d090;--teal:#28a87e;--text:#e4f5ea;--muted:#70a880;--danger:#e05a5a;--success:#3db88a;--warn:#e0a83a;--r:12px;--r-lg:16px;--bar:50px;--foot:28px;--prog:3px}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+.screen{display:none;position:fixed;inset:0;flex-direction:column;overflow:hidden}.screen.active{display:flex}
+.bar{height:var(--bar);min-height:var(--bar);max-height:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0}
+.bar-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700}
+.btn-back{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-back:hover{border-color:var(--green);color:var(--green-lt)}
+.prog-rail{height:var(--prog);min-height:var(--prog);background:var(--border);flex-shrink:0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--green));transition:width .4s ease;width:0%}
+.zone{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 18px;overflow:hidden;gap:12px}
+.foot{height:var(--foot);min-height:var(--foot);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.06em;color:#142018;background:var(--surf);border-top:1px solid var(--border);flex-shrink:0}
+#home{background:radial-gradient(ellipse 80% 55% at 25% 20%,#1a3c22 0%,var(--bg) 65%)}
+.pill{background:rgba(58,184,110,.15);border:1px solid rgba(58,184,110,.45);color:var(--green-lt);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 14px;border-radius:50px}
+.home-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(20px,4.2vw,38px);font-weight:800;text-align:center;line-height:1.15}
+.home-title em{color:var(--green-lt);font-style:normal}
+.home-sub{font-size:clamp(11px,1.5vw,14px);color:var(--muted);text-align:center;max-width:460px;line-height:1.55}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:680px}
+.mode-card{background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px);cursor:pointer;transition:border-color .2s,background .2s,transform .15s;display:flex;flex-direction:column;gap:6px}
+.mode-card:hover{border-color:var(--green);background:var(--surf2);transform:translateY(-2px)}
+.mode-icon{font-size:clamp(20px,3vw,26px);line-height:1}
+.mode-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.6vw,14px);font-weight:700}
+.mode-desc{font-size:clamp(10px,1.2vw,11px);color:var(--muted);line-height:1.45}
+.chip{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:50px;margin-top:2px;width:fit-content}
+.chip-green{background:rgba(58,184,110,.2);color:var(--green-lt)}.chip-gold{background:rgba(224,168,58,.2);color:#f0c068}.chip-teal{background:rgba(40,168,126,.2);color:#60d4a8}.chip-red{background:rgba(224,90,90,.2);color:#f08080}
+.btn-primary{background:var(--green);color:#0c1a10;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;padding:11px 32px;border:none;border-radius:10px;cursor:pointer;transition:background .15s,transform .1s;white-space:nowrap}.btn-primary:hover{background:var(--green-lt);transform:translateY(-1px)}
+.btn-sec{background:var(--surf);border:1.5px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;padding:9px 20px;border-radius:10px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-sec:hover:not(:disabled){border-color:var(--green);color:var(--green-lt)}.btn-sec:disabled{opacity:.3;cursor:default}
+.btn-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:540px}
+.quiz-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green-lt)}
+.streak-row{display:flex;gap:3px}.sdot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .25s}.sdot.hit{background:var(--success)}.sdot.miss{background:var(--danger)}
+.card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:560px;text-align:center}
+.card-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(13px,2vw,16px);font-weight:600;line-height:1.6;color:var(--text)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:560px}
+.opt{background:var(--surf);border:2px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:clamp(11px,1.4vw,12px);font-weight:600;font-family:'Inter',sans-serif;color:var(--text);cursor:pointer;text-align:left;transition:border-color .12s,background .12s;min-height:52px;display:flex;align-items:center}
+.opt:hover:not(.locked){border-color:var(--green);background:var(--surf2)}.opt.correct{border-color:var(--success);background:rgba(61,184,138,.1);color:var(--success)}.opt.wrong{border-color:var(--danger);background:rgba(224,90,90,.1);color:var(--danger)}.opt.locked{cursor:default}
+.fb{font-size:12px;color:var(--muted);text-align:center;min-height:28px;max-width:540px;line-height:1.5}
+.sc-header{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--warn);align-self:flex-start;max-width:600px;width:100%}
+.sc-card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:600px;flex-shrink:1;min-height:0}
+.sc-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.9vw,15px);font-weight:600;line-height:1.85;color:var(--text)}
+.hl{color:var(--green-lt);background:rgba(58,184,110,.12);padding:1px 5px;border-radius:4px;cursor:pointer;transition:background .12s;display:inline-block}.hl:hover{background:rgba(58,184,110,.24)}.hl.popped{color:#60d4a8;background:rgba(40,168,126,.18)}
+.sc-decode{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;width:100%;max-width:600px;font-size:12px;color:var(--muted);line-height:1.6;min-height:44px;flex-shrink:0}.sc-decode strong{color:var(--green-lt)}
+.res-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;max-width:420px}
+.ring-wrap{position:relative;width:130px;height:130px}.ring-wrap svg{width:100%;height:100%}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:10}.ring-fill{fill:none;stroke:var(--green);stroke-width:10;stroke-linecap:round;stroke-dasharray:339;stroke-dashoffset:339;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)}
+.ring-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.ring-pct{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;color:var(--green-lt)}.ring-sub{font-size:10px;color:var(--muted)}
+.res-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:800}.res-msg{font-size:13px;color:var(--muted);line-height:1.6;max-width:340px}.res-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+</style>
+</head>
+<body>
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 4 · Medical Assistant Training</div>
+    <h1 class="home-title">EHR <em>Fundamentals</em></h1>
+    <p class="home-sub">Navigation, HIPAA, coding systems, e-prescribing & the 5 Rights in four interactive modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startFC()"><div class="mode-icon">💻</div><div class="mode-name">EHR Flashcards</div><div class="mode-desc">Key terms: EMR vs EHR, RBAC, CDS, FHIR, MAR & more.</div><div class="chip chip-green">20 cards</div></div>
+      <div class="mode-card" onclick="startQuiz()"><div class="mode-icon">🧠</div><div class="mode-name">Knowledge Quiz</div><div class="mode-desc">HIPAA, coding systems, e-prescribing, scheduling & portals.</div><div class="chip chip-gold">15 questions</div></div>
+      <div class="mode-card" onclick="startCode()"><div class="mode-icon">🏷️</div><div class="mode-name">Code Type Sorter</div><div class="mode-desc">Sort codes into ICD-10-CM, CPT, or HCPCS Level II.</div><div class="chip chip-teal">12 codes</div></div>
+      <div class="mode-card" onclick="startSC()"><div class="mode-icon">🔐</div><div class="mode-name">Access & Privacy Lab</div><div class="mode-desc">Tap EHR actions to see if they comply with HIPAA.</div><div class="chip chip-red">Scenarios</div></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="fc-screen" class="screen">
+  <div class="bar"><span class="bar-title">💻 EHR Flashcards</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="fc-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="fc-ctr">Card 1 of 20</span><span style="font-size:9px;color:var(--muted)">Tap · Space · ← →</span></div>
+    <div style="perspective:1000px;width:100%;max-width:520px">
+      <div id="fc-card" style="width:100%;height:clamp(180px,calc(100vh - 200px),230px);position:relative;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,0,.2,1);cursor:pointer" onclick="fcFlip()">
+        <div style="position:absolute;inset:0;border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;padding:20px;gap:8px;background:var(--surf);border:2px solid var(--border)">
+          <div id="fc-term" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(18px,4vw,28px);font-weight:800;color:var(--green-lt);text-align:center;line-height:1.2">EMR</div>
+          <div style="font-size:11px;color:var(--muted)">Tap to reveal</div>
+        </div>
+        <div style="position:absolute;inset:0;border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;backface-visibility:hidden;padding:20px;gap:8px;background:linear-gradient(135deg,#132218 0%,#1e3828 100%);border:2px solid var(--green);transform:rotateY(180deg)">
+          <div id="fc-def" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(14px,2.5vw,20px);font-weight:700;color:var(--text);text-align:center;line-height:1.4">Electronic Medical Record — single-practice record only</div>
+          <div style="font-size:10px;color:var(--muted)">Tap to flip back</div>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row"><button class="btn-sec" id="fc-prev" onclick="fcPrev()">← Prev</button><button class="btn-sec" id="fc-next" onclick="fcNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Q 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="card"><div class="card-text" id="quiz-q">Q</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="opts" id="opts-grid"></div>
+    <div class="fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="code-screen" class="screen">
+  <div class="bar"><span class="bar-title">🏷️ Code Type Sorter</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="code-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="code-num">Code 1 of 12</span><div class="streak-row" id="code-streak"></div></div>
+    <div class="card"><div class="card-text" id="code-item" style="font-size:clamp(18px,4vw,28px);font-weight:800;color:var(--green-lt)">J06.9</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="code-desc">Acute upper respiratory infection</div></div>
+    <div class="opts" id="code-grid" style="grid-template-columns:1fr 1fr 1fr;max-width:480px"></div>
+    <div class="fb" id="code-fb"></div>
+    <button class="btn-primary" id="btn-codenext" style="display:none" onclick="codeNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">🔐 Access & Privacy Lab</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start;padding-top:14px;gap:10px">
+    <div class="sc-header" id="sc-label">Scene 1 of 4</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--green-lt)">highlighted</span> action to see the HIPAA ruling.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div><div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+const FC_CARDS=[
+  {term:'EMR vs EHR',def:'EMR = single practice; EHR = shared across providers and organizations'},
+  {term:'Interoperability',def:'Ability to share/access records across different EHR systems and providers'},
+  {term:'RBAC',def:'Role-Based Access Control — each user sees only what their job role requires'},
+  {term:'HIPAA Minimum Necessary',def:'Access or share only the least amount of PHI needed for the task'},
+  {term:'Audit Trail / Log',def:'Automatic EHR record of every access, edit, print, and export — permanent, cannot be altered'},
+  {term:'Clinical Decision Support (CDS)',def:'EHR alerts and reminders that assist providers in making evidence-based decisions'},
+  {term:'MAR',def:'Medication Administration Record — logs every drug given, by whom, and when'},
+  {term:'5 Rights of Medication',def:'Right Patient, Right Medication, Right Dose, Right Route, Right Time'},
+  {term:'CCD',def:'Continuity of Care Document — standardized patient summary for transitions of care'},
+  {term:'Meaningful Use / Promoting Interoperability',def:'Federal program incentivizing EHR adoption to improve outcomes'},
+  {term:'EPCS',def:'Electronic Prescribing for Controlled Substances — DEA regulated'},
+  {term:'eRx',def:'E-prescribing — provider sends prescriptions electronically to pharmacy'},
+  {term:'ICD-10-CM',def:'Diagnosis codes — WHY the visit happened (outpatient/office)'},
+  {term:'CPT',def:'Current Procedural Terminology — WHAT was done (procedure codes, 5-digit)'},
+  {term:'HCPCS Level II',def:'Supplies, equipment, injections — alpha + 4 digits, used for Medicare/Medicaid'},
+  {term:'EOB',def:'Explanation of Benefits — insurance statement of what was billed, allowed, paid, and patient\'s responsibility'},
+  {term:'Super Bill / Charge Ticket',def:'Lists diagnosis and procedure codes used to generate a claim after a visit'},
+  {term:'FHIR',def:'Fast Healthcare Interoperability Resources — current standard for electronic health record exchange'},
+  {term:'Information Blocking',def:'Practice interfering with access to electronic health information — penalties up to $1M per violation'},
+  {term:'Auto-logoff',def:'EHR security feature that logs out inactive sessions — required physical safeguard under HIPAA Security Rule'},
+];
+
+const QUIZ=[
+  {q:'What is the key difference between an EMR and an EHR?',ctx:'EHR Basics',correct:'EHR is shared across providers; EMR is a single-practice record only',wrongs:['EMR is digital; EHR is paper-based','EHR is used only in hospitals; EMR in clinics','EHR requires a separate login for each facility']},
+  {q:'RBAC in an EHR means —',ctx:'Access Control',correct:'Role-Based Access Control — each staff role sees only what their job requires',wrongs:['Read-Before-Act Compliance — review before entering data','Record-Based Audit Compliance — logging all views','Random Batch Access Control — periodic record reviews']},
+  {q:'What does auto-logoff protect against?',ctx:'Physical Safeguards',correct:'Unauthorized access to an unattended EHR session',wrongs:['Virus attacks on the EHR server','Incorrect vital sign entry','Duplicate patient chart creation']},
+  {q:'What does the 5th Right of Medication entry mean?',ctx:'5 Rights',correct:'Right Time — verify frequency and set EHR MAR reminder',wrongs:['Right to refuse medication','Right documentation in the patient chart','Right co-signer for controlled substances']},
+  {q:'ICD-10-CM codes document —',ctx:'Coding Systems',correct:'Diagnoses — the WHY of the visit',wrongs:['Procedures performed — the WHAT','Equipment and supplies used','Provider time and complexity']},
+  {q:'CPT codes document —',ctx:'Coding Systems',correct:'Procedures — the WHAT was done (5-digit numeric)',wrongs:['Diagnoses — the WHY of the visit','Supplies and equipment — HCPCS','Time spent with the patient only']},
+  {q:'HCPCS Level II codes are used for —',ctx:'Coding Systems',correct:'Supplies, equipment, and injections — especially for Medicare/Medicaid',wrongs:['Evaluation and Management office visits','All diagnosis coding','All inpatient hospital procedures']},
+  {q:'What is Clinical Decision Support (CDS)?',ctx:'EHR Features',correct:'EHR alerts and reminders that assist providers in making evidence-based decisions',wrongs:['A patient portal for scheduling','The billing module that submits claims','The audit log that tracks EHR access']},
+  {q:'Drug-allergy interaction alerts in the EHR should —',ctx:'e-Prescribing',correct:'Never be overridden without provider authorization',wrongs:['Be dismissed immediately as false alarms','Only apply to controlled substances','Require patient signature before overriding']},
+  {q:'What is a Continuity of Care Document (CCD)?',ctx:'Interoperability',correct:'Standardized XML patient summary used for transitions of care between providers',wrongs:['A paper chart backup kept at the front desk','The discharge summary faxed to specialists','The patient\'s insurance pre-authorization form']},
+  {q:'Secure messaging through the patient portal is required because —',ctx:'Patient Portal',correct:'PHI cannot be sent via regular email — only HIPAA-compliant encrypted channels',wrongs:['Regular email is slow and unreliable','Patients prefer not to use email','Insurance companies require portal use']},
+  {q:'Medication reconciliation is done —',ctx:'Medication Management',correct:'At every transition of care — comparing chart list to what patient actually takes',wrongs:['Only at the first visit','Only when the patient reports a new medication','Only for patients over 65']},
+  {q:'EPCS stands for —',ctx:'e-Prescribing',correct:'Electronic Prescribing for Controlled Substances — DEA regulated',wrongs:['Electronic Patient Care Summary','Enhanced Privacy and Compliance Standards','Electronic Procedure Coding System']},
+  {q:'What is information blocking in health IT?',ctx:'Interoperability',correct:'A practice or policy that interferes with access to electronic health information — penalized up to $1M',wrongs:['Blocking patients from seeing their bills','Preventing staff from logging in remotely','Denying media access to the EHR']},
+  {q:'What must staff do if they suspect a HIPAA breach in the EHR?',ctx:'Breach Response',correct:'Report to the supervisor or privacy officer immediately — do not investigate alone',wrongs:['Delete the accessed records to contain the breach','Wait and see if the patient notices','Document it in the personal record and move on']},
+];
+
+const CODE_ITEMS=[
+  {code:'J06.9',desc:'Acute upper respiratory infection, unspecified',correct:'ICD-10-CM',wrongs:['CPT','HCPCS Level II']},
+  {code:'99213',desc:'Office visit, established patient, low complexity',correct:'CPT',wrongs:['ICD-10-CM','HCPCS Level II']},
+  {code:'A6216',desc:'Gauze, non-impregnated, sterile dressing',correct:'HCPCS Level II',wrongs:['CPT','ICD-10-CM']},
+  {code:'E11.9',desc:'Type 2 diabetes mellitus, without complications',correct:'ICD-10-CM',wrongs:['CPT','HCPCS Level II']},
+  {code:'99214',desc:'Office visit, established patient, moderate complexity',correct:'CPT',wrongs:['ICD-10-CM','HCPCS Level II']},
+  {code:'G0008',desc:'Administration of influenza virus vaccine',correct:'HCPCS Level II',wrongs:['CPT','ICD-10-CM']},
+  {code:'I10',desc:'Essential (primary) hypertension',correct:'ICD-10-CM',wrongs:['CPT','HCPCS Level II']},
+  {code:'36415',desc:'Collection of venous blood by venipuncture',correct:'CPT',wrongs:['ICD-10-CM','HCPCS Level II']},
+  {code:'L3670',desc:'Ankle foot orthosis, stirrup style (DME)',correct:'HCPCS Level II',wrongs:['CPT','ICD-10-CM']},
+  {code:'M17.11',desc:'Primary osteoarthritis, right knee',correct:'ICD-10-CM',wrongs:['CPT','HCPCS Level II']},
+  {code:'93000',desc:'Electrocardiogram, routine ECG with at least 12 leads',correct:'CPT',wrongs:['ICD-10-CM','HCPCS Level II']},
+  {code:'E0601',desc:'Continuous positive airway pressure (CPAP) device',correct:'HCPCS Level II',wrongs:['CPT','ICD-10-CM']},
+];
+
+const SCENARIOS=[
+  {label:'🔐 Login & Access — Scene 1 of 4',tokens:[
+    {t:'A front desk MA: '},
+    {a:'logs in using a coworker\'s credentials while their own account is being reset',d:'❌ HIPAA violation: sharing login credentials — each user must have a unique ID. This creates a false audit trail.'},
+    {t:'. Another MA: '},
+    {a:'locks their workstation screen before leaving to help a patient',d:'✔ Correct physical safeguard — workstations must be locked or logged off when unattended.'},
+  ]},
+  {label:'👁️ Snooping & RBAC — Scene 2 of 4',tokens:[
+    {t:'An MA: '},
+    {a:'looks up a celebrity patient\'s chart "out of curiosity"',d:'❌ HIPAA violation: accessing records without a treatment, payment, or operations need. Audit logs record this access automatically.'},
+    {t:'. A billing specialist: '},
+    {a:'accesses detailed clinical notes beyond what is needed to process the claim',d:'❌ Violation of Minimum Necessary principle — billing staff should see only what is needed for claim processing, not the full clinical record.'},
+  ]},
+  {label:'📱 Device & Transmission — Scene 3 of 4',tokens:[
+    {t:'An MA: '},
+    {a:'emails a patient\'s lab results from their personal Gmail account',d:'❌ HIPAA violation: PHI must only be transmitted via HIPAA-compliant encrypted channels — not standard email.'},
+    {t:'. A provider: '},
+    {a:'uses the EHR\'s built-in secure messaging to send results to the patient portal',d:'✔ Correct: HIPAA-compliant secure messaging. PHI stays within the encrypted system.'},
+  ]},
+  {label:'⚠️ Drug Alerts & 5 Rights — Scene 4 of 4',tokens:[
+    {t:'When entering a medication order, the EHR fires a drug-allergy alert. The MA: '},
+    {a:'clicks "override" without notifying the provider',d:'❌ Wrong: drug-allergy alerts must never be overridden without provider authorization — this bypasses a critical patient safety control.'},
+    {t:'. Instead, the MA should: '},
+    {a:'halt, notify the provider of the alert, and await instruction before proceeding',d:'✔ Correct: Clinical Decision Support alerts are safety tools — always escalate to the provider.'},
+  ]},
+];
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function goHome(){show('home')}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let currentMode='';
+
+// Flashcards
+let fcIdx=0;
+function startFC(){currentMode='fc';fcIdx=0;show('fc-screen');renderFC()}
+function renderFC(){
+  const c=FC_CARDS[fcIdx];
+  $('fc-term').textContent=c.term;$('fc-def').textContent=c.def;
+  $('fc-ctr').textContent=`Card ${fcIdx+1} of ${FC_CARDS.length}`;
+  $('fc-prog').style.width=`${((fcIdx+1)/FC_CARDS.length)*100}%`;
+  $('fc-card').style.transform='';
+  $('fc-prev').disabled=fcIdx===0;$('fc-next').disabled=fcIdx===FC_CARDS.length-1;
+}
+function fcFlip(){const c=$('fc-card');c.style.transform=c.style.transform?'':'rotateY(180deg)'}
+function fcPrev(){if(fcIdx>0){fcIdx--;renderFC()}}
+function fcNext(){if(fcIdx<FC_CARDS.length-1){fcIdx++;renderFC()}}
+document.addEventListener('keydown',e=>{
+  if(!$('fc-screen').classList.contains('active'))return;
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')fcNext();
+  else if(e.key==='ArrowLeft'||e.key==='ArrowUp')fcPrev();
+  else if(e.key===' '||e.key==='Enter'){e.preventDefault();fcFlip()}
+});
+
+// Quiz
+let qPool=[],qIdx=0,qScore=0,qHist=[];
+function startQuiz(){currentMode='quiz';qPool=shuffle(QUIZ);qIdx=0;qScore=0;qHist=[];show('quiz-screen');renderQuiz()}
+function renderQuiz(){
+  const q=qPool[qIdx];const opts=shuffle([q.correct,...q.wrongs]);
+  $('quiz-q').textContent=q.q;$('quiz-ctx').textContent=q.ctx;
+  $('quiz-num').textContent=`Q ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width=`${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent='';$('btn-qnext').style.display='none';
+  $('streak-row').innerHTML=qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML=opts.map(o=>{const s=o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');return`<button class="opt" data-val="${s}" onclick="quizAnswer(this)">${s}</button>`}).join('');
+}
+function quizAnswer(btn){
+  const chosen=btn.dataset.val,correct=qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .opt').forEach(b=>b.classList.add('locked'));
+  if(chosen===correct){btn.classList.add('correct');qScore++;$('quiz-fb').innerHTML='<span style="color:var(--success)">✓ Correct!</span>';}
+  else{btn.classList.add('wrong');document.querySelectorAll('#opts-grid .opt').forEach(b=>{if(b.dataset.val===correct)b.classList.add('correct')});$('quiz-fb').innerHTML=`<span style="color:var(--danger)">✗ Answer: ${correct}</span>`;}
+  qHist.push(chosen===correct);$('btn-qnext').style.display='inline-block';
+}
+function quizNext(){qIdx++;if(qIdx>=qPool.length)showResults('quiz',qScore,qPool.length);else renderQuiz()}
+
+// Code Sorter
+let codePool=[],codeIdx=0,codeScore=0,codeHist=[];
+function startCode(){currentMode='code';codePool=shuffle(CODE_ITEMS);codeIdx=0;codeScore=0;codeHist=[];show('code-screen');renderCode()}
+function renderCode(){
+  const it=codePool[codeIdx];
+  $('code-item').textContent=it.code;$('code-desc').textContent=it.desc;
+  $('code-num').textContent=`Code ${codeIdx+1} of ${codePool.length}`;
+  $('code-prog').style.width=`${(codeIdx/codePool.length)*100}%`;
+  $('code-fb').textContent='';$('btn-codenext').style.display='none';
+  $('code-streak').innerHTML=codeHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('code-grid').innerHTML=['ICD-10-CM','CPT','HCPCS Level II'].map(c=>`<button class="opt" data-val="${c}" onclick="codeAnswer(this)" style="justify-content:center;text-align:center;font-size:10px">${c}</button>`).join('');
+}
+function codeAnswer(btn){
+  const chosen=btn.dataset.val,it=codePool[codeIdx];
+  document.querySelectorAll('#code-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.correct;
+  if(ok){btn.classList.add('correct');codeScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#code-grid .opt').forEach(b=>{if(b.dataset.val===it.correct)b.classList.add('correct')})}
+  $('code-fb').innerHTML=ok?'<span style="color:var(--success)">✓ Correct!</span>':`<span style="color:var(--danger)">✗ Answer: ${it.correct}</span>`;
+  codeHist.push(ok);$('btn-codenext').style.display='inline-block';
+}
+function codeNext(){codeIdx++;if(codeIdx>=codePool.length)showResults('code',codeScore,codePool.length);else renderCode()}
+
+// Scenarios
+let scIdx=0;
+function startSC(){currentMode='scenario';scIdx=0;show('sc-screen');renderSC()}
+function renderSC(){
+  const sc=SCENARIOS[scIdx];
+  $('sc-label').textContent=sc.label;
+  $('sc-prog').style.width=`${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML='👆 Tap any <span style="color:var(--green-lt)">highlighted</span> action to see the HIPAA ruling.';
+  $('sc-text').innerHTML=sc.tokens.map(tok=>{
+    if(tok.a){const s=tok.d.replace(/"/g,'&quot;');return`<span class="hl" data-abbr="${tok.a.replace(/"/g,'&quot;')}" data-def="${s}" onclick="scDecode(this)">${tok.a}</span>`}
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled=scIdx===0;$('sc-next').disabled=scIdx===SCENARIOS.length-1;
+}
+function scDecode(el){el.classList.toggle('popped');$('sc-decode').innerHTML=`<strong>HIPAA Ruling:</strong> ${el.dataset.def}`}
+function scPrev(){if(scIdx>0){scIdx--;renderSC()}}
+function scNext(){if(scIdx<SCENARIOS.length-1){scIdx++;renderSC()}}
+
+function showResults(mode,score,total){
+  currentMode=mode;show('results-screen');
+  const pct=Math.round((score/total)*100),C=2*Math.PI*54,offset=C-(Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray=C;$('ring-fill').style.strokeDashoffset=C;
+  $('ring-pct').textContent=pct+'%';$('ring-sub').textContent=`${score} / ${total}`;
+  setTimeout(()=>{$('ring-fill').style.strokeDashoffset=offset},80);
+  $('res-title').textContent=pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  $('res-msg').textContent=`You scored ${score} / ${total} (${pct}%). ${pct>=80?'Your EHR knowledge is solid!':'Review and try again.'}`;
+}
+function retryMode(){
+  if(currentMode==='fc')startFC();
+  else if(currentMode==='quiz')startQuiz();
+  else if(currentMode==='code')startCode();
+  else if(currentMode==='scenario')startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

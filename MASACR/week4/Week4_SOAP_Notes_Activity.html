@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOAP Notes – Week 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a1520;--surf:#111f2e;--surf2:#172840;--border:#1e3a54;--blue:#3a8fd4;--blue-lt:#65b3f0;--cyan:#28b8d0;--text:#e4f0fa;--muted:#6b9ab8;--danger:#e05a5a;--success:#3db88a;--warn:#e0a83a;--r:12px;--r-lg:16px;--bar:50px;--foot:28px;--prog:3px}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+.screen{display:none;position:fixed;inset:0;flex-direction:column;overflow:hidden}
+.screen.active{display:flex}
+.bar{height:var(--bar);min-height:var(--bar);max-height:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0}
+.bar-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700}
+.btn-back{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-back:hover{border-color:var(--blue);color:var(--blue-lt)}
+.prog-rail{height:var(--prog);min-height:var(--prog);background:var(--border);flex-shrink:0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:width .4s ease;width:0%}
+.zone{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 18px;overflow:hidden;gap:12px}
+.foot{height:var(--foot);min-height:var(--foot);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.06em;color:#112033;background:var(--surf);border-top:1px solid var(--border);flex-shrink:0}
+#home{background:radial-gradient(ellipse 80% 55% at 25% 20%,#1a3354 0%,var(--bg) 65%)}
+.pill{background:rgba(58,143,212,.15);border:1px solid rgba(58,143,212,.45);color:var(--blue-lt);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 14px;border-radius:50px}
+.home-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(20px,4.2vw,38px);font-weight:800;text-align:center;line-height:1.15}
+.home-title em{color:var(--blue-lt);font-style:normal}
+.home-sub{font-size:clamp(11px,1.5vw,14px);color:var(--muted);text-align:center;max-width:460px;line-height:1.55}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:680px}
+.mode-card{background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px);cursor:pointer;transition:border-color .2s,background .2s,transform .15s;display:flex;flex-direction:column;gap:6px}
+.mode-card:hover{border-color:var(--blue);background:var(--surf2);transform:translateY(-2px)}
+.mode-icon{font-size:clamp(20px,3vw,26px);line-height:1}
+.mode-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.6vw,14px);font-weight:700}
+.mode-desc{font-size:clamp(10px,1.2vw,11px);color:var(--muted);line-height:1.45}
+.chip{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:50px;margin-top:2px;width:fit-content}
+.chip-blue{background:rgba(58,143,212,.2);color:var(--blue-lt)}
+.chip-gold{background:rgba(224,168,58,.2);color:#f0c068}
+.chip-green{background:rgba(61,184,138,.2);color:#5de0b0}
+.chip-red{background:rgba(224,90,90,.2);color:#f08080}
+.btn-primary{background:var(--blue);color:#0a1520;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;padding:11px 32px;border:none;border-radius:10px;cursor:pointer;transition:background .15s,transform .1s;white-space:nowrap}
+.btn-primary:hover{background:var(--blue-lt);transform:translateY(-1px)}
+.btn-sec{background:var(--surf);border:1.5px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;padding:9px 20px;border-radius:10px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-sec:hover:not(:disabled){border-color:var(--blue);color:var(--blue-lt)}
+.btn-sec:disabled{opacity:.3;cursor:default}
+.btn-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:540px}
+.quiz-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-lt)}
+.streak-row{display:flex;gap:3px}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .25s}
+.sdot.hit{background:var(--success)}.sdot.miss{background:var(--danger)}
+.card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:560px;text-align:center}
+.card-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(13px,2vw,16px);font-weight:600;line-height:1.6;color:var(--text)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:560px}
+.opt{background:var(--surf);border:2px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:clamp(11px,1.4vw,13px);font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text);cursor:pointer;text-align:center;transition:border-color .12s,background .12s;min-height:48px;display:flex;align-items:center;justify-content:center}
+.opt:hover:not(.locked){border-color:var(--blue);background:var(--surf2)}
+.opt.correct{border-color:var(--success);background:rgba(61,184,138,.1);color:var(--success)}
+.opt.wrong{border-color:var(--danger);background:rgba(224,90,90,.1);color:var(--danger)}
+.opt.locked{cursor:default}
+.fb{font-size:12px;color:var(--muted);text-align:center;min-height:28px;max-width:540px;line-height:1.5}
+.sc-header{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--warn);align-self:flex-start;max-width:600px;width:100%}
+.sc-card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:600px;flex-shrink:1;min-height:0}
+.sc-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.9vw,15px);font-weight:600;line-height:1.85;color:var(--text)}
+.hl{color:var(--blue-lt);background:rgba(58,143,212,.12);padding:1px 5px;border-radius:4px;cursor:pointer;transition:background .12s;display:inline-block}
+.hl:hover{background:rgba(58,143,212,.24)}.hl.popped{color:#5de0b0;background:rgba(61,184,138,.15)}
+.sc-decode{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;width:100%;max-width:600px;font-size:12px;color:var(--muted);line-height:1.6;min-height:44px;flex-shrink:0}
+.sc-decode strong{color:var(--blue-lt)}
+.res-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;max-width:420px}
+.ring-wrap{position:relative;width:130px;height:130px}
+.ring-wrap svg{width:100%;height:100%}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:10}
+.ring-fill{fill:none;stroke:var(--blue);stroke-width:10;stroke-linecap:round;stroke-dasharray:339;stroke-dashoffset:339;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)}
+.ring-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;color:var(--blue-lt)}
+.ring-sub{font-size:10px;color:var(--muted)}
+.res-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:800}
+.res-msg{font-size:13px;color:var(--muted);line-height:1.6;max-width:340px}
+.res-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+</style>
+</head>
+<body>
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 4 · Medical Assistant Training</div>
+    <h1 class="home-title">SOAP <em>Notes</em></h1>
+    <p class="home-sub">Subjective, Objective, Assessment, Plan — structure, rules, errors & ICD-10 in four modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startSort()"><div class="mode-icon">🗂️</div><div class="mode-name">Section Sorter</div><div class="mode-desc">Assign each clinical item to S, O, A, or P.</div><div class="chip chip-blue">16 items</div></div>
+      <div class="mode-card" onclick="startQuiz()"><div class="mode-icon">🧠</div><div class="mode-name">Knowledge Quiz</div><div class="mode-desc">OLD CARTS, ICD-10, E&M coding & documentation rules.</div><div class="chip chip-gold">15 questions</div></div>
+      <div class="mode-card" onclick="startError()"><div class="mode-icon">🚫</div><div class="mode-name">Error Spotter</div><div class="mode-desc">Identify common SOAP documentation mistakes.</div><div class="chip chip-green">10 entries</div></div>
+      <div class="mode-card" onclick="startSC()"><div class="mode-icon">📄</div><div class="mode-name">Full Note Decoder</div><div class="mode-desc">Tap parts of a real SOAP note to see what makes them correct.</div><div class="chip chip-red">Case Study</div></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sort-screen" class="screen">
+  <div class="bar"><span class="bar-title">🗂️ Section Sorter</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sort-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="sort-num">Item 1 of 16</span><div class="streak-row" id="sort-streak"></div></div>
+    <div class="card"><div class="card-text" id="sort-item">Item text</div></div>
+    <div class="opts" style="grid-template-columns:1fr 1fr 1fr 1fr;max-width:560px" id="sort-grid">
+      <button class="opt" data-val="S" onclick="sortAnswer(this)">S</button>
+      <button class="opt" data-val="O" onclick="sortAnswer(this)">O</button>
+      <button class="opt" data-val="A" onclick="sortAnswer(this)">A</button>
+      <button class="opt" data-val="P" onclick="sortAnswer(this)">P</button>
+    </div>
+    <div class="fb" id="sort-fb"></div>
+    <button class="btn-primary" id="btn-sortnext" style="display:none" onclick="sortNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Q 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="card"><div class="card-text" id="quiz-q">Q</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="opts" id="opts-grid"></div>
+    <div class="fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="error-screen" class="screen">
+  <div class="bar"><span class="bar-title">🚫 Error Spotter</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="error-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="error-num">Entry 1 of 10</span><div class="streak-row" id="error-streak"></div></div>
+    <div class="card"><div style="font-size:10px;color:var(--warn);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px" id="error-section">Section</div><div class="card-text" id="error-entry">Entry text</div><div style="font-size:11px;color:var(--muted);margin-top:8px">Is this entry correct or an error?</div></div>
+    <div class="opts" style="grid-template-columns:1fr 1fr;max-width:380px" id="error-grid">
+      <button class="opt" data-val="error" onclick="errorAnswer(this)">🚫 Error</button>
+      <button class="opt" data-val="correct" onclick="errorAnswer(this)">✔ Correct</button>
+    </div>
+    <div class="fb" id="error-fb"></div>
+    <button class="btn-primary" id="btn-errornext" style="display:none" onclick="errorNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">📄 Full Note Decoder</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start;padding-top:14px;gap:10px">
+    <div class="sc-header" id="sc-label">Note Section 1 of 4</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--blue-lt)">highlighted</span> element to see why it matters.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div>
+      <div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+const SORT_ITEMS=[
+  {item:'"I\'ve had a headache for 3 days."',correct:'S',why:'Chief complaint in the patient\'s own words — always Subjective.'},
+  {item:'BP 126/78, HR 74, RR 16, T 98.4°F',correct:'O',why:'Vital signs are measurable data — always Objective.'},
+  {item:'M17.11 — Primary osteoarthritis, right knee',correct:'A',why:'An ICD-10 diagnosis code belongs in Assessment.'},
+  {item:'Naproxen 500mg BID × 2 weeks; refer to PT',correct:'P',why:'Treatment orders and referrals go in the Plan.'},
+  {item:'HPI: Pain is aching, 6/10 at rest, worsens with stairs',correct:'S',why:'The HPI narrative is patient-reported — Subjective.'},
+  {item:'McMurray\'s test negative; no effusion',correct:'O',why:'Physical exam findings are observed and measurable — Objective.'},
+  {item:'HbA1c 7.1% (drawn today)',correct:'O',why:'Lab results available at the time of visit are Objective data.'},
+  {item:'Type 2 DM: increase Metformin to 1000mg BID',correct:'P',why:'Medication changes are Plan items.'},
+  {item:'Patient denies trauma, swelling, or locking of knee',correct:'S',why:'What the patient denies reporting — Subjective (pertinent negative).'},
+  {item:'E11.65 — Type 2 DM with hyperglycemia, managed',correct:'A',why:'Secondary diagnosis with ICD-10 code — Assessment.'},
+  {item:'Alert, oriented ×3, no acute distress',correct:'O',why:'General appearance observed during exam — Objective.'},
+  {item:'Recheck HbA1c in 3 months; diabetes education reinforced',correct:'P',why:'Follow-up orders and patient education documentation — Plan.'},
+  {item:'PMH: HTN, Type 2 DM. PSH: Appendectomy 2010',correct:'S',why:'Past medical and surgical history is patient-reported — Subjective.'},
+  {item:'X-ray right knee: mild medial joint space narrowing',correct:'O',why:'Imaging findings reviewed during the encounter — Objective.'},
+  {item:'I10 — Essential hypertension, controlled',correct:'A',why:'A third addressed diagnosis with ICD-10 code — Assessment.'},
+  {item:'Patient verbalized understanding; follow-up in 3 months',correct:'P',why:'Patient education response and follow-up plan — Plan.'},
+];
+
+const QUIZ=[
+  {q:'What does the "O" in OLD CARTS stand for?',ctx:'HPI Framework',correct:'Onset — when did it start?',wrongs:['Objective findings','Ordered tests','Overall severity']},
+  {q:'Where does the Chief Complaint go in a SOAP note?',ctx:'SOAP Structure',correct:'Subjective section, in the patient\'s exact words and in quotes',wrongs:['Objective section, as a clinical observation','Assessment section, with an ICD-10 code','Plan section, as the next step']},
+  {q:'What ICD-10 code system is used for outpatient diagnoses?',ctx:'ICD-10 Coding',correct:'ICD-10-CM (Clinical Modification)',wrongs:['ICD-10-PCS (Procedure Coding System)','CPT codes','HCPCS Level II codes']},
+  {q:'What is a "pertinent negative" in the Objective section?',ctx:'Objective Documentation',correct:'A relevant finding that is ABSENT — its absence is clinically significant',wrongs:['A lab result that is below normal','A diagnosis that was ruled out','An allergy the patient denies having']},
+  {q:'The Assessment section must logically follow from which data?',ctx:'Assessment Rules',correct:'Both Subjective AND Objective combined',wrongs:['Only the Objective data','Only the Subjective complaint','Provider intuition alone']},
+  {q:'What makes a Plan entry like "follow up PRN" insufficient?',ctx:'Plan Documentation',correct:'It doesn\'t specify when, with whom, or for what reason',wrongs:['It uses unapproved abbreviations','PRN means monthly, which is too long','It belongs in the Assessment section']},
+  {q:'What is the E&M code for an established patient with moderate complexity?',ctx:'E&M Coding',correct:'99214',wrongs:['99213','99204','99215']},
+  {q:'What is the main risk of copy-forward (copy/paste) in SOAP notes?',ctx:'Documentation Rules',correct:'Propagates outdated information and is flagged by CMS/OIG as a fraud risk',wrongs:['It is time-consuming','It violates HIPAA','It requires extra co-signatures']},
+  {q:'Pain scored 7/10 by the patient — where does this go?',ctx:'SOAP Structure',correct:'Subjective (patient-reported) — though sometimes documented in Objective by convention',wrongs:['Assessment only','Plan only','Objective only — it\'s measurable']},
+  {q:'Which of these belongs in the Objective section?',ctx:'Objective Rules',correct:'"Breath sounds clear bilaterally, no wheezing"',wrongs:['"Patient reports difficulty breathing"','"Asthma exacerbation, moderate"','"Albuterol 2 puffs every 4 hours PRN"']},
+  {q:'Every problem listed in Assessment must have —',ctx:'Plan Rules',correct:'A corresponding action in the Plan',wrongs:['Its own addendum','A separate consent form','A CPT procedure code']},
+  {q:'What is Medical Decision Making (MDM) used for?',ctx:'E&M Coding',correct:'One of two methods to determine the E&M billing level',wrongs:['Documenting the physical exam','Determining if a referral is needed','Calculating the patient\'s copay']},
+  {q:'An opinion like "patient seems depressed" should go —',ctx:'Objective Rules',correct:'Nowhere in the Objective — rewrite as "patient appears tearful; flat affect observed"',wrongs:['In the Subjective as the chief complaint','In the Assessment as the diagnosis','In the Plan as a referral note']},
+  {q:'Which abbreviations are on The Joint Commission\'s Do-Not-Use list?',ctx:'Abbreviations',correct:'U (for units), IU, trailing zero (1.0 mg), and MS/MSO4',wrongs:['BP, HR, RR, and Temp','PRN, QD, BID, and TID','NKDA, WNL, NAD, and ROM']},
+  {q:'If a diagnosis appears in the Assessment but has no Plan entry, this is called —',ctx:'Documentation Errors',correct:'An orphaned diagnosis — an incomplete note',wrongs:['An addendum requirement','A billing modifier','A pertinent negative']},
+];
+
+const ERROR_ITEMS=[
+  {section:'SUBJECTIVE',entry:'"Patient has osteoarthritis of the right knee."',isError:true,why:'Diagnosis language belongs in Assessment, not Subjective. S should read: "Patient reports right knee pain for 2 weeks."'},
+  {section:'OBJECTIVE',entry:'"BP 126/78, HR 74, SpO₂ 98%, T 98.4°F"',isError:false,why:'Correct — exact vital sign measurements with units. This is proper Objective documentation.'},
+  {section:'ASSESSMENT',entry:'"Right knee pain" (no ICD-10 code)',isError:true,why:'Every diagnosis in Assessment must include an ICD-10-CM code for billing and legal validity.'},
+  {section:'PLAN',entry:'"Naproxen 500mg BID with food × 2 weeks; patient educated on GI side effects"',isError:false,why:'Correct — specific drug, dose, route, frequency, duration, and patient education documented.'},
+  {section:'SUBJECTIVE',entry:'"My chest hurts" (CC in quotes)',isError:false,why:'Correct — the chief complaint is in the patient\'s own words and in quotation marks, as required.'},
+  {section:'OBJECTIVE',entry:'"Patient appears to be in pain"',isError:true,why:'An interpretation, not an observation. Write "patient grimacing, guarding right knee, 6/10 pain" instead.'},
+  {section:'PLAN',entry:'"Follow up PRN"',isError:true,why:'Insufficient — must specify when, with whom, and for what reason. E.g. "Follow up in 2 weeks to recheck knee or sooner if worsening."'},
+  {section:'ASSESSMENT',entry:'"1. M17.11 — Primary OA, right knee (new)\n2. E11.9 — Type 2 DM, managed\n3. I10 — HTN, controlled"',isError:false,why:'Correct — all diagnoses have ICD-10-CM codes; problem status is noted for each. Well-structured Assessment.'},
+  {section:'OBJECTIVE',entry:'"CBC pending; HbA1c 7.1% drawn today"',isError:false,why:'Correct — results in hand are documented; pending results noted as pending. Transparency about what is available.'},
+  {section:'SUBJECTIVE',entry:'"Lisinopril 10mg daily, Metformin 500mg BID, NKDA"',isError:false,why:'Correct — current medications and allergy status (patient-reported) belong in the Subjective section.'},
+];
+
+const SCENARIOS=[
+  {label:'S — Subjective Section',tokens:[
+    {t:'CC: '},
+    {a:'"My knee has been hurting for about two weeks."',d:'✔ CC in the patient\'s exact words, in quotation marks — correct format.'},
+    {t:'\nHPI: 45-year-old female, right knee pain 2 weeks. '},
+    {a:'Onset gradual after increased walking.',d:'✔ "Onset" = O in OLD CARTS — when and how it started.'},
+    {t:' Pain '},
+    {a:'aching, 6/10 at rest, 8/10 with stairs.',d:'✔ Character (C) and Severity (S) from OLD CARTS — descriptors in patient\'s terms.'},
+    {t:' '},
+    {a:'Denies trauma, swelling, or locking.',d:'✔ Pertinent negatives documented in Subjective — legally and clinically required.'},
+  ]},
+  {label:'O — Objective Section',tokens:[
+    {t:'Vitals: '},
+    {a:'BP 126/78, HR 74, RR 16, T 98.4°F, SpO₂ 98%',d:'✔ Exact measurements with units — no vague language. This is proper Objective documentation.'},
+    {t:'\nExam: '},
+    {a:'Mild tenderness to palpation over medial joint line',d:'✔ Specific exam finding — location, quality, examiner observation. Not interpretation.'},
+    {t:'; '},
+    {a:'McMurray\'s test negative',d:'✔ Pertinent negative on exam — absence of a finding is as important as presence.'},
+    {t:'\nLabs: '},
+    {a:'HbA1c 7.1% (drawn today)',d:'✔ Only results in hand are documented. Pending results should be noted as pending.'},
+  ]},
+  {label:'A — Assessment Section',tokens:[
+    {t:'1. '},
+    {a:'M17.11 — Primary osteoarthritis, right knee',d:'✔ ICD-10-CM code + specific diagnosis + laterality. Coded to highest specificity.'},
+    {t:' (new)\n2. '},
+    {a:'E11.65 — Type 2 DM with hyperglycemia',d:'✔ Secondary diagnosis also coded — every problem addressed must appear in Assessment.'},
+    {t:' managed\n3. '},
+    {a:'I10 — Essential hypertension',d:'✔ Third chronic condition addressed today — all three have ICD-10 codes. Complete Assessment.'},
+    {t:', controlled'},
+  ]},
+  {label:'P — Plan Section',tokens:[
+    {t:'1. OA: '},
+    {a:'Naproxen 500mg BID × 2 weeks with food',d:'✔ Drug, dose, route, frequency, duration — complete medication order.'},
+    {t:'; refer to PT; '},
+    {a:'patient verbalized understanding',d:'✔ Patient education documented with confirmed comprehension — required in Plan.'},
+    {t:'\n2. DM: '},
+    {a:'Increase Metformin to 1000mg BID; recheck HbA1c in 3 months',d:'✔ Medication change with follow-up testing plan — every Assessment problem has a Plan entry.'},
+    {t:'\n3. HTN: Continue Lisinopril 10mg. '},
+    {a:'Follow-up: 3 months or sooner if knee worsens.',d:'✔ Specific follow-up timeline + conditional instruction. Not just "PRN."'},
+  ]},
+];
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function goHome(){show('home')}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let currentMode='';
+
+let sortPool=[],sortIdx=0,sortScore=0,sortHist=[];
+function startSort(){currentMode='sort';sortPool=shuffle(SORT_ITEMS);sortIdx=0;sortScore=0;sortHist=[];show('sort-screen');renderSort()}
+function renderSort(){
+  const it=sortPool[sortIdx];
+  $('sort-item').textContent=it.item;
+  $('sort-num').textContent=`Item ${sortIdx+1} of ${sortPool.length}`;
+  $('sort-prog').style.width=`${(sortIdx/sortPool.length)*100}%`;
+  $('sort-fb').textContent='';$('btn-sortnext').style.display='none';
+  $('sort-streak').innerHTML=sortHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  document.querySelectorAll('#sort-grid .opt').forEach(b=>b.classList.remove('correct','wrong','locked'));
+}
+function sortAnswer(btn){
+  const chosen=btn.dataset.val,it=sortPool[sortIdx];
+  document.querySelectorAll('#sort-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.correct;
+  if(ok){btn.classList.add('correct');sortScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#sort-grid .opt').forEach(b=>{if(b.dataset.val===it.correct)b.classList.add('correct');})}
+  $('sort-fb').innerHTML=(ok?'✓ Correct. ':'✗ This belongs in '+it.correct+'. ')+it.why;
+  sortHist.push(ok);$('btn-sortnext').style.display='inline-block';
+}
+function sortNext(){sortIdx++;if(sortIdx>=sortPool.length)showResults('sort',sortScore,sortPool.length);else renderSort()}
+
+let qPool=[],qIdx=0,qScore=0,qHist=[];
+function startQuiz(){currentMode='quiz';qPool=shuffle(QUIZ);qIdx=0;qScore=0;qHist=[];show('quiz-screen');renderQuiz()}
+function renderQuiz(){
+  const q=qPool[qIdx];const opts=shuffle([q.correct,...q.wrongs]);
+  $('quiz-q').textContent=q.q;$('quiz-ctx').textContent=q.ctx;
+  $('quiz-num').textContent=`Q ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width=`${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent='';$('btn-qnext').style.display='none';
+  $('streak-row').innerHTML=qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML=opts.map(o=>{const s=o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');return`<button class="opt" data-val="${s}" onclick="quizAnswer(this)" style="text-align:left;justify-content:flex-start;min-height:56px;font-weight:600;font-family:'Inter',sans-serif;font-size:12px">${s}</button>`}).join('');
+}
+function quizAnswer(btn){
+  const chosen=btn.dataset.val,correct=qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .opt').forEach(b=>b.classList.add('locked'));
+  if(chosen===correct){btn.classList.add('correct');qScore++;$('quiz-fb').innerHTML='<span style="color:var(--success)">✓ Correct!</span>';}
+  else{btn.classList.add('wrong');document.querySelectorAll('#opts-grid .opt').forEach(b=>{if(b.dataset.val===correct)b.classList.add('correct')});$('quiz-fb').innerHTML=`<span style="color:var(--danger)">✗ Answer: ${correct}</span>`;}
+  qHist.push(chosen===correct);$('btn-qnext').style.display='inline-block';
+}
+function quizNext(){qIdx++;if(qIdx>=qPool.length)showResults('quiz',qScore,qPool.length);else renderQuiz()}
+
+let ePool=[],eIdx=0,eScore=0,eHist=[];
+function startError(){currentMode='error';ePool=shuffle(ERROR_ITEMS);eIdx=0;eScore=0;eHist=[];show('error-screen');renderError()}
+function renderError(){
+  const it=ePool[eIdx];
+  $('error-section').textContent=it.section;$('error-entry').textContent=it.entry;
+  $('error-num').textContent=`Entry ${eIdx+1} of ${ePool.length}`;
+  $('error-prog').style.width=`${(eIdx/ePool.length)*100}%`;
+  $('error-fb').textContent='';$('btn-errornext').style.display='none';
+  $('error-streak').innerHTML=eHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  document.querySelectorAll('#error-grid .opt').forEach(b=>b.classList.remove('correct','wrong','locked'));
+}
+function errorAnswer(btn){
+  const chosen=btn.dataset.val,it=ePool[eIdx];
+  document.querySelectorAll('#error-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=(chosen==='error')===it.isError;
+  if(ok){btn.classList.add('correct');eScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#error-grid .opt').forEach(b=>{if((b.dataset.val==='error')===it.isError)b.classList.add('correct')})}
+  $('error-fb').innerHTML=(ok?'✓ Correct. ':'✗ ')+(it.isError?'This IS an error. ':'This IS correct. ')+it.why;
+  eHist.push(ok);$('btn-errornext').style.display='inline-block';
+}
+function errorNext(){eIdx++;if(eIdx>=ePool.length)showResults('error',eScore,ePool.length);else renderError()}
+
+let scIdx=0;
+function startSC(){currentMode='scenario';scIdx=0;show('sc-screen');renderSC()}
+function renderSC(){
+  const sc=SCENARIOS[scIdx];
+  $('sc-label').textContent=sc.label;
+  $('sc-prog').style.width=`${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML='👆 Tap any <span style="color:var(--blue-lt)">highlighted</span> element to see why it matters.';
+  $('sc-text').innerHTML=sc.tokens.map(tok=>{
+    if(tok.a){const s=tok.d.replace(/"/g,'&quot;');return`<span class="hl" data-abbr="${tok.a.replace(/"/g,'&quot;')}" data-def="${s}" onclick="scDecode(this)">${tok.a}</span>`}
+    return tok.t.replace(/\n/g,'<br>');
+  }).join('');
+  $('sc-prev').disabled=scIdx===0;$('sc-next').disabled=scIdx===SCENARIOS.length-1;
+}
+function scDecode(el){el.classList.toggle('popped');$('sc-decode').innerHTML=`<strong>Why:</strong> ${el.dataset.def}`}
+function scPrev(){if(scIdx>0){scIdx--;renderSC()}}
+function scNext(){if(scIdx<SCENARIOS.length-1){scIdx++;renderSC()}}
+
+function showResults(mode,score,total){
+  currentMode=mode;show('results-screen');
+  const pct=Math.round((score/total)*100),C=2*Math.PI*54,offset=C-(Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray=C;$('ring-fill').style.strokeDashoffset=C;
+  $('ring-pct').textContent=pct+'%';$('ring-sub').textContent=`${score} / ${total}`;
+  setTimeout(()=>{$('ring-fill').style.strokeDashoffset=offset},80);
+  $('res-title').textContent=pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  $('res-msg').textContent=`You scored ${score} / ${total} (${pct}%). ${pct>=80?'Your SOAP documentation is solid!':'Review and try again.'}`;
+}
+function retryMode(){
+  if(currentMode==='sort')startSort();
+  else if(currentMode==='quiz')startQuiz();
+  else if(currentMode==='error')startError();
+  else if(currentMode==='scenario')startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

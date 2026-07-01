@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentation Standards – Week 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#1a1208;--surf:#261c10;--surf2:#322514;--border:#4e3820;--gold:#d9a835;--gold-lt:#f0c860;--amber:#c47a28;--text:#f6ebda;--muted:#b09070;--danger:#e05a5a;--success:#3db88a;--warn:#e0a83a;--r:12px;--r-lg:16px;--bar:50px;--foot:28px;--prog:3px}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+.screen{display:none;position:fixed;inset:0;flex-direction:column;overflow:hidden}.screen.active{display:flex}
+.bar{height:var(--bar);min-height:var(--bar);max-height:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0}
+.bar-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700}
+.btn-back{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-back:hover{border-color:var(--gold);color:var(--gold-lt)}
+.prog-rail{height:var(--prog);min-height:var(--prog);background:var(--border);flex-shrink:0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));transition:width .4s ease;width:0%}
+.zone{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 18px;overflow:hidden;gap:12px}
+.foot{height:var(--foot);min-height:var(--foot);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.06em;color:#2e1e0c;background:var(--surf);border-top:1px solid var(--border);flex-shrink:0}
+#home{background:radial-gradient(ellipse 80% 55% at 25% 20%,#3d2c10 0%,var(--bg) 65%)}
+.pill{background:rgba(217,168,53,.15);border:1px solid rgba(217,168,53,.45);color:var(--gold-lt);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 14px;border-radius:50px}
+.home-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(20px,4.2vw,38px);font-weight:800;text-align:center;line-height:1.15}
+.home-title em{color:var(--gold-lt);font-style:normal}
+.home-sub{font-size:clamp(11px,1.5vw,14px);color:var(--muted);text-align:center;max-width:460px;line-height:1.55}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:680px}
+.mode-card{background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px);cursor:pointer;transition:border-color .2s,background .2s,transform .15s;display:flex;flex-direction:column;gap:6px}
+.mode-card:hover{border-color:var(--gold);background:var(--surf2);transform:translateY(-2px)}
+.mode-icon{font-size:clamp(20px,3vw,26px);line-height:1}
+.mode-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.6vw,14px);font-weight:700}
+.mode-desc{font-size:clamp(10px,1.2vw,11px);color:var(--muted);line-height:1.45}
+.chip{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:50px;margin-top:2px;width:fit-content}
+.chip-gold{background:rgba(217,168,53,.2);color:var(--gold-lt)}.chip-amber{background:rgba(196,122,40,.2);color:#e8a060}.chip-green{background:rgba(61,184,138,.2);color:#5de0b0}.chip-red{background:rgba(224,90,90,.2);color:#f08080}
+.btn-primary{background:var(--gold);color:#1a1208;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;padding:11px 32px;border:none;border-radius:10px;cursor:pointer;transition:background .15s,transform .1s;white-space:nowrap}.btn-primary:hover{background:var(--gold-lt);transform:translateY(-1px)}
+.btn-sec{background:var(--surf);border:1.5px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;padding:9px 20px;border-radius:10px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-sec:hover:not(:disabled){border-color:var(--gold);color:var(--gold-lt)}.btn-sec:disabled{opacity:.3;cursor:default}
+.btn-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:540px}
+.quiz-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gold-lt)}
+.streak-row{display:flex;gap:3px}.sdot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .25s}.sdot.hit{background:var(--success)}.sdot.miss{background:var(--danger)}
+.card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:560px;text-align:center}
+.card-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(13px,2vw,16px);font-weight:600;line-height:1.6;color:var(--text)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:560px}
+.opt{background:var(--surf);border:2px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:clamp(11px,1.4vw,12px);font-weight:600;font-family:'Inter',sans-serif;color:var(--text);cursor:pointer;text-align:left;transition:border-color .12s,background .12s;min-height:52px;display:flex;align-items:center}
+.opt:hover:not(.locked){border-color:var(--gold);background:var(--surf2)}.opt.correct{border-color:var(--success);background:rgba(61,184,138,.1);color:var(--success)}.opt.wrong{border-color:var(--danger);background:rgba(224,90,90,.1);color:var(--danger)}.opt.locked{cursor:default}
+.fb{font-size:12px;color:var(--muted);text-align:center;min-height:28px;max-width:540px;line-height:1.5}
+.sc-header{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--warn);align-self:flex-start;max-width:600px;width:100%}
+.sc-card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:600px;flex-shrink:1;min-height:0}
+.sc-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.9vw,15px);font-weight:600;line-height:1.85;color:var(--text)}
+.hl{color:var(--gold-lt);background:rgba(217,168,53,.12);padding:1px 5px;border-radius:4px;cursor:pointer;transition:background .12s;display:inline-block}.hl:hover{background:rgba(217,168,53,.24)}.hl.popped{color:#5de0b0;background:rgba(61,184,138,.15)}
+.sc-decode{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;width:100%;max-width:600px;font-size:12px;color:var(--muted);line-height:1.6;min-height:44px;flex-shrink:0}.sc-decode strong{color:var(--gold-lt)}
+.res-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;max-width:420px}
+.ring-wrap{position:relative;width:130px;height:130px}.ring-wrap svg{width:100%;height:100%}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:10}.ring-fill{fill:none;stroke:var(--gold);stroke-width:10;stroke-linecap:round;stroke-dasharray:339;stroke-dashoffset:339;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)}
+.ring-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.ring-pct{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;color:var(--gold-lt)}.ring-sub{font-size:10px;color:var(--muted)}
+.res-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:800}.res-msg{font-size:13px;color:var(--muted);line-height:1.6;max-width:340px}.res-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+</style>
+</head>
+<body>
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 4 · Medical Assistant Training</div>
+    <h1 class="home-title">Documentation <em>Standards</em></h1>
+    <p class="home-sub">The 6 Cs, medical necessity, E&M coding, corrections & compliance in four modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startSixC()"><div class="mode-icon">📋</div><div class="mode-name">6 Cs Matcher</div><div class="mode-desc">Match documentation examples to the correct "C" principle.</div><div class="chip chip-gold">12 items</div></div>
+      <div class="mode-card" onclick="startQuiz()"><div class="mode-icon">🧠</div><div class="mode-name">Knowledge Quiz</div><div class="mode-desc">Medical necessity, E&M codes, addenda, audits & TJC list.</div><div class="chip chip-amber">15 questions</div></div>
+      <div class="mode-card" onclick="startEM()"><div class="mode-icon">💳</div><div class="mode-name">E&M Code Match</div><div class="mode-desc">Match visit descriptions to the correct 99202–99215 code.</div><div class="chip chip-green">10 scenarios</div></div>
+      <div class="mode-card" onclick="startSC()"><div class="mode-icon">⚖️</div><div class="mode-name">Compliance Lab</div><div class="mode-desc">Tap chart entries to identify corrections, addenda & violations.</div><div class="chip chip-red">Audit scenarios</div></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sixc-screen" class="screen">
+  <div class="bar"><span class="bar-title">📋 6 Cs Matcher</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sixc-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="sixc-num">Item 1 of 12</span><div class="streak-row" id="sixc-streak"></div></div>
+    <div class="card"><div class="card-text" id="sixc-item">Item</div></div>
+    <div class="opts" id="sixc-grid" style="grid-template-columns:1fr 1fr 1fr;max-width:560px"></div>
+    <div class="fb" id="sixc-fb"></div>
+    <button class="btn-primary" id="btn-sixcnext" style="display:none" onclick="sixcNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Q 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="card"><div class="card-text" id="quiz-q">Q</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="opts" id="opts-grid"></div>
+    <div class="fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="em-screen" class="screen">
+  <div class="bar"><span class="bar-title">💳 E&M Code Match</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="em-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="em-num">Scenario 1 of 10</span><div class="streak-row" id="em-streak"></div></div>
+    <div class="card"><div class="card-text" id="em-text">Scenario</div></div>
+    <div class="opts" id="em-grid" style="grid-template-columns:1fr 1fr"></div>
+    <div class="fb" id="em-fb"></div>
+    <button class="btn-primary" id="btn-emnext" style="display:none" onclick="emNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">⚖️ Compliance Lab</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start;padding-top:14px;gap:10px">
+    <div class="sc-header" id="sc-label">Scenario 1 of 4</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--gold-lt)">highlighted</span> entry to see the compliance ruling.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div><div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+const SIXC_ITEMS=[
+  {item:'BP 126/78 mmHg — not "normal BP"',correct:'Correct',why:'Exact measurements, not vague labels — this is the Correct principle.'},
+  {item:'All 4 SOAP sections completed; every diagnosis has a Plan',correct:'Complete',why:'Nothing missing — every required element is present. This is Complete.'},
+  {item:'Using only facility-approved abbreviations; no shorthand',correct:'Clear',why:'Legible and unambiguous — the Clear principle.'},
+  {item:'Not repeating HPI verbatim in both S and O sections',correct:'Concise',why:'No redundancy or bloat — the Concise principle.'},
+  {item:'Late entry labeled with both service date and documentation date',correct:'Chronological',why:'Preserving accurate timeline — the Chronological principle.'},
+  {item:'Locking workstation when stepping away from EHR',correct:'Confidential',why:'Protecting PHI access — the Confidential principle.'},
+  {item:'Documenting "CBC ordered to evaluate for anemia given fatigue"',correct:'Correct',why:'Exact clinical indication documented, not assumed — the Correct principle.'},
+  {item:'Never copy-pasting prior notes without updating to today\'s picture',correct:'Concise',why:'Avoiding note bloat and outdated data — Concise and integrity-protecting.'},
+  {item:'Logging every access, print, and export in the audit trail',correct:'Confidential',why:'Access controls and audit accountability — Confidential principle.'},
+  {item:'ICD-10 code on every diagnosis; plan for every problem',correct:'Complete',why:'No orphaned diagnoses or missing elements — Complete.'},
+  {item:'Writing "patient reports chest tightness" not "patient has angina"',correct:'Correct',why:'Documenting only what was reported, not interpreting it — Correct.'},
+  {item:'Date and time on every entry; late entries clearly labeled',correct:'Chronological',why:'Events documented in order with accurate timestamps — Chronological.'},
+];
+
+const QUIZ=[
+  {q:'What is the core principle of medical necessity documentation?',ctx:'Medical Necessity',correct:'Document WHY the service was needed, not just WHAT was done',wrongs:['Always order more tests to justify billing','Document only what the patient requested','Medical necessity applies only to surgery']},
+  {q:'Which of the 6 Cs prohibits copy-pasting prior notes without updating?',ctx:'6 Cs',correct:'Concise — each note must reflect today\'s clinical picture',wrongs:['Confidential','Chronological','Complete']},
+  {q:'What does the False Claims Act penalize?',ctx:'Compliance',correct:'Knowingly billing for undocumented services — a federal crime',wrongs:['Using unapproved abbreviations','Filing a late entry','Accessing the EHR from home']},
+  {q:'What must a late entry always include?',ctx:'Late Entries',correct:'Both the date/time of actual service AND the date/time of documentation',wrongs:['Only the date it was written','Just the provider\'s initials','A supervisor co-signature']},
+  {q:'An addendum may NOT be used to —',ctx:'Addenda',correct:'Retroactively change a diagnosis or alter the clinical picture',wrongs:['Add a forgotten finding','Note a patient callback','Link to the original note by date']},
+  {q:'RAC stands for —',ctx:'Audits',correct:'Recovery Audit Contractors — review Medicare/Medicaid claims retroactively',wrongs:['Regulated Access Controls','Record Accuracy Checklist','Remote Attestation Code']},
+  {q:'What is "downcoding"?',ctx:'E&M Coding',correct:'When an E&M code is reduced because documentation doesn\'t support the billed level',wrongs:['Billing a higher code than supported','Using ICD-10 instead of ICD-9','Coding a telehealth visit incorrectly']},
+  {q:'The TJC Do-Not-Use list prohibits "U" because —',ctx:'Abbreviations',correct:'It is mistaken for 0 (zero) or 4, leading to medication dose errors',wrongs:['It has no clinical meaning','It conflicts with ICD-10 codes','It is too informal for medical records']},
+  {q:'A trailing zero (e.g., 1.0 mg) should be written as —',ctx:'Abbreviations',correct:'"1 mg" — trailing zeros cause 10× dosing errors',wrongs:['"1.0 mg" is correct standard practice','Always use two decimal places','Spelled out as "one point zero milligrams"']},
+  {q:'E&M code level is based on —',ctx:'E&M Coding',correct:'Medical Decision Making (MDM) OR total encounter time — not just documentation volume',wrongs:['Only the number of diagnoses listed','Only the length of the note','The number of lab tests ordered']},
+  {q:'What is a Corporate Integrity Agreement (CIA)?',ctx:'Compliance',correct:'An agreement imposed on organizations found non-compliant with federal health programs',wrongs:['A billing contract between provider and insurer','An internal quality improvement plan','A HIPAA consent form for employers']},
+  {q:'Pertinent negatives are —',ctx:'Documentation Rules',correct:'Documented absence of relevant findings — legally and clinically significant',wrongs:['Findings that are negative on labs only','Things the patient refuses to discuss','Items left blank because they were not checked']},
+  {q:'What does the After-Visit Summary (AVS) require under Meaningful Use?',ctx:'AVS',correct:'Visit date, provider name, diagnoses, medications, and follow-up instructions',wrongs:['Full SOAP note in plain language','Insurance billing codes only','A signed consent form from the patient']},
+  {q:'Telehealth documentation must include —',ctx:'Telehealth',correct:'Platform used, patient\'s geographic location, consent confirmed, and any tech limitations',wrongs:['Only the diagnoses and plan — no visit-specific details','A physical exam section marked as "not applicable"','The patient\'s home Wi-Fi network name']},
+  {q:'An internal audit that finds documentation errors but no fraud typically results in —',ctx:'Audits',correct:'Provider education or re-training — not punishment if no fraud',wrongs:['Automatic license suspension','Criminal referral to OIG','Billing hold for 2 years']},
+];
+
+const EM_ITEMS=[
+  {text:'New patient, straightforward complexity, 22-minute visit',correct:'99202',wrongs:['99203','99212','99204']},
+  {text:'New patient, moderate complexity, 50-minute visit',correct:'99204',wrongs:['99203','99205','99214']},
+  {text:'Established patient, minimal/no MDM (e.g., nurse visit for injections)',correct:'99211',wrongs:['99212','99213','99202']},
+  {text:'Established patient, low complexity, 25-minute visit',correct:'99213',wrongs:['99212','99214','99203']},
+  {text:'Established patient, high complexity, 45-minute visit',correct:'99215',wrongs:['99214','99205','99213']},
+  {text:'New patient, low complexity, 35-minute visit',correct:'99203',wrongs:['99202','99204','99213']},
+  {text:'Established patient, moderate complexity, 35-minute visit',correct:'99214',wrongs:['99213','99215','99204']},
+  {text:'New patient, high complexity, 65-minute visit',correct:'99205',wrongs:['99204','99215','99203']},
+  {text:'Established patient, straightforward MDM, 15-minute visit',correct:'99212',wrongs:['99211','99213','99202']},
+  {text:'Established patient, low complexity, chronic disease management follow-up, 20 min',correct:'99213',wrongs:['99212','99214','99211']},
+];
+
+const SCENARIOS=[
+  {label:'📋 Correction Scene — Scenario 1 of 4',tokens:[
+    {t:'An MA documents vitals and then realizes the weight was entered incorrectly. The MA: '},
+    {a:'uses white-out to cover the number and writes the correct one',d:'❌ Violation: white-out conceals original entries — this constitutes falsification of the medical record.'},
+    {t:' OR the MA: '},
+    {a:'draws a single line through the error, initials, dates, and writes the correct value next to it',d:'✔ Correct: the only acceptable paper correction method — original remains visible and readable.'},
+  ]},
+  {label:'📄 Addendum Scene — Scenario 2 of 4',tokens:[
+    {t:'A provider finalizes a note and later receives a critical lab result. The provider: '},
+    {a:'opens the original note and edits the Assessment section to add the result',d:'❌ Wrong: editing a finalized note changes the original record — this is not permitted.'},
+    {t:' OR the provider: '},
+    {a:'adds an addendum labeled "Addendum to note dated [date]" with their name, credentials, and current date/time',d:'✔ Correct: addenda supplement a finalized note without altering it — properly labeled with both dates.'},
+  ]},
+  {label:'🔍 Copy-Forward Scene — Scenario 3 of 4',tokens:[
+    {t:'A provider copies last week\'s note into today\'s visit and signs it without updating: '},
+    {a:'"Patient reports no new complaints. Vital signs stable. Assessment: HTN, DM, HLD — unchanged."',d:'❌ Audit risk: copy-forward without updating is flagged by CMS/OIG as a documentation fraud risk. Today\'s note must reflect today\'s encounter.'},
+    {t:' This note is billed at: '},
+    {a:'99214 (moderate complexity)',d:'❌ Upcoding risk: if the note doesn\'t actually document moderate complexity work today, billing 99214 is unsupported — a claim denial or repayment demand may follow.'},
+  ]},
+  {label:'⚠️ Dangerous Shortcuts — Scenario 4 of 4',tokens:[
+    {t:'An MA writes "U" for units in a medication order: '},
+    {a:'"Insulin 10U daily"',d:'❌ TJC Do-Not-Use: "U" can be misread as 0 or 4 — write "10 units" in full.'},
+    {t:' A provider writes: '},
+    {a:'"Warfarin 2.5mg — .5 tablet"',d:'❌ Naked decimal: write "0.5 tablet" — a naked decimal (.5) can be misread as 5, causing a 10× dosing error.'},
+    {t:' And documents: '},
+    {a:'"QD" for daily dosing',d:'❌ TJC Do-Not-Use: "QD" is confused with "QOD" (every other day) — write "daily" in full.'},
+  ]},
+];
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function goHome(){show('home')}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let currentMode='';
+
+// 6 Cs
+const SIX_C=['Correct','Complete','Clear','Concise','Chronological','Confidential'];
+let scPool=[],scIdx2=0,scScore=0,scHist=[];
+function startSixC(){currentMode='sixc';scPool=shuffle(SIXC_ITEMS);scIdx2=0;scScore=0;scHist=[];show('sixc-screen');renderSixC()}
+function renderSixC(){
+  const it=scPool[scIdx2];
+  $('sixc-item').textContent=it.item;
+  $('sixc-num').textContent=`Item ${scIdx2+1} of ${scPool.length}`;
+  $('sixc-prog').style.width=`${(scIdx2/scPool.length)*100}%`;
+  $('sixc-fb').textContent='';$('btn-sixcnext').style.display='none';
+  $('sixc-streak').innerHTML=scHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('sixc-grid').innerHTML=SIX_C.map(c=>`<button class="opt" data-val="${c}" onclick="sixcAnswer(this)" style="justify-content:center;text-align:center;font-size:11px">${c}</button>`).join('');
+}
+function sixcAnswer(btn){
+  const chosen=btn.dataset.val,it=scPool[scIdx2];
+  document.querySelectorAll('#sixc-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.correct;
+  if(ok){btn.classList.add('correct');scScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#sixc-grid .opt').forEach(b=>{if(b.dataset.val===it.correct)b.classList.add('correct')})}
+  $('sixc-fb').innerHTML=(ok?'✓ Correct. ':'✗ This is '+it.correct+'. ')+it.why;
+  scHist.push(ok);$('btn-sixcnext').style.display='inline-block';
+}
+function sixcNext(){scIdx2++;if(scIdx2>=scPool.length)showResults('sixc',scScore,scPool.length);else renderSixC()}
+
+// Quiz
+let qPool=[],qIdx=0,qScore=0,qHist=[];
+function startQuiz(){currentMode='quiz';qPool=shuffle(QUIZ);qIdx=0;qScore=0;qHist=[];show('quiz-screen');renderQuiz()}
+function renderQuiz(){
+  const q=qPool[qIdx];const opts=shuffle([q.correct,...q.wrongs]);
+  $('quiz-q').textContent=q.q;$('quiz-ctx').textContent=q.ctx;
+  $('quiz-num').textContent=`Q ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width=`${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent='';$('btn-qnext').style.display='none';
+  $('streak-row').innerHTML=qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML=opts.map(o=>{const s=o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');return`<button class="opt" data-val="${s}" onclick="quizAnswer(this)">${s}</button>`}).join('');
+}
+function quizAnswer(btn){
+  const chosen=btn.dataset.val,correct=qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .opt').forEach(b=>b.classList.add('locked'));
+  if(chosen===correct){btn.classList.add('correct');qScore++;$('quiz-fb').innerHTML='<span style="color:var(--success)">✓ Correct!</span>';}
+  else{btn.classList.add('wrong');document.querySelectorAll('#opts-grid .opt').forEach(b=>{if(b.dataset.val===correct)b.classList.add('correct')});$('quiz-fb').innerHTML=`<span style="color:var(--danger)">✗ Answer: ${correct}</span>`;}
+  qHist.push(chosen===correct);$('btn-qnext').style.display='inline-block';
+}
+function quizNext(){qIdx++;if(qIdx>=qPool.length)showResults('quiz',qScore,qPool.length);else renderQuiz()}
+
+// E&M
+let emPool=[],emIdx=0,emScore=0,emHist=[];
+function startEM(){currentMode='em';emPool=shuffle(EM_ITEMS);emIdx=0;emScore=0;emHist=[];show('em-screen');renderEM()}
+function renderEM(){
+  const it=emPool[emIdx];const opts=shuffle([it.correct,...it.wrongs]);
+  $('em-text').textContent=it.text;
+  $('em-num').textContent=`Scenario ${emIdx+1} of ${emPool.length}`;
+  $('em-prog').style.width=`${(emIdx/emPool.length)*100}%`;
+  $('em-fb').textContent='';$('btn-emnext').style.display='none';
+  $('em-streak').innerHTML=emHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('em-grid').innerHTML=opts.map(o=>`<button class="opt" data-val="${o}" onclick="emAnswer(this)" style="justify-content:center;text-align:center;font-size:16px;font-weight:800">${o}</button>`).join('');
+}
+function emAnswer(btn){
+  const chosen=btn.dataset.val,it=emPool[emIdx];
+  document.querySelectorAll('#em-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.correct;
+  if(ok){btn.classList.add('correct');emScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#em-grid .opt').forEach(b=>{if(b.dataset.val===it.correct)b.classList.add('correct')})}
+  $('em-fb').innerHTML=ok?'<span style="color:var(--success)">✓ Correct!</span>':`<span style="color:var(--danger)">✗ Answer: ${it.correct}</span>`;
+  emHist.push(ok);$('btn-emnext').style.display='inline-block';
+}
+function emNext(){emIdx++;if(emIdx>=emPool.length)showResults('em',emScore,emPool.length);else renderEM()}
+
+// Scenario
+let sceneIdx=0;
+function startSC(){currentMode='scenario';sceneIdx=0;show('sc-screen');renderScene()}
+function renderScene(){
+  const sc=SCENARIOS[sceneIdx];
+  $('sc-label').textContent=sc.label;
+  $('sc-prog').style.width=`${((sceneIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML='👆 Tap any <span style="color:var(--gold-lt)">highlighted</span> entry to see the compliance ruling.';
+  $('sc-text').innerHTML=sc.tokens.map(tok=>{
+    if(tok.a){const s=tok.d.replace(/"/g,'&quot;');return`<span class="hl" data-abbr="${tok.a.replace(/"/g,'&quot;')}" data-def="${s}" onclick="scDecode(this)">${tok.a}</span>`}
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled=sceneIdx===0;$('sc-next').disabled=sceneIdx===SCENARIOS.length-1;
+}
+function scDecode(el){el.classList.toggle('popped');$('sc-decode').innerHTML=`<strong>Ruling:</strong> ${el.dataset.def}`}
+function scPrev(){if(sceneIdx>0){sceneIdx--;renderScene()}}
+function scNext(){if(sceneIdx<SCENARIOS.length-1){sceneIdx++;renderScene()}}
+
+function showResults(mode,score,total){
+  currentMode=mode;show('results-screen');
+  const pct=Math.round((score/total)*100),C=2*Math.PI*54,offset=C-(Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray=C;$('ring-fill').style.strokeDashoffset=C;
+  $('ring-pct').textContent=pct+'%';$('ring-sub').textContent=`${score} / ${total}`;
+  setTimeout(()=>{$('ring-fill').style.strokeDashoffset=offset},80);
+  $('res-title').textContent=pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  $('res-msg').textContent=`You scored ${score} / ${total} (${pct}%). ${pct>=80?'Your documentation knowledge is solid!':'Review the ones you missed.'}`;
+}
+function retryMode(){
+  if(currentMode==='sixc')startSixC();
+  else if(currentMode==='quiz')startQuiz();
+  else if(currentMode==='em')startEM();
+  else if(currentMode==='scenario')startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

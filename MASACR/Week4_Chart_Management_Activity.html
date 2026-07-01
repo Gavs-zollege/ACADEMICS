@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chart Management – Week 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#100a1e;--surf:#1a1230;--surf2:#221840;--border:#342655;--purple:#7c5bd9;--purple-lt:#9d80ed;--violet:#5e3fb8;--text:#ede8fa;--muted:#8878b0;--danger:#e05a5a;--success:#3db88a;--warn:#e0a83a;--r:12px;--r-lg:16px;--bar:50px;--foot:28px;--prog:3px}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+.screen{display:none;position:fixed;inset:0;flex-direction:column;overflow:hidden}.screen.active{display:flex}
+.bar{height:var(--bar);min-height:var(--bar);max-height:var(--bar);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0}
+.bar-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700}
+.btn-back{background:none;border:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-back:hover{border-color:var(--purple);color:var(--purple-lt)}
+.prog-rail{height:var(--prog);min-height:var(--prog);background:var(--border);flex-shrink:0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--violet),var(--purple));transition:width .4s ease;width:0%}
+.zone{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 18px;overflow:hidden;gap:12px}
+.foot{height:var(--foot);min-height:var(--foot);display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.06em;color:#1c1430;background:var(--surf);border-top:1px solid var(--border);flex-shrink:0}
+#home{background:radial-gradient(ellipse 80% 55% at 25% 20%,#28183c 0%,var(--bg) 65%)}
+.pill{background:rgba(124,91,217,.15);border:1px solid rgba(124,91,217,.45);color:var(--purple-lt);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 14px;border-radius:50px}
+.home-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(20px,4.2vw,38px);font-weight:800;text-align:center;line-height:1.15}
+.home-title em{color:var(--purple-lt);font-style:normal}
+.home-sub{font-size:clamp(11px,1.5vw,14px);color:var(--muted);text-align:center;max-width:460px;line-height:1.55}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:680px}
+.mode-card{background:var(--surf);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:clamp(12px,2vw,18px) clamp(12px,2vw,16px);cursor:pointer;transition:border-color .2s,background .2s,transform .15s;display:flex;flex-direction:column;gap:6px}
+.mode-card:hover{border-color:var(--purple);background:var(--surf2);transform:translateY(-2px)}
+.mode-icon{font-size:clamp(20px,3vw,26px);line-height:1}
+.mode-name{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.6vw,14px);font-weight:700}
+.mode-desc{font-size:clamp(10px,1.2vw,11px);color:var(--muted);line-height:1.45}
+.chip{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:50px;margin-top:2px;width:fit-content}
+.chip-purple{background:rgba(124,91,217,.2);color:var(--purple-lt)}.chip-gold{background:rgba(224,168,58,.2);color:#f0c068}.chip-green{background:rgba(61,184,138,.2);color:#5de0b0}.chip-red{background:rgba(224,90,90,.2);color:#f08080}
+.btn-primary{background:var(--purple);color:#100a1e;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:14px;padding:11px 32px;border:none;border-radius:10px;cursor:pointer;transition:background .15s,transform .1s;white-space:nowrap}.btn-primary:hover{background:var(--purple-lt);transform:translateY(-1px)}
+.btn-sec{background:var(--surf);border:1.5px solid var(--border);color:var(--text);font-family:'Inter',sans-serif;font-weight:600;font-size:13px;padding:9px 20px;border-radius:10px;cursor:pointer;transition:all .15s;white-space:nowrap}.btn-sec:hover:not(:disabled){border-color:var(--purple);color:var(--purple-lt)}.btn-sec:disabled{opacity:.3;cursor:default}
+.btn-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:540px}
+.quiz-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--purple-lt)}
+.streak-row{display:flex;gap:3px}.sdot{width:7px;height:7px;border-radius:50%;background:var(--border);transition:background .25s}.sdot.hit{background:var(--success)}.sdot.miss{background:var(--danger)}
+.card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:560px;text-align:center}
+.card-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(13px,2vw,16px);font-weight:600;line-height:1.6;color:var(--text)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:560px}
+.opt{background:var(--surf);border:2px solid var(--border);border-radius:var(--r);padding:11px 14px;font-size:clamp(11px,1.4vw,12px);font-weight:600;font-family:'Inter',sans-serif;color:var(--text);cursor:pointer;text-align:left;transition:border-color .12s,background .12s;min-height:52px;display:flex;align-items:center}
+.opt:hover:not(.locked){border-color:var(--purple);background:var(--surf2)}.opt.correct{border-color:var(--success);background:rgba(61,184,138,.1);color:var(--success)}.opt.wrong{border-color:var(--danger);background:rgba(224,90,90,.1);color:var(--danger)}.opt.locked{cursor:default}
+.fb{font-size:12px;color:var(--muted);text-align:center;min-height:28px;max-width:540px;line-height:1.5}
+.sc-header{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--warn);align-self:flex-start;max-width:600px;width:100%}
+.sc-card{background:var(--surf);border:2px solid var(--border);border-radius:var(--r-lg);padding:18px 22px;width:100%;max-width:600px;flex-shrink:1;min-height:0}
+.sc-text{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(12px,1.9vw,15px);font-weight:600;line-height:1.85;color:var(--text)}
+.hl{color:var(--purple-lt);background:rgba(124,91,217,.12);padding:1px 5px;border-radius:4px;cursor:pointer;transition:background .12s;display:inline-block}.hl:hover{background:rgba(124,91,217,.24)}.hl.popped{color:#5de0b0;background:rgba(61,184,138,.15)}
+.sc-decode{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;width:100%;max-width:600px;font-size:12px;color:var(--muted);line-height:1.6;min-height:44px;flex-shrink:0}.sc-decode strong{color:var(--purple-lt)}
+.res-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;max-width:420px}
+.ring-wrap{position:relative;width:130px;height:130px}.ring-wrap svg{width:100%;height:100%}
+.ring-bg{fill:none;stroke:var(--border);stroke-width:10}.ring-fill{fill:none;stroke:var(--purple);stroke-width:10;stroke-linecap:round;stroke-dasharray:339;stroke-dashoffset:339;transform:rotate(-90deg);transform-origin:50% 50%;transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)}
+.ring-lbl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.ring-pct{font-family:'Plus Jakarta Sans',sans-serif;font-size:30px;font-weight:800;color:var(--purple-lt)}.ring-sub{font-size:10px;color:var(--muted)}
+.res-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(18px,3vw,24px);font-weight:800}.res-msg{font-size:13px;color:var(--muted);line-height:1.6;max-width:340px}.res-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+</style>
+</head>
+<body>
+<div id="home" class="screen active">
+  <div class="zone" style="gap:14px">
+    <div class="pill">Week 4 · Medical Assistant Training</div>
+    <h1 class="home-title">Chart <em>Management</em></h1>
+    <p class="home-sub">Chart anatomy, filing systems, retention rules, ROI & HIPAA security in four modes.</p>
+    <div class="mode-grid">
+      <div class="mode-card" onclick="startQuiz()"><div class="mode-icon">🧠</div><div class="mode-name">Knowledge Quiz</div><div class="mode-desc">Anatomy, corrections, retention, filing & audit logs.</div><div class="chip chip-purple">15 questions</div></div>
+      <div class="mode-card" onclick="startRetention()"><div class="mode-icon">📅</div><div class="mode-name">Retention Rules</div><div class="mode-desc">Match record types to their minimum retention periods.</div><div class="chip chip-gold">8 scenarios</div></div>
+      <div class="mode-card" onclick="startFiling()"><div class="mode-icon">🗄️</div><div class="mode-name">Filing System Sorter</div><div class="mode-desc">Sort practice scenarios to the right filing method.</div><div class="chip chip-green">10 items</div></div>
+      <div class="mode-card" onclick="startSC()"><div class="mode-icon">📤</div><div class="mode-name">ROI Lab</div><div class="mode-desc">Tap release of information requests to check if they require authorization.</div><div class="chip chip-red">Scenarios</div></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="quiz-screen" class="screen">
+  <div class="bar"><span class="bar-title">🧠 Knowledge Quiz</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="quiz-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="quiz-num">Q 1 of 15</span><div class="streak-row" id="streak-row"></div></div>
+    <div class="card"><div class="card-text" id="quiz-q">Q</div><div style="font-size:11px;color:var(--muted);margin-top:6px" id="quiz-ctx">Category</div></div>
+    <div class="opts" id="opts-grid"></div>
+    <div class="fb" id="quiz-fb"></div>
+    <button class="btn-primary" id="btn-qnext" style="display:none" onclick="quizNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="ret-screen" class="screen">
+  <div class="bar"><span class="bar-title">📅 Retention Rules</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="ret-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="ret-num">Scenario 1 of 8</span><div class="streak-row" id="ret-streak"></div></div>
+    <div class="card"><div class="card-text" id="ret-item">Item</div></div>
+    <div class="opts" id="ret-grid" style="grid-template-columns:1fr 1fr"></div>
+    <div class="fb" id="ret-fb"></div>
+    <button class="btn-primary" id="btn-retnext" style="display:none" onclick="retNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="file-screen" class="screen">
+  <div class="bar"><span class="bar-title">🗄️ Filing System Sorter</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="file-prog"></div></div>
+  <div class="zone">
+    <div class="quiz-top"><span class="quiz-num" id="file-num">Item 1 of 10</span><div class="streak-row" id="file-streak"></div></div>
+    <div class="card"><div class="card-text" id="file-item">Item</div></div>
+    <div class="opts" id="file-grid" style="grid-template-columns:1fr 1fr 1fr;max-width:520px"></div>
+    <div class="fb" id="file-fb"></div>
+    <button class="btn-primary" id="btn-filenext" style="display:none" onclick="fileNext()">Next →</button>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="sc-screen" class="screen">
+  <div class="bar"><span class="bar-title">📤 ROI Lab</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="prog-rail"><div class="prog-fill" id="sc-prog"></div></div>
+  <div class="zone" style="justify-content:flex-start;padding-top:14px;gap:10px">
+    <div class="sc-header" id="sc-label">Scene 1 of 4</div>
+    <div class="sc-card"><div class="sc-text" id="sc-text"></div></div>
+    <div class="sc-decode" id="sc-decode">👆 Tap any <span style="color:var(--purple-lt)">highlighted</span> request to see the ruling.</div>
+    <div class="btn-row"><button class="btn-sec" id="sc-prev" onclick="scPrev()">← Prev</button><button class="btn-sec" id="sc-next" onclick="scNext()">Next →</button></div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div class="bar"><span class="bar-title">Results</span><button class="btn-back" onclick="goHome()">← Home</button></div>
+  <div class="zone">
+    <div class="res-wrap">
+      <div class="ring-wrap"><svg viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="54"/><circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="54"/></svg><div class="ring-lbl"><div class="ring-pct" id="ring-pct">—</div><div class="ring-sub" id="ring-sub">score</div></div></div>
+      <div class="res-title" id="res-title">Great work!</div><div class="res-msg" id="res-msg"></div>
+      <div class="res-btns"><button class="btn-sec" onclick="retryMode()">Try Again</button><button class="btn-primary" onclick="goHome()">Choose Mode</button></div>
+    </div>
+  </div>
+  <div class="foot">©2026 ZOLLEGE</div>
+</div>
+
+<script>
+const QUIZ=[
+  {q:'What is terminal digit filing?',ctx:'Filing Systems',correct:'Numeric system using the last 2 digits as primary sort — reduces misfiling in large practices',wrongs:['Filing by last name, last letter first','Filing by end date of last visit','Alphabetical filing by provider name']},
+  {q:'What is an "outguide" in paper filing?',ctx:'Filing Systems',correct:'A placeholder showing a chart was removed, by whom, and where it went',wrongs:['A label on the outside of the chart folder','A color-coded tab for insurance type','A backup copy of the chart kept at the desk']},
+  {q:'An addendum to a chart note must —',ctx:'Corrections',correct:'Be labeled "Addendum to note dated [date]" with author name, credentials, and current date/time',wrongs:['Replace the original note entirely','Be signed by a supervisor','Correct any errors in the original note retroactively']},
+  {q:'What is a delinquent chart?',ctx:'Chart Management',correct:'A chart with unresolved deficiencies past the required completion timeframe',wrongs:['A chart that was filed in the wrong location','A chart belonging to a deceased patient','A chart with three or more no-show visits']},
+  {q:'Minimum retention for adult patient records is typically —',ctx:'Retention',correct:'10 years from last visit (varies by state)',wrongs:['5 years from last visit','Indefinitely — records can never be destroyed','7 years per IRS requirement']},
+  {q:'Minor patient records must be retained until —',ctx:'Retention',correct:'Age of majority + 3 years, or 10 years from last visit, whichever is longer',wrongs:['The patient\'s 18th birthday','5 years from birth','Until the parent requests destruction']},
+  {q:'Which is the correct method to destroy paper medical records?',ctx:'Destruction',correct:'Certified cross-cut shredding with a Certificate of Destruction',wrongs:['Regular office shredder with no documentation','Burning in an incinerator','Recycling with PHI-cover sheets removed']},
+  {q:'The Certificate of Destruction must document —',ctx:'Destruction',correct:'What was destroyed, when, by whom, and the method used',wrongs:['Patient names destroyed','The replacement digital copy location','Insurance carrier approval']},
+  {q:'A duplicate chart creates what risk?',ctx:'Chart Management',correct:'Split medical history — a patient safety risk that must be merged',wrongs:['Billing the same patient twice','Insurance fraud','A HIPAA breach automatically']},
+  {q:'Loose filing (lab results, letters received) requires —',ctx:'Filing',correct:'Provider review and sign-off before filing into the chart',wrongs:['Filing immediately without provider review','Shredding if more than 30 days old','Sending directly to billing']},
+  {q:'What does TPO stand for under HIPAA?',ctx:'ROI',correct:'Treatment, Payment, Operations — three purposes that allow disclosure without authorization',wrongs:['Transfer, Protect, Organize','Time, Place, and Occasion of disclosure','The Privacy Office rules']},
+  {q:'A valid HIPAA authorization form must include —',ctx:'ROI',correct:'Patient name/DOB, info to release, recipient, purpose, expiration, patient signature, and right to revoke',wrongs:['Only the patient\'s signature and date','The ordering provider\'s DEA number','A notary public seal']},
+  {q:'Which records require extra authorization beyond standard HIPAA?',ctx:'ROI',correct:'Substance abuse (42 CFR Part 2), mental health notes, HIV/AIDS status, genetic information',wrongs:['Lab results and imaging reports','Prescriptions and referrals','Advance directives']},
+  {q:'What is the first step when a subpoena is received at the office?',ctx:'Legal',correct:'Do NOT release records — notify the compliance officer and place records under legal hold',wrongs:['Release records immediately to comply with the legal demand','Contact the patient and warn them','Destroy the records to protect patient privacy']},
+  {q:'EHR audit logs are —',ctx:'EHR Security',correct:'Automatic, permanent, and cannot be deleted or altered — part of the legal record',wrongs:['Reviewed and deleted monthly by IT','Editable by the privacy officer if needed','Optional and stored separately from the medical record']},
+];
+
+const RETENTION_ITEMS=[
+  {item:'Adult patient records',correct:'10 years from last visit',wrongs:['5 years','7 years (IRS)','25 years or indefinitely']},
+  {item:'Minor patient records',correct:'Age of majority + 3 years or 10 years (whichever longer)',wrongs:['10 years from birth','5 years from last visit','Until the minor requests their own records']},
+  {item:'Medicare/Medicaid records',correct:'10 years from last date of service (CMS requirement)',wrongs:['7 years','5 years','3 years after audit']},
+  {item:'OSHA injury logs (300/300A)',correct:'5 years',wrongs:['7 years','10 years','Indefinitely']},
+  {item:'Employee personnel records',correct:'7 years after termination',wrongs:['5 years','10 years','1 year after leaving']},
+  {item:'Financial records (IRS)',correct:'7 years',wrongs:['5 years','10 years','3 years']},
+  {item:'Deceased patient records',correct:'10 years from date of death or last service',wrongs:['5 years from date of death','Immediate destruction is permitted','30 years for malpractice protection']},
+  {item:'Destruction log (record of destroyed records)',correct:'Permanently — never destroyed',wrongs:['7 years','10 years','Same period as the records destroyed']},
+];
+
+const FILING_ITEMS=[
+  {item:'Large hospital with 50,000+ patient records — privacy is critical',correct:'Numeric (Terminal Digit)',wrongs:['Alphabetical','Alphanumeric']},
+  {item:'Small 2-provider family practice — simple and easy for staff',correct:'Alphabetical',wrongs:['Numeric (Terminal Digit)','Color-Coding']},
+  {item:'Color label on chart indicating year of last visit',correct:'Color-Coding',wrongs:['Alphabetical','Subject/Divider Tabs']},
+  {item:'Documents within a chart organized newest on top',correct:'Chronological (Reverse)',wrongs:['Alphabetical','Terminal Digit']},
+  {item:'Hospital system combining letters and numbers (e.g., A-12345)',correct:'Alphanumeric',wrongs:['Alphabetical','Terminal Digit']},
+  {item:'Lab results tab, Notes tab, Imaging tab in paper chart',correct:'Subject/Divider Tabs',wrongs:['Chronological','Alphabetical']},
+  {item:'Chart color indicates insurance type — misfiles are immediately visible',correct:'Color-Coding',wrongs:['Alphabetical','Terminal Digit']},
+  {item:'A chart is removed — what must be placed in the filing slot?',correct:'Outguide',wrongs:['A color-coded flag','A duplicate chart copy','A deficiency notice']},
+  {item:'Search by name AND date of birth before creating a new record to prevent —',correct:'Duplicate Charts',wrongs:['Wrong insurance filing','Late entries','Unauthorized access']},
+  {item:'Documents received by fax or mail that belong in a chart',correct:'Loose Filing',wrongs:['Late Entries','Addenda','Outguides']},
+];
+
+const SCENARIOS=[
+  {label:'📤 Authorization Required? — Scene 1 of 4',tokens:[
+    {t:'A treating specialist requests the patient\'s chart to prepare for a referral visit: '},
+    {a:'No authorization required — this is Treatment (TPO)',d:'✔ Correct: sharing with another treating provider falls under Treatment — one of the three TPO categories. No patient authorization needed.'},
+    {t:'. An attorney requests the same records: '},
+    {a:'Written authorization required',d:'✔ Correct: attorney requests are not TPO — a valid HIPAA authorization signed by the patient is required before any release.'},
+  ]},
+  {label:'🔍 ROI Verification — Scene 2 of 4',tokens:[
+    {t:'A caller says they are the patient and wants records faxed to them. You: '},
+    {a:'verify identity by asking for name, DOB, and a government-issued ID before releasing',d:'✔ Correct: identity must be verified before any PHI is released — phone calls alone are not sufficient verification.'},
+    {t:'. A written authorization arrives but it has no expiration date: '},
+    {a:'the authorization is invalid — request a new completed form',d:'✔ Correct: a valid HIPAA authorization must include an expiration date or event. Missing elements invalidate the form.'},
+  ]},
+  {label:'⚠️ Special Category Records — Scene 3 of 4',tokens:[
+    {t:'A standard HIPAA authorization is submitted requesting a patient\'s substance abuse treatment records. You: '},
+    {a:'cannot release them — 42 CFR Part 2 requires a separate, more specific consent form',d:'✔ Correct: substance abuse treatment records under 42 CFR Part 2 have stricter protections than standard HIPAA and require specific written consent.'},
+    {t:'. A court order signed by a judge requests the same records: '},
+    {a:'notify the compliance officer first, then comply',d:'✔ Correct: a judge-signed court order does override HIPAA — unlike a subpoena alone. Always notify compliance before releasing.'},
+  ]},
+  {label:'🗑️ Destruction & Breach — Scene 4 of 4',tokens:[
+    {t:'After retention period, paper records are placed in the regular recycling bin: '},
+    {a:'PHI in regular trash/recycling — this is a HIPAA violation',d:'❌ Wrong: paper PHI must be cross-cut shredded by a certified vendor with a Certificate of Destruction — never placed in regular trash.'},
+    {t:'. An MA notices a chart was accessed by a staff member not involved in that patient\'s care: '},
+    {a:'report to the supervisor/privacy officer immediately — possible HIPAA breach',d:'✔ Correct: unauthorized EHR access is a potential breach — must be reported to the privacy officer immediately and documented.'},
+  ]},
+];
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function goHome(){show('home')}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let currentMode='';
+
+let qPool=[],qIdx=0,qScore=0,qHist=[];
+function startQuiz(){currentMode='quiz';qPool=shuffle(QUIZ);qIdx=0;qScore=0;qHist=[];show('quiz-screen');renderQuiz()}
+function renderQuiz(){
+  const q=qPool[qIdx];const opts=shuffle([q.correct,...q.wrongs]);
+  $('quiz-q').textContent=q.q;$('quiz-ctx').textContent=q.ctx;
+  $('quiz-num').textContent=`Q ${qIdx+1} of ${qPool.length}`;
+  $('quiz-prog').style.width=`${(qIdx/qPool.length)*100}%`;
+  $('quiz-fb').textContent='';$('btn-qnext').style.display='none';
+  $('streak-row').innerHTML=qHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('opts-grid').innerHTML=opts.map(o=>{const s=o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');return`<button class="opt" data-val="${s}" onclick="quizAnswer(this)">${s}</button>`}).join('');
+}
+function quizAnswer(btn){
+  const chosen=btn.dataset.val,correct=qPool[qIdx].correct;
+  document.querySelectorAll('#opts-grid .opt').forEach(b=>b.classList.add('locked'));
+  if(chosen===correct){btn.classList.add('correct');qScore++;$('quiz-fb').innerHTML='<span style="color:var(--success)">✓ Correct!</span>';}
+  else{btn.classList.add('wrong');document.querySelectorAll('#opts-grid .opt').forEach(b=>{if(b.dataset.val===correct)b.classList.add('correct')});$('quiz-fb').innerHTML=`<span style="color:var(--danger)">✗ Answer: ${correct}</span>`;}
+  qHist.push(chosen===correct);$('btn-qnext').style.display='inline-block';
+}
+function quizNext(){qIdx++;if(qIdx>=qPool.length)showResults('quiz',qScore,qPool.length);else renderQuiz()}
+
+let retPool=[],retIdx=0,retScore=0,retHist=[];
+function startRetention(){currentMode='ret';retPool=shuffle(RETENTION_ITEMS);retIdx=0;retScore=0;retHist=[];show('ret-screen');renderRet()}
+function renderRet(){
+  const it=retPool[retIdx];const opts=shuffle([it.correct,...it.wrongs]);
+  $('ret-item').textContent=it.item;
+  $('ret-num').textContent=`Scenario ${retIdx+1} of ${retPool.length}`;
+  $('ret-prog').style.width=`${(retIdx/retPool.length)*100}%`;
+  $('ret-fb').textContent='';$('btn-retnext').style.display='none';
+  $('ret-streak').innerHTML=retHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('ret-grid').innerHTML=opts.map(o=>{const s=o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');return`<button class="opt" data-val="${s}" onclick="retAnswer(this)" style="justify-content:center;text-align:center;font-size:11px">${s}</button>`}).join('');
+}
+function retAnswer(btn){
+  const chosen=btn.dataset.val,it=retPool[retIdx];
+  document.querySelectorAll('#ret-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.correct;
+  if(ok){btn.classList.add('correct');retScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#ret-grid .opt').forEach(b=>{if(b.dataset.val===it.correct)b.classList.add('correct')})}
+  $('ret-fb').innerHTML=ok?'<span style="color:var(--success)">✓ Correct!</span>':`<span style="color:var(--danger)">✗ Answer: ${it.correct}</span>`;
+  retHist.push(ok);$('btn-retnext').style.display='inline-block';
+}
+function retNext(){retIdx++;if(retIdx>=retPool.length)showResults('ret',retScore,retPool.length);else renderRet()}
+
+const FILE_METHODS=['Alphabetical','Numeric (Terminal Digit)','Alphanumeric','Chronological (Reverse)','Subject/Divider Tabs','Color-Coding','Outguide','Duplicate Charts','Loose Filing','Alphanumeric'];
+let filePool=[],fileIdx=0,fileScore=0,fileHist=[];
+function startFiling(){currentMode='file';filePool=shuffle(FILING_ITEMS);fileIdx=0;fileScore=0;fileHist=[];show('file-screen');renderFile()}
+function renderFile(){
+  const it=filePool[fileIdx];const opts=shuffle([it.correct,...it.wrongs]);
+  $('file-item').textContent=it.item;
+  $('file-num').textContent=`Item ${fileIdx+1} of ${filePool.length}`;
+  $('file-prog').style.width=`${(fileIdx/filePool.length)*100}%`;
+  $('file-fb').textContent='';$('btn-filenext').style.display='none';
+  $('file-streak').innerHTML=fileHist.map(h=>`<div class="sdot ${h?'hit':'miss'}"></div>`).join('');
+  $('file-grid').innerHTML=opts.map(o=>{const s=o.replace(/&/g,'&amp;').replace(/"/g,'&quot;');return`<button class="opt" data-val="${s}" onclick="fileAnswer(this)" style="justify-content:center;text-align:center;font-size:11px">${s}</button>`}).join('');
+}
+function fileAnswer(btn){
+  const chosen=btn.dataset.val,it=filePool[fileIdx];
+  document.querySelectorAll('#file-grid .opt').forEach(b=>b.classList.add('locked'));
+  const ok=chosen===it.correct;
+  if(ok){btn.classList.add('correct');fileScore++;}
+  else{btn.classList.add('wrong');document.querySelectorAll('#file-grid .opt').forEach(b=>{if(b.dataset.val===it.correct)b.classList.add('correct')})}
+  $('file-fb').innerHTML=ok?'<span style="color:var(--success)">✓ Correct!</span>':`<span style="color:var(--danger)">✗ Answer: ${it.correct}</span>`;
+  fileHist.push(ok);$('btn-filenext').style.display='inline-block';
+}
+function fileNext(){fileIdx++;if(fileIdx>=filePool.length)showResults('file',fileScore,filePool.length);else renderFile()}
+
+let scIdx=0;
+function startSC(){currentMode='scenario';scIdx=0;show('sc-screen');renderSC()}
+function renderSC(){
+  const sc=SCENARIOS[scIdx];
+  $('sc-label').textContent=sc.label;
+  $('sc-prog').style.width=`${((scIdx+1)/SCENARIOS.length)*100}%`;
+  $('sc-decode').innerHTML='👆 Tap any <span style="color:var(--purple-lt)">highlighted</span> request to see the ruling.';
+  $('sc-text').innerHTML=sc.tokens.map(tok=>{
+    if(tok.a){const s=tok.d.replace(/"/g,'&quot;');return`<span class="hl" data-abbr="${tok.a.replace(/"/g,'&quot;')}" data-def="${s}" onclick="scDecode(this)">${tok.a}</span>`}
+    return tok.t;
+  }).join('');
+  $('sc-prev').disabled=scIdx===0;$('sc-next').disabled=scIdx===SCENARIOS.length-1;
+}
+function scDecode(el){el.classList.toggle('popped');$('sc-decode').innerHTML=`<strong>Ruling:</strong> ${el.dataset.def}`}
+function scPrev(){if(scIdx>0){scIdx--;renderSC()}}
+function scNext(){if(scIdx<SCENARIOS.length-1){scIdx++;renderSC()}}
+
+function showResults(mode,score,total){
+  currentMode=mode;show('results-screen');
+  const pct=Math.round((score/total)*100),C=2*Math.PI*54,offset=C-(Math.min(pct,100)/100)*C;
+  $('ring-fill').style.strokeDasharray=C;$('ring-fill').style.strokeDashoffset=C;
+  $('ring-pct').textContent=pct+'%';$('ring-sub').textContent=`${score} / ${total}`;
+  setTimeout(()=>{$('ring-fill').style.strokeDashoffset=offset},80);
+  $('res-title').textContent=pct>=90?'🏆 Outstanding!':pct>=75?'🎉 Great Work!':pct>=60?'👍 Good Effort!':'💪 Keep Studying!';
+  $('res-msg').textContent=`You scored ${score} / ${total} (${pct}%). ${pct>=80?'Chart management mastered!':'Review and try again.'}`;
+}
+function retryMode(){
+  if(currentMode==='quiz')startQuiz();
+  else if(currentMode==='ret')startRetention();
+  else if(currentMode==='file')startFiling();
+  else if(currentMode==='scenario')startSC();
+  else goHome();
+}
+</script>
+</body>
+</html>

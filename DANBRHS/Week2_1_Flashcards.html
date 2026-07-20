@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Evaluation — Anatomy, Pathology & Quality — Flashcards</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.card-stage{flex:1 1 auto;min-height:140px;perspective:1200px;margin-bottom:12px;}
+.flip-card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer;}
+.flip-card.flipped{transform:rotateY(180deg);}
+.face{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(14px,3vh,30px);text-align:center;border:1px solid var(--border);overflow:hidden;}
+.front{background:var(--card);}
+.back{background:linear-gradient(150deg,var(--teal),#0a4d54);transform:rotateY(180deg);}
+.face .tag{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:clamp(6px,1.6vh,14px);}
+.face .txt{font-size:clamp(15px,2.2vh,19px);font-weight:600;line-height:1.4;max-height:100%;overflow-y:auto;}
+.back .txt{font-weight:400;font-size:clamp(13px,1.9vh,16px);}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 2 — Purpose and Technique</div>
+    <h1>Image Evaluation — Anatomy, Pathology & Quality — Flashcards</h1>
+    <div class="sub">Week 2: Flip through key terms and concepts.</div>
+  </div>
+  
+<div class="act-col">
+  <div class="stat-row"><div class="stat">Click the card to flip it<br><b id="counter">1 / 15</b></div></div>
+  <div class="progress-wrap"><div class="progress-bar" id="bar"></div></div>
+  <div class="card-stage" id="stage"></div>
+  <div class="nav-row">
+    <button class="btn ghost" id="prevBtn">← Previous</button>
+    <button class="btn gold" id="shufBtn">🔀 Shuffle</button>
+    <button class="btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const cards = [{"front":"Maxillary sinus (radiographic appearance)","back":"Appears as a radiolucent area above the posterior maxillary teeth — normal anatomy, not pathology."},{"front":"TMJ on panoramic image","back":"The temporomandibular joint is visualized on panoramic images; know its normal appearance to avoid mistaking it for pathology."},{"front":"Caries appearance","back":"Radiolucent, typically at interproximal contact points or occlusal surfaces."},{"front":"Apical pathology","back":"Radiolucent changes at the root apex indicating possible infection or periapical disease."},{"front":"Horizontal bone loss","back":"Bone resorbs evenly, parallel to the CEJ line — the most common pattern in generalized periodontal disease."},{"front":"Vertical (angular) bone loss","back":"Bone resorbs unevenly at an angle to the adjacent tooth — often a localized periodontal defect."},{"front":"Amalgam restoration appearance","back":"Highly radiopaque with well-defined margins due to metal content."},{"front":"Gutta-percha","back":"Radiopaque root canal filling material, often seen with a post or core visible."},{"front":"Ghost image","back":"A blurred radiopaque structure projected on the opposite side of a panoramic image, higher up and mirrored."},{"front":"Dot orientation convention","back":"The receptor's identification dot is always mounted convex side facing the viewer, for correct right/left orientation."},{"front":"Radiopaque","back":"Appears light/white on the image — dense structures like enamel, bone, and metal."},{"front":"Radiolucent","back":"Appears dark on the image — less dense structures like pulp, caries, and sinus air spaces."},{"front":"Diagnostically acceptable image — 3 criteria","back":"Correct positioning, adequate density/contrast, and freedom from distortion or artifacts."},{"front":"Banding artifact","back":"A digital-specific artifact often from sensor cable issues or static electricity on a PSP plate."},{"front":"Retake reduction step 4","back":"Evaluate the image immediately for density, contrast, and positioning before dismissing the patient."}];
+let i = 0;
+const stage = document.getElementById('stage');
+const counter = document.getElementById('counter');
+const bar = document.getElementById('bar');
+function render(){
+  stage.innerHTML = '<div class="flip-card" id="fc"><div class="face front"><div class="tag">Term</div><div class="txt">'+cards[i].front+'</div></div><div class="face back"><div class="tag">Explanation</div><div class="txt">'+cards[i].back+'</div></div></div>';
+  document.getElementById('fc').onclick = () => document.getElementById('fc').classList.toggle('flipped');
+  counter.textContent = (i+1)+' / '+cards.length;
+  bar.style.width = (((i+1)/cards.length)*100)+'%';
+}
+function next(){ i = (i+1)%cards.length; render(); }
+function prev(){ i = (i-1+cards.length)%cards.length; render(); }
+function shuffle(){ for(let j=cards.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[cards[j],cards[k]]=[cards[k],cards[j]];} i=0; render(); }
+document.getElementById('nextBtn').onclick = next;
+document.getElementById('prevBtn').onclick = prev;
+document.getElementById('shufBtn').onclick = shuffle;
+render();
+</script>
+</body>
+</html>

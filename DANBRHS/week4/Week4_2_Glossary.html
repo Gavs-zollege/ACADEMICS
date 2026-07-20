@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infection Prevention & Control — Glossary</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.g-list-wrap{flex:1 1 auto;min-height:0;overflow-y:auto;padding-right:6px;}
+.g-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin-bottom:8px;}
+.g-term{font-weight:700;font-size:14.5px;color:var(--gold-l);margin-bottom:2px;}
+.g-def{color:#D6E1EA;font-size:13px;line-height:1.4;}
+.g-count{flex:0 0 auto;color:var(--muted);font-size:12.5px;margin:8px 0;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 4 — Infection Prevention and Control</div>
+    <h1>Infection Prevention & Control — Glossary</h1>
+    <div class="sub">Week 4: Searchable reference of key terms.</div>
+  </div>
+  
+<div class="act-col">
+  <input type="text" id="search" placeholder="Search terms or definitions...">
+  <div class="g-count" id="count"></div>
+  <div class="g-list-wrap"><div id="list"></div></div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const terms = [{"term":"Standard Precautions","def":"Infection control practices applied to every patient regardless of known infectious status."},{"term":"Critical Items","def":"Instruments penetrating soft tissue or bone, requiring sterilization."},{"term":"Semi-Critical Items","def":"Instruments touching mucous membranes, requiring high-level disinfection or sterilization."},{"term":"Noncritical Items","def":"Items touching only intact skin, requiring disinfection only."},{"term":"Barrier Sleeve","def":"A single-use protective cover for sensors and PSP plates, which cannot tolerate heat sterilization."},{"term":"Spray-Wipe-Spray","def":"A surface disinfection method: apply disinfectant, wipe debris, reapply, and allow full contact time."},{"term":"Autoclave","def":"A steam-under-pressure sterilizer, the most common FDA-approved sterilization device."},{"term":"Dry Heat Sterilization","def":"A no-moisture sterilization method with a longer cycle but less instrument corrosion."},{"term":"Chemical Vapor Sterilization","def":"A heated chemical solution under pressure used for sterilization."},{"term":"Ethylene Oxide","def":"A gas sterilization method for heat-sensitive items, requiring extended aeration time."},{"term":"Biological Indicator (Spore Test)","def":"A test confirming a sterilizer kills resistant bacterial spores, verifying true sterilization."},{"term":"Biohazardous Waste","def":"Regulated waste including sharps, blood-saturated materials, and extracted teeth."},{"term":"Impervious Container","def":"A leak-proof container required for sealing contaminated cases before lab shipment."},{"term":"Exposure Control Plan","def":"OSHA-required written plan identifying exposure-risk tasks and protective measures."},{"term":"Bloodborne Pathogens Standard","def":"The OSHA regulation governing occupational exposure to blood and other potentially infectious materials."},{"term":"Hepatitis B Reporting","def":"A licensee's legal duty to notify the Board in writing within 14 days of learning of a Hepatitis B infection."},{"term":"Dental Practice Act","def":"State law defining the legal scope of practice for dentists and dental auxiliaries."},{"term":"Administrative Code (Rule 64B5)","def":"Detailed regulations implementing the Practice Act, including infection control and supervision rules."},{"term":"Delegable Duty","def":"A clinical task a licensed dentist may legally assign to a trained auxiliary."},{"term":"PPE Donning/Doffing Sequence","def":"The correct order for putting on and removing personal protective equipment to avoid self-contamination."},{"term":"Cross-Contamination","def":"The transfer of infectious material from one surface, person, or item to another."}];
+const list = document.getElementById('list');
+const search = document.getElementById('search');
+const count = document.getElementById('count');
+function render(items){
+  list.innerHTML = items.map(t => '<div class="g-item"><div class="g-term">'+t.term+'</div><div class="g-def">'+t.def+'</div></div>').join('');
+  count.textContent = items.length + ' of ' + terms.length + ' terms';
+}
+search.addEventListener('input', () => {
+  const q = search.value.toLowerCase();
+  render(terms.filter(t => t.term.toLowerCase().includes(q) || t.def.toLowerCase().includes(q)));
+});
+render(terms.sort((a,b)=>a.term.localeCompare(b.term)));
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infection Prevention & Control — True or False Speed Round</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.tf-stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;}
+.tf-card{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(18px,4vh,36px);text-align:center;}
+.tf-text{font-size:clamp(15px,2.4vh,19px);font-weight:600;line-height:1.5;margin-bottom:clamp(14px,3vh,28px);min-height:60px;display:flex;align-items:center;justify-content:center;}
+.tf-btns{display:flex;gap:16px;justify-content:center;}
+.tf-btn{flex:1;max-width:160px;padding:clamp(10px,2vh,16px);border-radius:12px;font-size:15px;font-weight:700;border:none;cursor:pointer;}
+.tf-true{background:var(--good);color:#04331a;}
+.tf-false{background:var(--bad);color:#3a0d0c;}
+.timer{font-size:22px;font-weight:800;color:var(--gold-l);}
+.feedback{margin-top:12px;font-weight:600;min-height:20px;font-size:13.5px;}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(20px,5vh,40px);text-align:center;width:100%;}
+.result-score{font-size:clamp(30px,6vh,44px);font-weight:800;color:var(--gold-l);margin:8px 0;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 4 — Infection Prevention and Control</div>
+    <h1>Infection Prevention & Control — True or False Speed Round</h1>
+    <div class="sub">Week 4: Answer as many as you can before time runs out.</div>
+  </div>
+  
+<div class="act-col">
+  <div class="stat-row">
+    <div class="stat">Time Left<br><b><span id="timer" class="timer">60s</span></b></div>
+    <div class="stat" id="counter"></div>
+  </div>
+  <div class="tf-stage" id="stage"></div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const statements = [{"text":"Critical items only need disinfection, not sterilization.","answer":false,"note":"Critical items penetrate tissue and require full sterilization, not just disinfection."},{"text":"Digital sensors can be safely run through an autoclave.","answer":false,"note":"Sensors cannot tolerate heat sterilization — barrier sleeves must be used instead."},{"text":"Ethylene oxide sterilization has the shortest cycle time of the four FDA-approved modalities.","answer":false,"note":"Ethylene oxide has the longest cycle time, including extended aeration."},{"text":"Biological spore testing should be run on a routine schedule.","answer":true,"note":"Correct — routine (often weekly) spore testing verifies ongoing sterilizer effectiveness."},{"text":"A case can be shipped to the lab with just a disinfection step, no sealing or labeling required.","answer":false,"note":"Both sealing in an impervious container and labeling \"Treat as Infectious Material\" are required."},{"text":"Hepatitis B Board notification is required within 14 days of the licensee learning of the infection.","answer":true,"note":"Correct."},{"text":"The spray-wipe-spray method allows wiping off the disinfectant immediately after spraying.","answer":false,"note":"The full contact/kill time must elapse after the second spray before wiping is complete."},{"text":"The Administrative Code (Rule 64B5) implements the operational detail behind the Dental Practice Act.","answer":true,"note":"Correct — the Code fills in specifics like infection control and supervision requirements."},{"text":"OSHA enforces the Bloodborne Pathogens Standard.","answer":true,"note":"Correct."},{"text":"The correct PPE doffing order is the same as the donning order.","answer":false,"note":"Doffing order is reversed from donning to avoid self-contamination."},{"text":"Biohazardous waste can be disposed of in regular office trash if double-bagged.","answer":false,"note":"Biohazardous waste must go through a licensed medical waste hauler, regardless of bagging."},{"text":"Semi-critical items require full sterilization only, never high-level disinfection.","answer":false,"note":"Semi-critical items may be either high-level disinfected or sterilized."}];
+let order = statements.map((s,i)=>i).sort(()=>Math.random()-.5);
+let idx=0, score=0, timeLeft=60, timerId=null, finished=false;
+const stage = document.getElementById('stage');
+const timerEl = document.getElementById('timer');
+const counter = document.getElementById('counter');
+function startTimer(){
+  timerId = setInterval(()=>{
+    timeLeft--; timerEl.textContent = timeLeft+'s';
+    if(timeLeft<=0){ clearInterval(timerId); endRound(); }
+  },1000);
+}
+function renderQ(){
+  if(idx>=order.length){ endRound(); return; }
+  const s = statements[order[idx]];
+  counter.textContent = 'Item '+(idx+1)+' / '+order.length+' · Score: '+score;
+  stage.innerHTML = '<div class="tf-card"><div class="tf-text">'+s.text+'</div>'+
+    '<div class="tf-btns"><button class="tf-btn tf-true" id="bt">TRUE</button><button class="tf-btn tf-false" id="bf">FALSE</button></div>'+
+    '<div class="feedback" id="fb"></div></div>';
+  document.getElementById('bt').onclick=()=>answer(true,s);
+  document.getElementById('bf').onclick=()=>answer(false,s);
+}
+function answer(val,s){
+  if(finished) return;
+  const ok = val===s.answer;
+  if(ok) score++;
+  document.getElementById('fb').style.color = ok ? 'var(--good)' : 'var(--bad)';
+  document.getElementById('fb').textContent = (ok?'✓ Correct — ':'✗ ') + s.note;
+  idx++;
+  setTimeout(renderQ, 800);
+}
+function endRound(){
+  finished = true;
+  clearInterval(timerId);
+  stage.innerHTML = '<div class="result-card"><div class="kicker">Round Complete</div><div class="result-score">'+score+' / '+order.length+'</div><button class="btn gold" id="again">Play Again</button></div>';
+  document.getElementById('again').onclick = () => { location.reload(); };
+}
+counter.textContent = 'Item 1 / '+order.length+' · Score: 0';
+renderQ();
+startTimer();
+</script>
+</body>
+</html>

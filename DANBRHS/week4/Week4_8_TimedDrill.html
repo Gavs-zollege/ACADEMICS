@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infection Prevention & Control — Timed Review Drill</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.td-stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;}
+.td-card{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(18px,4vh,40px);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;}
+.td-q{font-size:clamp(15px,2.4vh,19px);font-weight:600;margin-bottom:6px;}
+.td-a{font-size:clamp(13px,2vh,15px);color:var(--teal-l);display:none;margin-top:8px;}
+.timer{font-size:22px;font-weight:800;color:var(--gold-l);}
+.td-btns{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(20px,5vh,40px);text-align:center;width:100%;}
+.result-score{font-size:clamp(30px,6vh,40px);font-weight:800;color:var(--gold-l);margin:8px 0;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 4 — Infection Prevention and Control</div>
+    <h1>Infection Prevention & Control — Timed Review Drill</h1>
+    <div class="sub">Week 4: Rapid self-check — mark each card known or needs review.</div>
+  </div>
+  
+<div class="act-col">
+  <div class="stat-row">
+    <div class="stat">Time Left<br><b><span id="timer" class="timer">90s</span></b></div>
+    <div class="stat" id="score">Known: 0 · Review: 0</div>
+  </div>
+  <div class="td-stage" id="stage"></div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const cards = [{"front":"Items requiring full sterilization?","back":"Critical items"},{"front":"Items requiring high-level disinfection or sterilization?","back":"Semi-critical items"},{"front":"Items requiring only disinfection?","back":"Noncritical items"},{"front":"Protects sensors that can't be autoclaved?","back":"Single-use barrier sleeve"},{"front":"Surface disinfection method?","back":"Spray-wipe-spray"},{"front":"Most common FDA-approved sterilizer?","back":"Autoclave (steam under pressure)"},{"front":"Gas sterilization with longest cycle?","back":"Ethylene oxide"},{"front":"Verifies true sterilization?","back":"Biological (spore) testing"},{"front":"Required before shipping a case to a lab?","back":"Seal in impervious container + label \"Treat as Infectious Material\""},{"front":"Hepatitis B Board notification deadline?","back":"Within 14 days of learning of infection"},{"front":"OSHA's core infection-exposure regulation?","back":"Bloodborne Pathogens Standard"},{"front":"Defines legal scope for auxiliaries?","back":"Dental Practice Act"},{"front":"Implements operational detail of the Practice Act?","back":"Administrative Code (Rule 64B5)"},{"front":"Regulatory body enforcing workplace safety?","back":"OSHA"},{"front":"Regulatory body enforcing state dental rules?","back":"State Dental Board"}].sort(()=>Math.random()-.5);
+let i=0, known=0, unknown=0, timeLeft=90, timerId=null, done=false;
+const stage = document.getElementById('stage');
+const timerEl = document.getElementById('timer');
+const scoreEl = document.getElementById('score');
+function updateScore(){ scoreEl.textContent = 'Known: '+known+' · Review: '+unknown; }
+function renderCard(){
+  if(i>=cards.length){ i=0; }
+  const c = cards[i];
+  stage.innerHTML = '<div class="td-card"><div class="td-q">'+c.front+'</div><div class="td-a" id="ans">'+c.back+'</div>'+
+    '<div class="td-btns"><button class="btn ghost" id="showBtn">Show Answer</button>'+
+    '<button class="btn" id="knowBtn" style="display:none;">✓ I Knew It</button>'+
+    '<button class="btn gold" id="reviewBtn" style="display:none;">↻ Needs Review</button></div></div>';
+  document.getElementById('showBtn').onclick=()=>{
+    document.getElementById('ans').style.display='block';
+    document.getElementById('showBtn').style.display='none';
+    document.getElementById('knowBtn').style.display='inline-block';
+    document.getElementById('reviewBtn').style.display='inline-block';
+  };
+  document.getElementById('knowBtn').onclick=()=>{ if(done) return; known++; updateScore(); i++; renderCard(); };
+  document.getElementById('reviewBtn').onclick=()=>{ if(done) return; unknown++; updateScore(); i++; renderCard(); };
+}
+function endDrill(){
+  done=true; clearInterval(timerId);
+  stage.innerHTML = '<div class="result-card"><div class="kicker">Time\'s Up!</div><div class="result-score">'+known+' Known</div><div class="sub">'+unknown+' flagged for review, out of '+(known+unknown)+' reviewed</div><button class="btn gold" id="again">Try Again</button></div>';
+  document.getElementById('again').onclick=()=>location.reload();
+}
+timerId = setInterval(()=>{
+  timeLeft--; timerEl.textContent=timeLeft+'s';
+  if(timeLeft<=0) endDrill();
+},1000);
+updateScore();
+renderCard();
+</script>
+</body>
+</html>

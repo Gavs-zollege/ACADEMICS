@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infection Prevention & Control — Quiz</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.q-stage{flex:1 1 auto;min-height:0;overflow-y:auto;}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(14px,2.6vh,26px);}
+.q-text{font-size:clamp(14px,2vh,17px);font-weight:600;margin-bottom:clamp(8px,1.6vh,18px);line-height:1.35;}
+.opt{display:block;width:100%;text-align:left;background:var(--navy2);border:1.5px solid var(--border);color:var(--text);
+  border-radius:10px;padding:clamp(8px,1.4vh,13px) 15px;margin-bottom:8px;font-size:13.5px;cursor:pointer;}
+.opt:hover{border-color:var(--teal-l);}
+.opt.correct{border-color:var(--good);background:rgba(47,191,113,.15);}
+.opt.wrong{border-color:var(--bad);background:rgba(225,85,84,.15);}
+.explain{margin-top:10px;padding:11px 13px;background:var(--navy);border-left:3px solid var(--gold);border-radius:6px;font-size:12.5px;color:var(--muted);display:none;}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(20px,5vh,40px);text-align:center;}
+.result-score{font-size:clamp(34px,7vh,52px);font-weight:800;color:var(--gold-l);margin:8px 0;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 4 — Infection Prevention and Control</div>
+    <h1>Infection Prevention & Control — Quiz</h1>
+    <div class="sub">Week 4: Multiple-choice knowledge check with explanations.</div>
+  </div>
+  
+<div class="act-col">
+  <div class="progress-wrap"><div class="progress-bar" id="bar"></div></div>
+  <div class="stat-row"><div class="stat" id="counter"></div></div>
+  <div class="q-stage" id="stage"></div>
+  <div class="nav-row" style="margin-top:10px;justify-content:flex-end;">
+    <button class="btn" id="nextBtn">Next Question →</button>
+  </div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const questions = [{"q":"Which classification requires full sterilization?","options":["Noncritical items","Semi-critical items","Critical items","All items equally"],"correct":2,"explain":"Critical items penetrate soft tissue or bone and require full sterilization — the highest infection control standard."},{"q":"Why must digital sensors be covered with a barrier sleeve?","options":["To make them easier to hold","Because they cannot be autoclaved","It's optional for convenience only","To improve image quality"],"correct":1,"explain":"Digital sensors and PSP plates cannot tolerate heat sterilization, so single-use barriers are required for every exposure."},{"q":"Which sterilization modality uses gas and requires the longest cycle?","options":["Autoclave","Dry heat","Chemical vapor","Ethylene oxide"],"correct":3,"explain":"Ethylene oxide is a gas sterilization method with the longest cycle time, including extended aeration."},{"q":"Biological (spore) testing verifies:","options":["That the sterilizer completed a cycle","That the sterilizer is actually killing resistant spores","The correct temperature only","That instruments look clean"],"correct":1,"explain":"Spore testing confirms actual microbial kill, not just that a cycle ran — this is the true verification of sterilization."},{"q":"Before shipping a disinfected impression to an outside lab, it must be:","options":["Left as-is since disinfection is sufficient","Sealed in an impervious container and labeled \"Treat as Infectious Material\"","Only labeled, no container needed","Wrapped in regular paper"],"correct":1,"explain":"Both steps are required: sealing in an impervious container AND labeling it, regardless of visible contamination."},{"q":"A licensee infected with Hepatitis B must notify the Board in writing within:","options":["48 hours","7 days","14 days","30 days"],"correct":2,"explain":"Notification is required within 14 days of the licensee learning of the infection."},{"q":"What does the correct spray-wipe-spray method require?","options":["Wiping immediately after the first spray","Allowing the full contact/kill time after the second spray","Only one spray application","Using water instead of disinfectant"],"correct":1,"explain":"The disinfectant must remain on the surface for its full stated contact time after the second spray to be effective."},{"q":"Which document defines what dental auxiliaries are legally permitted to do?","options":["OSHA Bloodborne Pathogens Standard","The Dental Practice Act","The CDC Guidelines","HIPAA"],"correct":1,"explain":"The Dental Practice Act is the state law establishing the legal scope of practice for dental auxiliaries."},{"q":"Which regulatory body enforces the Bloodborne Pathogens Standard?","options":["CDC","OSHA","State Dental Board","FDA"],"correct":1,"explain":"OSHA enforces workplace safety standards, including the Bloodborne Pathogens Standard, at the federal level."},{"q":"The correct PPE donning order is:","options":["Gloves, mask, eyewear, gown","Gown, mask, eyewear, gloves","Mask, gown, gloves, eyewear","Eyewear, gloves, gown, mask"],"correct":1,"explain":"The standard donning order is gown, mask, eyewear, then gloves — reversed when doffing to avoid self-contamination."}];
+let i = 0, score = 0, answered = false;
+const stage = document.getElementById('stage');
+const bar = document.getElementById('bar');
+const counter = document.getElementById('counter');
+function renderQ(){
+  answered = false;
+  const q = questions[i];
+  bar.style.width = ((i/questions.length)*100)+'%';
+  counter.textContent = 'Question '+(i+1)+' of '+questions.length+' · Score: '+score;
+  stage.innerHTML = '<div class="q-card"><div class="q-text">'+q.q+'</div>'+
+    q.options.map((o,idx)=>'<button class="opt" data-idx="'+idx+'">'+o+'</button>').join('')+
+    '<div class="explain" id="explain">'+q.explain+'</div></div>';
+  document.querySelectorAll('.opt').forEach(btn=>{
+    btn.onclick = () => {
+      if(answered) return;
+      answered = true;
+      const idx = parseInt(btn.dataset.idx);
+      document.querySelectorAll('.opt').forEach((b,bi)=>{
+        if(bi===q.correct) b.classList.add('correct');
+        else if(bi===idx) b.classList.add('wrong');
+      });
+      if(idx===q.correct) score++;
+      document.getElementById('explain').style.display='block';
+      counter.textContent = 'Question '+(i+1)+' of '+questions.length+' · Score: '+score;
+    };
+  });
+}
+function renderResult(){
+  bar.style.width='100%';
+  const pct = Math.round((score/questions.length)*100);
+  stage.innerHTML = '<div class="result-card"><div class="kicker">Quiz Complete</div><div class="result-score">'+score+' / '+questions.length+'</div><div class="sub">'+pct+'% correct</div><button class="btn gold" id="retryBtn" style="margin-top:12px;">Retry Quiz</button></div>';
+  document.getElementById('retryBtn').onclick = () => { i=0; score=0; renderQ(); document.getElementById('nextBtn').style.display='inline-block'; };
+  document.getElementById('nextBtn').style.display='none';
+}
+document.getElementById('nextBtn').onclick = () => {
+  i++;
+  if(i>=questions.length) renderResult(); else renderQ();
+};
+renderQ();
+</script>
+</body>
+</html>

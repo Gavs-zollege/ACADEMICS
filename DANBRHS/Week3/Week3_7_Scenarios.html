@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radiation Characteristics & Protection — Scenario Challenge</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.sc-stage{flex:1 1 auto;min-height:0;overflow-y:auto;}
+.sc-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(14px,2.8vh,28px);}
+.sc-setup{font-size:13.5px;line-height:1.55;margin-bottom:14px;padding:12px 14px;background:var(--navy2);border-radius:10px;border-left:3px solid var(--teal);}
+.sc-q{font-size:14.5px;font-weight:600;margin-bottom:12px;}
+.sc-opt{display:block;width:100%;text-align:left;background:var(--navy2);border:1.5px solid var(--border);color:var(--text);
+  border-radius:10px;padding:10px 14px;margin-bottom:8px;font-size:13px;cursor:pointer;}
+.sc-opt:hover{border-color:var(--teal-l);}
+.sc-opt.correct{border-color:var(--good);background:rgba(47,191,113,.15);}
+.sc-opt.wrong{border-color:var(--bad);background:rgba(225,85,84,.15);}
+.sc-fb{margin-top:12px;padding:11px 13px;background:var(--navy);border-left:3px solid var(--gold);border-radius:6px;font-size:12.5px;color:var(--muted);display:none;}
+.sc-progress{flex:0 0 auto;color:var(--muted);font-size:12px;margin-bottom:8px;}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(20px,5vh,40px);}
+.result-score{font-size:clamp(30px,6vh,44px);font-weight:800;color:var(--gold-l);margin:8px 0;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 3 — Radiation Characteristics and Protection</div>
+    <h1>Radiation Characteristics & Protection — Scenario Challenge</h1>
+    <div class="sub">Week 3: Apply your knowledge to realistic clinical situations.</div>
+  </div>
+  
+<div class="act-col">
+  <div class="sc-progress" id="progress"></div>
+  <div class="sc-stage" id="stage"></div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const cases = [{"setup":"A patient asks you to explain why the dental office uses lead aprons and collimation if the radiation dose is already so small.","question":"What is the best explanation to give the patient?","options":["Radiation has no real risk, so these are just for show","ALARA principles apply to every exposure, however small, since some radiation effects have no safe threshold","Only pregnant patients need these precautions","These are optional based on office preference"],"correct":1,"feedback":"Stochastic effects have no dose threshold, so ALARA principles — minimizing exposure through shielding, collimation, and other means — apply to every exposure regardless of how small."},{"setup":"During a busy morning, you notice the x-ray unit is making an unusual clicking sound and one exposure came out inconsistent.","question":"What should you do next?","options":["Continue using it carefully for the rest of the day","Stop using the unit immediately and report the suspected malfunction","Increase the mA to compensate","Ask the patient if they noticed anything unusual"],"correct":1,"feedback":"Any suspected malfunction requires stopping use immediately and reporting it — the unit should not be used again until a qualified technician inspects and clears it."},{"setup":"You're assisting with an exposure and there's no protective barrier available in the room.","question":"What is your best next step for protection?","options":["Stand right next to the patient to help hold the receptor","Stand at least 6 feet away, positioned outside the useful beam, at a 90-135 degree angle","Leave the room entirely and let the exposure happen unsupervised","Hold the tube head steady during exposure"],"correct":1,"feedback":"Without a barrier, the correct protocol is distance (at least 6 feet) combined with proper angle (90-135 degrees to the beam) to minimize scatter exposure."},{"setup":"A dental assistant has been reviewing dosimeter badge readings and notices her cumulative dose is trending upward each quarter.","question":"What is the most appropriate response?","options":["Ignore it since dental doses are always low-risk","Review her exposure practices against ALARA principles and report the trend per office protocol","Stop wearing the badge since it's just adding stress","Share her badge with a coworker to average the readings"],"correct":1,"feedback":"Personnel monitoring exists specifically to catch and address upward trends — reviewing practices against ALARA and following office reporting protocol is the correct response, not ignoring or manipulating the readings."}];
+let i=0, answered=false, correctCount=0;
+const progress = document.getElementById('progress');
+const stage = document.getElementById('stage');
+function render(){
+  answered=false;
+  if(i>=cases.length){
+    progress.textContent='';
+    stage.innerHTML = '<div class="sc-card center result-card"><div class="kicker">Scenarios Complete</div><div class="result-score">'+correctCount+' / '+cases.length+'</div><div class="sub">correct decisions</div><button class="btn gold" id="restart">Restart</button></div>';
+    document.getElementById('restart').onclick=()=>{i=0;correctCount=0;render();};
+    return;
+  }
+  const c = cases[i];
+  progress.textContent = 'Scenario '+(i+1)+' of '+cases.length;
+  stage.innerHTML = '<div class="sc-card"><div class="sc-setup">'+c.setup+'</div><div class="sc-q">'+c.question+'</div>'+
+    c.options.map((o,idx)=>'<button class="sc-opt" data-idx="'+idx+'">'+o+'</button>').join('')+
+    '<div class="sc-fb" id="fb">'+c.feedback+'</div>'+
+    '<div class="nav-row" style="margin-top:12px;"><span></span><button class="btn" id="nextCase" style="display:none;">Next Scenario →</button></div></div>';
+  document.querySelectorAll('.sc-opt').forEach(btn=>{
+    btn.onclick=()=>{
+      if(answered) return; answered=true;
+      const idx=parseInt(btn.dataset.idx);
+      document.querySelectorAll('.sc-opt').forEach((b,bi)=>{
+        if(bi===c.correct) b.classList.add('correct');
+        else if(bi===idx) b.classList.add('wrong');
+      });
+      if(idx===c.correct) correctCount++;
+      document.getElementById('fb').style.display='block';
+      document.getElementById('nextCase').style.display='inline-block';
+    };
+  });
+  document.getElementById('nextCase').onclick=()=>{i++;render();};
+}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Preparation & Radiographic Purpose — Quiz</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.q-stage{flex:1 1 auto;min-height:0;overflow-y:auto;}
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(14px,2.6vh,26px);}
+.q-text{font-size:clamp(14px,2vh,17px);font-weight:600;margin-bottom:clamp(8px,1.6vh,18px);line-height:1.35;}
+.opt{display:block;width:100%;text-align:left;background:var(--navy2);border:1.5px solid var(--border);color:var(--text);
+  border-radius:10px;padding:clamp(8px,1.4vh,13px) 15px;margin-bottom:8px;font-size:13.5px;cursor:pointer;}
+.opt:hover{border-color:var(--teal-l);}
+.opt.correct{border-color:var(--good);background:rgba(47,191,113,.15);}
+.opt.wrong{border-color:var(--bad);background:rgba(225,85,84,.15);}
+.explain{margin-top:10px;padding:11px 13px;background:var(--navy);border-left:3px solid var(--gold);border-radius:6px;font-size:12.5px;color:var(--muted);display:none;}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(20px,5vh,40px);text-align:center;}
+.result-score{font-size:clamp(34px,7vh,52px);font-weight:800;color:var(--gold-l);margin:8px 0;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 1 — Purpose and Technique</div>
+    <h1>Patient Preparation & Radiographic Purpose — Quiz</h1>
+    <div class="sub">Week 1: Multiple-choice knowledge check with explanations.</div>
+  </div>
+  
+<div class="act-col">
+  <div class="progress-wrap"><div class="progress-bar" id="bar"></div></div>
+  <div class="stat-row"><div class="stat" id="counter"></div></div>
+  <div class="q-stage" id="stage"></div>
+  <div class="nav-row" style="margin-top:10px;justify-content:flex-end;">
+    <button class="btn" id="nextBtn">Next Question →</button>
+  </div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const questions = [{"q":"Which acquisition technique is preferred because it minimizes image distortion?","options":["Bisecting angle","Paralleling","Panoramic","Occlusal"],"correct":1,"explain":"Paralleling places the receptor parallel to the tooth's long axis with a perpendicular beam, minimizing distortion — it's the preferred technique whenever anatomy allows."},{"q":"What does kVp primarily control?","options":["Image density only","Beam energy and image contrast","Total exam time","Patient positioning"],"correct":1,"explain":"kVp controls the penetrating power (energy) of the beam, which determines the image's contrast/gray scale."},{"q":"Which image type is best for detecting interproximal caries?","options":["Periapical","Bitewing","Occlusal","Cephalometric"],"correct":1,"explain":"Bitewings capture the crowns of both arches in one image, making them ideal for interproximal caries and bone level checks."},{"q":"A digital sensor that requires no separate scanning step is called a:","options":["PSP plate","CCD/CMOS sensor","Film packet","Cephalostat"],"correct":1,"explain":"CCD/CMOS sensors are wired directly to the computer and display the image within seconds, unlike PSP plates which require scanning."},{"q":"Which finding indicates the PID was misaligned with the receptor?","options":["Elongation","Foreshortening","Cone cutting","Overlap"],"correct":2,"explain":"Cone cutting is a clear unexposed area caused by beam/receptor misalignment."},{"q":"Too steep a vertical angulation causes:","options":["Elongation","Foreshortening","Cone cutting","Overlap"],"correct":1,"explain":"Foreshortening occurs when the vertical angle is too steep, compressing the image of the structure."},{"q":"Before any exposure, which of these must be reviewed?","options":["Only the patient's insurance","Medications, pregnancy status, and prior radiation history","Only the patient's age","Nothing — imaging can proceed immediately"],"correct":1,"explain":"Pre-procedure history review — medications, pregnancy, prior radiation history, and medical conditions — determines whether and how imaging should proceed."},{"q":"CBCT is primarily used for:","options":["Routine bitewing caries checks","3D implant planning and complex anatomy","Orthodontic growth tracking only","Replacing all 2D imaging"],"correct":1,"explain":"CBCT produces 3D volumetric data, useful for implant planning and cases needing cross-sectional detail."},{"q":"A standard adult full mouth series (FMX) typically totals about how many images?","options":["6","12","18","30"],"correct":2,"explain":"A typical adult FMX totals around 18 images: anterior and posterior periapicals plus bitewings."},{"q":"Which document governs the retention and ownership of dental images?","options":["OSHA Bloodborne Pathogens Standard","HIPAA","The Dental Practice Act only","ALARA guidelines"],"correct":1,"explain":"HIPAA governs the retention, ownership, transfer, and charting of protected health information, including dental images."}];
+let i = 0, score = 0, answered = false;
+const stage = document.getElementById('stage');
+const bar = document.getElementById('bar');
+const counter = document.getElementById('counter');
+function renderQ(){
+  answered = false;
+  const q = questions[i];
+  bar.style.width = ((i/questions.length)*100)+'%';
+  counter.textContent = 'Question '+(i+1)+' of '+questions.length+' · Score: '+score;
+  stage.innerHTML = '<div class="q-card"><div class="q-text">'+q.q+'</div>'+
+    q.options.map((o,idx)=>'<button class="opt" data-idx="'+idx+'">'+o+'</button>').join('')+
+    '<div class="explain" id="explain">'+q.explain+'</div></div>';
+  document.querySelectorAll('.opt').forEach(btn=>{
+    btn.onclick = () => {
+      if(answered) return;
+      answered = true;
+      const idx = parseInt(btn.dataset.idx);
+      document.querySelectorAll('.opt').forEach((b,bi)=>{
+        if(bi===q.correct) b.classList.add('correct');
+        else if(bi===idx) b.classList.add('wrong');
+      });
+      if(idx===q.correct) score++;
+      document.getElementById('explain').style.display='block';
+      counter.textContent = 'Question '+(i+1)+' of '+questions.length+' · Score: '+score;
+    };
+  });
+}
+function renderResult(){
+  bar.style.width='100%';
+  const pct = Math.round((score/questions.length)*100);
+  stage.innerHTML = '<div class="result-card"><div class="kicker">Quiz Complete</div><div class="result-score">'+score+' / '+questions.length+'</div><div class="sub">'+pct+'% correct</div><button class="btn gold" id="retryBtn" style="margin-top:12px;">Retry Quiz</button></div>';
+  document.getElementById('retryBtn').onclick = () => { i=0; score=0; renderQ(); document.getElementById('nextBtn').style.display='inline-block'; };
+  document.getElementById('nextBtn').style.display='none';
+}
+document.getElementById('nextBtn').onclick = () => {
+  i++;
+  if(i>=questions.length) renderResult(); else renderQ();
+};
+renderQ();
+</script>
+</body>
+</html>

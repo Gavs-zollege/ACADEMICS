@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Preparation & Radiographic Purpose — Glossary</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.g-list-wrap{flex:1 1 auto;min-height:0;overflow-y:auto;padding-right:6px;}
+.g-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 16px;margin-bottom:8px;}
+.g-term{font-weight:700;font-size:14.5px;color:var(--gold-l);margin-bottom:2px;}
+.g-def{color:#D6E1EA;font-size:13px;line-height:1.4;}
+.g-count{flex:0 0 auto;color:var(--muted);font-size:12.5px;margin:8px 0;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 1 — Purpose and Technique</div>
+    <h1>Patient Preparation & Radiographic Purpose — Glossary</h1>
+    <div class="sub">Week 1: Searchable reference of key terms.</div>
+  </div>
+  
+<div class="act-col">
+  <input type="text" id="search" placeholder="Search terms or definitions...">
+  <div class="g-count" id="count"></div>
+  <div class="g-list-wrap"><div id="list"></div></div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const terms = [{"term":"Informed Consent","def":"The process of informing a patient of the purpose and process of an exposure and obtaining their agreement before proceeding."},{"term":"HIPAA","def":"Federal law governing the retention, ownership, transfer, and privacy of protected health information, including dental images."},{"term":"Thyroid Collar","def":"A lead shield placed around the neck to protect the thyroid gland from scatter radiation during exposure."},{"term":"Lead Apron","def":"A protective barrier placed over the patient's torso to shield tissue outside the field of exposure."},{"term":"Paralleling Technique","def":"Preferred intraoral acquisition technique placing the receptor parallel to the tooth's long axis."},{"term":"Bisecting Angle Technique","def":"Alternate acquisition technique used when paralleling is not anatomically possible."},{"term":"Periapical (PA)","def":"An intraoral image showing the full tooth and surrounding bone from crown to root apex."},{"term":"Bitewing (BW)","def":"An intraoral image showing the crowns of upper and lower teeth, used for caries and bone level assessment."},{"term":"Occlusal Radiograph","def":"A larger-format intraoral image capturing a broad area of an arch in a single exposure."},{"term":"Panoramic Radiograph","def":"An extraoral image capturing the entire maxilla and mandible in one exposure."},{"term":"Cephalometric Radiograph","def":"A standardized extraoral skull image used mainly for orthodontic assessment."},{"term":"CBCT (Cone-Beam CT)","def":"3D volumetric imaging technology used for implant planning and complex diagnostic cases."},{"term":"CCD/CMOS Sensor","def":"A wired digital receptor that converts X-ray energy into an electronic image signal."},{"term":"PSP Plate","def":"A wireless, flexible digital receptor that must be scanned to reveal the captured image."},{"term":"kVp","def":"Kilovoltage peak — controls beam energy and image contrast."},{"term":"mA","def":"Milliamperage — controls beam quantity and image density."},{"term":"mAs","def":"The combined product of mA and exposure time, representing total radiation quantity."},{"term":"Cone Cutting","def":"A clear, unexposed area on an image from PID/receptor misalignment."},{"term":"Elongation","def":"Image distortion where structures appear longer than actual size."},{"term":"Foreshortening","def":"Image distortion where structures appear shorter than actual size."},{"term":"Lamina Dura","def":"A thin radiopaque line of bone surrounding a tooth root, visible on periapical images."},{"term":"PDL Space","def":"The thin radiolucent space representing the periodontal ligament between root and lamina dura."}];
+const list = document.getElementById('list');
+const search = document.getElementById('search');
+const count = document.getElementById('count');
+function render(items){
+  list.innerHTML = items.map(t => '<div class="g-item"><div class="g-term">'+t.term+'</div><div class="g-def">'+t.def+'</div></div>').join('');
+  count.textContent = items.length + ' of ' + terms.length + ' terms';
+}
+search.addEventListener('input', () => {
+  const q = search.value.toLowerCase();
+  render(terms.filter(t => t.term.toLowerCase().includes(q) || t.def.toLowerCase().includes(q)));
+});
+render(terms.sort((a,b)=>a.term.localeCompare(b.term)));
+</script>
+</body>
+</html>

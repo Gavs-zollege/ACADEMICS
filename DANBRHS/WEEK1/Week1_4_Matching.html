@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient Preparation & Radiographic Purpose — Matching Game</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.match-grid{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:20px;overflow:hidden;}
+.match-col{display:flex;flex-direction:column;min-height:0;}
+.match-col h3{flex:0 0 auto;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin:0 0 8px;}
+.match-list{flex:1 1 auto;min-height:0;overflow-y:auto;padding-right:4px;}
+.m-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:8px;
+  font-size:13px;cursor:pointer;transition:all .15s;line-height:1.3;}
+.m-item:hover{border-color:var(--teal-l);}
+.m-item.selected{border-color:var(--gold);background:rgba(201,162,39,.15);}
+.m-item.matched{border-color:var(--good);background:rgba(47,191,113,.12);opacity:.6;cursor:default;}
+.m-item.shake{animation:shake .3s;border-color:var(--bad);}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+@media(max-width:700px){.match-grid{grid-template-columns:1fr;}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 1 — Purpose and Technique</div>
+    <h1>Patient Preparation & Radiographic Purpose — Matching Game</h1>
+    <div class="sub">Week 1: Match each term to its correct definition.</div>
+  </div>
+  
+<div class="act-col">
+  <div class="stat-row"><div class="stat" id="counter"></div></div>
+  <div class="match-grid">
+    <div class="match-col"><h3>Terms</h3><div class="match-list" id="terms"></div></div>
+    <div class="match-col"><h3>Definitions</h3><div class="match-list" id="defs"></div></div>
+  </div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const pairs = [{"term":"Periapical (PA)","def":"Shows entire tooth from crown to root tip"},{"term":"Bitewing (BW)","def":"Best for interproximal caries detection"},{"term":"Occlusal","def":"Larger-field intraoral image in one exposure"},{"term":"Panoramic","def":"Single image of entire maxilla and mandible"},{"term":"Cephalometric","def":"Standardized skull image for orthodontics"},{"term":"CBCT","def":"3D volumetric imaging for implant planning"},{"term":"Paralleling","def":"Preferred technique — receptor parallel to tooth"},{"term":"Bisecting angle","def":"Used when paralleling isn't anatomically possible"}];
+let terms = pairs.map((p,idx)=>({id:idx,text:p.term})).sort(()=>Math.random()-.5);
+let defs = pairs.map((p,idx)=>({id:idx,text:p.def})).sort(()=>Math.random()-.5);
+let selTerm=null, selDef=null, matchedCount=0;
+const termsEl = document.getElementById('terms');
+const defsEl = document.getElementById('defs');
+const counter = document.getElementById('counter');
+function render(){
+  termsEl.innerHTML = terms.map(t=>'<div class="m-item" data-id="'+t.id+'" data-side="term">'+t.text+'</div>').join('');
+  defsEl.innerHTML = defs.map(d=>'<div class="m-item" data-id="'+d.id+'" data-side="def">'+d.text+'</div>').join('');
+  document.querySelectorAll('.m-item').forEach(el=>el.onclick=onClick);
+  counter.textContent = 'Matched: '+matchedCount+' / '+pairs.length;
+}
+function onClick(e){
+  const el = e.currentTarget;
+  if(el.classList.contains('matched')) return;
+  const side = el.dataset.side, id = el.dataset.id;
+  if(side==='term'){ if(selTerm) selTerm.classList.remove('selected'); selTerm = el; el.classList.add('selected'); }
+  else { if(selDef) selDef.classList.remove('selected'); selDef = el; el.classList.add('selected'); }
+  if(selTerm && selDef){
+    if(selTerm.dataset.id === selDef.dataset.id){
+      selTerm.classList.add('matched'); selDef.classList.add('matched');
+      selTerm.classList.remove('selected'); selDef.classList.remove('selected');
+      matchedCount++;
+      selTerm=null; selDef=null;
+      counter.textContent = 'Matched: '+matchedCount+' / '+pairs.length;
+      if(matchedCount===pairs.length){ counter.textContent = '🎉 All matched! Refresh to play again.'; }
+    } else {
+      selTerm.classList.add('shake'); selDef.classList.add('shake');
+      setTimeout(()=>{
+        selTerm.classList.remove('selected','shake'); selDef.classList.remove('selected','shake');
+        selTerm=null; selDef=null;
+      },400);
+    }
+  }
+}
+render();
+</script>
+</body>
+</html>

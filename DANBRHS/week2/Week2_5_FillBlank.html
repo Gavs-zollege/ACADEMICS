@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Evaluation — Anatomy, Pathology & Quality — Fill in the Blank</title>
+<style>
+:root{
+  --navy:#0E1A30; --navy2:#16294B; --navy3:#1E3157;
+  --teal:#0E7C86; --teal-l:#3AC0C9; --gold:#C9A227; --gold-l:#E8CE7A;
+  --text:#EAF1F6; --muted:#9FB0C4; --good:#2FBF71; --bad:#E15554;
+  --card:#152744; --border:#26406B;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;overflow:hidden;}
+body{
+  background:radial-gradient(circle at 15% 0%, var(--navy3), var(--navy) 60%);
+  color:var(--text); font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+.wrap{
+  height:100vh; width:100%; max-width:980px; margin:0 auto;
+  padding:clamp(14px,2.4vh,26px) clamp(16px,3vw,30px);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.head{flex:0 0 auto;}
+.kicker{color:var(--gold);font-weight:700;font-size:11.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+h1{font-family:Georgia,"Cambria",serif;font-size:clamp(20px,2.6vw,30px);margin:0 0 4px;line-height:1.15;}
+.sub{color:var(--muted);font-size:13.5px;margin-bottom:10px;}
+.badge{display:inline-block;background:var(--teal);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.btn{
+  background:var(--teal); color:#fff; border:none; border-radius:10px; padding:10px 16px;
+  font-size:14px; font-weight:600; cursor:pointer; transition:transform .12s ease, background .2s ease; white-space:nowrap;
+}
+.btn:hover{background:var(--teal-l); transform:translateY(-1px);}
+.btn.gold{background:var(--gold); color:#152030;}
+.btn.gold:hover{background:var(--gold-l);}
+.btn.ghost{background:transparent;border:1.5px solid var(--border);color:var(--text);}
+.btn.ghost:hover{border-color:var(--teal-l);}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.progress-wrap{flex:0 0 auto;background:var(--card);border:1px solid var(--border);border-radius:20px;height:8px;overflow:hidden;margin:8px 0;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .3s ease;}
+.stat-row{flex:0 0 auto;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px;font-size:12.5px;color:var(--muted);}
+.stat b{color:var(--text);font-size:14.5px;display:block;}
+.footer-note{flex:0 0 auto;color:var(--muted);font-size:10.5px;text-align:center;padding-top:6px;}
+.center{text-align:center;}
+.act-col{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden;}
+.nav-row{flex:0 0 auto;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+input[type="text"]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;
+  padding:9px 14px;font-size:14px;width:100%;
+}
+input[type="text"]:focus{outline:none;border-color:var(--teal-l);}
+
+
+.fb-stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;}
+.fb-card{width:100%;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(18px,4vh,32px);}
+.fb-text{font-size:clamp(15px,2.2vh,18px);line-height:1.7;margin-bottom:14px;}
+.fb-input{background:var(--navy2);border:1.5px solid var(--border);color:var(--text);border-radius:8px;
+  padding:7px 12px;font-size:15px;width:200px;}
+.fb-input.correct{border-color:var(--good);}
+.fb-input.wrong{border-color:var(--bad);}
+.fb-check{color:var(--muted);font-size:13px;margin-top:8px;display:block;min-height:18px;}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:clamp(20px,5vh,40px);text-align:center;width:100%;}
+.result-score{font-size:clamp(34px,7vh,52px);font-weight:800;color:var(--gold-l);margin:8px 0;}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">DANB RHS · Week 2 — Purpose and Technique</div>
+    <h1>Image Evaluation — Anatomy, Pathology & Quality — Fill in the Blank</h1>
+    <div class="sub">Week 2: Complete each statement, then check your answers.</div>
+  </div>
+  
+<div class="act-col">
+  <div class="progress-wrap"><div class="progress-bar" id="bar"></div></div>
+  <div class="stat-row"><div class="stat" id="counter"></div></div>
+  <div class="fb-stage" id="stage"></div>
+  <div class="nav-row">
+    <span></span>
+    <div>
+      <button class="btn" id="checkBtn">Check Answer</button>
+      <button class="btn gold" id="nextBtn" style="display:none;">Next →</button>
+    </div>
+  </div>
+</div>
+  <div class="footer-note">Zollege Dental Assisting Program — DANB RHS Exam Prep</div>
+</div>
+<script>
+const items = [{"text":"The maxillary ___ appears as a radiolucent area above the posterior maxillary teeth.","answers":["sinus"]},{"text":"___ bone loss resorbs evenly and parallel to the CEJ line.","answers":["horizontal"]},{"text":"A(n) ___ image is a blurred, mirrored artifact seen on panoramic radiographs.","answers":["ghost"]},{"text":"Dense structures like enamel and metal appear ___ on a radiograph.","answers":["radiopaque"]},{"text":"Less dense structures like caries and pulp appear ___ on a radiograph.","answers":["radiolucent"]},{"text":"The receptor's identification ___ should face the viewer, convex side out, when mounting.","answers":["dot"]},{"text":"A diagnostically acceptable image must have correct positioning, adequate density/contrast, and be free of distortion or ___.","answers":["artifacts"]},{"text":"___ restorations appear highly radiopaque with well-defined margins due to metal content.","answers":["amalgam"]},{"text":"Images should be evaluated for retake ___ before the patient is dismissed.","answers":["immediately"]},{"text":"___ teeth have smaller crowns and shorter, more open roots than permanent teeth.","answers":["primary"]}];
+let i = 0, score = 0, answered = false;
+const stage = document.getElementById('stage');
+const bar = document.getElementById('bar');
+const counter = document.getElementById('counter');
+function renderQ(){
+  answered = false;
+  const it = items[i];
+  bar.style.width = ((i/items.length)*100)+'%';
+  counter.textContent = 'Item '+(i+1)+' of '+items.length+' · Score: '+score;
+  stage.innerHTML = '<div class="fb-card"><div class="fb-text">'+it.text.replace('___','<input type=\'text\' class=\'fb-input\' id=\'blankInput\' autocomplete=\'off\'>')+
+    '</div><span class="fb-check" id="chk"></span></div>';
+  document.getElementById('blankInput').focus();
+  document.getElementById('blankInput').addEventListener('keydown', e => { if(e.key==='Enter') checkBtn.click(); });
+}
+function renderResult(){
+  bar.style.width='100%';
+  const pct = Math.round((score/items.length)*100);
+  stage.innerHTML = '<div class="result-card"><div class="kicker">Complete</div><div class="result-score">'+score+' / '+items.length+'</div><div class="sub">'+pct+'% correct</div><button class="btn gold" id="retryBtn" style="margin-top:12px;">Retry</button></div>';
+  document.getElementById('retryBtn').onclick = () => { i=0; score=0; renderQ(); checkBtn.style.display='inline-block'; nextBtn.style.display='none'; };
+}
+const checkBtn = document.getElementById('checkBtn');
+const nextBtn = document.getElementById('nextBtn');
+checkBtn.onclick = () => {
+  if(answered) return;
+  answered = true;
+  const it = items[i];
+  const input = document.getElementById('blankInput');
+  const val = input.value.trim().toLowerCase();
+  const ok = it.answers.some(a=>a.toLowerCase()===val);
+  input.classList.add(ok?'correct':'wrong');
+  document.getElementById('chk').textContent = ok ? '✓ Correct' : 'Answer: '+it.answers[0];
+  document.getElementById('chk').style.color = ok ? 'var(--good)' : 'var(--bad)';
+  if(ok) score++;
+  counter.textContent = 'Item '+(i+1)+' of '+items.length+' · Score: '+score;
+  checkBtn.style.display='none';
+  nextBtn.style.display='inline-block';
+};
+nextBtn.onclick = () => {
+  i++;
+  checkBtn.style.display='inline-block';
+  nextBtn.style.display='none';
+  if(i>=items.length) renderResult(); else renderQ();
+};
+renderQ();
+</script>
+</body>
+</html>

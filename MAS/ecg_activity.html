@@ -76,7 +76,7 @@
 
 <div class="header">
   <div class="icon">❤️‍🩺</div>
-  <h1>ECG ALERT ACTIVITY</h1>
+  <h1>EKG ALERT ACTIVITY</h1>
   <p>Tap a sign to learn more, then test yourself!</p>
 </div>
 
@@ -85,7 +85,7 @@
 <div id="score-panel"></div>
 
 <div class="tip">
-  <p>🩺 <strong>Medical Tip:</strong> Any ONE of these signs can be enough reason to order an ECG — always document and report to the supervising provider!</p>
+  <p>🩺 <strong>Medical Tip:</strong> Any ONE of these signs can be enough reason to order an EKG — always document and report to the supervising provider!</p>
 </div>
 
 <script>
@@ -94,8 +94,8 @@ const signs = [
     id: 1, emoji: "💥", label: "CHEST PAIN",
     color: "#C0392B", bg: "#FADBD8", border: "#E74C3C",
     description: "Pressure, tightness, squeezing, or burning sensation in the chest. May radiate to arm, jaw, or back.",
-    fact: "🏆 Fun Fact: Chest pain is the #1 reason patients are sent for an ECG!",
-    question: "What type of chest pain warrants an ECG?",
+    fact: "🏆 Fun Fact: Chest pain is the #1 reason patients are sent for an EKG!",
+    question: "What type of chest pain warrants an EKG?",
     options: ["Only sharp stabbing pain", "Pressure, tightness, or burning", "Only left-sided pain", "Pain after eating spicy food"],
     correct: 1,
   },
@@ -121,7 +121,7 @@ const signs = [
     id: 4, emoji: "💓", label: "RAPID HEARTBEAT",
     color: "#145A32", bg: "#D5F5E3", border: "#27AE60",
     description: "Palpitations or a racing heart that feels like fluttering, pounding, or skipping beats.",
-    fact: "⚡ Fun Fact: A normal resting heart rate is 60–100 bpm. An ECG can catch rates over 150 bpm in seconds!",
+    fact: "⚡ Fun Fact: A normal resting heart rate is 60–100 bpm. An EKG can catch rates over 150 bpm in seconds!",
     question: "What is the medical term for a rapid heartbeat over 100 bpm?",
     options: ["Bradycardia", "Tachycardia", "Fibrillation", "Arrhythmia"],
     correct: 1,
@@ -204,7 +204,7 @@ function renderScore() {
   if (!allAnswered) { panel.innerHTML = ''; return; }
 
   const trophy = score === 4 ? '🏆' : score >= 2 ? '👍' : '📚';
-  const msg = score === 4 ? "Perfect score! You're an ECG pro! 🌟" : score >= 2 ? "Nice work! Keep studying those signs! 💪" : "Keep practicing — you've got this! 📖";
+  const msg = score === 4 ? "Perfect score! You're an EKG pro! 🌟" : score >= 2 ? "Nice work! Keep studying those signs! 💪" : "Keep practicing — you've got this! 📖";
   panel.innerHTML = `
     <div class="score-box">
       <div class="trophy">${trophy}</div>

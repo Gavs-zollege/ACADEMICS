@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OSHA Bloodborne Pathogens & Hazard Communication — Quiz</title>
+<style>
+  :root{
+    --navy:#1B2A4A; --navy-light:#2A3D63; --teal:#0F6B72; --amber:#C9862B; --red:#A83A3A;
+    --gray:#5B6472; --lightbg:#F4F6F8; --border:#E3E7EC; --green:#2E7D4F;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%; margin:0; overflow:hidden;}
+  body{
+    font-family:-apple-system,"Segoe UI",Arial,Helvetica,sans-serif; color:#222;
+    display:flex; flex-direction:column; background:#F8F9FB;
+  }
+
+  header{
+    background:var(--navy); color:#fff; padding:16px 28px 14px; flex-shrink:0;
+  }
+  header .top-row{display:flex; justify-content:space-between; align-items:baseline;}
+  header h1{margin:0; font-size:19px; font-weight:700;}
+  header .cfr{font-size:12px; color:#9FB0C9;}
+  .dots{display:flex; gap:5px; margin-top:12px; flex-wrap:wrap;}
+  .dot{
+    width:18px; height:6px; border-radius:4px; background:#3A4C70; cursor:pointer; transition:background .15s;
+  }
+  .dot.answered{background:#5C8B90;}
+  .dot.current{background:#fff;}
+
+  main{
+    flex:1; min-height:0; display:flex; align-items:center; justify-content:center; padding:22px 28px;
+  }
+  .stage{width:100%; max-width:760px; height:100%; display:flex; flex-direction:column; justify-content:center;}
+
+  .section-tag{
+    display:inline-block; font-size:11px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase;
+    color:var(--teal); background:#E7F1F1; padding:4px 10px; border-radius:20px; margin-bottom:14px; align-self:flex-start;
+  }
+  .section-tag.amber{color:var(--amber); background:#F8EEDD;}
+
+  .qcard{background:#fff; border:1px solid var(--border); border-radius:14px; padding:26px 30px; box-shadow:0 2px 10px rgba(20,30,50,0.05);}
+  .qmeta{font-size:12.5px; color:var(--gray); margin-bottom:6px; font-weight:600;}
+  .qtext{font-size:19px; line-height:1.35; margin:0 0 20px; font-weight:600; color:#16233F;}
+
+  .options{display:flex; flex-direction:column; gap:9px;}
+  .opt{
+    display:flex; align-items:center; gap:12px; padding:12px 16px; border:1.5px solid var(--border);
+    border-radius:10px; cursor:pointer; font-size:14.5px; transition:all .12s;
+  }
+  .opt:hover{border-color:#B9C2CE; background:#FAFBFC;}
+  .opt input{accent-color:var(--teal); width:17px; height:17px; flex-shrink:0;}
+  .opt.correct{background:#EAF6EE; border-color:var(--green);}
+  .opt.incorrect{background:#FBEAEA; border-color:var(--red);}
+  .opt.disabled{cursor:default; pointer-events:none;}
+
+  textarea{
+    width:100%; height:64px; border:1.5px solid var(--border); border-radius:10px; padding:12px;
+    font-family:inherit; font-size:14.5px; resize:none;
+  }
+  .reveal-btn{
+    background:var(--lightbg); color:var(--navy); border:1.5px solid var(--border); padding:9px 16px;
+    border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; margin-top:10px;
+  }
+  .model-answer{
+    display:none; margin-top:10px; background:#EFF5F5; border-left:3px solid var(--teal);
+    padding:10px 14px; font-size:13.5px; color:#333; border-radius:0 8px 8px 0; line-height:1.4;
+  }
+  .feedback{margin-top:12px; font-size:13.5px; font-weight:700;}
+  .feedback.correct{color:var(--green);}
+  .feedback.incorrect{color:var(--red);}
+
+  footer{
+    flex-shrink:0; display:flex; align-items:center; justify-content:space-between;
+    padding:14px 28px; border-top:1px solid var(--border); background:#fff;
+  }
+  .navbtn{
+    background:var(--navy); color:#fff; border:none; padding:11px 22px; border-radius:9px;
+    font-size:14px; font-weight:700; cursor:pointer;
+  }
+  .navbtn.secondary{background:#fff; color:var(--navy); border:1.5px solid var(--border);}
+  .navbtn:disabled{opacity:.35; cursor:not-allowed;}
+  .navbtn.finish{background:var(--amber);}
+  .counter{font-size:13px; color:var(--gray); font-weight:600;}
+
+  .review-wrap{display:flex; flex-direction:column; align-items:center; height:100%; justify-content:center; width:100%;}
+  .score-ring{
+    width:120px; height:120px; border-radius:50%; background:conic-gradient(var(--teal) var(--pct,0%), #E3E7EC 0);
+    display:flex; align-items:center; justify-content:center; margin-bottom:6px;
+  }
+  .score-ring-inner{
+    width:96px; height:96px; border-radius:50%; background:#fff; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+  }
+  .score-ring-inner .num{font-size:26px; font-weight:800; color:var(--navy); line-height:1;}
+  .score-ring-inner .den{font-size:11px; color:var(--gray);}
+  .review-title{font-size:16px; font-weight:700; color:var(--navy); margin:8px 0 16px;}
+  .grid15{display:grid; grid-template-columns:repeat(5,44px); gap:8px; margin-bottom:20px;}
+  .tile{
+    width:44px; height:44px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:700; cursor:pointer; border:1.5px solid var(--border); color:#fff;
+  }
+  .tile.right{background:var(--green);}
+  .tile.wrong{background:var(--red);}
+  .tile.selfcheck{background:var(--gray);}
+  .review-actions{display:flex; gap:10px;}
+  .detail-wrap{width:100%; max-width:760px; display:flex; flex-direction:column; height:100%; justify-content:center;}
+  .back-link{font-size:13px; color:var(--teal); cursor:pointer; font-weight:700; margin-bottom:10px; align-self:flex-start;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top-row">
+    <h1>OSHA Bloodborne Pathogens &amp; Hazard Communication Quiz</h1>
+    <span class="cfr">29 CFR 1910.1030 &amp; 1910.1200</span>
+  </div>
+  <div class="dots" id="dots"></div>
+</header>
+
+<main><div id="stageContent"></div></main>
+
+<footer id="footerNav">
+  <button class="navbtn secondary" id="prevBtn" onclick="go(-1)">← Previous</button>
+  <span class="counter" id="counter"></span>
+  <div style="display:flex; gap:10px;">
+    <button class="navbtn finish" id="finishBtn" onclick="finishQuiz()">Finish &amp; See Score</button>
+    <button class="navbtn" id="nextBtn" onclick="go(1)">Next →</button>
+  </div>
+</footer>
+
+<script>
+const questions = [
+  {section:"Exposure Control · 29 CFR 1910.1030", type:"mc", text:"Which OSHA regulation is known as the Bloodborne Pathogens Standard?",
+    options:["29 CFR 1910.1200","29 CFR 1910.1030","29 CFR 1910.1020","29 CFR 1910.132"], answer:1},
+  {section:"Exposure Control · 29 CFR 1910.1030", type:"mc", text:"True or False: The Bloodborne Pathogens Standard requires every covered employer to maintain a written Exposure Control Plan.",
+    options:["True","False"], answer:0},
+  {section:"Exposure Control · 29 CFR 1910.1030", type:"mc", text:"Which of the following is NOT considered a bloodborne pathogen or OPIM discussed in this training?",
+    options:["Hepatitis C Virus (HCV)","HIV","Common cold virus (rhinovirus)","Syphilis"], answer:2},
+  {section:"Exposure Control · 29 CFR 1910.1030", type:"short", text:"List two of the four ways bloodborne pathogens can spread in a dental setting.",
+    model:"Contact with infected blood or body fluids; needlesticks/cuts/abrasions that become contaminated; contact with mucous membranes (eyes, nose, mouth); contact with open wounds."},
+  {section:"Exposure Control · 29 CFR 1910.1030", type:"mc", text:"When removing PPE (doffing), which item should be removed by the straps only?",
+    options:["Gloves","Gown","Mask or respirator","Eye protection"], answer:2},
+  {section:"Exposure Control · 29 CFR 1910.1030", type:"mc", text:"An Exposure Control Plan must be reviewed and updated at what minimum frequency?",
+    options:["Every 5 years","Only when a new employee is hired","At least annually","There is no review requirement"], answer:2},
+  {section:"Hepatitis B Vaccination", type:"mc", text:"Within how many days of initial assignment must an employer offer the Hepatitis B vaccine to an at-risk employee?",
+    options:["10 days","30 days","60 days","90 days"], answer:0},
+  {section:"Hepatitis B Vaccination", type:"short", text:"The Hepatitis B vaccine series consists of how many doses, and at what intervals?",
+    model:"3 doses — 1st dose (initial shot), 2nd dose 1 month after the first, 3rd dose 6 months after the first."},
+  {section:"Hepatitis B Vaccination", type:"mc", text:"True or False: An employee who declines the Hepatitis B vaccine initially may never receive it later, even if they change their mind.",
+    options:["True","False"], answer:1},
+  {section:"Post-Exposure Procedures & Reporting", type:"mc", text:"What is the FIRST step after a needlestick or other exposure incident?",
+    options:["Call the manufacturer of the device","Immediately wash the affected area with soap and water","Finish the current procedure, then report it","Document the incident in the sharps injury log only"], answer:1},
+  {section:"Post-Exposure Procedures & Reporting", type:"mc", text:"Which log specifically records every needle, scalpel, or sharp-instrument injury?",
+    options:["Training record","Medical record","Sharps injury log","Exposure Control Plan"], answer:2},
+  {section:"Hazard Communication · 29 CFR 1910.1200", type:"mc", text:"The Hazard Communication Standard is often referred to by what nickname?", amber:true,
+    options:["The Safety-First Rule","The Right-to-Know Standard","The Universal Precautions Rule","The Green Chemistry Standard"], answer:1},
+  {section:"Hazard Communication · 29 CFR 1910.1200", type:"mc", text:"What percentage of dental amalgam is elemental mercury?", amber:true,
+    options:["5–10%","20–30%","43–54%","70–80%"], answer:2},
+  {section:"Hazard Communication · 29 CFR 1910.1200", type:"mc", text:"If mercury is spilled in the operatory, which tool should NEVER be used to clean it up?", amber:true,
+    options:["The mercury spill kit's absorbent sponge/powder","A broom","Proper ventilation of the area","A sealed hazardous-waste container"], answer:1},
+  {section:"Hazard Communication · 29 CFR 1910.1200", type:"mc", text:"What is the NIOSH-recommended 8-hour time-weighted average exposure limit for occupational nitrous oxide?", amber:true,
+    options:["5 ppm","25 ppm","100 ppm","There is no recommended limit"], answer:1},
+];
+
+let cur = 0;
+let responses = {};
+let mode = "quiz";
+
+function buildDots(){
+  const wrap = document.getElementById('dots');
+  wrap.innerHTML = '';
+  questions.forEach((q,i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (responses[i] !== undefined ? ' answered' : '') + (i===cur && mode==='quiz' ? ' current' : '');
+    d.onclick = () => { if(mode==='quiz'){ cur = i; render(); } };
+    wrap.appendChild(d);
+  });
+}
+
+function renderQuestion(){
+  const q = questions[cur];
+  const stage = document.getElementById('stageContent');
+  let html = '<div class="stage">';
+  html += '<span class="section-tag' + (q.amber?' amber':'') + '">' + q.section + '</span>';
+  html += '<div class="qcard">';
+  html += '<div class="qmeta">Question ' + (cur+1) + ' of ' + questions.length + (q.type==='short' ? ' — Self-check (not scored)' : '') + '</div>';
+  html += '<p class="qtext">' + q.text + '</p>';
+
+  if (q.type === 'mc'){
+    html += '<div class="options" id="optsWrap">';
+    q.options.forEach((opt,i) => {
+      const chosen = responses[cur] === i;
+      html += '<label class="opt" data-idx="'+i+'"><input type="radio" name="opt" value="'+i+'" '+(chosen?'checked':'')+' onchange="selectOption('+i+')"> ' + String.fromCharCode(65+i) + ') ' + opt + '</label>';
+    });
+    html += '</div><div class="feedback" id="fb"></div>';
+  } else {
+    const existing = responses[cur] && responses[cur].text ? responses[cur].text : '';
+    const revealed = responses[cur] && responses[cur].revealed;
+    html += '<textarea id="shortAns" placeholder="Type your answer here...">' + existing + '</textarea>';
+    html += '<br><button class="reveal-btn" onclick="revealShort()">' + (revealed ? 'Hide' : 'Reveal') + ' Model Answer</button>';
+    html += '<div class="model-answer" id="modelBox" style="display:' + (revealed ? 'block':'none') + '">' + q.model + '</div>';
+  }
+  html += '</div></div>';
+  stage.innerHTML = html;
+
+  if (q.type === 'short'){
+    document.getElementById('shortAns').addEventListener('input', (e) => {
+      responses[cur] = responses[cur] || {};
+      responses[cur].text = e.target.value;
+    });
+  }
+
+  document.getElementById('prevBtn').disabled = cur === 0;
+  document.getElementById('nextBtn').disabled = cur === questions.length - 1;
+  document.getElementById('counter').textContent = (cur+1) + ' / ' + questions.length;
+}
+
+function selectOption(i){
+  responses[cur] = i;
+  buildDots();
+}
+
+function revealShort(){
+  responses[cur] = responses[cur] || {};
+  responses[cur].revealed = !responses[cur].revealed;
+  buildDots();
+  render();
+}
+
+function go(dir){
+  cur = Math.max(0, Math.min(questions.length-1, cur+dir));
+  render();
+}
+
+function finishQuiz(){
+  mode = 'review';
+  render();
+}
+
+function retake(){
+  responses = {};
+  cur = 0;
+  mode = 'quiz';
+  render();
+}
+
+function scoreCount(){
+  let correct = 0, total = 0;
+  questions.forEach((q,i) => {
+    if (q.type === 'mc'){
+      total++;
+      if (responses[i] === q.answer) correct++;
+    }
+  });
+  return {correct, total};
+}
+
+function renderReview(){
+  const s = scoreCount();
+  const correct = s.correct, total = s.total;
+  const pct = Math.round(correct/total*100);
+  const stage = document.getElementById('stageContent');
+  let html = '<div class="review-wrap">';
+  html += '<div class="score-ring" style="--pct:' + pct + '%"><div class="score-ring-inner"><div class="num">' + correct + '/' + total + '</div><div class="den">correct</div></div></div>';
+  html += '<div class="review-title">' + (pct === 100 ? 'Perfect score!' : pct >= 70 ? 'Nice work!' : 'Keep practicing — review below.') + '</div>';
+  html += '<div class="grid15">';
+  questions.forEach((q,i) => {
+    let cls = 'selfcheck';
+    if (q.type === 'mc'){
+      cls = responses[i] === q.answer ? 'right' : 'wrong';
+    }
+    html += '<div class="tile ' + cls + '" onclick="openDetail(' + i + ')">' + (i+1) + '</div>';
+  });
+  html += '</div>';
+  html += '<div class="review-actions"><button class="navbtn secondary" onclick="retake()">Retake Quiz</button></div>';
+  html += '</div>';
+  stage.innerHTML = html;
+}
+
+function openDetail(i){
+  mode = 'detail';
+  cur = i;
+  render();
+}
+
+function renderDetail(){
+  const q = questions[cur];
+  const stage = document.getElementById('stageContent');
+  let html = '<div class="detail-wrap">';
+  html += '<span class="back-link" onclick="mode=\'review\'; render();">← Back to results</span>';
+  html += '<span class="section-tag' + (q.amber?' amber':'') + '">' + q.section + '</span>';
+  html += '<div class="qcard">';
+  html += '<div class="qmeta">Question ' + (cur+1) + ' of ' + questions.length + (q.type==='short' ? ' — Self-check' : '') + '</div>';
+  html += '<p class="qtext">' + q.text + '</p>';
+  if (q.type === 'mc'){
+    html += '<div class="options">';
+    q.options.forEach((opt,i) => {
+      let cls = 'disabled';
+      if (i === q.answer) cls += ' correct';
+      else if (responses[cur] === i) cls += ' incorrect';
+      html += '<label class="opt ' + cls + '"><input type="radio" disabled ' + (responses[cur]===i?'checked':'') + '> ' + String.fromCharCode(65+i) + ') ' + opt + '</label>';
+    });
+    html += '</div>';
+    const isRight = responses[cur] === q.answer;
+    html += '<div class="feedback ' + (isRight?'correct':'incorrect') + '">' + (isRight ? '✓ Correct' : (responses[cur] !== undefined ? '✗ Incorrect' : '— Not answered')) + '</div>';
+  } else {
+    html += '<div class="model-answer" style="display:block;"><b>Model answer:</b> ' + q.model + '</div>';
+    if (responses[cur] && responses[cur].text){
+      html += '<div style="margin-top:10px; font-size:13px; color:var(--gray);"><b>Your answer:</b> ' + responses[cur].text + '</div>';
+    }
+  }
+  html += '</div></div>';
+  stage.innerHTML = html;
+}
+
+function render(){
+  buildDots();
+  const footer = document.getElementById('footerNav');
+  if (mode === 'quiz'){
+    footer.style.display = 'flex';
+    renderQuestion();
+  } else if (mode === 'review'){
+    footer.style.display = 'none';
+    renderReview();
+  } else if (mode === 'detail'){
+    footer.style.display = 'none';
+    renderDetail();
+  }
+}
+
+render();
+</script>
+
+</body>
+</html>

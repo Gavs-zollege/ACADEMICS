@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OSHA Learning Activities — Interactive</title>
+<style>
+  :root{
+    --navy:#1B2A4A; --teal:#0F6B72; --amber:#C9862B; --red:#A83A3A;
+    --gray:#5B6472; --lightbg:#F4F6F8; --border:#E3E7EC; --green:#2E7D4F;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%; margin:0; overflow:hidden;}
+  body{font-family:-apple-system,"Segoe UI",Arial,Helvetica,sans-serif; color:#222; background:#F8F9FB; display:flex; flex-direction:column;}
+
+  header{background:var(--navy); color:#fff; padding:14px 28px 12px; flex-shrink:0;}
+  header h1{margin:0 0 2px; font-size:18px; font-weight:700;}
+  header p{margin:0; font-size:12px; color:#9FB0C9;}
+
+  .tabbar{display:flex; gap:8px; padding:10px 28px; background:#fff; border-bottom:1px solid var(--border); flex-shrink:0;}
+  .tab{
+    flex:1; padding:10px 14px; border-radius:9px; border:1.5px solid var(--border); background:#fff;
+    cursor:pointer; font-size:13px; font-weight:700; color:var(--gray); text-align:center; transition:all .12s;
+  }
+  .tab.active.a1{background:var(--red); color:#fff; border-color:var(--red);}
+  .tab.active.a2{background:var(--amber); color:#fff; border-color:var(--amber);}
+  .tab.active.a3{background:var(--teal); color:#fff; border-color:var(--teal);}
+
+  main{flex:1; min-height:0; display:flex; padding:18px 28px; overflow:hidden;}
+  .panel{display:none; width:100%; max-width:920px; margin:0 auto; flex-direction:column; height:100%;}
+  .panel.active{display:flex;}
+
+  .scenario{
+    background:var(--lightbg); border-left:3px solid var(--gray); padding:12px 16px; font-size:14px;
+    border-radius:0 8px 8px 0; margin-bottom:22px; line-height:1.45; flex-shrink:0;
+  }
+  .body-area{flex:1; min-height:0; display:flex; flex-direction:column; justify-content:flex-start; gap:22px;}
+  .body-inner{display:flex; flex-direction:column; justify-content:center; flex:1; min-height:0;}
+
+  /* Activity 1 - sequencing */
+  #seqList{list-style:none; padding:0; margin:0 0 18px;}
+  #seqList li{
+    background:#fff; border:1.5px solid var(--border); border-radius:10px; padding:15px 18px; margin-bottom:10px;
+    cursor:grab; font-size:15px; display:flex; align-items:center; gap:14px; user-select:none;
+    box-shadow:0 1px 3px rgba(20,30,50,0.04);
+  }
+  #seqList li .handle{color:var(--gray); font-size:17px;}
+  #seqList li.dragging{opacity:.4;}
+  #seqList li.correct-pos{border-color:var(--green); background:#EAF6EE;}
+  #seqList li.wrong-pos{border-color:var(--red); background:#FBEAEA;}
+  .slot-num{
+    background:var(--red); color:#fff; width:25px; height:25px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:bold; flex-shrink:0;
+  }
+
+  /* Activity 2 - toggle cards */
+  .toolgrid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px;}
+  .toolcard{border:1.5px solid var(--border); border-radius:12px; padding:18px 16px; background:#fff; box-shadow:0 1px 3px rgba(20,30,50,0.04);}
+  .toolcard h4{margin:0 0 12px; font-size:14px; line-height:1.3; min-height:36px; color:#16233F;}
+  .toggle-row{display:flex; gap:8px; margin-bottom:8px;}
+  .toggle-btn{
+    flex:1; padding:9px 0; border:1px solid var(--border); border-radius:7px; background:#fff;
+    cursor:pointer; font-size:12.5px; font-weight:bold; color:var(--gray);
+  }
+  .toggle-btn.use.active{background:var(--amber); color:#fff; border-color:var(--amber);}
+  .toggle-btn.avoid.active{background:var(--navy); color:#fff; border-color:var(--navy);}
+  .toolcard .explain{font-size:12px; color:var(--gray); display:none; line-height:1.4;}
+  .toolcard.graded.right{border-color:var(--green); box-shadow:0 0 0 2px #EAF6EE;}
+  .toolcard.graded.wrong{border-color:var(--red); box-shadow:0 0 0 2px #FBEAEA;}
+  .toolcard.graded .explain{display:block;}
+
+  /* Activity 3 - matching table */
+  table.match{width:100%; border-collapse:separate; border-spacing:0 10px; font-size:14.5px; margin-bottom:18px;}
+  table.match th{text-align:left; font-size:11.5px; color:var(--gray); padding:0 12px 6px; text-transform:uppercase; letter-spacing:.5px;}
+  table.match td{padding:14px 12px; background:#fff; vertical-align:middle; border-top:1.5px solid var(--border); border-bottom:1.5px solid var(--border);}
+  table.match td:first-child{border-left:1.5px solid var(--border); border-radius:10px 0 0 10px; font-weight:600; color:#16233F;}
+  table.match td:last-child{border-right:1.5px solid var(--border); border-radius:0 10px 10px 0;}
+  table.match select{width:100%; padding:8px; border-radius:7px; border:1px solid var(--border); font-size:13px;}
+  select.right{border-color:var(--green); background:#EAF6EE;}
+  select.wrong{border-color:var(--red); background:#FBEAEA;}
+
+  .action-row{display:flex; align-items:center; gap:12px; flex-shrink:0;}
+  .btn{background:var(--teal); color:#fff; border:none; padding:11px 22px; border-radius:9px; font-size:14px; font-weight:700; cursor:pointer;}
+  .btn.secondary{background:#fff; color:var(--gray); border:1.5px solid var(--border);}
+  .result{font-size:14px; font-weight:700;}
+  .result.good{color:var(--green);}
+  .result.bad{color:var(--red);}
+  .debrief{margin-top:0; padding:12px 16px; background:var(--lightbg); border-radius:9px; font-size:13px; flex-shrink:0; line-height:1.4;}
+  .debrief b{color:var(--navy);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>OSHA Learning Activities</h1>
+  <p>Interactive versions — Dental Assisting Program &nbsp;|&nbsp; 29 CFR 1910.1030 &amp; 29 CFR 1910.1200</p>
+</header>
+
+<div class="tabbar">
+  <div class="tab active a1" id="tabBtn1" onclick="showTab(1)">1 · Post-Exposure Response Drill</div>
+  <div class="tab a2" id="tabBtn2" onclick="showTab(2)">2 · Mercury Spill Simulation</div>
+  <div class="tab a3" id="tabBtn3" onclick="showTab(3)">3 · SDS &amp; GHS Label Matching</div>
+</div>
+
+<main>
+
+  <!-- ACTIVITY 1 -->
+  <div class="panel active" id="panel1">
+    <div class="scenario"><b>Scenario:</b> While cleaning an operatory, a student assistant experiences a needlestick from a used anesthetic needle. Drag the steps into the correct order of response.</div>
+    <div class="body-area">
+      <div class="body-inner">
+        <ul id="seqList"></ul>
+        <div class="action-row">
+          <button class="btn" onclick="checkSequence()">Check Order</button>
+          <button class="btn secondary" onclick="shuffleSequence()">Shuffle &amp; Retry</button>
+          <span class="result" id="seqResult"></span>
+        </div>
+      </div>
+      <div class="debrief"><b>Debrief:</b> What would change about this sequence if the exposed person were alone in the office when it happened?</div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 2 -->
+  <div class="panel" id="panel2">
+    <div class="scenario"><b>Scenario:</b> An amalgam capsule ruptures on the operatory floor and mercury droplets are scattered. Mark each item <b>USE</b> or <b>AVOID</b>.</div>
+    <div class="body-area">
+      <div class="body-inner">
+        <div class="toolgrid" id="toolGrid"></div>
+        <div class="action-row">
+          <button class="btn" onclick="checkTools()">Check Answers</button>
+          <button class="btn secondary" onclick="resetTools()">Reset</button>
+          <span class="result" id="toolResult"></span>
+        </div>
+      </div>
+      <div class="debrief"><b>Extension:</b> Draft a one-paragraph incident report — what happened, who was notified, what was done, how it was resolved.</div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY 3 -->
+  <div class="panel" id="panel3">
+    <div class="scenario"><b>Task:</b> Match each chemical to its correct GHS signal word and primary required PPE, then check your matches.</div>
+    <div class="body-area">
+      <div class="body-inner">
+        <table class="match" id="matchTable">
+          <thead><tr><th style="width:28%">Chemical</th><th style="width:34%">Signal Word</th><th style="width:38%">Primary Required PPE</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="action-row">
+          <button class="btn" onclick="checkMatch()">Check Matches</button>
+          <button class="btn secondary" onclick="resetMatch()">Reset</button>
+          <span class="result" id="matchResult"></span>
+        </div>
+      </div>
+      <div class="debrief"><b>Discuss:</b> Which chemical carries the more severe signal word, and why does that make sense given how it's used?</div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function showTab(n){
+  for (let i=1;i<=3;i++){
+    document.getElementById('panel'+i).classList.toggle('active', i===n);
+    document.getElementById('tabBtn'+i).classList.toggle('active', i===n);
+  }
+}
+
+/* ---------- ACTIVITY 1 ---------- */
+const steps = [
+  {id:1, text:"Immediately wash the affected area with soap and water (or flush eyes/mucous membranes with water)."},
+  {id:2, text:"Report the incident to the supervisor right away."},
+  {id:3, text:"Seek prompt medical evaluation and treatment."},
+  {id:4, text:"Follow the practice's written Exposure Control Plan."},
+  {id:5, text:"Document the incident in the sharps injury log."},
+];
+let seqState = [];
+
+function renderSequence(order){
+  seqState = order.slice();
+  const ul = document.getElementById('seqList');
+  ul.innerHTML = '';
+  seqState.forEach((stepId) => {
+    const step = steps.find(s => s.id === stepId);
+    const li = document.createElement('li');
+    li.draggable = true;
+    li.dataset.id = stepId;
+    li.innerHTML = '<span class="handle">&#10021;</span><span>' + step.text + '</span>';
+    ul.appendChild(li);
+  });
+  attachDragHandlers();
+}
+
+function shuffleSequence(){
+  let order = steps.map(s => s.id);
+  for (let i = order.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i+1));
+    const tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+  }
+  document.getElementById('seqResult').textContent = '';
+  document.getElementById('seqResult').className = 'result';
+  renderSequence(order);
+}
+
+function attachDragHandlers(){
+  const ul = document.getElementById('seqList');
+  let dragEl = null;
+  ul.querySelectorAll('li').forEach(li => {
+    li.addEventListener('dragstart', () => { dragEl = li; li.classList.add('dragging'); });
+    li.addEventListener('dragend', () => { li.classList.remove('dragging'); dragEl = null; });
+    li.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const after = getDragAfterElement(ul, e.clientY);
+      if (after == null) ul.appendChild(dragEl);
+      else ul.insertBefore(dragEl, after);
+    });
+  });
+}
+
+function getDragAfterElement(container, y){
+  const els = [...container.querySelectorAll('li:not(.dragging)')];
+  return els.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height/2;
+    if (offset < 0 && offset > closest.offset) return {offset, element: child};
+    else return closest;
+  }, {offset: -Infinity}).element;
+}
+
+function checkSequence(){
+  const lis = document.querySelectorAll('#seqList li');
+  let correctCount = 0;
+  lis.forEach((li, idx) => {
+    const id = parseInt(li.dataset.id);
+    const correctPos = idx + 1 === id;
+    li.classList.remove('correct-pos','wrong-pos');
+    li.classList.add(correctPos ? 'correct-pos' : 'wrong-pos');
+    if (correctPos) correctCount++;
+    if (!li.querySelector('.slot-num')){
+      const numEl = document.createElement('span');
+      numEl.className = 'slot-num';
+      numEl.textContent = idx + 1;
+      li.insertBefore(numEl, li.firstChild);
+    } else {
+      li.querySelector('.slot-num').textContent = idx + 1;
+    }
+  });
+  const result = document.getElementById('seqResult');
+  if (correctCount === lis.length){
+    result.textContent = 'Perfect! All ' + lis.length + ' steps in order.';
+    result.className = 'result good';
+  } else {
+    result.textContent = correctCount + ' of ' + lis.length + ' correct. Drag to fix.';
+    result.className = 'result bad';
+  }
+}
+
+renderSequence([2,4,1,5,3]);
+
+/* ---------- ACTIVITY 2 ---------- */
+const tools = [
+  {name:"Mercury spill kit sponge/absorbent powder", correct:"use", explain:"Correct tool — designed to safely collect mercury droplets."},
+  {name:"Household vacuum", correct:"avoid", explain:"Never use — aerosolizes mercury vapor into the air."},
+  {name:"Broom", correct:"avoid", explain:"Never use — scatters mercury into smaller, harder-to-collect droplets."},
+  {name:"Ventilating the area", correct:"use", explain:"Correct — disperses vapor and reduces inhalation risk."},
+  {name:"Hazardous waste disposal container", correct:"use", explain:"Correct — spill waste is hazardous waste, not regular trash."},
+  {name:"Regular trash bin", correct:"avoid", explain:"Never use — mercury waste cannot go in regular trash."},
+];
+
+function renderTools(){
+  const grid = document.getElementById('toolGrid');
+  grid.innerHTML = '';
+  tools.forEach((t, i) => {
+    const card = document.createElement('div');
+    card.className = 'toolcard';
+    card.dataset.index = i;
+    card.dataset.choice = '';
+    card.innerHTML =
+      '<h4>' + t.name + '</h4>' +
+      '<div class="toggle-row">' +
+        '<button class="toggle-btn use" onclick="setChoice(' + i + ',\'use\')">USE</button>' +
+        '<button class="toggle-btn avoid" onclick="setChoice(' + i + ',\'avoid\')">AVOID</button>' +
+      '</div>' +
+      '<div class="explain">' + t.explain + '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function setChoice(i, choice){
+  const card = document.querySelector('.toolcard[data-index="'+i+'"]');
+  card.dataset.choice = choice;
+  card.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  card.querySelector('.toggle-btn.'+choice).classList.add('active');
+}
+
+function checkTools(){
+  let correctCount = 0;
+  let allAnswered = true;
+  document.querySelectorAll('.toolcard').forEach(card => {
+    const i = parseInt(card.dataset.index);
+    const choice = card.dataset.choice;
+    if (!choice) { allAnswered = false; return; }
+    const isRight = choice === tools[i].correct;
+    card.classList.add('graded');
+    card.classList.remove('right','wrong');
+    card.classList.add(isRight ? 'right' : 'wrong');
+    if (isRight) correctCount++;
+  });
+  const result = document.getElementById('toolResult');
+  if (!allAnswered){
+    result.textContent = 'Mark USE or AVOID for every item first.';
+    result.className = 'result bad';
+    return;
+  }
+  result.textContent = correctCount + ' of ' + tools.length + ' correct.';
+  result.className = correctCount === tools.length ? 'result good' : 'result bad';
+}
+
+function resetTools(){
+  renderTools();
+  document.getElementById('toolResult').textContent = '';
+  document.getElementById('toolResult').className = 'result';
+}
+
+renderTools();
+
+/* ---------- ACTIVITY 3 ---------- */
+const chemicals = [
+  {
+    name: "Dental Amalgam (mercury-containing)",
+    signalOptions: ["Warning", "Danger"],
+    correctSignal: "Danger",
+    ppeOptions: ["Gloves only", "Gloves + ventilation, avoid skin/vapor contact", "No PPE required"],
+    correctPPE: "Gloves + ventilation, avoid skin/vapor contact",
+  },
+  {
+    name: "Surface Disinfectant",
+    signalOptions: ["Warning", "Danger"],
+    correctSignal: "Warning",
+    ppeOptions: ["Gloves + eye protection", "Full respirator required", "No PPE required"],
+    correctPPE: "Gloves + eye protection",
+  },
+  {
+    name: "Cold Sterilant (high-level disinfectant)",
+    signalOptions: ["Warning", "Danger"],
+    correctSignal: "Danger",
+    ppeOptions: ["Gloves only", "Gloves + eye protection + ventilation", "No PPE required"],
+    correctPPE: "Gloves + eye protection + ventilation",
+  },
+];
+
+function renderMatch(){
+  const tbody = document.querySelector('#matchTable tbody');
+  tbody.innerHTML = '';
+  chemicals.forEach((c, i) => {
+    const tr = document.createElement('tr');
+    const signalSelect = ['<option value="">Select...</option>'].concat(
+      c.signalOptions.map(o => '<option value="'+o+'">'+o+'</option>')
+    ).join('');
+    const ppeSelect = ['<option value="">Select...</option>'].concat(
+      c.ppeOptions.map(o => '<option value="'+o+'">'+o+'</option>')
+    ).join('');
+    tr.innerHTML =
+      '<td>' + c.name + '</td>' +
+      '<td><select id="signal'+i+'">' + signalSelect + '</select></td>' +
+      '<td><select id="ppe'+i+'">' + ppeSelect + '</select></td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function checkMatch(){
+  let correct = 0;
+  let total = chemicals.length * 2;
+  let allAnswered = true;
+  chemicals.forEach((c, i) => {
+    const sSel = document.getElementById('signal'+i);
+    const pSel = document.getElementById('ppe'+i);
+    if (!sSel.value || !pSel.value) allAnswered = false;
+    sSel.classList.remove('right','wrong');
+    pSel.classList.remove('right','wrong');
+    if (sSel.value){
+      const ok = sSel.value === c.correctSignal;
+      sSel.classList.add(ok ? 'right' : 'wrong');
+      if (ok) correct++;
+    }
+    if (pSel.value){
+      const ok = pSel.value === c.correctPPE;
+      pSel.classList.add(ok ? 'right' : 'wrong');
+      if (ok) correct++;
+    }
+  });
+  const result = document.getElementById('matchResult');
+  if (!allAnswered){
+    result.textContent = 'Select an answer for every dropdown first.';
+    result.className = 'result bad';
+    return;
+  }
+  result.textContent = correct + ' of ' + total + ' correct.';
+  result.className = correct === total ? 'result good' : 'result bad';
+}
+
+function resetMatch(){
+  renderMatch();
+  document.getElementById('matchResult').textContent = '';
+  document.getElementById('matchResult').className = 'result';
+}
+
+renderMatch();
+</script>
+
+</body>
+</html>

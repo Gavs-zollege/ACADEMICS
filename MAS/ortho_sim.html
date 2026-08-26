@@ -223,7 +223,7 @@ function renderQuiz(){
   document.getElementById('q-bar').style.width=(qScore/total*100)+'%';
   let html=`<div class="card"><span class="badge badge-warn" style="margin-bottom:8px;display:inline-block;">Case ${qIdx+1}</span><p style="color:var(--text);font-size:15px;font-weight:600;line-height:1.6;">${d.case}</p><p style="margin-bottom:12px;font-size:13px;">What is the most likely injury?</p>`;
   d.choices.forEach((c,i)=>{html+=`<button class="opt-btn" id="q-opt-${i}" onclick="answerQuiz(${i})">${c}</button>`;});
-  html+=`<div class="feedback" id="q-fb"></div></div>`;
+  html+=`<div class="feedback" id="q-fb"></div><button class="action-btn primary" id="q-next-btn" style="display:none;margin-top:8px;" onclick="qIdx++;if(qIdx<quizData.length){renderQuiz();}else{showQuizEnd();}">Next →</button></div>`;
   document.getElementById('quiz-content').innerHTML=html;
 }
 
@@ -236,7 +236,8 @@ function answerQuiz(i){
   else{document.getElementById(`q-opt-${i}`).classList.add('wrong');document.getElementById(`q-opt-${d.answer}`).classList.add('reveal');fb.className='feedback show no';fb.textContent='Not quite. '+d.explain;}
   document.getElementById('q-score-lbl').textContent=`Score: ${qScore}`;
   document.getElementById('q-bar').style.width=(qScore/quizData.length*100)+'%';
-  setTimeout(()=>{qIdx++;if(qIdx<quizData.length){renderQuiz();}else{showQuizEnd();}},2200);
+  document.getElementById('q-next-btn').style.display='inline-block';
+  document.getElementById('q-next-btn').textContent=(qIdx+1<quizData.length)?'Next →':'See Results →';
 }
 
 function showQuizEnd(){
@@ -248,7 +249,7 @@ function renderSplint(){
   const d=splintData[sIdx];
   let html=`<div class="card"><span class="badge badge-err" style="margin-bottom:8px;display:inline-block;">Case ${sIdx+1} of ${splintData.length}</span><p style="color:var(--text);font-size:15px;font-weight:600;line-height:1.6;">${d.case}</p><p style="font-size:13px;margin-bottom:12px;">Which support device is most appropriate?</p>`;
   d.options.forEach((o,i)=>{html+=`<button class="opt-btn" id="s-opt-${i}" onclick="answerSplint(${i})">${o}</button>`;});
-  html+=`<div class="feedback" id="s-fb"></div></div>`;
+  html+=`<div class="feedback" id="s-fb"></div><button class="action-btn primary" id="s-next-btn" style="display:none;margin-top:8px;" onclick="nextSplint()">Next →</button></div>`;
   document.getElementById('splint-content').innerHTML=html;
 }
 
@@ -259,14 +260,21 @@ function answerSplint(i){
   fb.classList.add('show');
   if(i===d.answer){document.getElementById(`s-opt-${i}`).classList.add('correct');fb.className='feedback show ok';fb.textContent='Correct! '+d.explain;}
   else{document.getElementById(`s-opt-${i}`).classList.add('wrong');document.getElementById(`s-opt-${d.answer}`).classList.add('reveal');fb.className='feedback show no';fb.textContent='Not quite. '+d.explain;}
-  setTimeout(()=>{sIdx++;if(sIdx<splintData.length){renderSplint();}else{document.getElementById('splint-content').innerHTML=`<div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:8px;">🩹</div><h2>Station complete!</h2><p>Great work matching devices to injuries.</p><button class="action-btn primary" onclick="sIdx=0;renderSplint()">Retry</button><button class="action-btn" onclick="goTo('home')">Main Menu</button></div>`;}},2200);
+  document.getElementById('s-next-btn').style.display='inline-block';
+  document.getElementById('s-next-btn').textContent=(sIdx+1<splintData.length)?'Next →':'Finish →';
+}
+
+function nextSplint(){
+  sIdx++;
+  if(sIdx<splintData.length){renderSplint();}
+  else{document.getElementById('splint-content').innerHTML=`<div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:8px;">🩹</div><h2>Station complete!</h2><p>Great work matching devices to injuries.</p><button class="action-btn primary" onclick="sIdx=0;renderSplint()">Retry</button><button class="action-btn" onclick="goTo('home')">Main Menu</button></div>`;}
 }
 
 function renderEdu(){
   const d=eduData[eIdx];
   let html=`<div class="card"><span class="badge badge-ok" style="margin-bottom:8px;display:inline-block;">Scenario ${eIdx+1} of ${eduData.length}</span><p style="color:var(--text);font-size:15px;font-weight:600;line-height:1.6;">${d.case}</p>`;
   d.options.forEach((o,i)=>{html+=`<button class="opt-btn" id="e-opt-${i}" onclick="answerEdu(${i})">${o}</button>`;});
-  html+=`<div class="feedback" id="e-fb"></div></div>`;
+  html+=`<div class="feedback" id="e-fb"></div><button class="action-btn primary" id="e-next-btn" style="display:none;margin-top:8px;" onclick="nextEdu()">Next →</button></div>`;
   document.getElementById('edu-content').innerHTML=html;
 }
 
@@ -277,7 +285,14 @@ function answerEdu(i){
   fb.classList.add('show');
   if(i===d.answer){document.getElementById(`e-opt-${i}`).classList.add('correct');fb.className='feedback show ok';fb.textContent='Correct! '+d.explain;}
   else{document.getElementById(`e-opt-${i}`).classList.add('wrong');document.getElementById(`e-opt-${d.answer}`).classList.add('reveal');fb.className='feedback show no';fb.textContent='Not quite. '+d.explain;}
-  setTimeout(()=>{eIdx++;if(eIdx<eduData.length){renderEdu();}else{document.getElementById('edu-content').innerHTML=`<div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:8px;">📋</div><h2>All scenarios done!</h2><p>Patient education is critical to safe recovery.</p><button class="action-btn primary" onclick="eIdx=0;renderEdu()">Retry</button><button class="action-btn" onclick="goTo('home')">Main Menu</button></div>`;}},2200);
+  document.getElementById('e-next-btn').style.display='inline-block';
+  document.getElementById('e-next-btn').textContent=(eIdx+1<eduData.length)?'Next →':'Finish →';
+}
+
+function nextEdu(){
+  eIdx++;
+  if(eIdx<eduData.length){renderEdu();}
+  else{document.getElementById('edu-content').innerHTML=`<div class="card" style="text-align:center;"><div style="font-size:36px;margin-bottom:8px;">📋</div><h2>All scenarios done!</h2><p>Patient education is critical to safe recovery.</p><button class="action-btn primary" onclick="eIdx=0;renderEdu()">Retry</button><button class="action-btn" onclick="goTo('home')">Main Menu</button></div>`;}
 }
 
 function initROM(){

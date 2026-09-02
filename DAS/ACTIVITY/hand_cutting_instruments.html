@@ -119,11 +119,74 @@ body{
   .grid{grid-template-columns:repeat(3,1fr)}
   .quiz-opts{grid-template-columns:1fr}
 }
+
+/* ================= GUIDED TOUR ================= */
+.tour-hidden{ display:none !important; }
+#tourHighlight{
+  position:fixed; z-index:9998; border-radius:14px; pointer-events:none;
+  box-shadow: 0 0 0 9999px rgba(4,10,20,0.78);
+  border: 2px solid #7ec8f8;
+  transition: top .4s cubic-bezier(.4,0,.2,1), left .4s cubic-bezier(.4,0,.2,1),
+              width .4s cubic-bezier(.4,0,.2,1), height .4s cubic-bezier(.4,0,.2,1);
+}
+#tourTooltip{
+  position:fixed; z-index:10001;
+  background:linear-gradient(145deg,#0a2a4a 0%,#0d3b66 40%,#1a5276 100%);
+  border-radius:14px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  width:300px; max-width:88vw; padding:20px 22px;
+  font-family:'Source Sans 3','Segoe UI',sans-serif;
+  border: 1px solid rgba(100,180,255,0.25);
+  transition: top .35s ease, left .35s ease;
+}
+#tourTooltip .tour-step-count{
+  font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  color:#7ec8f8; margin-bottom:6px;
+}
+#tourTooltip h3{ font-family:'Playfair Display',Georgia,serif; font-size:17px; color:#fff; margin:0 0 8px; }
+#tourTooltip p{ font-size:13px; line-height:1.55; color:rgba(200,220,240,0.9); margin:0 0 16px; }
+#tourTooltip .tour-actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+#tourTooltip .tour-right{ display:flex; align-items:center; gap:10px; }
+#tourTooltip button.tour-btn{
+  background:linear-gradient(135deg,rgba(15,50,90,0.9),rgba(25,80,140,0.9)); color:#fff;
+  border:1px solid rgba(100,180,255,0.4); border-radius:8px;
+  padding:9px 16px; font-weight:700; font-size:13px; cursor:pointer; font-family:inherit;
+}
+#tourTooltip button.tour-btn:hover{ background:linear-gradient(135deg,rgba(25,70,130,0.9),rgba(35,100,170,0.9)); }
+#tourTooltip button.tour-btn-secondary{
+  background:transparent; color:rgba(180,200,220,0.7); border:none;
+  font-size:12.5px; font-weight:600; cursor:pointer; padding:9px 2px; font-family:inherit;
+}
+#tourTooltip button.tour-btn-secondary:hover{ color:#fff; text-decoration:underline; }
+#tourReplayBtn{
+  position:fixed; bottom:20px; right:20px; z-index:9997;
+  background:linear-gradient(135deg,rgba(15,50,90,0.95),rgba(25,80,140,0.95)); color:#fff;
+  border:1px solid rgba(100,180,255,0.4); border-radius:999px;
+  padding:12px 20px; font-weight:700; font-size:13px; cursor:pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  display:flex; align-items:center; gap:8px; font-family:inherit;
+}
+#tourReplayBtn:hover{ background:linear-gradient(135deg,rgba(25,70,130,0.95),rgba(35,100,170,0.95)); }
 </style>
 </head>
 <body>
 <div class="bg-orb1"></div>
 <div class="bg-orb2"></div>
+
+<div id="tourHighlight" class="tour-hidden"></div>
+<div id="tourTooltip" class="tour-hidden">
+  <div class="tour-step-count" id="tourStepCount"></div>
+  <h3 id="tourTitle"></h3>
+  <p id="tourText"></p>
+  <div class="tour-actions">
+    <button class="tour-btn-secondary" id="tourSkip">Skip tour</button>
+    <div class="tour-right">
+      <button class="tour-btn-secondary" id="tourBack">Back</button>
+      <button class="tour-btn" id="tourNext">Next</button>
+    </div>
+  </div>
+</div>
+<button id="tourReplayBtn" class="tour-hidden">&#9654; Replay Tutorial</button>
 
 <div class="nav-tabs">
   <div class="nav-tab active" onclick="switchPage('study')">Study Cards</div>
@@ -309,5 +372,199 @@ function showResults() {
   document.getElementById('quiz-body').innerHTML = h;
 }
 </script>
+
+<script>
+(function(){
+  const highlightBox = document.getElementById('tourHighlight');
+  const tooltip = document.getElementById('tourTooltip');
+  const stepCountEl = document.getElementById('tourStepCount');
+  const titleEl = document.getElementById('tourTitle');
+  const textEl = document.getElementById('tourText');
+  const nextBtn = document.getElementById('tourNext');
+  const backBtn = document.getElementById('tourBack');
+  const skipBtn = document.getElementById('tourSkip');
+  const replayBtn = document.getElementById('tourReplayBtn');
+
+  function q(sel){ return document.querySelector(sel); }
+
+  function demoAnswer(){
+    const opts = document.querySelectorAll('.quiz-opt');
+    let target = null;
+    opts.forEach(o => { if(!target && o.dataset.id !== o.dataset.correct) target = o; });
+    if(target) pick(target);
+  }
+
+  function goToQuiz(){
+    closeFullscreen();
+    closeModal();
+    switchPage('game');
+  }
+
+  function resetToDefault(){
+    closeFullscreen();
+    closeModal();
+    switchPage('study');
+    quizStarted = false;
+  }
+
+  const steps = [
+    {
+      selector: '.nav-tabs',
+      placement: 'bottom',
+      title: 'Welcome to Hand Cutting Instruments',
+      text: "This activity has two modes: Study Cards to learn each instrument, and Quiz Game to test yourself. Click Next to see how it works."
+    },
+    {
+      selector: '.grid',
+      placement: 'top',
+      title: 'Browse the study cards',
+      text: 'Each tile is an instrument or concept. Click any tile to see its full details.'
+    },
+    {
+      selector: '#modal',
+      placement: 'bottom',
+      title: 'Function & characteristics',
+      text: 'The card shows a photo along with its function and characteristics \u2014 tap the photo to zoom in.',
+      before: () => openModal('parts'),
+      delay: 300
+    },
+    {
+      selector: '#fullscreen',
+      placement: 'bottom',
+      title: 'Zoomed-in view',
+      text: 'Close it with the \u00d7 or by clicking outside the image.',
+      before: () => openFullscreen(),
+      delay: 300
+    },
+    {
+      selector: '.quiz-top',
+      placement: 'bottom',
+      title: 'Switch to Quiz Game',
+      text: 'This mode shuffles all 11 instruments into multiple-choice questions. The progress bar and correct/wrong counts track how you\u2019re doing.',
+      before: () => goToQuiz(),
+      delay: 300
+    },
+    {
+      selector: '.quiz-opts',
+      placement: 'top',
+      title: 'Pick your answer',
+      text: 'Tap the name that matches the photo. Correct answers turn green \u2014 if you\u2019re wrong, your pick turns red and the right answer is revealed too.',
+      before: () => demoAnswer(),
+      delay: 300
+    },
+    {
+      selector: '#q-next',
+      placement: 'top',
+      title: 'Move to the next question',
+      text: 'Click Next to continue through all 11 questions.'
+    },
+    {
+      selector: '.quiz-done',
+      placement: 'bottom',
+      title: 'Your results',
+      text: 'When you finish, you\u2019ll see your score and percentage correct, with a button to try again.',
+      before: () => showResults(),
+      delay: 300
+    }
+  ];
+
+  let current = -1;
+
+  function showStep(i){
+    if(i < 0) i = 0;
+    if(i >= steps.length){ endTour(); return; }
+    current = i;
+    const step = steps[i];
+    const wait = step.delay !== undefined ? step.delay : (step.before ? 300 : 60);
+    if(step.before) step.before();
+    setTimeout(() => renderStep(step, i), wait);
+  }
+
+  function renderStep(step, i){
+    const target = q(step.selector);
+    tooltip.classList.remove('tour-hidden');
+    stepCountEl.textContent = `Step ${i + 1} of ${steps.length}`;
+    titleEl.textContent = step.title;
+    textEl.textContent = step.text;
+    backBtn.style.visibility = i === 0 ? 'hidden' : 'visible';
+    nextBtn.textContent = i === steps.length - 1 ? 'Finish' : 'Next';
+
+    if(target){
+      highlightBox.classList.remove('tour-hidden');
+      const rect = target.getBoundingClientRect();
+      const pad = 8;
+      highlightBox.style.top = (rect.top - pad) + 'px';
+      highlightBox.style.left = (rect.left - pad) + 'px';
+      highlightBox.style.width = (rect.width + pad * 2) + 'px';
+      highlightBox.style.height = (rect.height + pad * 2) + 'px';
+      positionTooltip(rect, step.placement);
+    } else {
+      highlightBox.classList.add('tour-hidden');
+      const ttRect = tooltip.getBoundingClientRect();
+      tooltip.style.top = (window.innerHeight / 2 - ttRect.height / 2) + 'px';
+      tooltip.style.left = (window.innerWidth / 2 - ttRect.width / 2) + 'px';
+    }
+  }
+
+  function positionTooltip(rect, placement){
+    const ttRect = tooltip.getBoundingClientRect();
+    const margin = 16;
+    let top, left;
+
+    if(placement === 'bottom'){
+      top = rect.bottom + margin;
+      left = rect.left;
+    } else {
+      top = rect.top - ttRect.height - margin;
+      left = rect.left;
+    }
+
+    if(top < margin){ top = rect.bottom + margin; }
+    if(top + ttRect.height > window.innerHeight - margin){ top = rect.top - ttRect.height - margin; }
+
+    left = Math.min(Math.max(margin, left), window.innerWidth - ttRect.width - margin);
+    top = Math.min(Math.max(margin, top), window.innerHeight - ttRect.height - margin);
+
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+  }
+
+  function startTour(){
+    replayBtn.classList.add('tour-hidden');
+    resetToDefault();
+    setTimeout(() => showStep(0), 200);
+  }
+
+  function endTour(){
+    tooltip.classList.add('tour-hidden');
+    highlightBox.classList.add('tour-hidden');
+    resetToDefault();
+    replayBtn.classList.remove('tour-hidden');
+  }
+
+  nextBtn.addEventListener('click', () => showStep(current + 1));
+  backBtn.addEventListener('click', () => showStep(current - 1));
+  skipBtn.addEventListener('click', endTour);
+  replayBtn.addEventListener('click', startTour);
+
+  document.addEventListener('keydown', (e) => {
+    if(tooltip.classList.contains('tour-hidden')) return;
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+      e.preventDefault();
+      showStep(current + 1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      showStep(current - 1);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if(current >= 0 && current < steps.length) renderStep(steps[current], current);
+  });
+
+  window.addEventListener('load', () => setTimeout(startTour, 500));
+})();
+</script>
+
 </body>
 </html>

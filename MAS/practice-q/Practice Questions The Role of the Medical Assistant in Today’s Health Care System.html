@@ -107,9 +107,70 @@
   .question-card::-webkit-scrollbar-track,.review-section::-webkit-scrollbar-track{background:transparent}
   .question-card::-webkit-scrollbar-thumb,.review-section::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
   @media(max-width:600px){.start-screen h1{font-size:.98rem}.question-text{font-size:.93rem}.option-btn{padding:8px 11px;font-size:.83rem}.option-letter{width:24px;height:24px;font-size:.73rem}.score-display{font-size:2.6rem}.app{padding:10px 10px 6px}}
+
+  /* ================= GUIDED TOUR ================= */
+  .tour-hidden{ display:none !important; }
+  #tourHighlight{
+    position:fixed; z-index:9998; border-radius:14px; pointer-events:none;
+    box-shadow: 0 0 0 9999px rgba(6,4,2,0.78);
+    border: 2px solid var(--accent);
+    transition: top .4s cubic-bezier(.4,0,.2,1), left .4s cubic-bezier(.4,0,.2,1),
+                width .4s cubic-bezier(.4,0,.2,1), height .4s cubic-bezier(.4,0,.2,1);
+  }
+  #tourTooltip{
+    position:fixed; z-index:10001; background: var(--bg-card); border-radius:14px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    width:300px; max-width:88vw; padding:20px 22px;
+    font-family:'Outfit',sans-serif;
+    border: 1px solid var(--border);
+    transition: top .35s ease, left .35s ease;
+  }
+  #tourTooltip .tour-step-count{
+    font-family:'Space Mono',monospace;
+    font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    color: var(--accent); margin-bottom:6px;
+  }
+  #tourTooltip h3{ font-size:16px; font-weight:800; color: var(--text-primary); margin:0 0 8px; }
+  #tourTooltip p{ font-size:13px; line-height:1.55; color: var(--text-secondary); margin:0 0 16px; }
+  #tourTooltip .tour-actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  #tourTooltip .tour-right{ display:flex; align-items:center; gap:10px; }
+  #tourTooltip button.tour-btn{
+    background: linear-gradient(135deg,var(--gradient-start),#c08a56); color:#0f0d0b; border:none; border-radius:10px;
+    padding:9px 16px; font-weight:800; font-size:13px; cursor:pointer; font-family:'Outfit',sans-serif;
+  }
+  #tourTooltip button.tour-btn:hover{ opacity:.9; }
+  #tourTooltip button.tour-btn-secondary{
+    background:transparent; color: var(--text-secondary); border:none;
+    font-size:12.5px; font-weight:600; cursor:pointer; padding:9px 2px; font-family:'Outfit',sans-serif;
+  }
+  #tourTooltip button.tour-btn-secondary:hover{ color: var(--text-primary); text-decoration:underline; }
+  #tourReplayBtn{
+    position:fixed; bottom:20px; right:20px; z-index:9997;
+    background: linear-gradient(135deg,var(--gradient-start),#c08a56); color:#0f0d0b; border:none; border-radius:999px;
+    padding:12px 20px; font-weight:800; font-size:13px; cursor:pointer;
+    box-shadow: 0 8px 24px var(--accent-glow);
+    display:flex; align-items:center; gap:8px; font-family:'Outfit',sans-serif;
+  }
+  #tourReplayBtn:hover{ opacity:.9; }
 </style>
 </head>
 <body>
+
+<div id="tourHighlight" class="tour-hidden"></div>
+<div id="tourTooltip" class="tour-hidden">
+  <div class="tour-step-count" id="tourStepCount"></div>
+  <h3 id="tourTitle"></h3>
+  <p id="tourText"></p>
+  <div class="tour-actions">
+    <button class="tour-btn-secondary" id="tourSkip">Skip tour</button>
+    <div class="tour-right">
+      <button class="tour-btn-secondary" id="tourBack">Back</button>
+      <button class="tour-btn" id="tourNext">Next</button>
+    </div>
+  </div>
+</div>
+<button id="tourReplayBtn" class="tour-hidden">&#9654; Replay Tutorial</button>
+
 <div class="app" id="app"></div>
 <script>
 const QUESTIONS=[
@@ -178,5 +239,211 @@ function render(){
 function toggleReview(){state.showReview=!state.showReview;render();}
 render();
 </script>
+
+<script>
+(function(){
+  const highlightBox = document.getElementById('tourHighlight');
+  const tooltip = document.getElementById('tourTooltip');
+  const stepCountEl = document.getElementById('tourStepCount');
+  const titleEl = document.getElementById('tourTitle');
+  const textEl = document.getElementById('tourText');
+  const nextBtn = document.getElementById('tourNext');
+  const backBtn = document.getElementById('tourBack');
+  const skipBtn = document.getElementById('tourSkip');
+  const replayBtn = document.getElementById('tourReplayBtn');
+
+  function q(sel){ return document.querySelector(sel); }
+
+  function enterQuizDemo(){
+    startQuiz();
+    const idx = state.shuffledQuestions.findIndex(qq => qq.type === 'mcq' || qq.type === 'tf');
+    if(idx > 0){
+      const tmp = state.shuffledQuestions[0];
+      state.shuffledQuestions[0] = state.shuffledQuestions[idx];
+      state.shuffledQuestions[idx] = tmp;
+    }
+    render();
+  }
+
+  function demoAnswer(){
+    const question = state.shuffledQuestions[state.currentQ];
+    if(state.answered) return;
+    let wrongIdx = -1;
+    question.options.forEach((_, i) => { if(wrongIdx === -1 && i !== question.correct) wrongIdx = i; });
+    if(wrongIdx !== -1) selectAnswer(wrongIdx);
+  }
+
+  function jumpToOpenQuestion(){
+    const idx = state.shuffledQuestions.findIndex(qq => qq.type === 'open');
+    if(idx === -1) return;
+    state.currentQ = idx;
+    state.answered = false;
+    state.selectedIdx = null;
+    state.revealed = false;
+    render();
+  }
+
+  function demoReveal(){
+    revealAnswer();
+  }
+
+  function resetToDefault(){
+    clearInterval(state.timerInterval);
+    state.screen = 'start';
+    render();
+  }
+
+  const steps = [
+    {
+      selector: '.start-screen',
+      placement: 'bottom',
+      title: 'Welcome to Practice Questions',
+      text: "This is a shuffled, timed practice quiz on MA roles and responsibilities \u2014 mixing multiple choice, true/false, and written response. Click Next to see how it works."
+    },
+    {
+      selector: '.progress-wrapper',
+      placement: 'bottom',
+      title: 'Timer, progress & score',
+      text: 'The timer runs throughout, this counter shows which question you\u2019re on, and your live score updates as you answer.',
+      before: () => enterQuizDemo(),
+      delay: 300
+    },
+    {
+      selector: '.options-list',
+      placement: 'top',
+      title: 'Answer the question',
+      text: 'Tap an option to answer. The correct choice glows gold, and if you\u2019re wrong, your pick turns red so you can compare.',
+      before: () => demoAnswer(),
+      delay: 300
+    },
+    {
+      selector: '.feedback-box',
+      placement: 'top',
+      title: 'Read the explanation',
+      text: 'Underneath, you\u2019ll see whether you were right, the correct answer, and a short explanation.'
+    },
+    {
+      selector: '.question-card',
+      placement: 'bottom',
+      title: 'Written-response questions',
+      text: 'Some questions ask you to type your own answer, then reveal a model answer to compare against.',
+      before: () => jumpToOpenQuestion()
+    },
+    {
+      selector: '.self-grade',
+      placement: 'top',
+      title: 'Self-grade your answer',
+      text: 'Mark yourself "I Got It" or "Missed It" \u2014 it\u2019s self-graded, but still counts toward your score.',
+      before: () => demoReveal(),
+      delay: 300
+    },
+    {
+      selector: '.results-screen',
+      placement: 'bottom',
+      title: 'Your results',
+      text: 'At the end, you\u2019ll see your score, a grade badge, and buttons to retake the quiz or review every question and answer.',
+      before: () => showResults(),
+      delay: 300
+    }
+  ];
+
+  let current = -1;
+
+  function showStep(i){
+    if(i < 0) i = 0;
+    if(i >= steps.length){ endTour(); return; }
+    current = i;
+    const step = steps[i];
+    const wait = step.delay !== undefined ? step.delay : (step.before ? 300 : 60);
+    if(step.before) step.before();
+    setTimeout(() => renderStep(step, i), wait);
+  }
+
+  function renderStep(step, i){
+    const target = q(step.selector);
+    tooltip.classList.remove('tour-hidden');
+    stepCountEl.textContent = `Step ${i + 1} of ${steps.length}`;
+    titleEl.textContent = step.title;
+    textEl.textContent = step.text;
+    backBtn.style.visibility = i === 0 ? 'hidden' : 'visible';
+    nextBtn.textContent = i === steps.length - 1 ? 'Finish' : 'Next';
+
+    if(target){
+      highlightBox.classList.remove('tour-hidden');
+      const rect = target.getBoundingClientRect();
+      const pad = 8;
+      highlightBox.style.top = (rect.top - pad) + 'px';
+      highlightBox.style.left = (rect.left - pad) + 'px';
+      highlightBox.style.width = (rect.width + pad * 2) + 'px';
+      highlightBox.style.height = (rect.height + pad * 2) + 'px';
+      positionTooltip(rect, step.placement);
+    } else {
+      highlightBox.classList.add('tour-hidden');
+      const ttRect = tooltip.getBoundingClientRect();
+      tooltip.style.top = (window.innerHeight / 2 - ttRect.height / 2) + 'px';
+      tooltip.style.left = (window.innerWidth / 2 - ttRect.width / 2) + 'px';
+    }
+  }
+
+  function positionTooltip(rect, placement){
+    const ttRect = tooltip.getBoundingClientRect();
+    const margin = 16;
+    let top, left;
+
+    if(placement === 'bottom'){
+      top = rect.bottom + margin;
+      left = rect.left;
+    } else {
+      top = rect.top - ttRect.height - margin;
+      left = rect.left;
+    }
+
+    if(top < margin){ top = rect.bottom + margin; }
+    if(top + ttRect.height > window.innerHeight - margin){ top = rect.top - ttRect.height - margin; }
+
+    left = Math.min(Math.max(margin, left), window.innerWidth - ttRect.width - margin);
+    top = Math.min(Math.max(margin, top), window.innerHeight - ttRect.height - margin);
+
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+  }
+
+  function startTour(){
+    replayBtn.classList.add('tour-hidden');
+    resetToDefault();
+    setTimeout(() => showStep(0), 200);
+  }
+
+  function endTour(){
+    tooltip.classList.add('tour-hidden');
+    highlightBox.classList.add('tour-hidden');
+    resetToDefault();
+    replayBtn.classList.remove('tour-hidden');
+  }
+
+  nextBtn.addEventListener('click', () => showStep(current + 1));
+  backBtn.addEventListener('click', () => showStep(current - 1));
+  skipBtn.addEventListener('click', endTour);
+  replayBtn.addEventListener('click', startTour);
+
+  document.addEventListener('keydown', (e) => {
+    if(tooltip.classList.contains('tour-hidden')) return;
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+      e.preventDefault();
+      showStep(current + 1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      showStep(current - 1);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if(current >= 0 && current < steps.length) renderStep(steps[current], current);
+  });
+
+  window.addEventListener('load', () => setTimeout(startTour, 500));
+})();
+</script>
+
 </body>
 </html>

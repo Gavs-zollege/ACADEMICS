@@ -82,9 +82,68 @@
   }
   .tile.right{background:var(--green);}
   .tile.wrong{background:var(--red);}
+
+  /* ================= GUIDED TOUR ================= */
+  .tour-hidden{ display:none !important; }
+  #tourHighlight{
+    position:fixed; z-index:9998; border-radius:14px; pointer-events:none;
+    box-shadow: 0 0 0 9999px rgba(11,15,25,0.68);
+    border: 2px solid var(--amber);
+    transition: top .4s cubic-bezier(.4,0,.2,1), left .4s cubic-bezier(.4,0,.2,1),
+                width .4s cubic-bezier(.4,0,.2,1), height .4s cubic-bezier(.4,0,.2,1);
+  }
+  #tourTooltip{
+    position:fixed; z-index:9999; background:#fff; border-radius:14px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    width:300px; max-width:88vw; padding:20px 22px;
+    font-family:-apple-system,"Segoe UI",Arial,Helvetica,sans-serif;
+    transition: top .35s ease, left .35s ease;
+    border: 1px solid var(--border);
+  }
+  #tourTooltip .tour-step-count{
+    font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    color: var(--teal); margin-bottom:6px;
+  }
+  #tourTooltip h3{ font-size:16px; font-weight:700; color: var(--navy); margin:0 0 8px; }
+  #tourTooltip p{ font-size:13px; line-height:1.55; color: var(--gray); margin:0 0 16px; }
+  #tourTooltip .tour-actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  #tourTooltip .tour-right{ display:flex; align-items:center; gap:10px; }
+  #tourTooltip button.tour-btn{
+    background: var(--navy); color:#fff; border:none; border-radius:9px;
+    padding:9px 16px; font-weight:700; font-size:13px; cursor:pointer;
+  }
+  #tourTooltip button.tour-btn:hover{ opacity:.88; }
+  #tourTooltip button.tour-btn-secondary{
+    background:transparent; color: var(--gray); border:none;
+    font-size:12.5px; font-weight:600; cursor:pointer; padding:9px 2px;
+  }
+  #tourTooltip button.tour-btn-secondary:hover{ color: var(--navy); text-decoration:underline; }
+  #tourReplayBtn{
+    position:fixed; bottom:20px; right:20px; z-index:9997;
+    background: var(--navy); color:#fff; border:none; border-radius:999px;
+    padding:12px 20px; font-weight:700; font-size:13px; cursor:pointer;
+    box-shadow: 0 8px 24px rgba(27,42,74,0.35);
+    display:flex; align-items:center; gap:8px;
+  }
+  #tourReplayBtn:hover{ opacity:.9; }
 </style>
 </head>
 <body>
+
+<div id="tourHighlight" class="tour-hidden"></div>
+<div id="tourTooltip" class="tour-hidden">
+  <div class="tour-step-count" id="tourStepCount"></div>
+  <h3 id="tourTitle"></h3>
+  <p id="tourText"></p>
+  <div class="tour-actions">
+    <button class="tour-btn-secondary" id="tourSkip">Skip tour</button>
+    <div class="tour-right">
+      <button class="tour-btn-secondary" id="tourBack">Back</button>
+      <button class="tour-btn" id="tourNext">Next</button>
+    </div>
+  </div>
+</div>
+<button id="tourReplayBtn" class="tour-hidden">&#9654; Replay Tutorial</button>
 
 <header>
   <div class="top-row">
@@ -306,6 +365,168 @@ function restart(){
 }
 
 renderScenario();
+</script>
+
+<script>
+(function(){
+  const highlightBox = document.getElementById('tourHighlight');
+  const tooltip = document.getElementById('tourTooltip');
+  const stepCountEl = document.getElementById('tourStepCount');
+  const titleEl = document.getElementById('tourTitle');
+  const textEl = document.getElementById('tourText');
+  const nextBtn = document.getElementById('tourNext');
+  const backBtn = document.getElementById('tourBack');
+  const skipBtn = document.getElementById('tourSkip');
+  const replayBtn = document.getElementById('tourReplayBtn');
+
+  function q(sel){ return document.querySelector(sel); }
+
+  function demoAnswer(){
+    if(responses[cur] === undefined) choose(0);
+  }
+
+  function previewSummary(){
+    showSummary();
+  }
+
+  function resetToDefault(){
+    restart();
+  }
+
+  const steps = [
+    {
+      selector: 'header',
+      placement: 'bottom',
+      title: 'Welcome to the Scenario Simulator',
+      text: "Work through real workplace scenarios on radiography safety and HIPAA. Click Next to see how it works."
+    },
+    {
+      selector: '.section-tag',
+      placement: 'bottom',
+      title: 'Section labels',
+      text: 'Each scenario is tagged by topic \u2014 teal for radiography safety, purple for HIPAA & privacy.'
+    },
+    {
+      selector: '.scenario-box',
+      placement: 'bottom',
+      title: 'Read the scenario',
+      text: 'Each one describes a real situation you might encounter, followed by a question about the best response.'
+    },
+    {
+      selector: '.options',
+      placement: 'top',
+      title: 'Choose your answer',
+      text: 'Tap an option to answer. The correct choice turns green, and if you picked wrong, your choice turns red so you can compare both.',
+      before: () => demoAnswer(),
+      delay: 300
+    },
+    {
+      selector: '.feedback-box',
+      placement: 'top',
+      title: 'Read the explanation',
+      text: "Underneath, you'll get a short explanation of why that's the correct answer \u2014 whether you got it right or not."
+    },
+    {
+      selector: '#footerNav',
+      placement: 'top',
+      title: 'Navigate the scenarios',
+      text: "The dots at the top mark which scenarios you've answered. Use Previous and Next to move between them \u2014 Next becomes \u201cSee Summary\u201d after the last one."
+    },
+    {
+      selector: '.review-wrap',
+      placement: 'bottom',
+      title: 'Your summary',
+      text: 'After the final scenario, you\u2019ll see a summary like this \u2014 your overall score, a color-coded grid of right/wrong answers, and a button to restart.',
+      before: () => previewSummary(),
+      delay: 300
+    }
+  ];
+
+  let current = -1;
+
+  function showStep(i){
+    if(i < 0) i = 0;
+    if(i >= steps.length){ endTour(); return; }
+    current = i;
+    const step = steps[i];
+    const wait = step.delay !== undefined ? step.delay : (step.before ? 300 : 60);
+    if(step.before) step.before();
+    setTimeout(() => renderStep(step, i), wait);
+  }
+
+  function renderStep(step, i){
+    const target = q(step.selector);
+    tooltip.classList.remove('tour-hidden');
+    stepCountEl.textContent = `Step ${i + 1} of ${steps.length}`;
+    titleEl.textContent = step.title;
+    textEl.textContent = step.text;
+    backBtn.style.visibility = i === 0 ? 'hidden' : 'visible';
+    nextBtn.textContent = i === steps.length - 1 ? 'Finish' : 'Next';
+
+    if(target){
+      highlightBox.classList.remove('tour-hidden');
+      const rect = target.getBoundingClientRect();
+      const pad = 8;
+      highlightBox.style.top = (rect.top - pad) + 'px';
+      highlightBox.style.left = (rect.left - pad) + 'px';
+      highlightBox.style.width = (rect.width + pad * 2) + 'px';
+      highlightBox.style.height = (rect.height + pad * 2) + 'px';
+      positionTooltip(rect, step.placement);
+    } else {
+      highlightBox.classList.add('tour-hidden');
+      const ttRect = tooltip.getBoundingClientRect();
+      tooltip.style.top = (window.innerHeight / 2 - ttRect.height / 2) + 'px';
+      tooltip.style.left = (window.innerWidth / 2 - ttRect.width / 2) + 'px';
+    }
+  }
+
+  function positionTooltip(rect, placement){
+    const ttRect = tooltip.getBoundingClientRect();
+    const margin = 16;
+    let top, left;
+
+    if(placement === 'bottom'){
+      top = rect.bottom + margin;
+      left = rect.left;
+    } else {
+      top = rect.top - ttRect.height - margin;
+      left = rect.left;
+    }
+
+    if(top < margin){ top = rect.bottom + margin; }
+    if(top + ttRect.height > window.innerHeight - margin){ top = rect.top - ttRect.height - margin; }
+
+    left = Math.min(Math.max(margin, left), window.innerWidth - ttRect.width - margin);
+    top = Math.min(Math.max(margin, top), window.innerHeight - ttRect.height - margin);
+
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+  }
+
+  function startTour(){
+    replayBtn.classList.add('tour-hidden');
+    resetToDefault();
+    setTimeout(() => showStep(0), 200);
+  }
+
+  function endTour(){
+    tooltip.classList.add('tour-hidden');
+    highlightBox.classList.add('tour-hidden');
+    resetToDefault();
+    replayBtn.classList.remove('tour-hidden');
+  }
+
+  nextBtn.addEventListener('click', () => showStep(current + 1));
+  backBtn.addEventListener('click', () => showStep(current - 1));
+  skipBtn.addEventListener('click', endTour);
+  replayBtn.addEventListener('click', startTour);
+
+  window.addEventListener('resize', () => {
+    if(current >= 0 && current < steps.length) renderStep(steps[current], current);
+  });
+
+  window.addEventListener('load', () => setTimeout(startTour, 500));
+})();
 </script>
 
 </body>

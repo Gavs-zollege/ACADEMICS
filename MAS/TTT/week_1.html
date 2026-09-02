@@ -229,9 +229,70 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
+
+  /* ================= GUIDED TOUR ================= */
+  .tour-hidden{ display:none !important; }
+  #tourHighlight{
+    position:fixed; z-index:9998; border-radius:14px; pointer-events:none;
+    box-shadow: 0 0 0 9999px rgba(3,5,9,0.78);
+    border: 2px solid #E63946;
+    transition: top .4s cubic-bezier(.4,0,.2,1), left .4s cubic-bezier(.4,0,.2,1),
+                width .4s cubic-bezier(.4,0,.2,1), height .4s cubic-bezier(.4,0,.2,1);
+  }
+  #tourTooltip{
+    position:fixed; z-index:10001; background:#0f1420; border-radius:14px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    width:300px; max-width:88vw; padding:20px 22px;
+    font-family:'DM Sans',sans-serif;
+    border: 1px solid var(--border);
+    transition: top .35s ease, left .35s ease;
+  }
+  #tourTooltip .tour-step-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    color:#E63946; margin-bottom:6px;
+  }
+  #tourTooltip h3{ font-size:16px; font-weight:700; color: var(--text-bright); margin:0 0 8px; }
+  #tourTooltip p{ font-size:13px; line-height:1.55; color: var(--text-muted); margin:0 0 16px; }
+  #tourTooltip .tour-actions{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  #tourTooltip .tour-right{ display:flex; align-items:center; gap:10px; }
+  #tourTooltip button.tour-btn{
+    background:#E63946; color:#fff; border:none; border-radius:8px;
+    padding:9px 16px; font-weight:700; font-size:13px; cursor:pointer; font-family:'DM Sans',sans-serif;
+  }
+  #tourTooltip button.tour-btn:hover{ opacity:.88; }
+  #tourTooltip button.tour-btn-secondary{
+    background:transparent; color: var(--text-muted); border:none;
+    font-size:12.5px; font-weight:600; cursor:pointer; padding:9px 2px; font-family:'DM Sans',sans-serif;
+  }
+  #tourTooltip button.tour-btn-secondary:hover{ color: var(--text-bright); text-decoration:underline; }
+  #tourReplayBtn{
+    position:fixed; bottom:20px; right:20px; z-index:9997;
+    background:#E63946; color:#fff; border:none; border-radius:999px;
+    padding:12px 20px; font-weight:700; font-size:13px; cursor:pointer;
+    box-shadow: 0 8px 24px rgba(230,57,70,.35);
+    display:flex; align-items:center; gap:8px; font-family:'DM Sans',sans-serif;
+  }
+  #tourReplayBtn:hover{ opacity:.9; }
 </style>
 </head>
 <body>
+
+<div id="tourHighlight" class="tour-hidden"></div>
+<div id="tourTooltip" class="tour-hidden">
+  <div class="tour-step-count" id="tourStepCount"></div>
+  <h3 id="tourTitle"></h3>
+  <p id="tourText"></p>
+  <div class="tour-actions">
+    <button class="tour-btn-secondary" id="tourSkip">Skip tour</button>
+    <div class="tour-right">
+      <button class="tour-btn-secondary" id="tourBack">Back</button>
+      <button class="tour-btn" id="tourNext">Next</button>
+    </div>
+  </div>
+</div>
+<button id="tourReplayBtn" class="tour-hidden">&#9654; Replay Tutorial</button>
+
 <div class="app">
   <div class="header">
     <h1>Completing Patient Intake and Recording Vital Signs</h1>
@@ -470,6 +531,7 @@ function selectTopic(id) {
 }
 
 document.addEventListener('keydown', function(e) {
+  if (window.__tourActive) return;
   if (e.key === 'F11') { e.preventDefault(); fsBtn.click(); return; }
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
     e.preventDefault();
@@ -489,5 +551,178 @@ document.addEventListener('keydown', function(e) {
 
 buildSidebar();
 </script>
+
+<script>
+(function(){
+  const highlightBox = document.getElementById('tourHighlight');
+  const tooltip = document.getElementById('tourTooltip');
+  const stepCountEl = document.getElementById('tourStepCount');
+  const titleEl = document.getElementById('tourTitle');
+  const textEl = document.getElementById('tourText');
+  const nextBtn = document.getElementById('tourNext');
+  const backBtn = document.getElementById('tourBack');
+  const skipBtn = document.getElementById('tourSkip');
+  const replayBtn = document.getElementById('tourReplayBtn');
+
+  function q(sel){ return document.querySelector(sel); }
+
+  function resetToDefault(){
+    activeId = null;
+    sidebarPage = 0;
+    var pages = sidebarPagesEl.querySelectorAll('.sidebar-page');
+    pages.forEach(function(p){ p.classList.remove('active'); });
+    if(pages[0]) pages[0].classList.add('active');
+    updateSidebarNav();
+    updateSidebarActive();
+    content.innerHTML = '<div class="welcome"><div class="big-icon">\uD83D\uDCDA</div><p>Select a topic from the left to explore its key learning points</p></div>';
+  }
+
+  const steps = [
+    {
+      selector: '.header',
+      placement: 'bottom',
+      title: 'Welcome to the Reference Guide',
+      text: "This covers patient intake and vital signs across 17 topics, plus a key takeaways summary. Click Next to see how it works."
+    },
+    {
+      selector: '.fs-btn',
+      placement: 'bottom',
+      title: 'View in fullscreen',
+      text: 'Use this button anytime for a distraction-free, full-screen view.'
+    },
+    {
+      selector: '.sidebar',
+      placement: 'bottom',
+      title: 'Browse topics',
+      text: 'Click any topic in the list to load its key points on the right.',
+      before: () => selectTopic(1)
+    },
+    {
+      selector: '.content-points',
+      placement: 'top',
+      title: 'Key points',
+      text: 'Each topic breaks down into numbered key points you can quickly scan and review.'
+    },
+    {
+      selector: '.content-footer',
+      placement: 'top',
+      title: 'Move between topics',
+      text: 'Use these buttons \u2014 or your keyboard\u2019s arrow keys \u2014 to move to the previous or next topic. The dots track where you are.'
+    },
+    {
+      selector: '#sidebarNav',
+      placement: 'bottom',
+      title: 'Page through the list',
+      text: 'With this many topics, the sidebar itself has pages \u2014 use these arrows to see more.'
+    },
+    {
+      selector: '.content-points',
+      placement: 'bottom',
+      title: 'Key Takeaways',
+      text: 'The final entry in the list pulls together the most important points from every topic into one summary.',
+      before: () => selectTopic('takeaways')
+    }
+  ];
+
+  let current = -1;
+
+  function showStep(i){
+    if(i < 0) i = 0;
+    if(i >= steps.length){ endTour(); return; }
+    current = i;
+    const step = steps[i];
+    const wait = step.delay !== undefined ? step.delay : (step.before ? 300 : 60);
+    if(step.before) step.before();
+    setTimeout(() => renderStep(step, i), wait);
+  }
+
+  function renderStep(step, i){
+    const target = q(step.selector);
+    tooltip.classList.remove('tour-hidden');
+    stepCountEl.textContent = `Step ${i + 1} of ${steps.length}`;
+    titleEl.textContent = step.title;
+    textEl.textContent = step.text;
+    backBtn.style.visibility = i === 0 ? 'hidden' : 'visible';
+    nextBtn.textContent = i === steps.length - 1 ? 'Finish' : 'Next';
+
+    if(target){
+      highlightBox.classList.remove('tour-hidden');
+      const rect = target.getBoundingClientRect();
+      const pad = 8;
+      highlightBox.style.top = (rect.top - pad) + 'px';
+      highlightBox.style.left = (rect.left - pad) + 'px';
+      highlightBox.style.width = (rect.width + pad * 2) + 'px';
+      highlightBox.style.height = (rect.height + pad * 2) + 'px';
+      positionTooltip(rect, step.placement);
+    } else {
+      highlightBox.classList.add('tour-hidden');
+      const ttRect = tooltip.getBoundingClientRect();
+      tooltip.style.top = (window.innerHeight / 2 - ttRect.height / 2) + 'px';
+      tooltip.style.left = (window.innerWidth / 2 - ttRect.width / 2) + 'px';
+    }
+  }
+
+  function positionTooltip(rect, placement){
+    const ttRect = tooltip.getBoundingClientRect();
+    const margin = 16;
+    let top, left;
+
+    if(placement === 'bottom'){
+      top = rect.bottom + margin;
+      left = rect.left;
+    } else {
+      top = rect.top - ttRect.height - margin;
+      left = rect.left;
+    }
+
+    if(top < margin){ top = rect.bottom + margin; }
+    if(top + ttRect.height > window.innerHeight - margin){ top = rect.top - ttRect.height - margin; }
+
+    left = Math.min(Math.max(margin, left), window.innerWidth - ttRect.width - margin);
+    top = Math.min(Math.max(margin, top), window.innerHeight - ttRect.height - margin);
+
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+  }
+
+  function startTour(){
+    replayBtn.classList.add('tour-hidden');
+    window.__tourActive = true;
+    resetToDefault();
+    setTimeout(() => showStep(0), 200);
+  }
+
+  function endTour(){
+    tooltip.classList.add('tour-hidden');
+    highlightBox.classList.add('tour-hidden');
+    window.__tourActive = false;
+    resetToDefault();
+    replayBtn.classList.remove('tour-hidden');
+  }
+
+  nextBtn.addEventListener('click', () => showStep(current + 1));
+  backBtn.addEventListener('click', () => showStep(current - 1));
+  skipBtn.addEventListener('click', endTour);
+  replayBtn.addEventListener('click', startTour);
+
+  document.addEventListener('keydown', (e) => {
+    if(tooltip.classList.contains('tour-hidden')) return;
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+      e.preventDefault();
+      showStep(current + 1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      showStep(current - 1);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if(current >= 0 && current < steps.length) renderStep(steps[current], current);
+  });
+
+  window.addEventListener('load', () => setTimeout(startTour, 500));
+})();
+</script>
+
 </body>
 </html>

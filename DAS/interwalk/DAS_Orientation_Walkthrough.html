@@ -37,6 +37,8 @@ button{font-family:inherit}
 .cbtn{border:1.5px solid var(--z-purple);background:#fff;color:var(--z-purple);border-radius:8px;padding:6px 12px;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap}
 .cbtn:hover{background:var(--z-purple-l)}
 .cbtn.solid{background:var(--z-purple);color:#fff}
+.fsbtn{display:inline-flex;align-items:center;gap:6px;flex:none}.fsbtn svg{width:15px;height:15px}
+html:fullscreen{overflow-y:auto}html:-webkit-full-screen{overflow-y:auto}
 .coach.win{border-left-color:var(--cv-green)}
 .coach.win .num{background:var(--cv-green)}
 
@@ -177,12 +179,14 @@ button{font-family:inherit}
   .mh .mr{display:none}
   .uc2 h2{font-size:23px}
 }
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <div><h1>How to Find Your Orientation Videos</h1><p>Practice in this copy of your Dental Assisting course in Canvas. Click where you would in the real course.</p></div>
+    <button class="cbtn fsbtn" id="fsbtn" type="button" aria-pressed="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path id="fsicon" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="fslbl">Full screen</span></button>
   </div>
   <div class="miles" id="miles">
     <div class="mile">1 · Open Week 01</div><div class="mile">2 · Find Orientation</div><div class="mile">3 · Complete 4 items</div><div class="mile">4 · Check progress</div>
@@ -426,6 +430,23 @@ $("restart").addEventListener("click",reset);
 function reset(){clearInterval(timer);clearTimeout(idle);busy=false;finished=false;step=0;done=[0,0,0,0];$("toast").classList.remove("show");renderHome();renderStep();}
 window.addEventListener("resize",placeTip);
 reset();
+
+(function(){
+  var d=document,el=d.documentElement,b=d.getElementById("fsbtn");
+  var req=el.requestFullscreen||el.webkitRequestFullscreen;
+  var on=function(){return d.fullscreenElement||d.webkitFullscreenElement};
+  if(!req||!(d.fullscreenEnabled||d.webkitFullscreenEnabled))return;
+  b.hidden=false;
+  b.addEventListener("click",function(){
+    if(on()){(d.exitFullscreen||d.webkitExitFullscreen).call(d)}
+    else{var r=req.call(el);if(r&&r.catch)r.catch(function(){})}
+  });
+  function sync(){var f=!!on();
+    d.getElementById("fslbl").textContent=f?"Exit full screen":"Full screen";
+    d.getElementById("fsicon").setAttribute("d",f?"M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5":"M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5");
+    b.setAttribute("aria-pressed",f)}
+  d.addEventListener("fullscreenchange",sync);d.addEventListener("webkitfullscreenchange",sync);
+})();
 </script>
 </body>
 </html>

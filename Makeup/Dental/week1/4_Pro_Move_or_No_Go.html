@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pro Move or No Go? | Dental Assisting Week 1</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:grid;grid-template-columns:260px 560px 1fr;gap:24px;padding:20px 26px}
+.rep{background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:24px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.rep h3{font-size:22px;text-align:center}
+.face{font-size:96px;line-height:1;transition:transform .2s}
+.face.bounce{animation:pop .4s}
+.gauge{flex:1;width:70px;border-radius:35px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);position:relative;overflow:hidden}
+.gauge i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,var(--red),var(--gold) 50%,var(--teal));transition:height .5s cubic-bezier(.3,1.4,.5,1)}
+.rep .pct{font-family:var(--head);font-size:34px;color:var(--gold)}
+.center{display:flex;flex-direction:column;gap:16px}
+.stack{position:relative;flex:1}
+.scard{position:absolute;inset:0;background:var(--card);color:var(--cardink);border-radius:26px;padding:30px 34px;display:flex;flex-direction:column;touch-action:none;cursor:grab;box-shadow:0 12px 0 #9DB4CC,0 26px 40px rgba(0,0,0,.45)}
+.scard.back{transform:translateY(14px) scale(.95);pointer-events:none;background:linear-gradient(180deg,#24508A,#1A3D6C);border:3px solid rgba(127,216,217,.3);box-shadow:0 12px 0 #0E2240;align-items:center;justify-content:center;font-size:90px;opacity:.9}
+.where{align-self:flex-start;font-weight:700;font-size:17px;padding:4px 14px;border-radius:99px;background:#D3F0F0;color:#0B6F71}
+.stxt{flex:1;display:flex;align-items:center;font-family:var(--head);font-size:34px;line-height:1.28;font-weight:700}
+.ctimer{height:10px;background:#E3EBF2;border-radius:5px;overflow:hidden}.ctimer i{display:block;height:100%;background:var(--teal);width:100%}
+.ctimer.low i{background:var(--red)}
+.stamp{position:absolute;top:30px;font-family:var(--head);font-weight:700;font-size:40px;padding:4px 16px;border:6px solid;border-radius:12px;opacity:0;pointer-events:none}
+.stamp.pro{right:28px;color:var(--teal);border-color:var(--teal);transform:rotate(12deg)}
+.stamp.no{left:28px;color:var(--red);border-color:var(--red);transform:rotate(-12deg)}
+.stamp.slam{animation:slam .3s forwards}
+@keyframes slam{0%{opacity:0;transform:scale(2.2) rotate(var(--r))}100%{opacity:1;transform:scale(1) rotate(var(--r))}}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;height:86px}
+.choices .btn{font-size:26px;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn.red{background:var(--red);color:#fff;box-shadow:0 6px 0 #9E2E28}
+.right{background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.right .idle{color:var(--soft);font-size:20px;line-height:1.45;margin:0}
+.right .idle kbd{background:rgba(255,255,255,.12);border-radius:6px;padding:2px 8px;font-family:var(--body)}
+.verdict{border-radius:20px;padding:22px;animation:pop .3s;flex:1;display:flex;flex-direction:column;gap:12px}
+.verdict.good{background:rgba(20,163,165,.25);border:3px solid var(--teal)}
+.verdict.bad{background:rgba(229,83,75,.22);border:3px solid var(--red)}
+.verdict h2{font-size:34px}
+.verdict .ans{font-weight:700;font-size:18px;color:var(--soft)}
+.verdict p{font-size:23px;line-height:1.4;margin:0;flex:1}
+.cnt{color:var(--soft);font-size:16px}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 1 · Policies & professionalism</div>
+  <h1>Pro Move or <em>No Go?</em></h1>
+  <p class="lead">It's your first week. The office manager is watching. Judge each move fast: is it professional, or a policy fail?</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">👈👉</div><b>Swipe or tap</b><span>Swipe right or press → for Pro Move. Left or ← for No Go.</span></div>
+    <div class="rule"><div class="ico">⏱️</div><b>Beat the clock</b><span>Faster answers score more. Timeouts count as wrong.</span></div>
+    <div class="rule"><div class="ico">😃</div><b>Keep them smiling</b><span>Your reputation meter rises and falls with every call.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Clock in</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 1</small>Pro Move or No Go?</div>
+    <div class="chipstat"><span>Card</span><b id="num">1/12</b></div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <div class="chipstat"><span>Streak</span><b id="streak">0</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play">
+    <div class="rep"><h3>Office manager</h3><div class="face" id="face">🙂</div><div class="gauge"><i id="gauge" style="height:50%"></i></div><div class="pct" id="pct">50%</div><div style="color:var(--soft);font-size:15px">Reputation</div></div>
+    <div class="center"><div class="stack" id="stack"></div>
+      <div class="choices"><button class="btn red" id="bNo">👈 No Go</button><button class="btn teal" id="bPro">Pro Move 👉</button></div></div>
+    <div class="right" id="right"></div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">End of shift</div>
+  <div style="font-size:110px;line-height:1" id="eface"></div>
+  <h1 id="etitle" style="font-size:64px"></h1>
+  <div id="fstars"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Work another shift</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const CARDS=[
+ ['In class','You quickly text a friend during lab without asking your instructor.',0,'Personal phones are off-limits without prior permission, in class and at externship.'],
+ ['At externship','You\'re running late, so you call the office and your Externship Specialist before your shift.',1,'Be present for scheduled hours and notify the right people when a delay or absence can\'t be avoided.'],
+ ['In the office','Patient toothbrushes and Chapstick are out on the counter. You grab one for after lunch.',0,'We\'re guests in the practice. Items set out for patients are never ours to take.'],
+ ['Online','You disagree with a classmate\'s discussion post and reply respectfully, explaining your view.',1,'Respectful, professional language in all written communication.'],
+ ['In the office','After lab you wipe down your area and put every supply back where you found it.',1,'"Leave this office cleaner than we found it." That\'s the standard.'],
+ ['In the office','You\'re out of gauze, so you head into the storage closet to grab more.',0,'Students don\'t go into the storage closet. Instructors supervise supplies.'],
+ ['At externship','Someone at your site makes harassing comments. You report it to a school staff member right away.',1,'Report immediately to any school staff member. It gets investigated, with no retaliation for reporting.'],
+ ['Online','An instructor emails about a missing assignment. You leave it unopened for a week.',0,'Respond to instructors and staff in a timely manner.'],
+ ['At externship','You worked 3 hours 40 minutes, so you log 4 hours to keep it simple.',0,'Externship hours must be documented accurately. No rounding up.'],
+ ['Policies','You were sick and told your instructor ahead of time, so you skip making up the lab.',0,'Missed lab and coursework must be made up per the catalog, even with illness and advance notice.'],
+ ['Online','You do your drag-and-drop activities on a laptop, not your phone.',1,'A computer is strongly recommended so you can fully participate in interactive work.'],
+ ['Online','Midway through an interactive lesson you click "Next" at the bottom of the page.',0,'Use the ARROWS. Clicking "Next" exits the lesson without completing it.'],
+ ['Portal','Your Dentrix Ascend email arrives Friday night. You set your password that same evening.',1,'The link is only valid for 24 hours. Acting fast is the pro move.'],
+ ['Externship search','You walk into a small office in business casual with a printed resume, then follow up a few days later.',1,'Textbook: dress professionally, bring your resume, ask for the office manager, follow up.'],
+ ['In class','Your school scrubs arrive, but you wear a bright patterned set you like better.',0,'Wear the scrubs issued by the school, or scrubs of the same color.'],
+ ['In class','You feel exhausted during lab, so you put your head down for a quick nap.',0,'Sleeping or disengaging during class time violates the code of conduct.']];
+const N=12,LIMIT=12;let G,tm=null;
+function newGame(){G={deck:shuffle(CARDS).slice(0,N),i:0,score:0,streak:0,best:0,right:0,rep:50,lock:false,misses:[]};showScreen('game');hud();idle();deal()}
+function hud(){$('num').textContent=Math.min(G.i+1,N)+'/'+N;$('score').textContent=G.score;$('streak').textContent=G.streak;
+  $('gauge').style.height=G.rep+'%';$('pct').textContent=G.rep+'%';$('face').textContent=G.rep>=85?'🤩':G.rep>=65?'😃':G.rep>=45?'🙂':G.rep>=25?'😬':'😠'}
+function idle(){$('right').innerHTML=`<h3 style="font-size:26px">How to play</h3><p class="idle">Read the move. Is it professional?</p><p class="idle">Swipe the card, tap a button, or use <kbd>←</kbd> <kbd>→</kbd>.</p><p class="idle">You have ${LIMIT} seconds per card. Quick and correct earns the most points.</p>`}
+function deal(){G.lock=false;const c=G.deck[G.i],n=G.deck[G.i+1];
+  $('stack').innerHTML=(n?`<div class="scard back">🦷</div>`:'')+`<div class="scard" id="card"><span class="stamp no" style="--r:-12deg" id="sNo">NO GO</span><span class="stamp pro" style="--r:12deg" id="sPro">PRO MOVE</span>
+   <span class="where">${c[0]}</span><div class="stxt">${c[1]}</div><div class="ctimer" id="ct"><i id="cti"></i></div></div>`;
+  const card=$('card');card.animate([{transform:'translateY(40px) scale(.9)',opacity:0},{transform:'none',opacity:1}],{duration:250,easing:'ease-out'});
+  drag(card);let t=LIMIT;G.t=t;clearInterval(tm);tm=setInterval(()=>{G.t-=.1;$('cti').style.width=(G.t/LIMIT*100)+'%';$('ct').classList.toggle('low',G.t<=3);
+    if(G.t<=3&&Math.abs(G.t-Math.round(G.t))<.05)SFX.tick();if(G.t<=0){clearInterval(tm);answer(null)}},100)}
+function drag(el){let sx=null,dx=0;
+  el.addEventListener('pointerdown',e=>{if(G.lock)return;sx=e.clientX;el.setPointerCapture(e.pointerId)});
+  el.addEventListener('pointermove',e=>{if(sx===null)return;dx=(e.clientX-sx)/SCALE;el.style.transform=`translateX(${dx}px) rotate(${dx/16}deg)`;$('sPro').style.opacity=Math.max(0,dx/140);$('sNo').style.opacity=Math.max(0,-dx/140)});
+  el.addEventListener('pointerup',()=>{if(sx===null)return;sx=null;if(dx>120)answer(1);else if(dx<-120)answer(0);else{el.animate([{transform:el.style.transform},{transform:'none'}],{duration:200});el.style.transform='';$('sPro').style.opacity=0;$('sNo').style.opacity=0}dx=0})}
+function answer(said){if(G.lock)return;G.lock=true;clearInterval(tm);const c=G.deck[G.i];const ok=said===c[2];const card=$('card');
+  if(said!==null){const st=$(said?'sPro':'sNo');st.style.opacity='';st.classList.add('slam')}
+  setTimeout(()=>{card.animate([{transform:card.style.transform||'none'},{transform:`translateX(${said===0?-1500:said===1?1500:0}px) translateY(${said===null?900:0}px) rotate(${said===0?-30:said===1?30:0}deg)`}],{duration:380,easing:'ease-in',fill:'forwards'})},said===null?0:260);
+  if(ok){G.streak++;G.right++;G.best=Math.max(G.best,G.streak);const pts=Math.round((100+G.t*20)*(G.streak>=3?2:1));G.score+=pts;G.rep=Math.min(100,G.rep+(G.streak>=3?9:7));
+    SFX.good(G.streak);const p=centerOf($('stack'));setTimeout(()=>{burst(p.x,p.y);floatText(p.x,p.y-60,'+'+pts)},260);if(G.streak===3||G.streak===6||G.streak===9){comboText(`${G.streak} STREAK ×2`);SFX.combo()}}
+  else{G.streak=0;G.rep=Math.max(0,G.rep-12);G.misses.push(c);SFX.bad();flash('#E5534B')}
+  $('face').classList.remove('bounce');void $('face').offsetWidth;$('face').classList.add('bounce');hud();
+  $('right').innerHTML=`<div class="verdict ${ok?'good':'bad'}"><h2>${said===null?'Time\'s up!':ok?(c[2]?'Pro move!':'Good catch!'):(c[2]?'That was a pro move':'That\'s a no go')}</h2>
+   <div class="ans">Correct call: ${c[2]?'PRO MOVE ✓':'NO GO ✗'}</div><p>${c[3]}</p>
+   <button class="btn ${ok?'teal':''}" id="nx">${G.i<N-1?'Next card':'End shift'}</button></div>`;
+  $('nx').onclick=next;setTimeout(()=>$('nx')&&$('nx').focus(),50)}
+function next(){SFX.click();G.i++;if(G.i>=N)end();else{hud();idle();deal()}}
+function end(){showScreen('end');const r=G.right;const s=r>=11?3:r>=9?2:r>=6?1:0;
+  $('eface').textContent=['😬','🙂','😃','🤩'][s];$('etitle').textContent=['Back to the handbook','Solid first week','Office favorite','Hired on the spot!'][s];
+  $('fstars').innerHTML=starsHTML(s);$('fsum').textContent=`${r} of ${N} right · ${G.score} points · best streak ${G.best}`;if(s>=2){confetti();SFX.win()}else SFX.lose()}
+addEventListener('keydown',e=>{if(!G||$('game').classList.contains('hidden'))return;if(!G.lock){if(e.key==='ArrowLeft')answer(0);if(e.key==='ArrowRight')answer(1)}});
+$('bNo').onclick=()=>answer(0);$('bPro').onclick=()=>answer(1);$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

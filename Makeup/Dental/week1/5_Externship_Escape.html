@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Externship Escape | Dental Assisting Week 1</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:grid;grid-template-columns:380px 1fr;gap:24px;padding:16px 26px 18px}
+.left{display:flex;flex-direction:column;align-items:center;gap:10px}
+.door-svg{height:470px;width:auto}
+.doorpanel{transform-origin:70px 50%;transition:transform 1.4s cubic-bezier(.5,0,.2,1)}
+.open .doorpanel{transform:perspective(700px) rotateY(-80deg)}
+.lock .shackle{transition:transform .5s}.lock.off .shackle{transform:translate(12px,-5px) rotate(18deg)}
+.lock .body{fill:#F2B33D;stroke:#B57E10;stroke-width:2.5;transition:fill .3s}
+.lock.off .body{fill:#14A3A5;stroke:#7FD8D9}
+.lock.cur .body{stroke:#fff;stroke-width:4}
+.lock text{font:700 15px var(--body);fill:#0E2240;text-anchor:middle}.lock.off text{fill:#fff}
+.notes{display:flex;gap:8px}
+.note{width:56px;height:62px;background:#FFE58A;color:#0E2240;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-weight:700;font-size:34px;box-shadow:0 4px 0 rgba(0,0,0,.25);transform:rotate(-3deg)}
+.note:nth-child(even){transform:rotate(3deg)}
+.note.empty{background:rgba(255,255,255,.08);color:rgba(255,255,255,.25);box-shadow:none;font-size:24px}
+.note.new{animation:pop .5s}
+.puz{background:var(--card);color:var(--cardink);border-radius:26px;padding:20px 30px 20px;display:flex;flex-direction:column;position:relative;box-shadow:0 12px 0 rgba(0,0,0,.25)}
+.puz .lk{font-weight:700;color:#4F6680;font-size:18px}
+.puz h2{font-size:36px;color:var(--navy);margin:0 0 4px}
+.puz .pr{font-size:20px;margin:0 0 10px;color:#2B4260}
+.opts{display:grid;gap:10px}
+.opt{font:600 20px var(--body);text-align:left;background:#F1F5F9;color:var(--navy);border:3px solid #D5E0EA;border-radius:14px;padding:12px 16px;cursor:pointer;display:flex;gap:14px;align-items:center;transition:transform .08s}
+.opt:hover{border-color:var(--teal)}.opt:active{transform:scale(.98)}
+.opt .bd{flex:none;min-width:38px;height:38px;border-radius:19px;border:3px solid #C3D2DF;display:grid;place-items:center;font-weight:700;font-size:15px;padding:0 6px}
+.opt.on{border-color:var(--teal);background:#D3F0F0}.opt.on .bd{background:var(--teal);border-color:var(--teal);color:#fff}
+.opt.bad{border-color:var(--red);background:#FFE1DF}
+.pairq{font-weight:700;font-size:17px;margin:4px 0 4px;color:#2B4260}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row2 .opt{font-size:17px;padding:7px 12px;min-height:56px}.row2 .opt .bd{min-width:32px;height:32px}
+.acts{margin-top:auto;display:flex;gap:12px;align-items:center;padding-top:10px}
+.btn.line{background:transparent;color:var(--navy);border:3px solid #C3D2DF;box-shadow:none}
+.msg{font-weight:700;font-size:19px;flex:1}.msg.bad{color:var(--red)}.msg.good{color:#0B6F71}
+.keypad{display:grid;grid-template-columns:repeat(3,96px);gap:12px;justify-content:center}
+.keypad button{font:700 34px var(--head);height:72px;border-radius:16px;border:0;background:#E3EBF2;color:var(--navy);cursor:pointer;box-shadow:0 5px 0 #B9C9D8}
+.keypad button:active{transform:translateY(3px);box-shadow:0 2px 0 #B9C9D8}
+.display{display:flex;gap:10px;justify-content:center;margin:6px 0 18px}
+.display span{width:64px;height:78px;border-radius:12px;background:#0E2240;color:var(--gold);font:700 46px var(--head);display:grid;place-items:center}
+.clock.low b{color:var(--red)!important;animation:pulse .5s infinite}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 1 · Externship</div>
+  <h1>Externship <em>Escape</em></h1>
+  <p class="lead">The externship office closes in 5 minutes, and the door is sealed with five locks. Crack each one to earn a code digit, then punch in the code to get in.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">🔒</div><b>Five locks</b><span>Each one tests a piece of becoming Externship Ready.</span></div>
+    <div class="rule"><div class="ico">🗒️</div><b>Collect the code</b><span>Every open lock drops a sticky note with a digit.</span></div>
+    <div class="rule"><div class="ico">⏳</div><b>Watch the clock</b><span>Wrong tries cost 15 seconds. Wrong ones also give you a hint.</span></div>
+  </div>
+  <button class="btn" id="go">Start the escape</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 1</small>Externship Escape</div>
+    <div class="chipstat"><span>Locks open</span><b id="opened">0/5</b></div>
+    <div class="chipstat clock" id="clockBox"><span>Office closes in</span><b id="clock">5:00</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play">
+    <div class="left">
+      <svg class="door-svg" id="door" viewBox="0 0 300 460" aria-label="Clinic door with five locks">
+        <rect x="56" y="16" width="200" height="430" rx="8" fill="#050E1E"/>
+        <rect x="60" y="20" width="192" height="426" fill="#F2B33D" opacity=".18"/>
+        <text x="156" y="230" text-anchor="middle" fill="#FFD97A" font-family="Cambria,Georgia,serif" font-size="26" font-weight="700">You're in!</text>
+        <g class="doorpanel">
+          <rect x="70" y="26" width="176" height="420" rx="6" fill="#1F4373" stroke="#14A3A5" stroke-width="4"/>
+          <rect x="92" y="50" width="132" height="84" rx="6" fill="#7FD8D9" opacity=".9"/>
+          <text x="158" y="86" text-anchor="middle" fill="#0E2240" font-family="Cambria,Georgia,serif" font-size="17" font-weight="700">EXTERNSHIP</text>
+          <text x="158" y="108" text-anchor="middle" fill="#0E2240" font-family="Calibri,Carlito,sans-serif" font-size="14">Staff only</text>
+          <circle cx="92" cy="280" r="9" fill="#F2B33D"/>
+          <g id="locks"></g>
+        </g>
+        <rect x="36" y="444" width="240" height="10" rx="4" fill="#55657A"/>
+      </svg>
+      <div class="notes" id="notes"></div>
+    </div>
+    <div class="puz" id="puz"></div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker" id="ek"></div>
+  <h1 id="et" style="font-size:76px"></h1>
+  <div id="fstars"></div>
+  <p class="lead" id="fsum"></p>
+  <p class="lead" style="font-size:20px;color:var(--teal2)">Before you leave today: log in to Healthcare Staff Solutions with your Canvas login, complete your profile, and start your Externship Ready qualification.</p>
+  <button class="btn" id="again">Escape again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const LOCKS=[
+ {type:'order',title:'The timeline',pr:'Tap the milestones in the order they happen.',labels:['Wk 1','Wk 4','Wk 5','Wk 6'],
+  items:['Create your HSS profile and list 10 possible offices','Start contacting potential externship sites','Finish CPR training, so you can start your externship','Have your externship placement secured'],hint:'Search starts Week 1, contact by Week 4, CPR by Week 5, secured by Week 6.'},
+ {type:'order',title:'The resume',pr:'Put the 3-step resume process in order.',items:['Gather your experience and skills','Tailor it to the job description','Format it for a polished, professional look'],hint:'Gather first, then tailor. Formatting is the finishing touch.'},
+ {type:'multi',title:'The checklist',pr:'Select every Externship Ready requirement. Three are decoys.',
+  items:[['Resume',1],['LinkedIn profile URL',1],['Professional headshot',1],['3-minute intro video',1],['Anatomy Knowledge Assessment',1],['Clinical Knowledge Assessment',1],['100% attendance',1],['Two reference letters',0],['Handwritten cover letter',0],['Typing speed test',0]],hint:'4 uploads + 2 knowledge assessments + 1 attendance requirement = 7.'},
+ {type:'pairs',title:'The walk-in',pr:'You\'re dropping by a small office to ask about externships. Pick the better move.',
+  items:[['What do you bring?','A printed copy of your resume','A promise to email it later',0],['What do you wear?','Whatever is comfy today','Business casual, clean and neat',1],['Who do you ask for?','The office manager, by name if you can','Whoever looks least busy',0],['They\'re too busy to talk.','Wait for them to call you','Leave your resume, follow up in a few days',1]],hint:'First impressions count, and always follow up.'},
+ {type:'multi',title:'The video intro',pr:'Your 3-minute video intro is meant to showcase which of these?',
+  items:[['Your personality',1],['Your communication',1],['Your confidence',1],['A clinical skills demo',0],['Your grade average',0],['Your salary expectations',0]],hint:'It shows who you are and how you come across.'}];
+let G,tm;
+function newGame(){G={cur:0,t:300,tries:0,code:Array.from({length:5},()=>Math.random()*10|0),lock:false};showScreen('game');$('door').classList.remove('open');
+  clearInterval(tm);tm=setInterval(()=>{G.t--;clock();if(G.t<=10&&G.t>0)SFX.tick();if(G.t<=0){clearInterval(tm);end(false)}},1000);clock();draw();puzzle()}
+function clock(){const t=Math.max(0,G.t);$('clock').textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');$('clockBox').classList.toggle('low',t<=30)}
+function draw(newIdx){$('locks').innerHTML=LOCKS.map((_,i)=>{const y=164+i*58;return `<g class="lock ${i<G.cur?'off':''} ${i===G.cur?'cur':''}" transform="translate(200,${y})">
+  <path class="shackle" d="M-10 0 v-9 a10 10 0 0 1 20 0 v9" fill="none" stroke="#C9D5DC" stroke-width="5"/><rect class="body" x="-16" y="-1" width="32" height="28" rx="5"/><text y="18">${i+1}</text></g>`}).join('');
+  $('opened').textContent=G.cur+'/5';
+  $('notes').innerHTML=G.code.map((d,i)=>`<div class="note ${i<G.cur?'':'empty'} ${i===newIdx?'new':''}">${i<G.cur?d:'?'}</div>`).join('')}
+function penalty(hint){G.tries++;G.t=Math.max(0,G.t-15);clock();SFX.bad();flash('#E5534B');shakeEl($('puz'));const p=centerOf($('clockBox'));floatText(p.x,p.y+40,'−15s','#FF8A84');
+  const m=$('msg');m.className='msg bad';m.textContent='Still locked. '+hint}
+function solved(){SFX.unlock();const lk=$('locks').children[G.cur];G.cur++;draw(G.cur-1);const p=centerOf(lk);burst(p.x,p.y);SFX.good(G.cur);
+  const m=$('msg');m.className='msg good';m.textContent=`Click! Lock ${G.cur} is open. Digit ${G.cur}: ${G.code[G.cur-1]}`;G.lock=true;
+  setTimeout(()=>{G.lock=false;G.cur<5?puzzle():keypad()},1100)}
+function puzzle(){const L=LOCKS[G.cur];let h=`<div class="lk">Lock ${G.cur+1} of 5</div><h2>${L.title}</h2><p class="pr">${L.pr}</p>`;
+  if(L.type==='order')h+=`<div class="opts">${shuffle(L.items.map((t,i)=>[t,i])).map(([t,i])=>`<button class="opt" data-i="${i}"><span class="bd"></span>${t}</button>`).join('')}</div>`;
+  if(L.type==='multi')h+=`<div class="opts" style="grid-template-columns:1fr 1fr">${shuffle(L.items).map(([t,ok])=>`<button class="opt" data-ok="${ok}"><span class="bd">✓</span>${t}</button>`).join('')}</div>`;
+  if(L.type==='pairs')h+=L.items.map((p,k)=>`<div class="pairq">${p[0]}</div><div class="row2" data-k="${k}">${[1,2].map(j=>`<button class="opt" data-j="${j-1}"><span class="bd">${j===1?'A':'B'}</span>${p[j]}</button>`).join('')}</div>`).join('');
+  $('puz').innerHTML=h+`<div class="acts">${L.type==='order'?'<button class="btn line" id="clr">Clear</button>':''}<div class="msg" id="msg"></div><button class="btn" id="try">Try the lock 🔑</button></div>`;
+  $('puz').animate([{transform:'translateX(40px)',opacity:0},{transform:'none',opacity:1}],{duration:300,easing:'ease-out'});
+  const opts=[...$('puz').querySelectorAll('.opt')];
+  if(L.type==='order'){let seq=[];const paint=()=>opts.forEach(o=>{const n=seq.indexOf(+o.dataset.i);o.classList.toggle('on',n>-1);o.querySelector('.bd').textContent=n>-1?(L.labels?L.labels[n]:n+1):''});
+    opts.forEach(o=>o.onclick=()=>{SFX.click();const i=+o.dataset.i,n=seq.indexOf(i);if(n>-1)seq=seq.slice(0,n);else seq.push(i);paint()});
+    $('clr').onclick=()=>{seq=[];paint()};
+    $('try').onclick=()=>{if(G.lock)return;if(seq.length<L.items.length){$('msg').className='msg bad';$('msg').textContent='Tap every step first.';return}
+      if(seq.every((v,k)=>v===k))solved();else{penalty(L.hint);seq=[];paint()}}}
+  if(L.type==='multi'){opts.forEach(o=>o.onclick=()=>{SFX.click();o.classList.toggle('on');o.classList.remove('bad')});
+    $('try').onclick=()=>{if(G.lock)return;const ok=opts.every(o=>o.classList.contains('on')===(o.dataset.ok==='1'));if(ok)solved();else{opts.forEach(o=>{if(o.classList.contains('on')&&o.dataset.ok==='0')o.classList.add('bad')});penalty(L.hint)}}}
+  if(L.type==='pairs'){const pick={};$('puz').querySelectorAll('.row2').forEach(r=>r.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{SFX.click();r.querySelectorAll('.opt').forEach(x=>x.classList.remove('on','bad'));o.classList.add('on');pick[r.dataset.k]=+o.dataset.j}));
+    $('try').onclick=()=>{if(G.lock)return;if(Object.keys(pick).length<4){$('msg').className='msg bad';$('msg').textContent='Answer all four first.';return}
+      let ok=true;$('puz').querySelectorAll('.row2').forEach(r=>{if(pick[r.dataset.k]!==L.items[r.dataset.k][3]){ok=false;r.querySelector('.opt.on').classList.add('bad')}});ok?solved():penalty(L.hint)}}}
+function keypad(){let entry='';$('puz').innerHTML=`<div class="lk">Final step</div><h2>Enter the door code</h2><p class="pr">Type the five digits from your sticky notes, in order.</p>
+  <div class="display" id="disp"></div><div class="keypad">${[1,2,3,4,5,6,7,8,9,'⌫',0,'✓'].map(k=>`<button data-k="${k}">${k}</button>`).join('')}</div><div class="acts" style="padding-top:8px"><div class="msg" id="msg"></div></div>`;
+  const disp=()=>$('disp').innerHTML=Array.from({length:5},(_,i)=>`<span>${entry[i]??''}</span>`).join('');disp();
+  $('puz').querySelectorAll('.keypad button').forEach(b=>b.onclick=()=>{const k=b.dataset.k;SFX.click();
+    if(k==='⌫')entry=entry.slice(0,-1);else if(k==='✓'){if(entry===G.code.join(''))win();else{penalty('Check the sticky notes under the door.');entry=''}}else if(entry.length<5)entry+=k;disp()})}
+function win(){clearInterval(tm);$('door').classList.add('open');SFX.win();confetti();setTimeout(()=>end(true),1800)}
+function end(ok){showScreen('end');const used=300-G.t;const s=!ok?0:G.tries===0?3:G.tries<=2?2:1;
+  $('ek').textContent=ok?'Door open':'The office closed';$('et').textContent=ok?'You made it in!':'Locked out!';$('fstars').innerHTML=starsHTML(s);
+  $('fsum').textContent=ok?`Escaped in ${Math.floor(used/60)}:${String(used%60).padStart(2,'0')} with ${G.tries} wrong ${G.tries===1?'try':'tries'}.`:`You opened ${G.cur} of 5 locks. Try again and beat the clock.`;
+  if(ok&&s>=2)confetti();if(!ok)SFX.lose()}
+$('go').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

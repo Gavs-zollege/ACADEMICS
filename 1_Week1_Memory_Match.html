@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 1 Memory Match | Dental Assisting</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:flex;align-items:center;justify-content:center;position:relative;padding:14px}
+.grid{display:grid;gap:14px}
+.grid.g16{grid-template-columns:repeat(4,232px);grid-template-rows:repeat(4,136px)}
+.grid.g12{grid-template-columns:repeat(4,250px);grid-template-rows:repeat(3,186px)}
+.mc{perspective:900px;border:0;padding:0;background:none;cursor:pointer;font:inherit}
+.mc .in{position:relative;width:100%;height:100%;transition:transform .45s cubic-bezier(.3,1.3,.5,1);transform-style:preserve-3d}
+.mc.up .in,.mc.done .in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px 16px}
+.front{background:linear-gradient(160deg,#24508A,#173763);border:3px solid rgba(127,216,217,.35);font-size:46px;box-shadow:0 6px 0 #0A1A33}
+.mc:hover .front{border-color:var(--gold)}
+.back{transform:rotateY(180deg);background:var(--card);color:var(--cardink);box-shadow:0 6px 0 #9DB4CC;flex-direction:column;gap:4px}
+.back.k{border:4px solid var(--gold)}.back.d{border:4px solid var(--teal)}
+.back .big{font-family:var(--head);font-weight:700;font-size:54px;line-height:1}
+.back .term{font-family:var(--head);font-weight:700;font-size:28px;line-height:1.1}
+.back .desc{font-size:19px;font-weight:600;line-height:1.25}
+.back small{font-size:12px;font-weight:700;color:#6B8099;letter-spacing:.3px}
+.mc.done .back{background:#D3F0F0;border-color:var(--teal);animation:matched .5s}
+@keyframes matched{0%{transform:rotateY(180deg) scale(1)}40%{transform:rotateY(180deg) scale(1.08)}100%{transform:rotateY(180deg) scale(1)}}
+.mc.nope .back{background:#FFE1DF;border-color:var(--red)}
+.banner{position:absolute;inset:0;background:rgba(7,20,42,.88);z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+.banner .rn{color:var(--teal2);font-weight:700;font-size:24px}
+.banner h2{font-size:80px;color:#fff}.banner p{font-size:26px;color:var(--soft);margin:0;max-width:760px}
+.peek{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);font-weight:700;font-size:22px;padding:6px 22px;border-radius:99px;z-index:20;animation:pulse .6s infinite}
+.legend{position:absolute;left:24px;bottom:18px;display:flex;gap:14px;color:var(--soft);font-size:15px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 1</div>
+  <h1>Week 1 <em>Memory Match</em></h1>
+  <p class="lead">Flip two cards at a time and match each one to its meaning. You get a quick peek at the start of every round, so pay attention.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">🔢</div><b>Round 1: By the numbers</b><span>Hours, weeks, percentages and deadlines.</span></div>
+    <div class="rule"><div class="ico">🦷</div><b>Round 2: Anatomy terms</b><span>Arches, midline, quadrants, tooth types.</span></div>
+    <div class="rule"><div class="ico">🧪</div><b>Round 3: Lab objectives</b><span>Match each Week 1 lab to what you'll do.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Start matching</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 1</small>Memory Match</div>
+    <div class="chipstat"><span>Round</span><b id="rnd">1/3</b></div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <div class="chipstat"><span>Moves</span><b id="moves">0</b></div>
+    <div class="chipstat"><span>Time</span><b id="time">0:00</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play" id="play"><div class="grid" id="grid"></div></div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">All three rounds cleared</div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Play again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const NUMS=[['12','Weeks in the program'],['40','Externship hours required'],['7','Average hours per week of online coursework'],['70%','Passing grade for the course'],['25%','Miss more than this in any section and you can\'t pass'],['24','Hours your Dentrix setup link stays valid'],['180','Total program hours'],['60%','Share of your grade from final exams'],['10','Possible externship offices to list in Week 1'],['Week 6','When your externship should be secured'],['Week 4','When to start contacting externship sites'],['3','Minutes in your video introduction'],['86','Online learning hours'],['54','In-person lab hours']];
+const TERMS=[['Maxilla','The upper jaw bone'],['Mandible','The lower jaw bone'],['Midline','Imaginary line dividing the right and left of the mouth'],['Quadrant','One of four sections of the arches'],['Anterior','Incisors and canines'],['Posterior','Premolars and molars'],['Tooth #1','Where adult numbering starts: upper right'],['Primary teeth','Lettered A to T instead of numbered'],['Maxillary arch','The upper jaw dentition'],['Mandibular arch','The lower jaw dentition']];
+const LABS=[['Clinical Office Tour','Identify important areas of the dental office and their purpose'],['Tooth Numbering & Morphology','Explain the Universal Tooth Numbering System'],['Operatory Setup & PPE','Practice PPE, hand washing, setup, teardown and disinfection'],['Chairside Etiquette','Seat a patient, use finger rests and keep good posture'],['Basic Instruments & Trays','Identify basic tray instruments and their purpose'],['Intro to Sterilization','Observe the sterilization process and memorize its flow']];
+const ROUNDS=[{name:'By the numbers',pool:NUMS,n:8,cls:'g16',kind:'num',peek:2200},{name:'Anatomy terms',pool:TERMS,n:8,cls:'g16',kind:'term',peek:2600},{name:'Lab objectives',pool:LABS,n:6,cls:'g12',kind:'lab',peek:3200}];
+let G,clk;
+function newGame(){G={r:0,score:0,totalMoves:0,totalTime:0};round()}
+function round(){showScreen('game');const R=ROUNDS[G.r];Object.assign(G,{moves:0,found:0,combo:0,open:[],lock:true,secs:0,pairs:shuffle(R.pool).slice(0,R.n)});
+  const cards=shuffle(G.pairs.flatMap((p,i)=>[{i,t:'k',text:p[0]},{i,t:'d',text:p[1]}]));
+  const g=$('grid');g.className='grid '+R.cls;
+  g.innerHTML=cards.map(c=>`<button class="mc up" data-i="${c.i}" aria-label="Card"><div class="in"><div class="face front">🦷</div><div class="face back ${c.t}">${c.t==='k'?`<small>${R.kind==='num'?'NUMBER':R.kind==='lab'?'LAB':'TERM'}</small><span class="${R.kind==='num'&&c.text.length<=4?'big':'term'}">${c.text}</span>`:`<small>${R.kind==='lab'?'OBJECTIVE':'MEANING'}</small><span class="desc">${c.text}</span>`}</div></div></button>`).join('');
+  g.querySelectorAll('.mc').forEach(b=>b.onclick=()=>flip(b));hud();
+  const bn=document.createElement('div');bn.className='banner';bn.innerHTML=`<div class="rn">Round ${G.r+1} of 3</div><h2>${R.name}</h2><p>${G.pairs.length} pairs. Get ready to peek!</p>`;$('play').appendChild(bn);SFX.whoosh();
+  setTimeout(()=>{bn.remove();const pk=document.createElement('div');pk.className='peek';pk.textContent='Memorize!';$('play').appendChild(pk);
+    setTimeout(()=>{pk.remove();g.querySelectorAll('.mc').forEach(b=>b.classList.remove('up'));SFX.whoosh();G.lock=false;clearInterval(clk);clk=setInterval(()=>{G.secs++;hud()},1000)},R.peek)},1600)}
+function hud(){$('rnd').textContent=(G.r+1)+'/3';$('score').textContent=G.score;$('moves').textContent=G.moves;$('time').textContent=Math.floor(G.secs/60)+':'+String(G.secs%60).padStart(2,'0')}
+function flip(b){if(G.lock||b.classList.contains('up')||b.classList.contains('done'))return;SFX.click();b.classList.add('up');G.open.push(b);
+  if(G.open.length<2)return;G.moves++;const [a,c]=G.open;G.open=[];
+  if(a.dataset.i===c.dataset.i){G.combo++;G.found++;const pts=100*G.combo;G.score+=pts;setTimeout(()=>{a.classList.add('done');c.classList.add('done');const p=centerOf(c);burst(p.x,p.y);floatText(p.x,p.y-30,'+'+pts);SFX.good(G.combo);
+      if(G.combo>=2){comboText(G.combo>=4?`${G.combo}× ON FIRE!`:`${G.combo}× COMBO`);if(G.combo===3)SFX.combo()}hud();if(G.found===G.pairs.length)setTimeout(roundDone,700)},350)}
+  else{G.combo=0;G.lock=true;setTimeout(()=>{a.classList.add('nope');c.classList.add('nope');SFX.bad()},350);
+    setTimeout(()=>{a.classList.remove('up','nope');c.classList.remove('up','nope');G.lock=false},1300)}hud()}
+function roundDone(){clearInterval(clk);const R=ROUNDS[G.r];const bonus=Math.max(0,(R.n*2-G.moves)*50+Math.max(0,90-G.secs)*5);G.score+=bonus;G.totalMoves+=G.moves;G.totalTime+=G.secs;hud();SFX.combo();
+  const perfect=G.moves===R.n;const bn=document.createElement('div');bn.className='banner';
+  bn.innerHTML=`<div class="rn">Round ${G.r+1} complete</div><h2>${perfect?'Perfect memory!':G.moves<=R.n+4?'Sharp!':'Nice work!'}</h2><p>${G.moves} moves in ${G.secs}s · speed and accuracy bonus +${bonus}</p><button class="btn" id="nx" style="margin-top:14px">${G.r<2?'Next round':'See results'}</button>`;
+  $('play').appendChild(bn);if(perfect)confetti();$('nx').onclick=()=>{bn.remove();if(G.r<2){G.r++;round()}else end()}}
+function end(){showScreen('end');const min=22;const s=G.totalMoves<=min+8?3:G.totalMoves<=min+18?2:1;$('fscore').textContent=G.score;$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=['','Good start','Sharp memory','Photographic memory'][s];$('fsum').textContent=`${G.totalMoves} total moves across 22 pairs in ${Math.floor(G.totalTime/60)}:${String(G.totalTime%60).padStart(2,'0')}.`;
+  if(s>=2)confetti();SFX.win()}
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

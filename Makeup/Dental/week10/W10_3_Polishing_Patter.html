@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polishing Patter | Dental Assisting Week 10</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:grid;grid-template-columns:300px 1fr;gap:22px;padding:16px 26px 18px}
+.pt{background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:22px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pt .face{font-size:110px;line-height:1}
+.pt b{font-size:20px}.pt .role{color:var(--soft);font-size:15px;margin-top:-6px}
+.gauge{width:100%;margin-top:auto}.gauge .lbl{display:flex;justify-content:space-between;color:var(--soft);font-size:15px;margin-bottom:6px}.gauge .lbl b{color:var(--gold)}
+.gauge .tr{height:18px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden}.gauge .tr i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--gold),var(--teal));transition:width .6s}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}.dots i{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.12)}.dots i.g{background:var(--teal)}.dots i.b{background:var(--red)}.dots i.c{background:#fff}
+.main{display:flex;flex-direction:column;gap:12px}
+.scene{background:var(--card);color:var(--navy);border-radius:22px;padding:20px 26px;display:flex;flex-direction:column;gap:10px}
+.scene .ph{font:700 15px var(--body);color:#6B8099;letter-spacing:1px}
+.scene .t{font:700 30px var(--head);line-height:1.25}
+.scene .say{background:#EEF4FA;border-left:6px solid var(--teal);border-radius:10px;padding:10px 16px;font:700 26px var(--head)}
+.opts{flex:1;display:flex;flex-direction:column;gap:10px}
+.opt{flex:1;font:600 21px var(--body);text-align:left;padding:12px 18px;border-radius:16px;border:3px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;line-height:1.35}
+.opt:hover{border-color:var(--gold)}.opt.g{background:rgba(20,163,165,.45);border-color:var(--teal2)}.opt.b{background:rgba(229,83,75,.35);border-color:var(--red)}.opt.n0{opacity:.45}.opts.locked .opt{pointer-events:none}
+.fb{min-height:64px;display:flex;align-items:center;gap:14px;font-size:19px;line-height:1.35;border-radius:14px;padding:8px 16px;background:rgba(255,255,255,.06)}.fb p{margin:0;flex:1}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 10 lab · Coronal polishing</div>
+  <h1>Polishing <em>Patter</em></h1>
+  <p class="lead">Mr. Alvarez is in your chair for a coronal polish. Handle each moment professionally and give him accurate instructions. Keep his comfort and trust high from seating to dismissal.</p>
+  <div class="rules"><div class="rule"><div class="ico">🪥</div><b>8 moments</b><span>Seating, technique, infection control and patient education.</span></div>
+    <div class="rule"><div class="ico">😊</div><b>Comfort and trust</b><span>Professional choices raise it.</span></div>
+    <div class="rule"><div class="ico">💬</div><b>Accurate instructions</b><span>What you tell the patient has to be right.</span></div></div>
+  <button class="btn" id="playBtn">Seat the patient</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 10</small>Polishing Patter</div>
+    <div class="chipstat"><span>Moment</span><b id="num">1/8</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play">
+    <div class="pt"><div class="face" id="face">🙂</div><b>Mr. Alvarez</b><div class="role">Coronal polish appointment</div><div class="dots" id="dots"></div>
+      <div class="gauge"><div class="lbl"><span>Comfort & trust</span><b id="gv">60%</b></div><div class="tr"><i id="gb" style="width:60%"></i></div></div></div>
+    <div class="main"><div class="scene" id="scene"></div><div class="opts" id="opts"></div><div class="fb" id="fb"></div></div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div style="font-size:100px;line-height:1" id="eem"></div>
+  <h1 id="et" style="font-size:60px"></h1><div id="fstars"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">See another patient</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+// [phase, situation, patient line, [good, bad1, bad2], why]
+const M=[['PATIENT PREP','Mr. Alvarez sits down. What do you do first?','',['Review his medical history and explain what the coronal polish involves','Start polishing right away to save time','Chat about the weekend and skip the explanation'],'Patient preparation comes first: review the medical history and explain the procedure.'],
+ ['PATIENT EDUCATION','He looks curious.','"So what does the polishing actually do?"',['"It removes plaque and surface stains from the crowns of your teeth."','"It permanently whitens your teeth."','"It removes the hard tartar below your gums."'],'Coronal polishing removes plaque and extrinsic stains from the crowns of the teeth. It isn\'t whitening or scaling.'],
+ ['INFECTION CONTROL','You\'re about to start.','',['Put on your PPE and use a new prophy angle and cup for this patient','Reuse the prophy cup from the last patient after a quick rinse','Skip gloves since it\'s just polishing'],'Full PPE, and fresh single-use items for every patient.'],
+ ['TECHNIQUE','You begin polishing.','',['Use a light, intermittent touch with a stable finger rest','Press hard and steady to finish faster','Polish without a finger rest so you can move freely'],'A light, intermittent touch with a fulcrum keeps the patient comfortable and the tooth cool.'],
+ ['PATIENT COMFORT','He tenses up.','"Ow, that feels hot!"',['Lighten your pressure, keep the paste moist and use shorter strokes','Press harder so you finish sooner','Tell him it\'s normal and keep going'],'Heat comes from pressure and dry paste. Lighten up and keep it moist.'],
+ ['HOME CARE','Polish complete! He has a question.','"How should I be brushing at home?"',['"Twice a day for two minutes, with a soft brush and fluoride toothpaste, angled toward the gumline."','"Use a hard brush and scrub as hard as you can."','"Once a day is plenty."'],'Give accurate, simple home care instructions.'],
+ ['HOME CARE','One more question.','"Do I really need to floss?"',['"Yes. Clean between your teeth once a day to remove plaque your brush can\'t reach."','"Only when food gets stuck."','"No, today\'s polish takes care of that."'],'Daily interdental cleaning matters. Polishing doesn\'t replace it.'],
+ ['DISMISSAL','Time to wrap up.','',['Check how he\'s feeling, answer his questions and document the procedure','Hand him a bib and walk away','Tell him to look up any questions online'],'Professionalism runs through the entire process, all the way to documentation.']];
+let G;
+function newGame(){G={i:0,c:60,res:[]};showScreen('game');load()}
+function ui(){$('gv').textContent=G.c+'%';$('gb').style.width=G.c+'%';$('face').textContent=G.c>=85?'😁':G.c>=65?'🙂':G.c>=45?'😐':G.c>=25?'😟':'😣';$('num').textContent=Math.min(G.i+1,8)+'/8';
+  $('dots').innerHTML=M.map((_,k)=>`<i class="${G.res[k]===1?'g':G.res[k]===0?'b':k===G.i?'c':''}"></i>`).join('')}
+function load(){const m=M[G.i];ui();$('scene').innerHTML=`<div class="ph">${m[0]}</div><div class="t">${m[1]}</div>${m[2]?`<div class="say">${m[2]}</div>`:''}`;
+  const o=shuffle(m[3].map((t,k)=>[t,k===0]));$('opts').className='opts';$('opts').innerHTML=o.map(([t,g])=>`<button class="opt" data-g="${g?1:0}">${t}</button>`).join('');$('fb').innerHTML='<p style="color:var(--soft)">Choose your move.</p>';
+  $('opts').querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(b));$('scene').animate([{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:280})}
+function pick(b){$('opts').classList.add('locked');const ok=b.dataset.g==='1';$('opts').querySelectorAll('.opt').forEach(x=>x.classList.add(x.dataset.g==='1'?'g':x===b?'b':'n0'));
+  G.res[G.i]=ok?1:0;G.c=Math.max(0,Math.min(100,G.c+(ok?6:-15)));ok?SFX.good(G.i):(SFX.bad(),shakeEl($('face')));if(ok){const p=centerOf($('face'));burst(p.x,p.y,undefined,10)}ui();
+  $('fb').innerHTML=`<p><b style="color:${ok?'var(--teal2)':'#FF8A84'}">${ok?'Professional!':'Not quite.'}</b> ${M[G.i][4]}</p><button class="btn" id="nx">${G.i<7?'Next':'Dismiss the patient'}</button>`;$('nx').onclick=()=>{G.i++;G.i<8?load():end()};$('nx').focus()}
+function end(){showScreen('end');const r=G.res.filter(x=>x).length;const s=r===8?3:r>=6?2:r>=4?1:0;$('eem').textContent=['😣','😐','🙂','😁'][s];$('et').textContent=['Mr. Alvarez is unhappy','He\'s okay…','Happy patient!','Five-star patient review!'][s];$('fstars').innerHTML=starsHTML(s);
+  $('fsum').textContent=`${r} of 8 moments handled professionally. Final comfort and trust: ${G.c}%.`;if(s>=2)confetti();SFX.win()}
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

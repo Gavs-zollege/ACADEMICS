@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fact Whack | Dental Assisting Week 4</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:flex;flex-direction:column;padding:12px 28px 16px;gap:12px}
+.tbar{height:14px;border-radius:7px;background:rgba(255,255,255,.1);overflow:hidden}.tbar i{display:block;height:100%;background:var(--teal);width:100%}.tbar.low i{background:var(--red)}
+.field{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:16px 22px}
+.hole{position:relative;overflow:hidden;border-radius:20px 20px 60px 60px;background:linear-gradient(180deg,rgba(5,14,30,0),rgba(5,14,30,.45));border-bottom:3px solid rgba(127,216,217,.15)}
+.hole::after{content:"";position:absolute;left:6%;right:6%;bottom:0;height:30px;border-radius:50%;background:#050D1C;box-shadow:inset 0 6px 10px rgba(0,0,0,.8);z-index:3}
+.mole{position:absolute;left:4%;right:4%;bottom:10px;height:120px;border-radius:18px;background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center;text-align:center;padding:8px 14px;font:700 22px var(--body);line-height:1.2;cursor:pointer;transform:translateY(130%);transition:transform .22s cubic-bezier(.3,1.4,.5,1);z-index:2;box-shadow:0 -4px 0 #9DB4CC inset;border:3px solid #fff}
+.mole.up{transform:translateY(0)}
+.mole.hitT{background:#D3F0F0;border-color:var(--teal);color:#0B6F71}
+.mole.hitF{background:#FFE1DF;border-color:var(--red);color:#9E2E28;animation:shake .3s}
+.mole .tag{position:absolute;top:-2px;right:8px;font-size:26px}
+.fbline{height:52px;border-radius:14px;background:rgba(255,255,255,.06);display:flex;align-items:center;padding:0 18px;font-size:20px;color:var(--soft)}
+.legend{display:flex;justify-content:space-between;color:var(--soft);font-size:17px}
+.legend b{color:var(--teal2)}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 4 review</div>
+  <h1>Fact <em>Whack</em></h1>
+  <p class="lead">Statements pop up from the holes. Whack every TRUE one before it ducks back down, and leave the false ones alone.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">✅</div><b>Whack the truth</b><span>+100 for every true statement you hit.</span></div>
+    <div class="rule"><div class="ico">🚫</div><b>Skip the fakes</b><span>Hitting a false one costs 75 points and breaks your combo.</span></div>
+    <div class="rule"><div class="ico">⏱️</div><b>60 seconds</b><span>It speeds up as the clock runs down.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Grab the mallet</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 4</small>Fact Whack</div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <div class="chipstat"><span>Combo</span><b id="combo">0</b></div>
+    <div class="chipstat"><span>Time</span><b id="time">60</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play">
+    <div class="legend"><span>Whack only the <b>TRUE</b> statements</span><span id="tally">0 true hit · 0 fakes hit</span></div>
+    <div class="tbar" id="tb"><i id="tbi"></i></div>
+    <div class="field" id="field"></div>
+    <div class="fbline" id="fbl">Get ready…</div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">Time's up</div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Whack again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const F=[['Coursework is due at midnight before class','Coursework is due at noon'],['Finish the work before clicking "Next"','Click "Next" to skip ahead'],['Visit offices in person','Only email offices about externships'],['Bring your resume to every visit','Leave your resume at home'],
+ ['Dress professionally for office visits','Gym clothes are fine for visits'],['Be friendly and polite at the front desk','Act bored at the front desk'],['In-person visits tend to get placements sooner','Calling beats visiting in person'],
+ ['Log in to HSS with your Canvas credentials','Make a brand-new HSS account'],['HSS login trouble? Email info@HSS','HSS login trouble? Call the dentist'],['Struggling to find a site? Email externships@HSS','Struggling to find a site? Just wait'],
+ ['Affiliation agreements go to your Externship Specialist','Affiliation agreements go to a classmate'],['Secured a site? Submit the Office Form right away','Secured a site? Submit the form next month'],['The Office Form is under My Account in HSS','The Office Form is in Canvas Grades'],
+ ['You earn CPR certification in this week\'s lab','CPR certification happens in Week 12'],['Take a pulse with two fingers, not your thumb','Take a pulse with your thumb'],['A normal adult pulse is 60–100','A normal adult pulse is 20–40'],
+ ['CPR ratio: 30 compressions, 2 breaths','CPR ratio: 10 compressions, 1 breath'],['Put reminders in your phone and calendar','Reminders? Just try to remember them']];
+const DUR=60;let G,tm,sp;
+function newGame(){G={score:0,combo:0,best:0,tHit:0,fHit:0,tMiss:0,t:DUR,used:new Set(),pool:F.flatMap(([a,b])=>[[a,1,a],[b,0,a]])};
+  $('field').innerHTML=Array.from({length:9},(_,i)=>`<div class="hole" data-h="${i}"><div class="mole" id="m${i}"></div></div>`).join('');
+  for(let i=0;i<9;i++){const m=$('m'+i);m.onpointerdown=e=>{e.preventDefault();whack(m)}}
+  showScreen('game');hud();$('fbl').textContent='Whack the true statements!';clearInterval(tm);clearTimeout(sp);
+  tm=setInterval(()=>{G.t-=.1;$('tbi').style.width=(G.t/DUR*100)+'%';$('tb').classList.toggle('low',G.t<=10);$('time').textContent=Math.ceil(Math.max(0,G.t));if(G.t<=0)end()},100);spawnLoop()}
+function hud(){$('score').textContent=G.score;$('combo').textContent=G.combo;$('tally').textContent=`${G.tHit} true hit · ${G.fHit} fakes hit`}
+function spawnLoop(){if(G.t<=0)return;const prog=1-G.t/DUR;const up=[...document.querySelectorAll('.mole.up')].length;if(up<2+Math.round(prog*2))spawn();sp=setTimeout(spawnLoop,750-prog*350)}
+function spawn(){const free=[...Array(9).keys()].filter(i=>!$('m'+i).classList.contains('up'));if(!free.length)return;const h=free[Math.random()*free.length|0];
+  let pick,tries=0;do{pick=G.pool[Math.random()*G.pool.length|0];tries++}while((G.used.has(pick[0])||[...document.querySelectorAll('.mole.up')].some(m=>m.dataset.pair===pick[2]))&&tries<40);
+  G.used.add(pick[0]);if(G.used.size>G.pool.length-8)G.used.clear();
+  const m=$('m'+h);m.className='mole';m.innerHTML=pick[0];m.dataset.t=pick[1];m.dataset.pair=pick[2];m.dataset.fix=pick[2];m.dataset.hit='';void m.offsetWidth;m.classList.add('up');
+  const stay=2600-(1-G.t/DUR)*1000;m._to=setTimeout(()=>{if(m.classList.contains('up')&&!m.dataset.hit){if(m.dataset.t==='1')G.tMiss++;m.classList.remove('up')}},stay)}
+function whack(m){if(!m.classList.contains('up')||m.dataset.hit||G.t<=0)return;m.dataset.hit='1';clearTimeout(m._to);const p=centerOf(m);
+  if(m.dataset.t==='1'){G.combo++;G.best=Math.max(G.best,G.combo);G.tHit++;const pts=100+(G.combo>=5?50:0);G.score+=pts;m.classList.add('hitT');m.insertAdjacentHTML('beforeend','<span class="tag">✅</span>');burst(p.x,p.y);floatText(p.x,p.y-40,'+'+pts);SFX.good(G.combo);
+    if(G.combo%5===0){comboText(`${G.combo} COMBO!`);SFX.combo()}$('fbl').innerHTML=`<span style="color:var(--teal2);font-weight:700">True!&nbsp;</span> ${m.textContent.replace('✅','')}`}
+  else{G.combo=0;G.fHit++;G.score=Math.max(0,G.score-75);m.classList.add('hitF');m.insertAdjacentHTML('beforeend','<span class="tag">❌</span>');floatText(p.x,p.y-40,'−75','#FF8A84');SFX.bad();
+    $('fbl').innerHTML=`<span style="color:#FF8A84;font-weight:700">Fake!&nbsp;</span> The truth: ${m.dataset.fix}`}
+  hud();setTimeout(()=>m.classList.remove('up'),420)}
+function end(){clearInterval(tm);clearTimeout(sp);document.querySelectorAll('.mole').forEach(m=>{clearTimeout(m._to);m.classList.remove('up')});showScreen('end');
+  const acc=G.tHit/Math.max(1,G.tHit+G.fHit);const s=G.tHit>=18&&acc>=.9?3:G.tHit>=12&&acc>=.8?2:G.tHit>=6?1:0;$('fscore').textContent=G.score;$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=['Review the Week 4 slides','Warming up','Sharp eye','Fact-whacking champion'][s];$('fsum').textContent=`${G.tHit} true statements whacked · ${G.fHit} fakes hit · best combo ${G.best}`;if(s>=2)confetti();SFX.win()}
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitals Lab | Dental Assisting Week 4</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:flex;flex-direction:column;padding:16px 28px 20px;gap:14px;position:relative}
+.ph{display:flex;align-items:baseline;gap:14px}.ph h2{font-size:30px;color:#fff}.ph span{color:var(--soft);font-size:18px}
+.monitor{flex:1;display:flex;align-items:center;justify-content:center;gap:40px;background:#06131F;border:4px solid #23405E;border-radius:26px;position:relative;overflow:hidden}
+.monitor::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(92,255,176,.03) 0 2px,transparent 2px 4px);pointer-events:none}
+.bp{font:700 130px "Courier New",monospace;color:#5CFFB0;text-shadow:0 0 18px rgba(92,255,176,.55);line-height:1}
+.bp small{font-size:30px;color:#3FA97A;display:block;text-align:center;letter-spacing:2px}
+.ekg{width:340px;height:120px}
+.ekg path{fill:none;stroke:#5CFFB0;stroke-width:3;filter:drop-shadow(0 0 6px rgba(92,255,176,.7));stroke-dasharray:700;stroke-dashoffset:700;animation:ekg 1.6s linear infinite}
+@keyframes ekg{to{stroke-dashoffset:-700}}
+.cats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;height:120px}
+.cat{font:700 20px var(--body);border:3px solid transparent;border-radius:16px;cursor:pointer;color:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;line-height:1.15;text-align:center;padding:6px}
+.cat small{font-size:14px;font-weight:600;opacity:.8}
+.cat:hover{border-color:#fff}.cat.pick{outline:5px solid #fff}
+.c0{background:#7FDB9A}.c1{background:#FFE27A}.c2{background:#FFB25B}.c3{background:#FF7A6E}.c4{background:#C9283E;color:#fff}
+.cats.locked .cat{pointer-events:none}.cat.dim{opacity:.3}
+.fb{min-height:66px;display:flex;align-items:center;gap:16px;border-radius:16px;padding:10px 18px;background:rgba(255,255,255,.06)}
+.fb p{margin:0;flex:1;font-size:20px;line-height:1.35}
+/* pulse */
+.heart{font-size:150px;line-height:1;transition:transform .08s}
+.heart.beat{transform:scale(1.25)}
+.pcount{font:700 90px "Courier New",monospace;color:#5CFFB0;text-shadow:0 0 14px rgba(92,255,176,.5);min-width:200px;text-align:center}
+.pcount small{display:block;font-size:22px;color:#3FA97A}
+.tapbtn{font:700 30px var(--body);padding:22px 50px;border-radius:20px;border:0;background:var(--teal);color:#fff;cursor:pointer;box-shadow:0 8px 0 #0B6F71}
+.tapbtn:active{transform:translateY(5px);box-shadow:0 3px 0 #0B6F71}
+.row{display:flex;gap:14px;align-items:center;justify-content:center}
+.calc{display:flex;align-items:center;gap:14px;font-size:26px;color:#fff;justify-content:center}
+.calc input{font:700 40px var(--head);width:150px;text-align:center;border-radius:14px;border:3px solid var(--gold);background:#fff;color:var(--navy);padding:6px;-webkit-user-select:text;user-select:text}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:16px;height:110px}
+.yn button{font:700 30px var(--body);border-radius:20px;border:0;cursor:pointer;color:#fff}
+.yn .y{background:var(--teal);box-shadow:0 7px 0 #0B6F71}.yn .n{background:var(--red);box-shadow:0 7px 0 #9E2E28}
+.yn.locked button{pointer-events:none}
+.scen{flex:1;background:var(--card);color:var(--cardink);border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 50px;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+.scen .q{font-family:var(--head);font-weight:700;font-size:42px;line-height:1.25;color:var(--navy)}
+.scen .lbl{font-weight:700;color:#4F6680;font-size:19px;margin-bottom:10px}
+.ov{position:absolute;inset:0;background:rgba(7,20,42,.92);z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+.ov h2{font-size:64px;color:#fff}.ov p{font-size:24px;color:var(--soft);max-width:820px;margin:0}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 4 lab · Blood pressure and pulse</div>
+  <h1>Vitals <em>Lab</em></h1>
+  <p class="lead">Warm up for today's blood pressure and pulse lab with three rounds of vital-signs practice.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">🩺</div><b>Round 1: Read the cuff</b><span>Classify each blood pressure reading.</span></div>
+    <div class="rule"><div class="ico">💓</div><b>Round 2: Count the pulse</b><span>Count beats for 15 seconds, then work out beats per minute.</span></div>
+    <div class="rule"><div class="ico">🦷</div><b>Round 3: When do we take it?</b><span>Decide when vitals get taken in the dental office.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Start the lab</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 4</small>Vitals Lab</div>
+    <div class="chipstat"><span>Round</span><b id="rnd">1/3</b></div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <div class="chipstat"><span>Streak</span><b id="streak">0</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play" id="play"></div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">Vitals lab warm-up complete</div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Run it again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const CATS=[['Normal','<120 and <80'],['Elevated','120–129 and <80'],['Stage 1','130–139 or 80–89'],['Stage 2','≥140 or ≥90'],['Crisis','>180 and/or >120']];
+const BP=[[112,72,0,'Both numbers are in the normal range.'],[124,76,1,'Systolic 120–129 with diastolic under 80 is elevated.'],[134,78,2,'Systolic 130–139 is Stage 1.'],[118,86,2,'Systolic is normal, but diastolic 80–89 makes it Stage 1. The higher category wins.'],
+ [146,88,3,'Systolic 140 or higher is Stage 2.'],[128,92,3,'Diastolic 90 or higher makes it Stage 2, even with a lower systolic.'],[186,112,4,'Systolic over 180 is a hypertensive crisis. Alert the dentist immediately.'],[108,68,0,'Both numbers are in the normal range.']];
+const PULSES=[72,96,56];
+const WHEN=[['A new patient comes in for their first visit.',1,'Baseline vitals are recorded at a new patient\'s first visit.'],['Before the dentist gives a local anesthetic.',1,'Vitals are checked before anesthetic is given.'],['A patient with a history of high blood pressure is seated for a routine visit.',1,'Patients with a history of high blood pressure should be checked at their visits.'],
+ ['A patient says they feel dizzy and faint in the chair.',1,'Check vitals right away and let the dentist know.'],['You\'re sterilizing instruments after the patient has left.',0,'There\'s no patient in front of you, so there are no vitals to take.'],['Before a surgical procedure, like an extraction.',1,'Vitals are taken before surgical procedures.'],['A patient is at the front desk scheduling their next cleaning.',0,'Vitals are taken chairside as part of care, not at checkout.']];
+let G,iv;
+function newGame(){G={score:0,streak:0,ok:0,total:0};showScreen('game');roundBP(0)}
+function hud(r){$('rnd').textContent=r+'/3';$('score').textContent=G.score;$('streak').textContent=G.streak}
+function award(ok,el,base=100){G.total++;if(ok){G.ok++;G.streak++;const pts=base*(G.streak>=3?2:1);G.score+=pts;SFX.good(G.streak);if(el){const p=centerOf(el);burst(p.x,p.y);floatText(p.x,p.y-30,'+'+pts)}if(G.streak%3===0){comboText(`${G.streak} IN A ROW ×2`);SFX.combo()}}else{G.streak=0;SFX.bad();flash('#E5534B')}}
+function fb(ok,txt,next,label){$('fb').innerHTML=`<p><b style="color:${ok?'var(--teal2)':'#FF8A84'}">${ok?'Correct!':'Not quite.'}</b> ${txt}</p><button class="btn" id="nx">${label||'Next'}</button>`;$('nx').onclick=next;$('nx').focus()}
+function roundBP(i){hud(1);if(i===0)G.bp=shuffle(BP);const r=G.bp[i];
+  $('play').innerHTML=`<div class="ph"><h2>Round 1: Read the cuff</h2><span>Reading ${i+1} of 8 · Tap the category</span></div>
+  <div class="monitor"><svg class="ekg" viewBox="0 0 340 120"><path d="M0 60 H80 L95 60 L105 20 L118 100 L130 60 H200 L215 60 L225 20 L238 100 L250 60 H340"/></svg><div class="bp">${r[0]}/${r[1]}<small>SYS / DIA  mmHg</small></div></div>
+  <div class="cats" id="cats">${CATS.map((c,k)=>`<button class="cat c${k}" data-k="${k}">${c[0]}<small>${c[1]}</small></button>`).join('')}</div>
+  <div class="fb" id="fb"><p style="color:var(--soft)">Check both numbers. If they fall in different categories, the higher one wins.</p></div>`;
+  $('cats').querySelectorAll('.cat').forEach(b=>b.onclick=()=>{$('cats').classList.add('locked');const ok=+b.dataset.k===r[2];b.classList.add('pick');$('cats').querySelectorAll('.cat').forEach(x=>{if(+x.dataset.k!==r[2]&&x!==b)x.classList.add('dim')});const cr=$('cats').querySelector(`[data-k="${r[2]}"]`);cr.classList.add('pick');cr.insertAdjacentHTML('afterbegin','<span style="font-size:26px">✓</span>');if(!ok){b.insertAdjacentHTML('afterbegin','<span style="font-size:26px">✗</span>');b.style.opacity=.75}
+    award(ok,b);hud(1);fb(ok,`${r[0]}/${r[1]} is <b>${CATS[r[2]][0]}</b>. ${r[3]}`,()=>i<7?roundBP(i+1):interlude(2,'Count the pulse','A pulse appears for 15 seconds. Tap once for every beat, then work out the beats per minute.',()=>roundPulse(0)))})}
+function interlude(n,t,p,go){const o=document.createElement('div');o.className='ov';o.innerHTML=`<div style="color:var(--teal2);font-weight:700;font-size:22px">Round ${n} of 3</div><h2>${t}</h2><p>${p}</p><button class="btn" id="go" style="margin-top:10px">Go</button>`;$('play').appendChild(o);SFX.combo();$('go').onclick=go}
+function roundPulse(i){hud(2);const bpm=PULSES[i];let count=0,left=15;
+  $('play').innerHTML=`<div class="ph"><h2>Round 2: Count the pulse</h2><span>Patient ${i+1} of 3 · Tap for every beat you see and hear</span></div>
+  <div class="monitor"><div class="heart" id="heart">❤️</div><div class="pcount" id="pc">${count}<small>beats counted</small></div><div class="pcount" id="pt" style="color:var(--gold);text-shadow:none">15<small style="color:var(--soft)">seconds left</small></div></div>
+  <div class="row" id="ctl"><button class="btn" id="startP">Start the 15-second count</button></div>
+  <div class="fb" id="fb"><p style="color:var(--soft)">Tip: feel the radial pulse with your index and middle fingers, never your thumb, because your thumb has its own pulse.</p></div>`;
+  $('startP').onclick=()=>{$('ctl').innerHTML=`<button class="tapbtn" id="tap">TAP each beat</button>`;
+    const beatMs=60000/bpm;const t0=performance.now();let nextBeat=t0+beatMs*.4;
+    const tapF=()=>{count++;$('pc').firstChild.textContent=count;SFX.click()};$('tap').onpointerdown=e=>{e.preventDefault();tapF()};G.tapF=tapF;
+    clearInterval(iv);iv=setInterval(()=>{const now=performance.now();if(now>=nextBeat){nextBeat+=beatMs;const h=$('heart');h.classList.add('beat');setTimeout(()=>h&&h.classList.remove('beat'),110);SFX.tick()}
+      const l=Math.max(0,15-(now-t0)/1000);$('pt').firstChild.textContent=Math.ceil(l);if(l<=0){clearInterval(iv);G.tapF=null;askCalc(i,bpm,count)}},20)}}
+function askCalc(i,bpm,count){const actual=Math.round(bpm/4);
+  $('ctl').innerHTML=`<div class="calc">You counted <b style="color:var(--gold)">&nbsp;${count}&nbsp;</b> beats in 15 seconds. That's <input id="ans" inputmode="numeric" maxlength="3"> beats per minute <button class="btn" id="sub">Check</button></div>`;$('ans').focus();
+  const go=()=>{const v=+$('ans').value;const ok=v===count*4;award(ok,$('ans'));hud(2);const close=Math.abs(count-actual)<=1;
+    fb(ok,`${count} × 4 = ${count*4} beats per minute. ${close?'Your count was spot on.':`The actual pulse was ${bpm} (${actual} beats in 15 seconds), so watch closely next time.`} Normal adult resting pulse is 60–100.`,()=>i<2?roundPulse(i+1):interlude(3,'When do we take it?','Decide whether blood pressure and pulse would be taken in each situation.',()=>roundWhen(0)))};
+  $('sub').onclick=go;$('ans').onkeydown=e=>{if(e.key==='Enter')go()}}
+function roundWhen(i){hud(3);if(i===0)G.w=shuffle(WHEN);const w=G.w[i];
+  $('play').innerHTML=`<div class="ph"><h2>Round 3: When do we take vitals?</h2><span>Situation ${i+1} of ${G.w.length}</span></div>
+  <div class="scen"><div class="lbl">Would you take blood pressure and pulse here?</div><div class="q">${w[0]}</div></div>
+  <div class="yn" id="yn"><button class="y" data-v="1">Yes, take vitals</button><button class="n" data-v="0">No</button></div>
+  <div class="fb" id="fb"><p style="color:var(--soft)">Think: is there a patient in the chair, and could their health affect treatment?</p></div>`;
+  $('yn').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('yn').classList.add('locked');const ok=+b.dataset.v===w[1];award(ok,b);hud(3);fb(ok,w[2],()=>i<G.w.length-1?roundWhen(i+1):end(),i<G.w.length-1?'Next':'Results')})}
+function end(){clearInterval(iv);showScreen('end');const acc=G.ok/G.total;const s=acc>=.9?3:acc>=.75?2:acc>=.5?1:0;$('fscore').textContent=G.score;$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=['Review your vitals notes','Getting there','Steady hands','Vitals pro'][s];$('fsum').textContent=`${G.ok} of ${G.total} correct across all three rounds.`;if(s>=2)confetti();SFX.win()}
+addEventListener('keydown',e=>{if(e.code==='Space'&&G&&G.tapF){e.preventDefault();if(!e.repeat)G.tapF()}});
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

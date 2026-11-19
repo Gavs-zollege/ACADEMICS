@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 4 Crossword | Dental Assisting</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:grid;grid-template-columns:auto 1fr;gap:24px;padding:14px 24px 16px}
+.left{display:flex;flex-direction:column;gap:10px}
+.cur{height:56px;border-radius:14px;background:var(--gold);color:var(--navy);display:flex;align-items:center;padding:0 18px;font-size:19px;font-weight:700;gap:10px;line-height:1.2}
+.cur b{font-family:var(--head);font-size:22px;flex:none}
+.grid{display:grid;gap:3px;position:relative}
+.cell{width:41px;height:41px;border-radius:6px;background:#fff;color:var(--navy);position:relative;display:flex;align-items:center;justify-content:center;font:700 24px var(--body);cursor:pointer;text-transform:uppercase}
+.cell.blk{background:transparent;cursor:default}
+.cell .num{position:absolute;top:1px;left:3px;font-size:10px;font-weight:700;color:#4F6680}
+.cell.word{background:#FFF1CF}.cell.sel{background:var(--gold)}
+.cell.bad{background:#FFB3AE;color:#9E2E28}.cell.rev{color:#0B6F71}
+.cell.solved{background:#D3F0F0;color:#0B6F71}
+.cell.done{animation:pop .4s}
+.clues{background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:20px;padding:12px 16px;display:flex;flex-direction:column;gap:2px}
+.clues h3{font-family:var(--body);font-size:15px;color:var(--teal2);margin:6px 0 2px;letter-spacing:.5px}
+.clue{font-size:14.5px;line-height:1.3;color:var(--soft);padding:3px 8px;border-radius:8px;cursor:pointer;display:flex;gap:8px}
+.clue b{color:#fff;min-width:18px}
+.clue:hover{background:rgba(255,255,255,.06)}
+.clue.on{background:rgba(242,179,61,.2);color:#fff}
+.clue.ok{color:var(--teal2);text-decoration:line-through;text-decoration-color:rgba(127,216,217,.5)}
+.tools{display:flex;gap:10px;margin-top:auto}
+.tools .btn{font-size:16px;padding:10px 16px;box-shadow:none}
+#kb{position:absolute;opacity:0;width:1px;height:1px;left:-10px;top:0}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 4 review</div>
+  <h1>Week 4 <em>Crossword</em></h1>
+  <p class="lead">Fourteen clues from this week's reminders, labs and externship slides. Tap a square or a clue, then type your answer.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">⌨️</div><b>Just type</b><span>Letters fill in and jump ahead. Backspace goes back. Arrow keys move you around.</span></div>
+    <div class="rule"><div class="ico">🔁</div><b>Switch direction</b><span>Tap the same square again to flip between Across and Down.</span></div>
+    <div class="rule"><div class="ico">💡</div><b>Stuck?</b><span>Check your work or reveal a letter. Fewer hints earn more stars.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Start the puzzle</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 4</small>Week 4 Crossword</div>
+    <div class="chipstat"><span>Solved</span><b id="solved">0/14</b></div>
+    <div class="chipstat"><span>Hints</span><b id="hints">0</b></div>
+    <div class="chipstat"><span>Time</span><b id="time">0:00</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play">
+    <div class="left"><div class="cur" id="cur"></div><div class="grid" id="grid"></div></div>
+    <div class="clues" id="clues"></div>
+  </div>
+  <input id="kb" autocomplete="off" autocapitalize="characters" aria-label="Crossword input">
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">Puzzle complete</div>
+  <div class="bigscore" id="fscore">0:00</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Solve it again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const D={"rows": 12, "cols": 17, "words": [{"w": "BLOODPRESSURE", "r": 6, "c": 2, "d": "A", "n": 10, "clue": "Vital sign you'll practice taking in lab, along with pulse (2 words)"}, {"w": "SPECIALIST", "r": 0, "c": 3, "d": "D", "n": 1, "clue": "Affiliation agreements go to your Externship ____"}, {"w": "CALENDAR", "r": 1, "c": 6, "d": "D", "n": 4, "clue": "Put your reminders in your phone and on your ____"}, {"w": "ATTESTATION", "r": 2, "c": 0, "d": "A", "n": 7, "clue": "Type of letter an office may request; route it to your Externship Specialist"}, {"w": "RESUME", "r": 6, "c": 8, "d": "D", "n": 11, "clue": "Have this in hand when you visit offices"}, {"w": "MIDNIGHT", "r": 10, "c": 8, "d": "A", "n": 13, "clue": "Online coursework is due at this time before next class"}, {"w": "MYACCOUNT", "r": 0, "c": 12, "d": "D", "n": 2, "clue": "Section of HSS where the Externship Office Form lives (2 words)"}, {"w": "QRCODE", "r": 1, "c": 14, "d": "D", "n": 6, "clue": "Scan this to open the Externship Office Form (2 words)"}, {"w": "CANVAS", "r": 1, "c": 0, "d": "D", "n": 3, "clue": "Log in to HSS with these credentials"}, {"w": "CPR", "r": 3, "c": 14, "d": "A", "n": 9, "clue": "Certification you earn in this week's lab"}, {"w": "INPERSON", "r": 1, "c": 10, "d": "D", "n": 5, "clue": "Visiting offices this way tends to secure externships sooner (2 words)"}, {"w": "NEXT", "r": 9, "c": 0, "d": "A", "n": 12, "clue": "Don't click this until your coursework is finished"}, {"w": "FRIENDLY", "r": 2, "c": 16, "d": "D", "n": 8, "clue": "Kind of demeanor to show on office visits"}, {"w": "PULSE", "r": 11, "c": 4, "d": "A", "n": 14, "clue": "Take it with two fingers, never your thumb"}]};
+let G,clk;
+function cellsOf(w){return [...w.w].map((_,i)=>[w.r+(w.d==='D'?i:0),w.c+(w.d==='A'?i:0)])}
+function newGame(){G={ans:{},grid:{},hints:0,checks:0,secs:0,solvedSet:new Set(),sel:null,dir:'A'};
+  D.words.forEach(w=>cellsOf(w).forEach(([r,c],i)=>{G.ans[r+','+c]=w.w[i]}));
+  const g=$('grid');g.style.gridTemplateColumns=`repeat(${D.cols},41px)`;let h='';
+  for(let r=0;r<D.rows;r++)for(let c=0;c<D.cols;c++){const k=r+','+c;const st=D.words.find(w=>w.r===r&&w.c===c);h+=G.ans[k]?`<div class="cell" data-k="${k}">${st?`<span class="num">${st.n}</span>`:''}<span class="l"></span></div>`:'<div class="cell blk"></div>'}
+  g.innerHTML=h;g.querySelectorAll('.cell[data-k]').forEach(c=>c.onclick=()=>tapCell(c.dataset.k));
+  const ac=D.words.filter(w=>w.d==='A').sort((a,b)=>a.n-b.n),dn=D.words.filter(w=>w.d==='D').sort((a,b)=>a.n-b.n);
+  $('clues').innerHTML=`<h3>ACROSS</h3>${ac.map(cl).join('')}<h3>DOWN</h3>${dn.map(cl).join('')}<div class="tools"><button class="btn ghost" id="chk">Check puzzle</button><button class="btn ghost" id="rev">Reveal letter</button><button class="btn ghost" id="revw">Reveal word</button></div>`;
+  $('clues').querySelectorAll('.clue').forEach(e=>e.onclick=()=>{const w=D.words.find(x=>x.d+x.n===e.dataset.id);G.dir=w.d;select(w.r+','+w.c)});
+  $('chk').onclick=check;$('rev').onclick=()=>reveal(false);$('revw').onclick=()=>reveal(true);
+  showScreen('game');clearInterval(clk);clk=setInterval(()=>{G.secs++;$('time').textContent=fmt(G.secs)},1000);
+  const first=D.words.filter(w=>w.d==='A').sort((a,b)=>a.n-b.n)[0];G.dir='A';select(first.r+','+first.c);upd()}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function cl(w){return `<div class="clue" data-id="${w.d}${w.n}"><b>${w.n}</b><span>${w.clue} (${w.w.length})</span></div>`}
+function wordAt(k,dir){const [r,c]=k.split(',').map(Number);return D.words.find(w=>w.d===dir&&cellsOf(w).some(([a,b])=>a===r&&b===c))}
+function tapCell(k){if(G.sel===k){const o=G.dir==='A'?'D':'A';if(wordAt(k,o))G.dir=o}else if(!wordAt(k,G.dir))G.dir=G.dir==='A'?'D':'A';select(k)}
+function select(k){G.sel=k;if(!wordAt(k,G.dir))G.dir=G.dir==='A'?'D':'A';const w=wordAt(k,G.dir);G.word=w;
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('sel','word'));cellsOf(w).forEach(([r,c])=>cell(r+','+c).classList.add('word'));cell(k).classList.add('sel');
+  document.querySelectorAll('.clue').forEach(e=>e.classList.toggle('on',e.dataset.id===w.d+w.n));$('cur').innerHTML=`<b>${w.n} ${w.d==='A'?'Across':'Down'}</b><span>${w.clue}</span>`;
+  $('kb').focus({preventScroll:true})}
+function cell(k){return $('grid').querySelector(`[data-k="${k}"]`)}
+function setL(k,ch){const c=cell(k);c.querySelector('.l').textContent=ch;G.grid[k]=ch;c.classList.remove('bad')}
+function move(step){const cs=cellsOf(G.word).map(([r,c])=>r+','+c);let i=cs.indexOf(G.sel)+step;if(i>=0&&i<cs.length)select(cs[i])}
+function type(ch){if(!G.sel||G.solvedCell(G.sel))return move(1);setL(G.sel,ch);SFX.click();checkWords();move(1)}
+function checkWords(){D.words.forEach(w=>{const id=w.d+w.n;if(G.solvedSet.has(id))return;if(cellsOf(w).every(([r,c])=>G.grid[r+','+c]===G.ans[r+','+c])){G.solvedSet.add(id);
+  cellsOf(w).forEach(([r,c])=>{const e=cell(r+','+c);e.classList.add('solved','done')});const m=cellsOf(w)[Math.floor(w.w.length/2)];const p=centerOf(cell(m[0]+','+m[1]));burst(p.x,p.y);SFX.good(G.solvedSet.size);
+  document.querySelector(`.clue[data-id="${id}"]`).classList.add('ok');upd();if(G.solvedSet.size===D.words.length)setTimeout(win,600)}})}
+function upd(){$('solved').textContent=G.solvedSet.size+'/'+D.words.length;$('hints').textContent=G.hints}
+function check(){G.checks++;let bad=0;Object.keys(G.grid).forEach(k=>{if(G.grid[k]&&G.grid[k]!==G.ans[k]){cell(k).classList.add('bad');bad++}});if(bad){SFX.bad();G.hints++}else SFX.combo();upd()}
+function reveal(whole){if(!G.word)return;const cs=cellsOf(G.word).map(([r,c])=>r+','+c);const targets=whole?cs:[cs.find(k=>G.grid[k]!==G.ans[k])].filter(Boolean);
+  if(!targets.length)return;targets.forEach(k=>{setL(k,G.ans[k]);cell(k).classList.add('rev')});G.hints+=whole?3:1;SFX.whoosh();checkWords();upd()}
+function win(){clearInterval(clk);showScreen('end');const s=G.hints===0?3:G.hints<=4?2:1;$('fscore').textContent=fmt(G.secs);$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=['','Solved with help','Nicely done','Crossword champ'][s];$('fsum').textContent=`All 14 words solved in ${fmt(G.secs)} with ${G.hints} hint${G.hints===1?'':'s'}.`;confetti();SFX.win()}
+document.addEventListener('keydown',e=>{if(!G||$('game').classList.contains('hidden'))return;
+  if(/^[a-zA-Z]$/.test(e.key)){e.preventDefault();type(e.key.toUpperCase())}
+  else if(e.key==='Backspace'){e.preventDefault();if(G.grid[G.sel]&&!G.solvedCell(G.sel))setL(G.sel,'');else{move(-1);if(!G.solvedCell(G.sel))setL(G.sel,'')}}
+  else if(e.key.startsWith('Arrow')){e.preventDefault();const dir=(e.key==='ArrowLeft'||e.key==='ArrowRight')?'A':'D';const st=(e.key==='ArrowRight'||e.key==='ArrowDown')?1:-1;
+    let [r,c]=G.sel.split(',').map(Number);for(let i=0;i<20;i++){dir==='A'?c+=st:r+=st;if(r<0||c<0||r>=D.rows||c>=D.cols)break;if(G.ans[r+','+c]){G.dir=dir;select(r+','+c);break}}}
+  else if(e.key==='Tab'){e.preventDefault();const ws=D.words.slice().sort((a,b)=>a.d===b.d?a.n-b.n:a.d<b.d?-1:1);const i=ws.indexOf(G.word);const n=ws[(i+1)%ws.length];G.dir=n.d;select(n.r+','+n.c)}});
+$('kb').addEventListener('input',e=>{const v=e.target.value.slice(-1);e.target.value='';if(/[a-zA-Z]/.test(v))type(v.toUpperCase())});
+$('playBtn').onclick=()=>{newGame();G.solvedCell=k=>{const ws=['A','D'].map(d=>wordAt(k,d)).filter(Boolean);return ws.some(w=>G.solvedSet.has(w.d+w.n))}};$('again').onclick=$('playBtn').onclick;wireMute();
+</script></body></html>

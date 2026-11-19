@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>After the Final: Domino Chain | Dental Assisting Week 12</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:flex;flex-direction:column;padding:14px 26px 16px;gap:12px}
+.chain{display:flex;gap:6px;align-items:center;min-height:62px;flex-wrap:nowrap;overflow:hidden}
+.mini{display:flex;border-radius:8px;overflow:hidden;border:2px solid #fff;flex:none;animation:pop .3s}
+.mini span{width:26px;height:44px;background:#fff;display:grid;place-items:center;font-size:14px}
+.mini span+span{border-left:2px solid #0E2240;background:#F2B33D}
+.cur{display:flex;align-items:stretch;background:#fff;color:var(--navy);border-radius:22px;overflow:hidden;box-shadow:0 10px 0 rgba(0,0,0,.25);min-height:150px}
+.cur .l{width:300px;background:#E8EEF5;padding:18px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-right:5px dashed var(--navy)}
+.cur .l small,.cur .r small{font:700 13px var(--body);color:#6B8099;letter-spacing:1px}.cur .l b{font:700 21px var(--body);line-height:1.25}
+.cur .r{flex:1;padding:18px 26px;display:flex;flex-direction:column;justify-content:center;gap:4px}.cur .r b{font:700 32px var(--head);line-height:1.2}
+.pool{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dom{display:flex;border-radius:16px;overflow:hidden;border:3px solid rgba(255,255,255,.25);cursor:pointer;background:rgba(255,255,255,.08);color:#fff;text-align:left;font:inherit;padding:0}
+.dom:hover{border-color:var(--gold)}
+.dom .a{flex:1.2;padding:12px 14px;display:flex;flex-direction:column;justify-content:center;gap:4px;border-right:3px dashed rgba(255,255,255,.35);font:700 18px var(--body);line-height:1.25}
+.dom .q{flex:1;padding:12px 14px;display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:15px;color:var(--soft);line-height:1.25}
+.dom small{font:700 11px var(--body);letter-spacing:1px;color:var(--teal2)}
+.dom.no{border-color:var(--red);background:rgba(229,83,75,.25);animation:shake .35s}
+.fb{min-height:44px;font-size:18px;color:var(--soft);display:flex;align-items:center}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 12 · After the final</div>
+  <h1>Domino <em>Chain</em></h1>
+  <p class="lead">Build the chain of what happens after today. Each domino answers the last question and asks the next one. Find the domino that fits, until the chain reaches graduation! 🎓</p>
+  <div class="rules"><div class="rule"><div class="ico">🁫</div><b>Match the ends</b><span>The left half has to answer the current question.</span></div>
+    <div class="rule"><div class="ico">🃏</div><b>Watch for decoys</b><span>Some dominoes have the wrong answer.</span></div>
+    <div class="rule"><div class="ico">🔗</div><b>8 links</b><span>From today's exit interview to celebrating your hire.</span></div></div>
+  <button class="btn" id="playBtn">Set up the dominoes</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 12</small>Domino Chain</div>
+    <div class="chipstat"><span>Links</span><b id="links">0/8</b></div>
+    <div class="chipstat"><span>Misses</span><b id="miss">0</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play"><div class="chain" id="chain"></div><div class="cur" id="cur"></div><div class="pool" id="pool"></div><div class="fb" id="fb">Find the domino whose left half answers the question.</div></div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">Chain complete</div>
+  <div class="bigscore" id="fscore">🎓</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Build it again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const START='Besides the lab final, what do you do in class today?';
+// [answer (left), next question (right)]
+const CHAIN=[['Fill out your exit interview','How long do you have to finish the online final and the radiology final?'],['1 week','Where do you complete them?'],['In your learning portal','What should you tell your instructor today?'],
+ ['Your job status, so the right support reaches you','Does NOT having a job block your graduation?'],['No. The Job Ready Qualification does, and you\'re already there','Not hired by the end of class? Who will support you?'],
+ ['Jessica\'s Cleanup Crew','How do they help?'],['Weekly calls, texts and emails until you\'re placed','Hired? What should you do?'],['Tell your instructor so everyone can celebrate! 🎉','🎓 FINISH']];
+const DECOY=[['2 months','Where do you complete them?'],['On the Canvas discussion board','What should you tell your instructor today?'],['Yes. No job means no diploma','Who supports you?'],['Nobody. You\'re on your own','How do they help?']];
+let G;
+function newGame(){G={k:0,miss:0};showScreen('game');render()}
+function render(){const q=G.k===0?START:CHAIN[G.k-1][1];$('links').textContent=G.k+'/8';$('miss').textContent=G.miss;
+  $('chain').innerHTML='<div class="mini"><span>▶</span><span>?</span></div>'+CHAIN.slice(0,G.k).map(()=>'<div class="mini"><span>✓</span><span>?</span></div>').join('')+(G.k<8?'':'');
+  $('cur').innerHTML=`<div class="l"><small>LAST ANSWER</small><b>${G.k===0?'START':CHAIN[G.k-1][0]}</b></div><div class="r"><small>NEXT QUESTION</small><b>${q}</b></div>`;
+  const rest=CHAIN.map((c,i)=>[c,i]).filter(([c,i])=>i>=G.k);const decoys=shuffle(DECOY).slice(0,2).map(d=>[d,-1]);const opts=shuffle([...shuffle(rest).slice(0,4).concat(rest.length?[]:[]),...decoys]);
+  if(!opts.some(([c,i])=>i===G.k))opts[0]=[CHAIN[G.k],G.k];const show=shuffle(opts).slice(0,6);
+  $('pool').innerHTML=show.map(([c,i])=>`<button class="dom" data-i="${i}"><div class="a"><small>ANSWER</small>${c[0]}</div><div class="q"><small>THEN ASKS</small>${c[1]}</div></button>`).join('');
+  $('pool').querySelectorAll('.dom').forEach(b=>b.onclick=()=>pick(b))}
+function pick(b){const i=+b.dataset.i;if(i===G.k){SFX.good(G.k+1);const p=centerOf(b);burst(p.x,p.y);$('fb').innerHTML=`<b style="color:var(--teal2)">Click! Linked.</b>&nbsp;${CHAIN[G.k][0]}`;G.k++;if(G.k>=8){$('links').textContent='8/8';SFX.combo();comboText('CHAIN COMPLETE!');confetti();return setTimeout(end,1400)}render()}
+  else{G.miss++;$('miss').textContent=G.miss;b.classList.remove('no');void b.offsetWidth;b.classList.add('no');SFX.bad();$('fb').innerHTML='<b style="color:#FF8A84">That doesn\'t answer the question.</b>&nbsp;Read the question again and try another domino.'}}
+function end(){showScreen('end');const s=G.miss===0?3:G.miss<=2?2:1;$('fstars').innerHTML=starsHTML(s);$('frank').textContent=['','Chain complete','Nicely linked','Flawless chain!'][s];
+  $('fsum').textContent='Exit interview today → online and radiology finals within 1 week in your learning portal → tell your instructor your job status. Not hired yet? You\'re supported until you\'re placed. Congratulations on finishing the program! 🎓';SFX.win()}
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

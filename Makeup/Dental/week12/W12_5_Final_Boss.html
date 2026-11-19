@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Final Boss Battle | Dental Assisting Week 12</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+#stage{background:radial-gradient(ellipse 800px 500px at 50% 30%,#3A2560 0%,#1A1638 55%,#0B0E22 100%)}
+.play{flex:1;display:flex;flex-direction:column;padding:12px 28px 16px;gap:10px}
+.arena{display:grid;grid-template-columns:1fr 160px 1fr;align-items:center;height:250px}
+.fighter{display:flex;flex-direction:column;align-items:center;gap:8px}
+.fighter .av{font-size:120px;line-height:1;transition:transform .15s}
+.fighter.hit .av{animation:hitf .4s}@keyframes hitf{0%,100%{transform:none;filter:none}30%{transform:translateX(-14px) rotate(-6deg);filter:brightness(2) saturate(0)}60%{transform:translateX(10px)}}
+.fighter.atk .av{animation:atk .35s}@keyframes atk{50%{transform:translateX(60px) scale(1.15)}}
+.fighter.batk .av{animation:batk .35s}@keyframes batk{50%{transform:translateX(-60px) scale(1.15)}}
+.fighter b{font-size:19px}
+.hp{width:300px;height:22px;border-radius:11px;background:rgba(255,255,255,.12);overflow:hidden;border:2px solid rgba(255,255,255,.25)}
+.hp i{display:block;height:100%;transition:width .4s}.hp.me i{background:linear-gradient(90deg,#2E9E5A,#5CFFB0)}.hp.boss i{background:linear-gradient(90deg,#E5534B,#FF9A94)}
+.vs{font:700 60px var(--head);color:var(--gold);text-align:center;text-shadow:0 5px 0 #B57E10}
+.qbox{background:var(--card);color:var(--navy);border-radius:22px;padding:16px 26px;display:flex;flex-direction:column;gap:10px;flex:1}
+.qbox .lbl{font:700 14px var(--body);color:#6B8099;letter-spacing:1px;display:flex;justify-content:space-between}.qbox .q{font:700 28px var(--head);line-height:1.25}
+.opts{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{font:700 20px var(--body);text-align:left;padding:12px 16px;border-radius:14px;border:3px solid #D5E0EA;background:#F1F5F9;color:var(--navy);cursor:pointer}
+.opt:hover{border-color:#7B61FF}.opt.g{background:#D3F0F0;border-color:var(--teal)}.opt.b{background:#FFE1DF;border-color:var(--red)}.opt.n0{opacity:.5}.opts.locked .opt{pointer-events:none}
+.dmg{position:absolute;font:700 46px var(--head);pointer-events:none;z-index:50;animation:floatup 1s forwards;text-shadow:0 3px 0 rgba(0,0,0,.5)}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 12 · The grand finale</div>
+  <h1>Final <em>Boss Battle</em></h1>
+  <p class="lead">Twelve weeks of training come down to this. Defeat the Lab Final Dragon with everything you've learned, from tooth numbering to job offers. Every correct answer is an attack!</p>
+  <div class="rules"><div class="rule"><div class="ico">⚔️</div><b>Answer to attack</b><span>Correct answers damage the boss. Streaks hit harder.</span></div>
+    <div class="rule"><div class="ico">🔥</div><b>Wrong answers hurt</b><span>The dragon strikes back for 20 HP.</span></div>
+    <div class="rule"><div class="ico">🏆</div><b>Whole-program review</b><span>Questions from all 12 weeks.</span></div></div>
+  <button class="btn" id="playBtn">Enter the arena</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 12</small>Final Boss Battle</div>
+    <div class="chipstat"><span>Streak</span><b id="streak">0</b></div>
+    <div class="chipstat"><span>Round</span><b id="rnd">1</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play">
+    <div class="arena"><div class="fighter" id="me"><div class="av">🦷</div><b>You · Dental Assistant</b><div class="hp me"><i id="mehp" style="width:100%"></i></div></div><div class="vs">VS</div>
+      <div class="fighter" id="boss"><div class="av">🐉</div><b>The Lab Final Dragon</b><div class="hp boss"><i id="bhp" style="width:100%"></i></div></div></div>
+    <div class="qbox"><div class="lbl"><span id="topic"></span><span id="hpt"></span></div><div class="q" id="q"></div><div class="opts" id="opts"></div></div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div style="font-size:110px;line-height:1" id="eem"></div>
+  <h1 id="et" style="font-size:64px"></h1><div id="fstars"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Battle again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const P=[['Week 1 · Numbering','Tooth #8 is the…','Maxillary right central incisor','Maxillary left central incisor','Mandibular right canine','Mandibular left central incisor'],['Week 1 · Policies','What percentage is passing?','70%','60%','80%','50%'],
+ ['Week 2 · Externship','How fast must you apply to HSS opportunities?','Within 24 hours','Within a week','Within 72 hours','Before graduation'],['Week 3 · Externship','How many externship hours are required?','40','20','60','100'],
+ ['Week 4 · CPR','What\'s the one-rescuer adult CPR ratio?','30:2','15:1','5:1','10:2'],['Week 4 · Vitals','What\'s a normal adult resting pulse?','60–100 bpm','40–50 bpm','110–140 bpm','20–40 bpm'],
+ ['Week 4 · Vitals','A blood pressure of 146/88 is…','Stage 2','Normal','Elevated','Stage 1'],['Week 5 · Crown & bridge','What does retraction cord do?','Pushes the gum tissue back so the impression captures the margin','Polishes the crown','Holds the rubber dam','Cements the temporary'],
+ ['Week 6 · Oral surgery','Which instrument loosens (luxates) the tooth?','Straight elevator','Bone file','Needle holder','Rongeurs'],['Week 7 · Endo','What dries the canals?','Paper points','Gutta-percha','A barbed broach','Endodontic files'],
+ ['Week 7 · Endo','What fills the canals?','Gutta-percha','Paper points','A barbed broach','Rubber stops'],['Week 8 · Job search','On which days do HSS jobs drop in Week 8?','Monday, Wednesday and Friday','Tuesday and Thursday','Weekends only','Every Monday'],
+ ['Week 9 · Interview','When should you arrive for an interview?','10–15 minutes early','Right on time','30+ minutes early','5 minutes late is fine'],['Week 9 · Interview','When do you send the thank-you email?','Within 24 hours','Within a week','Only if you get the job','Never'],
+ ['Week 10 · FMX','An elongated image means you need to…','Increase the vertical angulation','Decrease the vertical angulation','Change the horizontal angulation','Center the PID'],['Week 10 · Polishing','Coronal polishing removes…','Plaque and surface stains','Tartar below the gums','Enamel','Decay'],
+ ['Week 11 · FMX','Which holder ring is used for bitewings?','Red','Blue','Yellow','Green'],['Week 11 · Molar temp','Tooth #19 is the…','Mandibular left first molar','Maxillary left first molar','Mandibular right first molar','Mandibular left second premolar'],
+ ['Week 11 · Offers','Before you accept an offer, who do you talk it through with?','Career Coach Angela','Nobody','A classmate only','The office\'s patients'],['Week 12 · Graduation','What\'s required to graduate?','The Job Ready Qualification','Having a job offer','A perfect resume score','A second externship'],
+ ['Week 5 · Restorative','What does the curing light do?','Hardens light-cured materials','Polishes enamel','Dries the canal','Takes X-rays'],['Week 3 · Contacts','Who handles affiliation agreements?','Your Externship Specialist','The front desk','Your classmates','The patient']];
+let G;
+function newGame(){G={me:100,boss:100,q:shuffle(P),i:0,streak:0,round:0,right:0};showScreen('game');ui();ask()}
+function ui(){$('mehp').style.width=G.me+'%';$('bhp').style.width=G.boss+'%';$('hpt').textContent=`You ${G.me} HP · Dragon ${G.boss} HP`;$('streak').textContent=G.streak;$('rnd').textContent=G.round+1}
+function ask(){if(G.i>=G.q.length){G.q=shuffle(P);G.i=0}const p=G.q[G.i];$('topic').textContent=p[0];$('q').textContent=p[1];const o=shuffle([[p[2],1],[p[3],0],[p[4],0],[p[5],0]]);
+  $('opts').className='opts';$('opts').innerHTML=o.map(([t,g])=>`<button class="opt" data-g="${g}">${t}</button>`).join('');$('opts').querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(b))}
+function dmg(el,t,c){const p=centerOf(el);const d=document.createElement('div');d.className='dmg';d.textContent=t;d.style.left=p.x+'px';d.style.top=(p.y-60)+'px';d.style.color=c;d.style.transform='translateX(-50%)';stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function pick(b){$('opts').classList.add('locked');const ok=b.dataset.g==='1';$('opts').querySelectorAll('.opt').forEach(x=>x.classList.add(x.dataset.g==='1'?'g':x===b?'b':'n0'));G.round++;
+  if(ok){G.streak++;G.right++;const d=12+Math.min(12,(G.streak-1)*3);G.boss=Math.max(0,G.boss-d);const me=$('me');me.classList.remove('atk');void me.offsetWidth;me.classList.add('atk');setTimeout(()=>{const bs=$('boss');bs.classList.remove('hit');void bs.offsetWidth;bs.classList.add('hit');dmg(bs.querySelector('.av'),'−'+d,'#FFD97A');burst(centerOf(bs.querySelector('.av')).x,centerOf(bs.querySelector('.av')).y)},180);SFX.good(G.streak);if(G.streak>=3&&G.streak%3===0){setTimeout(()=>comboText(`${G.streak}-HIT COMBO!`),300);SFX.combo()}}
+  else{G.streak=0;G.me=Math.max(0,G.me-20);const bs=$('boss');bs.classList.remove('batk');void bs.offsetWidth;bs.classList.add('batk');setTimeout(()=>{const me=$('me');me.classList.remove('hit');void me.offsetWidth;me.classList.add('hit');dmg(me.querySelector('.av'),'−20','#FF8A84');flash('#E5534B')},180);SFX.bad()}
+  setTimeout(()=>{ui();if(G.boss<=0)return end(true);if(G.me<=0)return end(false);G.i++;ask()},1100)}
+function end(won){showScreen('end');const acc=G.right/G.round;const s=won?(G.me>=80?3:G.me>=40?2:1):0;$('eem').textContent=won?'🏆':'🐉';$('et').textContent=won?'You defeated the Lab Final Dragon!':'The dragon wins… this time';$('fstars').innerHTML=starsHTML(s);
+  $('fsum').textContent=won?`Victory in ${G.round} rounds with ${G.me} HP left (${Math.round(acc*100)}% accuracy). You're ready. Congratulations on completing the Dental Assisting program! 🎓`:`You answered ${G.right} of ${G.round} correctly. Review and try again. You've got this!`;if(won){confetti();setTimeout(confetti,600);SFX.win()}else SFX.lose()}
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

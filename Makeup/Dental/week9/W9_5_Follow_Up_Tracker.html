@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Follow-Up Tracker | Dental Assisting Week 9</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:flex;flex-direction:column;padding:12px 26px 14px;gap:10px;position:relative}
+.ph{display:flex;align-items:baseline;gap:14px}.ph h2{font-size:28px;color:#fff}.ph span{color:var(--soft);font-size:17px}
+.sheet{background:#fff;color:var(--navy);border-radius:14px;overflow:hidden;box-shadow:0 10px 24px rgba(0,0,0,.35)}
+.row{display:grid;grid-template-columns:250px 130px 1fr 470px;align-items:center;border-bottom:1px solid #E3EBF2;min-height:54px;font-size:16px}
+.row>div{padding:4px 12px}.row.hd{background:#E8F4EA;font-weight:700;font-size:14px;color:#2E6B3A;min-height:36px;letter-spacing:.5px}
+.row .st{color:#4F6680}.row .st b{color:var(--navy)}
+.acts{display:flex;gap:6px}
+.acts button{font:700 13px var(--body);padding:7px 8px;border-radius:8px;border:2px solid #D5E0EA;background:#F4F7FA;color:var(--navy);cursor:pointer;flex:1;line-height:1.15}
+.acts button.on{background:var(--gold);border-color:#B57E10}
+.row.g{background:#E6F7F3}.row.b{background:#FFE9E7}
+.row.g .acts button.on{background:var(--teal);color:#fff;border-color:var(--teal)}.row.b .acts button.on{background:var(--red);color:#fff;border-color:var(--red)}
+.bar{display:flex;align-items:center;gap:14px;margin-top:auto}.bar .msg{flex:1;font-size:18px;color:var(--soft);line-height:1.3}
+.cal{flex:1;display:grid;grid-template-columns:90px repeat(5,1fr);gap:6px}
+.cal .h{font-weight:700;color:var(--teal2);text-align:center;font-size:17px;padding:6px}
+.cal .tm{color:var(--soft);font-size:15px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px}
+.slot{border-radius:10px;font:700 14px var(--body);display:flex;align-items:center;justify-content:center;text-align:center;padding:4px;line-height:1.15;min-height:58px;flex-direction:column;gap:2px}
+.slot.busy{background:#3A4A62;color:#B9C6D8}
+.slot.open{background:rgba(20,163,165,.25);border:2px dashed var(--teal2);color:#fff;cursor:pointer}.slot.open:hover{background:rgba(20,163,165,.5)}
+.slot.conf{background:rgba(20,163,165,.25);border:2px dashed var(--teal2);color:#fff;cursor:pointer}.slot.conf:hover{background:rgba(20,163,165,.5)}.slot small{font-weight:600;color:#FFD97A}
+.slot.none{background:rgba(255,255,255,.03)}
+.slot.picked{background:var(--gold);color:var(--navy);border:0}
+.legend{display:flex;gap:18px;color:var(--soft);font-size:15px}.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px}
+.ov{position:absolute;inset:0;background:rgba(7,20,42,.93);z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:20px}
+.ov h2{font-size:44px;color:#fff;max-width:960px}.ov p{font-size:22px;color:var(--soft);max-width:860px;margin:0}
+.qo{display:flex;flex-direction:column;gap:10px;width:860px}.qo button{font:700 21px var(--body);padding:16px;border-radius:14px;border:3px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;text-align:left}
+.qo button:hover{border-color:var(--gold)}.qo button.g{background:var(--teal)}.qo button.b{background:var(--red)}.qo.locked button{pointer-events:none}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 9 · Follow up on every application</div>
+  <h1>Follow-Up <em>Tracker</em></h1>
+  <p class="lead">Your job tracker has 8 applications from the last two weeks. Pick the right next step for each one, then book your mock interview with Career Coach Angela without double-booking yourself.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">📊</div><b>Work the tracker</b><span>A week of silence is not a no!</span></div>
+    <div class="rule"><div class="ico">📅</div><b>Book with Angela</b><span>Find a time when you're both free.</span></div>
+    <div class="rule"><div class="ico">⚠️</div><b>Plans change</b><span>Know what to do if you can't make the meeting.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Open my tracker</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 9</small>Follow-Up Tracker</div>
+    <div class="chipstat"><span>Step</span><b id="step">1/3</b></div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play" id="play"></div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">Tracker up to date</div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Play again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const A=[['fu','📞 Follow up (call or email)'],['ty','✉️ Send thank-you email'],['prep','📋 Prepare for the interview'],['none','⏳ Nothing yet']];
+const APPS=[['Bright Smiles Family Dental','13 days ago','No response yet','fu','13 days of silence. Follow up with a call or email.'],['Riverside Oral Surgery','9 days ago','No response yet','fu','A week of silence is not a no. Follow up!'],
+ ['Downtown Dental Group','6 days ago','<b>Interviewed yesterday</b>','ty','Send a thank-you email within 24 hours of the interview.'],['Lakeside Family Dental','5 days ago','<b>Interview tomorrow at 9:00</b>','prep','Research the practice, print resume copies, and write down your questions.'],
+ ['Oak Street Orthodontics','8 days ago','No response yet','fu','Over a week with no response. Follow up.'],['Smile Studio','10 days ago','No response yet','fu','Follow up on every application from the last two weeks.'],
+ ['Main St. Family Dentistry','Today','Just applied','none','You just applied. Give it a little time before following up.'],['Pediatric Dental Care','7 days ago','No response yet','fu','A full week of silence. Time to follow up.']];
+const DAYS=['Mon','Tue','Wed','Thu','Fri'],TIMES=['9 AM','11 AM','1 PM','3 PM','5 PM'];
+// cell: busy label | 'A' Angela open | null
+const ME={'Tue-9 AM':'Class','Tue-11 AM':'Class','Thu-9 AM':'Class','Thu-11 AM':'Class','Mon-1 PM':'Externship','Mon-3 PM':'Externship','Wed-1 PM':'Externship','Wed-3 PM':'Externship','Fri-9 AM':'Lakeside interview'};
+const ANG=['Mon-1 PM','Tue-11 AM','Wed-9 AM','Thu-3 PM','Fri-9 AM','Fri-1 PM'];
+let G;
+function newGame(){G={score:0,pick:{},rowsOk:0,cal:null,calOk:false,re:false};showScreen('game');tracker()}
+function sc(n){G.score+=n;$('score').textContent=G.score}
+function tracker(){$('step').textContent='1/3';
+  $('play').innerHTML=`<div class="ph"><h2>📊 My job applications</h2><span>Choose the next step for each row</span></div>
+  <div class="sheet"><div class="row hd"><div>OFFICE</div><div>APPLIED</div><div>STATUS</div><div>NEXT STEP</div></div>${APPS.map((a,i)=>`<div class="row" data-i="${i}"><div><b>${a[0]}</b></div><div>${a[1]}</div><div class="st">${a[2]}</div><div class="acts">${A.map(x=>`<button data-a="${x[0]}">${x[1]}</button>`).join('')}</div></div>`).join('')}</div>
+  <div class="bar"><span class="msg" id="msg">Pick a next step for all 8 rows.</span><button class="btn" id="chk" disabled>Check my tracker</button></div>`;
+  $('play').querySelectorAll('.row[data-i]').forEach(r=>r.querySelectorAll('button').forEach(b=>b.onclick=()=>{const i=+r.dataset.i;G.pick[i]=b.dataset.a;r.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));SFX.click();$('chk').disabled=Object.keys(G.pick).length<8}));
+  $('chk').onclick=checkT}
+function checkT(){let ok=0;const wrong=[];$('play').querySelectorAll('.row[data-i]').forEach(r=>{const i=+r.dataset.i;const g=G.pick[i]===APPS[i][3];r.classList.add(g?'g':'b');if(g)ok++;else wrong.push(i);r.querySelectorAll('button').forEach(b=>b.disabled=true)});
+  G.rowsOk=ok;sc(ok*100);ok===8?(SFX.combo(),comboText('TRACKER PERFECT!')):SFX.bad();
+  $('msg').innerHTML=ok===8?'<b style="color:var(--teal2)">All 8 right!</b> A week of silence is not a no.':`<b style="color:#FFD97A">${ok} of 8.</b> ${wrong.slice(0,2).map(i=>APPS[i][0]+': '+APPS[i][4]).join(' ')}`;
+  $('chk').outerHTML='<button class="btn" id="nx">Book with Angela →</button>';$('nx').onclick=calendar}
+function calendar(){$('step').textContent='2/3';let cells='<div></div>'+DAYS.map(d=>`<div class="h">${d}</div>`).join('');
+  TIMES.forEach(t=>{cells+=`<div class="tm">${t}</div>`;DAYS.forEach(d=>{const k=d+'-'+t;const me=ME[k],an=ANG.includes(k);
+    cells+=an?`<div class="slot ${me?'conf':'open'}" data-k="${k}">${me?`Angela open<small>📌 You: ${me}</small>`:'Angela open'}</div>`:me?`<div class="slot busy">${me}</div>`:'<div class="slot none"></div>'})});
+  $('play').innerHTML=`<div class="ph"><h2>📅 Book your mock interview with Angela</h2><span>Pick an "Angela open" slot that works for YOU</span></div>
+   <div class="legend"><span><i style="background:rgba(20,163,165,.5)"></i>Angela is available</span><span><i style="background:#3A4A62"></i>You're busy</span></div><div class="cal" id="cal">${cells}</div>
+   <div class="bar"><span class="msg" id="msg">Tap a slot to book it.</span></div>`;
+  $('cal').querySelectorAll('.slot.open,.slot.conf').forEach(s=>s.onclick=()=>{if(G.cal)return;G.cal=s.dataset.k;s.classList.add('picked');const ok=s.classList.contains('open');G.calOk=ok;
+    if(ok){sc(300);SFX.combo();confetti();$('msg').innerHTML=`<b style="color:var(--teal2)">Booked: ${G.cal.replace('-',' at ')}!</b> Practice chairside scenario questions, not just "tell me about yourself."`}
+    else{SFX.bad();$('msg').innerHTML=`<b style="color:#FF8A84">Double-booked!</b> You already have ${ME[G.cal]} then. Missing a scheduled meeting can cost you. Always check your calendar first.`}
+    $('play').querySelector('.bar').insertAdjacentHTML('beforeend','<button class="btn" id="nx">Next</button>');$('nx').onclick=twist})}
+function twist(){$('step').textContent='3/3';const o=document.createElement('div');o.className='ov';const opts=shuffle([['Message Angela ahead of time to let her know and reschedule',1],['Skip the meeting. She\'ll figure it out',0],['Show up 40 minutes late without telling anyone',0]]);
+  o.innerHTML=`<div style="font-size:70px">⚠️</div><h2>Plans changed! Something now conflicts with your meeting with Angela. What do you do?</h2><div class="qo" id="qo">${opts.map(([t,g])=>`<button data-g="${g}">${t}</button>`).join('')}</div><p id="tm" style="min-height:70px"></p>`;$('play').appendChild(o);
+  o.querySelectorAll('#qo button').forEach(b=>b.onclick=()=>{$('qo').classList.add('locked');const ok=b.dataset.g==='1';o.querySelectorAll('#qo button').forEach(x=>x.classList.add(x.dataset.g==='1'?'g':x===b?'b':''));G.re=ok;ok?(sc(200),SFX.good(3)):SFX.bad();
+    $('tm').innerHTML=`<b style="color:${ok?'var(--teal2)':'#FF8A84'}">${ok?'Right call.':'Risky!'}</b> Missing a scheduled Career Coach meeting without notice can remove your Job Placement Qualification. <button class="btn" id="fin" style="margin-left:10px">Finish</button>`;$('fin').onclick=end})}
+function end(){showScreen('end');const s=G.rowsOk===8&&G.calOk&&G.re?3:G.rowsOk>=6&&(G.calOk||G.re)?2:G.rowsOk>=4?1:0;$('fscore').textContent=G.score;$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=['Keep working the process','Getting organized','Organized job seeker','Follow-up pro'][s];$('fsum').textContent=`Tracker: ${G.rowsOk}/8 · Booking: ${G.calOk?'no conflicts':'double-booked'} · Reschedule: ${G.re?'handled with notice':'needs work'}. Follow up on every application from the last two weeks, and book your mock interview with Angela this week!`;if(s>=2)confetti();SFX.win()}
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

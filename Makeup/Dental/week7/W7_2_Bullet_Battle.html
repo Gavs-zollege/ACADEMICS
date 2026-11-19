@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bullet Battle | Dental Assisting Week 7</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:flex;flex-direction:column;padding:14px 28px 16px;gap:12px;position:relative}
+.ph{display:flex;align-items:baseline;gap:14px}.ph h2{font-size:30px;color:#fff}.ph span{color:var(--soft);font-size:18px}
+.arenaB{flex:1;display:grid;grid-template-columns:1fr 110px 1fr;align-items:stretch;gap:0}
+.fighter{font:700 30px var(--head);line-height:1.3;text-align:left;padding:30px 34px;border-radius:26px;border:4px solid transparent;background:var(--card);color:var(--navy);cursor:pointer;display:flex;flex-direction:column;justify-content:center;gap:12px;box-shadow:0 10px 0 rgba(0,0,0,.25);transition:transform .12s}
+.fighter:hover{transform:translateY(-4px) rotate(-.5deg);border-color:var(--gold)}
+.fighter .lbl{font:700 15px var(--body);color:#6B8099;letter-spacing:1px}
+.fighter.win{background:#D3F0F0;border-color:var(--teal);animation:pop .4s}.fighter.lose{opacity:.35;transform:scale(.94)}.fighter.wrong{background:#FFE1DF;border-color:var(--red)}
+.arenaB.locked .fighter{pointer-events:none}
+.vs{display:flex;align-items:center;justify-content:center;font:700 54px var(--head);color:var(--gold);text-shadow:0 4px 0 #B57E10}
+.vs.pulse{animation:pulse .6s 2}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tags span{font:700 14px var(--body);background:var(--teal);color:#fff;border-radius:99px;padding:3px 10px}
+.fb{min-height:74px;display:flex;align-items:center;gap:16px;border-radius:16px;padding:10px 18px;background:rgba(255,255,255,.06)}
+.fb p{margin:0;flex:1;font-size:20px;line-height:1.35}
+.bullet{flex:1;background:var(--card);color:var(--cardink);border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 60px;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+.bullet .lbl{font-weight:700;color:#4F6680;font-size:19px}.bullet .q{font-family:var(--head);font-weight:700;font-size:40px;line-height:1.25;color:var(--navy);margin-top:10px}
+.secs{display:grid;grid-template-columns:1fr 1fr;gap:16px;height:110px}
+.secs button{font:700 24px var(--body);border-radius:18px;border:0;cursor:pointer;color:#fff;line-height:1.2}
+.secs .e{background:#2C5FA0;box-shadow:0 6px 0 #173763}.secs .x{background:var(--teal);box-shadow:0 6px 0 #0B6F71}.secs.locked button{pointer-events:none;opacity:.6}
+.ov{position:absolute;inset:0;background:rgba(7,20,42,.92);z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+.ov h2{font-size:58px;color:#fff}.ov p{font-size:23px;color:var(--soft);max-width:820px;margin:0}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 7 · Building your resume</div>
+  <h1>Bullet <em>Battle</em></h1>
+  <p class="lead">Two resume bullets go head to head. Pick the stronger one every time. Then decide which section of your resume each winner belongs in.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">💪</div><b>Use action verbs</b><span>"Prepared," "Assisted," "Charted," not "Did stuff."</span></div>
+    <div class="rule"><div class="ico">🔧</div><b>Be specific</b><span>Name the skills and tools, like Dentrix and digital X-rays.</span></div>
+    <div class="rule"><div class="ico">🤝</div><b>Patient care and teamwork</b><span>Highlight them whenever you can.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Let the battle begin</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 7</small>Bullet Battle</div>
+    <div class="chipstat"><span>Round</span><b id="num">1/8</b></div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <div class="chipstat"><span>Streak</span><b id="streak">0</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play" id="play"></div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">Battle over</div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Battle again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+// [strong, weak, tags, why, section E=education X=externship]
+const B=[['Took and processed digital X-rays','Did X-rays sometimes',['Action verb','Specific'],'Action verbs plus the specific skill.','X'],
+ ['Updated patient records using Dentrix','Used a computer at the front desk',['Specific tool'],'Naming the software (Dentrix) shows real software knowledge.','X'],
+ ['Provided chairside support and ensured patient comfort','Sat with patients',['Patient care'],'It highlights patient care and your chairside role.','X'],
+ ['Prepared and sterilized instruments and treatment rooms','Cleaned up after people',['Action verb','Specific'],'Specific clinical tasks with strong verbs.','X'],
+ ['Assisted the dentist during patient exams and restorative procedures','Watched the dentist work',['Action verb','Patient care'],'You assisted, you didn\'t just watch!','X'],
+ ['Charted existing and proposed treatments using Dentrix','Learned some charting stuff',['Specific tool'],'Specific charting skills plus the software name.','E'],
+ ['Fabricated temporary restorations from preliminary impressions','Made temporaries in class',['Action verb','Specific'],'"Fabricated" is a strong verb, and the bullet names the process.','E'],
+ ['Prepared instrument trays, materials and accessories','Set some stuff out',['Action verb','Specific'],'Specific lab and chairside skills.','E'],
+ ['Assisted in procedure simulations for oral exams and routine restorations','Practiced in a fake office',['Action verb','Specific'],'It shows hands-on clinical training, described professionally.','E']];
+let G;
+function newGame(){G={q:shuffle(B).slice(0,8),i:0,score:0,streak:0,ok:0,secOk:0};showScreen('game');battle()}
+function hud(){$('score').textContent=G.score;$('streak').textContent=G.streak}
+function battle(){const b=G.q[G.i];$('num').textContent=(G.i+1)+'/8';hud();const left=Math.random()<.5;
+  const card=(t,s,side)=>`<button class="fighter" data-s="${s}"><span class="lbl">BULLET ${side}</span>• ${t}</button>`;
+  $('play').innerHTML=`<div class="ph"><h2>Which bullet is stronger?</h2><span>Round ${G.i+1} of 8</span></div>
+  <div class="arenaB" id="ar">${left?card(b[0],1,'A'):card(b[1],0,'A')}<div class="vs pulse">VS</div>${left?card(b[1],0,'B'):card(b[0],1,'B')}</div>
+  <div class="fb" id="fb"><p style="color:var(--soft)">Tap the bullet you'd put on your resume. (Keys 1 and 2 work too.)</p></div>`;
+  const f=$('ar').querySelectorAll('.fighter');f[0].animate([{transform:'translateX(-80px)',opacity:0},{transform:'none',opacity:1}],{duration:350});f[1].animate([{transform:'translateX(80px)',opacity:0},{transform:'none',opacity:1}],{duration:350});SFX.whoosh();
+  f.forEach(x=>x.onclick=()=>pick(x))}
+function pick(x){if($('ar').classList.contains('locked'))return;$('ar').classList.add('locked');const b=G.q[G.i];const ok=x.dataset.s==='1';
+  $('ar').querySelectorAll('.fighter').forEach(f=>{if(f.dataset.s==='1'){f.classList.add('win');f.insertAdjacentHTML('beforeend',`<div class="tags">${b[2].map(t=>`<span>${t}</span>`).join('')}</div>`)}else f.classList.add(f===x?'wrong':'lose')});
+  if(ok){G.ok++;G.streak++;const pts=G.streak>=3?200:100;G.score+=pts;const p=centerOf(x);burst(p.x,p.y);floatText(p.x,p.y-40,'+'+pts);SFX.good(G.streak);if(G.streak===3||G.streak===6){comboText(`${G.streak} WINS ×2`);SFX.combo()}}else{G.streak=0;SFX.bad()}
+  hud();$('fb').innerHTML=`<p><b style="color:${ok?'var(--teal2)':'#FF8A84'}">${ok?'Winner!':'The other bullet wins.'}</b> ${b[3]}</p><button class="btn" id="nx">${G.i<7?'Next battle':'Round 2'}</button>`;$('nx').onclick=()=>{G.i++;G.i<8?battle():secIntro()};$('nx').focus()}
+function secIntro(){const o=document.createElement('div');o.className='ov';o.innerHTML=`<div style="font-size:80px">🗂️</div><h2>Round 2: Where does it go?</h2><p>Lab and classroom training goes in your <b style="color:#fff">Education</b> section. Real patient work from your externship goes under <b style="color:#fff">Clinical or Externship Experience</b>.</p><button class="btn" id="go" style="margin-top:10px">Sort the winners</button>`;$('play').appendChild(o);SFX.combo();$('go').onclick=()=>{G.s=shuffle(B);G.k=0;secQ()}}
+function secQ(){const b=G.s[G.k];$('num').textContent=`S ${G.k+1}/${G.s.length}`;
+  $('play').innerHTML=`<div class="ph"><h2>Which resume section?</h2><span>Bullet ${G.k+1} of ${G.s.length}</span></div><div class="bullet"><div class="lbl">Where does this bullet belong?</div><div class="q">• ${b[0]}</div></div>
+  <div class="secs" id="secs"><button class="e" data-v="E">🎓 Education<br><small style="font-size:15px;font-weight:600">Lab and classroom training</small></button><button class="x" data-v="X">🦷 Clinical / Externship Experience<br><small style="font-size:15px;font-weight:600">Real patient care</small></button></div>
+  <div class="fb" id="fb"><p style="color:var(--soft)">Pick a section.</p></div>`;
+  $('secs').querySelectorAll('button').forEach(x=>x.onclick=()=>{$('secs').classList.add('locked');const ok=x.dataset.v===b[4];if(ok){G.secOk++;G.score+=100;SFX.good(G.secOk);const p=centerOf(x);burst(p.x,p.y);floatText(p.x,p.y-30,'+100')}else SFX.bad();hud();
+    $('fb').innerHTML=`<p><b style="color:${ok?'var(--teal2)':'#FF8A84'}">${ok?'Correct!':'Not quite.'}</b> ${b[4]==='E'?'This describes lab training and procedure simulations, so it goes in your Education section.':'This describes real patient work from your externship, so it goes under Clinical or Externship Experience.'}</p><button class="btn" id="nx">${G.k<G.s.length-1?'Next':'Results'}</button>`;$('nx').onclick=()=>{G.k++;G.k<G.s.length?secQ():end()};$('nx').focus()})}
+function end(){showScreen('end');const tot=G.ok+G.secOk;const s=tot>=16?3:tot>=13?2:tot>=9?1:0;$('fscore').textContent=G.score;$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=['Review the resume tips','Getting stronger','Resume writer','Bullet champion'][s];$('fsum').textContent=`${G.ok} of 8 battles won · ${G.secOk} of 9 bullets sorted correctly. Book your resume session with Career Coach Angela this week!`;if(s>=2)confetti();SFX.win()}
+addEventListener('keydown',e=>{if(!G||$('game').classList.contains('hidden')||!$('ar')||$('ar').classList.contains('locked'))return;if(e.key==='1'||e.key==='2')pick($('ar').querySelectorAll('.fighter')[+e.key-1])});
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

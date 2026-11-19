@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 7 Word Hunt | Dental Assisting</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:grid;grid-template-columns:auto 1fr;gap:24px;padding:14px 24px 16px}
+.gridwrap{position:relative;background:#fff;border-radius:20px;padding:12px;box-shadow:0 10px 0 rgba(0,0,0,.25);align-self:start}
+.grid{display:grid;grid-template-columns:repeat(13,42px);grid-template-rows:repeat(13,42px);position:relative;z-index:2;touch-action:none}
+.c{display:grid;place-items:center;font:700 23px var(--body);color:var(--navy);cursor:pointer;border-radius:50%;user-select:none}
+.c.sel{background:rgba(242,179,61,.55)}
+svg.marks{position:absolute;left:12px;top:12px;width:546px;height:546px;z-index:1;pointer-events:none}
+svg.marks line{stroke-width:34;stroke-linecap:round;opacity:.45}
+.clues{background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:20px;padding:12px 16px;display:flex;flex-direction:column;gap:4px}
+.clues h3{font-family:var(--body);font-size:15px;color:var(--teal2);display:flex;justify-content:space-between;margin-bottom:2px}
+.cl{display:flex;gap:10px;align-items:center;font-size:15px;line-height:1.25;color:var(--soft);padding:4px 8px;border-radius:8px}
+.cl .ans{flex:none;width:190px;font:700 13px var(--body);letter-spacing:1px;white-space:nowrap;color:rgba(255,255,255,.3)}
+.cl.found{background:rgba(20,163,165,.18);color:#fff}.cl.found .ans{color:var(--teal2)}
+.cl.hint .ans{color:var(--gold2)}
+.tools{display:flex;gap:10px;margin-top:auto;align-items:center}
+.tools .btn{font-size:16px;padding:10px 16px;box-shadow:none}
+.tools span{color:var(--soft);font-size:15px;flex:1}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 7 review</div>
+  <h1>Week 7 <em>Word Hunt</em></h1>
+  <p class="lead">Fourteen words from this week are hidden in the grid, running across, down or diagonally. You get the clues, not the words. Figure out each answer, then find it.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">👉</div><b>Drag to select</b><span>Drag from the first letter to the last. You can also tap the first letter, then the last.</span></div>
+    <div class="rule"><div class="ico">🧠</div><b>Clues, not words</b><span>Each clue reveals its word once you find it.</span></div>
+    <div class="rule"><div class="ico">💡</div><b>Hints</b><span>Stuck? A hint shows a word's first letter.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Start hunting</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 7</small>Week 7 Word Hunt</div>
+    <div class="chipstat"><span>Found</span><b id="found">0/14</b></div>
+    <div class="chipstat"><span>Time</span><b id="time">0:00</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play">
+    <div class="gridwrap"><svg class="marks" id="marks"></svg><div class="grid" id="grid"></div></div>
+    <div class="clues"><h3><span>CLUES</span><span id="hl">Hints used: 0</span></h3><div id="cl" style="display:flex;flex-direction:column;gap:3px"></div>
+      <div class="tools"><span>Drag across a word to select it.</span><button class="btn ghost" id="hint">💡 Hint</button></div></div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">All words found</div>
+  <div class="bigscore" id="fscore">0:00</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Hunt again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const D={"n": 13, "grid": ["STERILIZATION", "SRUBBERDAMTDP", "CYFCTEAMWORKS", "ONMWEEKLYIHPP", "EKNMIDNIGHTPR", "KDGNUAIEHIPAA", "YFLEXIBILITYC", "ABGEHDENTRIXE", "OSHAAWCPRJKLM", "HANGELAUPDPTE", "RADIOGRAPHYDN", "RUIYGYRNAMVNT", "RUFSFRIDAYGVS"], "words": [{"w": "STERILIZATION", "c": "Clinical skill: processing instruments so they're safe to use again", "r": 0, "col": 0, "dr": 0, "dc": 1}, {"w": "FLEXIBILITY", "c": "Professional skill: adapting when plans change", "r": 6, "col": 1, "dr": 0, "dc": 1}, {"w": "RADIOGRAPHY", "c": "Digital ____, a clinical skill to list on your resume", "r": 10, "col": 0, "dr": 0, "dc": 1}, {"w": "RUBBERDAM", "c": "You'll observe how to place this in an endo lab (2 words)", "r": 1, "col": 1, "dr": 0, "dc": 1}, {"w": "MIDNIGHT", "c": "Time online coursework is due before next class", "r": 4, "col": 3, "dr": 0, "dc": 1}, {"w": "TEAMWORK", "c": "Professional skill to highlight along with patient care", "r": 2, "col": 4, "dr": 0, "dc": 1}, {"w": "DENTRIX", "c": "Charting software (Ascend) to name on your resume", "r": 7, "col": 5, "dr": 0, "dc": 1}, {"w": "ANGELA", "c": "Career coach who starts building your resume with you this week", "r": 9, "col": 1, "dr": 0, "dc": 1}, {"w": "FRIDAY", "c": "Finish every Job Ready item in HSS by this day", "r": 12, "col": 4, "dr": 0, "dc": 1}, {"w": "CEMENT", "c": "Permanent and temporary ____s: identify them and mix them in lab", "r": 6, "col": 12, "dr": 1, "dc": 0}, {"w": "WEEKLY", "c": "How often to submit your externship evaluation form", "r": 3, "col": 3, "dr": 0, "dc": 1}, {"w": "HIPAA", "c": "Patient-privacy training to list under certifications", "r": 5, "col": 8, "dr": 0, "dc": 1}, {"w": "OSHA", "c": "Workplace-safety training to list under certifications", "r": 8, "col": 0, "dr": 0, "dc": 1}, {"w": "CPR", "c": "Certification you earned in Week 4", "r": 8, "col": 6, "dr": 0, "dc": 1}]};const COLORS=['#F2B33D','#14A3A5','#E5534B','#7B61FF','#2E9E5A','#E07AB0','#3B8BEB'];
+let G,clk;
+function newGame(){G={found:new Set(),hints:0,secs:0,start:null,hinted:new Set()};$('grid').innerHTML=D.grid.map((row,r)=>[...row].map((ch,c)=>`<div class="c" data-r="${r}" data-c="${c}">${ch}</div>`).join('')).join('');$('marks').innerHTML='';
+  $('cl').innerHTML=D.words.map((w,i)=>`<div class="cl" data-i="${i}"><span class="ans">${'_ '.repeat(w.w.length).trim()}</span><span>${w.c}</span></div>`).join('');
+  showScreen('game');upd();clearInterval(clk);clk=setInterval(()=>{G.secs++;$('time').textContent=fmt(G.secs)},1000)}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function upd(){$('found').textContent=G.found.size+'/14';$('hl').textContent='Hints used: '+G.hints}
+function cellAt(e){const el=document.elementFromPoint(e.clientX,e.clientY);return el&&el.classList.contains('c')?el:null}
+function line(a,b){const r1=+a.dataset.r,c1=+a.dataset.c,r2=+b.dataset.r,c2=+b.dataset.c;const dr=Math.sign(r2-r1),dc=Math.sign(c2-c1);const len=Math.max(Math.abs(r2-r1),Math.abs(c2-c1));
+  if(!(r1===r2||c1===c2||Math.abs(r2-r1)===Math.abs(c2-c1)))return null;const cells=[];for(let i=0;i<=len;i++)cells.push([r1+dr*i,c1+dc*i]);return cells}
+function hl(cells){document.querySelectorAll('.c.sel').forEach(x=>x.classList.remove('sel'));(cells||[]).forEach(([r,c])=>$('grid').children[r*13+c].classList.add('sel'))}
+let dragA=null,moved=false;
+$('grid').addEventListener('pointerdown',e=>{const c=cellAt(e);if(!c)return;e.preventDefault();$('grid').setPointerCapture(e.pointerId);moved=false;
+  if(G.start&&G.start!==c){finish(G.start,c);G.start=null;return}dragA=c;hl([[+c.dataset.r,+c.dataset.c]])});
+$('grid').addEventListener('pointermove',e=>{if(!dragA)return;const c=cellAt(e);if(c&&c!==dragA){moved=true;hl(line(dragA,c))}});
+$('grid').addEventListener('pointerup',e=>{if(!dragA)return;const c=cellAt(e);if(moved&&c&&c!==dragA){finish(dragA,c);G.start=null}else{G.start=dragA;SFX.click()}dragA=null});
+function finish(a,b){const cells=line(a,b);hl([]);if(!cells)return;const s=cells.map(([r,c])=>D.grid[r][c]).join('');
+  const i=D.words.findIndex(w=>!G.found.has(w.w)&&(w.w===s||w.w===[...s].reverse().join('')));
+  if(i<0){SFX.bad();return}const w=D.words[i];G.found.add(w.w);const col=COLORS[G.found.size%COLORS.length];
+  const p=k=>[k[1]*42+21,k[0]*42+21];const [x1,y1]=p(cells[0]),[x2,y2]=p(cells[cells.length-1]);
+  $('marks').insertAdjacentHTML('beforeend',`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}"/>`);
+  const row=$('cl').querySelector(`[data-i="${i}"]`);row.classList.add('found');row.querySelector('.ans').textContent=w.w;
+  const pp=centerOf($('grid').children[cells[Math.floor(cells.length/2)][0]*13+cells[Math.floor(cells.length/2)][1]]);burst(pp.x,pp.y);SFX.good(G.found.size);upd();
+  if(G.found.size===D.words.length)setTimeout(win,700)}
+$('hint').onclick=()=>{const left=D.words.map((w,i)=>[w,i]).filter(([w,i])=>!G.found.has(w.w)&&!G.hinted.has(i));if(!left.length)return;const [w,i]=left[0];G.hinted.add(i);G.hints++;
+  const row=$('cl').querySelector(`[data-i="${i}"]`);row.classList.add('hint');row.querySelector('.ans').textContent=w.w[0]+' _'.repeat(w.w.length-1);
+  const c=$('grid').children[w.r*13+w.col];c.animate([{background:'#F2B33D'},{background:'transparent'}],{duration:1500});SFX.whoosh();upd()};
+function win(){clearInterval(clk);showScreen('end');const s=G.hints===0?3:G.hints<=3?2:1;$('fscore').textContent=fmt(G.secs);$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=['','Word finder','Sharp eyes','Word Hunt champion'][s];$('fsum').textContent=`All 14 words found in ${fmt(G.secs)} with ${G.hints} hint${G.hints===1?'':'s'}. Add those certifications and skills to your resume!`;confetti();SFX.win()}
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

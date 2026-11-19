@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPR Ready | Dental Assisting Week 4</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:flex;flex-direction:column;padding:16px 28px 20px;gap:14px;position:relative}
+.ph{display:flex;align-items:baseline;gap:14px}.ph h2{font-size:32px;color:#fff}.ph span{color:var(--soft);font-size:19px}
+/* order phase */
+.order{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.pool,.seq{background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.pool h3,.seq h3{font-family:var(--body);font-size:16px;color:var(--teal2)}
+.st{font:700 20px var(--body);text-align:left;padding:11px 16px;border-radius:14px;border:3px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;display:flex;gap:12px;align-items:center}
+.st:hover{border-color:var(--gold)}
+.st .n{flex:none;width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--navy);display:grid;place-items:center;font-size:16px}
+.seq .st{background:#fff;color:var(--navy);border-color:#fff}
+.seq .st.ok{background:#D3F0F0;border-color:var(--teal)}.seq .st.no{background:#FFE1DF;border-color:var(--red);animation:shake .35s}
+.slot{height:50px;border:2px dashed rgba(255,255,255,.18);border-radius:14px}
+.bar{display:flex;align-items:center;gap:14px}.bar .msg{flex:1;font-size:20px;font-weight:700}
+/* rhythm phase */
+.rhythm{flex:1;display:grid;grid-template-columns:330px 1fr 300px;gap:20px}
+.panel{background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:22px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.gauge{position:relative;width:290px;height:170px}
+.gauge svg{width:100%;height:100%}
+.rate{font-family:var(--head);font-size:64px;line-height:1;color:#fff}.rate.ok{color:var(--teal2)}.rate.bad{color:#FF8A84}
+.zone{font-weight:700;font-size:20px;min-height:28px}
+.pushwrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.push{width:300px;height:300px;border-radius:50%;border:0;background:radial-gradient(circle at 50% 35%,#FF7A73,#C93A33);color:#fff;font:700 52px var(--head);cursor:pointer;box-shadow:0 14px 0 #8E2420,0 0 0 14px rgba(229,83,75,.15);touch-action:manipulation;transition:transform .05s,box-shadow .05s}
+.push.down{transform:translateY(10px);box-shadow:0 4px 0 #8E2420,0 0 0 22px rgba(229,83,75,.25)}
+.push.breath{background:radial-gradient(circle at 50% 35%,#5FD2D4,#118A8C);box-shadow:0 14px 0 #0B5F61,0 0 0 14px rgba(20,163,165,.2)}
+.cnt{font-family:var(--head);font-size:40px;color:var(--gold)}
+.hintk{color:var(--soft);font-size:16px}
+.depth{width:44px;flex:none;border-radius:30px;background:rgba(255,255,255,.08);position:relative;overflow:hidden;border:2px solid rgba(255,255,255,.15)}
+.depth i{position:absolute;left:0;right:0;top:0;height:0;background:linear-gradient(180deg,var(--gold),var(--red));transition:height .08s}
+.facts{font-size:17px;color:var(--soft);line-height:1.5;text-align:left;width:100%}
+.facts b{color:#fff}
+.metro{display:flex;gap:8px;align-items:center;font-size:16px;color:var(--soft)}
+.dot{width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.15)}.dot.on{background:var(--gold);box-shadow:0 0 12px var(--gold)}
+.ov{position:absolute;inset:0;background:rgba(7,20,42,.92);z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+.ov h2{font-size:62px;color:#fff}.ov p{font-size:24px;color:var(--soft);max-width:820px;margin:0}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 4 lab · CPR</div>
+  <h1>CPR <em>Ready</em></h1>
+  <p class="lead">Get ready for today's CPR lab. First put the adult CPR steps in order. Then find the compression rhythm by tapping 30 compressions at 100–120 per minute, followed by 2 breaths.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">🔢</div><b>Phase 1: The steps</b><span>Tap the steps in the order you'd do them.</span></div>
+    <div class="rule"><div class="ico">💓</div><b>Phase 2: The rhythm</b><span>Tap the button or press the spacebar for each compression.</span></div>
+    <div class="rule"><div class="ico">🎯</div><b>Stay in the green</b><span>Keep your rate between 100 and 120 per minute.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Start</button>
+  <p style="color:var(--soft);font-size:15px;margin:0">Practice only. Your certification comes from today's hands-on CPR lab.</p>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 4</small>CPR Ready</div>
+    <div class="chipstat"><span>Phase</span><b id="phase">1/2</b></div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play" id="play"></div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">CPR practice complete</div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Practice again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const STEPS=['Make sure the scene is safe','Check if the person is responsive','Call 911 and get an AED','Check for breathing (no more than 10 seconds)','Give 30 chest compressions','Give 2 rescue breaths','Use the AED as soon as it arrives, and keep going'];
+let G,beat;
+function newGame(){G={score:0,orderTries:0,rounds:[]};showScreen('game');orderPhase()}
+function orderPhase(){$('phase').textContent='1/2';G.seq=[];G.tries=0;
+  $('play').innerHTML=`<div class="ph"><h2>Phase 1: Put the steps in order</h2><span>Adult CPR, one rescuer</span></div>
+  <div class="order"><div class="pool"><h3>Tap the next step</h3><div id="pool" style="display:flex;flex-direction:column;gap:10px"></div></div><div class="seq"><h3>Your sequence</h3><div id="seq" style="display:flex;flex-direction:column;gap:8px"></div></div></div>
+  <div class="bar"><button class="btn ghost" id="undo">Undo</button><span class="msg" id="msg"></span><button class="btn" id="chk" disabled>Check order</button></div>`;
+  $('pool').innerHTML=shuffle(STEPS.map((s,i)=>[s,i])).map(([s,i])=>`<button class="st" data-i="${i}"><span class="n">?</span>${s}</button>`).join('');
+  $('pool').querySelectorAll('.st').forEach(b=>b.onclick=()=>{SFX.click();G.seq.push(+b.dataset.i);b.classList.add('hidden');paint()});
+  $('undo').onclick=()=>{const i=G.seq.pop();if(i!==undefined){$('pool').querySelector(`[data-i="${i}"]`).classList.remove('hidden');paint()}};$('chk').onclick=checkOrder;paint()}
+function paint(){$('seq').innerHTML=STEPS.map((_,k)=>{const i=G.seq[k];return i===undefined?'<div class="slot"></div>':`<div class="st" data-i="${i}"><span class="n">${k+1}</span>${STEPS[i]}</div>`}).join('');$('chk').disabled=G.seq.length<STEPS.length}
+function checkOrder(){G.tries++;const rows=[...$('seq').querySelectorAll('.st')];let ok=true;rows.forEach((r,k)=>{if(+r.dataset.i===k)r.classList.add('ok');else{r.classList.add('no');ok=false}});
+  if(ok){const pts=G.tries===1?700:G.tries===2?400:200;G.score+=pts;$('score').textContent=G.score;SFX.combo();comboText(G.tries===1?'PERFECT ORDER!':'IN ORDER!');$('msg').style.color='var(--teal2)';$('msg').textContent=`+${pts}. Now let's find the rhythm.`;$('chk').disabled=true;setTimeout(()=>rhythm(0),1600)}
+  else{SFX.bad();$('msg').style.color='#FF8A84';$('msg').textContent='Red steps are out of place. Undo back to them and try again.';G.orderTries++}}
+function rhythm(r){$('phase').textContent='2/2';G.r=r;G.taps=[];G.n=0;G.inZone=0;G.breaths=0;G.mode='comp';const guide=r===0;
+  $('play').innerHTML=`<div class="ph"><h2>Phase 2, round ${r+1} of 2: ${guide?'With the beat guide':'On your own'}</h2><span>${guide?'Tap along with the flashing beat at 110/min.':'No guide this time. Can you hold the rhythm?'}</span></div>
+  <div class="rhythm">
+   <div class="panel"><div class="gauge"><svg viewBox="0 0 200 115"><path d="M15 100 A85 85 0 0 1 185 100" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="18"/>
+     <path d="M15 100 A85 85 0 0 1 185 100" fill="none" stroke="#14A3A5" stroke-width="18" stroke-dasharray="${Math.PI*85}" stroke-dashoffset="0" style="stroke-dasharray:0 ${Math.PI*85*0.5} ${Math.PI*85*0.1667} 999"/>
+     <line id="needle" x1="100" y1="100" x2="100" y2="25" stroke="#F2B33D" stroke-width="5" stroke-linecap="round" style="transform-origin:100px 100px;transform:rotate(-90deg);transition:transform .2s"/><circle cx="100" cy="100" r="8" fill="#F2B33D"/>
+     <text x="15" y="114" fill="#9DB4CC" font-size="10" text-anchor="middle">40</text><text x="185" y="114" fill="#9DB4CC" font-size="10" text-anchor="middle">160</text><text x="100" y="12" fill="#7FD8D9" font-size="10" text-anchor="middle">100</text></svg></div>
+     <div class="rate" id="rate">--</div><div style="color:var(--soft)">compressions / min</div><div class="zone" id="zone"></div>
+     ${guide?'<div class="metro"><span class="dot" id="mdot"></span>Beat guide</div>':''}</div>
+   <div class="pushwrap"><div class="cnt" id="cnt">0 / 30</div><button class="push" id="push">PUSH</button><div class="hintk">Tap the button or press the <b>spacebar</b></div></div>
+   <div class="panel" style="flex-direction:row;align-items:stretch"><div class="depth"><i id="depth"></i></div><div class="facts"><p><b>Rate:</b> 100–120 per minute</p><p><b>Depth:</b> at least 2 inches</p><p><b>Recoil:</b> let the chest come all the way back up</p><p><b>Ratio:</b> 30 compressions, then 2 breaths</p><p><b>Minimize pauses</b> in compressions</p></div></div>
+  </div>`;
+  $('push').onpointerdown=e=>{e.preventDefault();press()};
+  clearInterval(beat);if(guide){let on=false;beat=setInterval(()=>{const d=$('mdot');if(!d)return clearInterval(beat);d.classList.add('on');SFX.tick();setTimeout(()=>d&&d.classList.remove('on'),120)},545)}}
+function press(){const btn=$('push');if(!btn)return;btn.classList.add('down');setTimeout(()=>btn.classList.remove('down'),90);
+  if(G.mode==='comp'){const now=performance.now();G.taps.push(now);G.n++;$('depth').style.height='100%';setTimeout(()=>{const d=$('depth');if(d)d.style.height='0'},110);SFX.click();
+    if(G.taps.length>=3){const t=G.taps.slice(-5);const avg=(t[t.length-1]-t[0])/(t.length-1);const bpm=Math.round(60000/avg);const ok=bpm>=100&&bpm<=120;if(ok)G.inZone++;
+      $('rate').textContent=bpm;$('rate').className='rate '+(ok?'ok':'bad');$('zone').textContent=ok?'In the zone ✓':bpm<100?'Too slow, speed up!':'Too fast, slow down!';$('zone').style.color=ok?'var(--teal2)':'#FF8A84';
+      const ang=Math.max(-90,Math.min(90,(bpm-100)*1.5));$('needle').style.transform=`rotate(${ang}deg)`}
+    $('cnt').textContent=`${Math.min(G.n,30)} / 30`;
+    if(G.n>=30){G.mode='breath';clearInterval(beat);btn.classList.add('breath');btn.textContent='BREATHE';$('cnt').textContent='Now 2 breaths';SFX.combo();comboText('30! NOW 2 BREATHS')}}
+  else if(G.mode==='breath'){G.breaths++;SFX.whoosh();$('cnt').textContent=`Breath ${G.breaths} of 2`;if(G.breaths>=2){G.mode='done';roundDone()}}}
+function roundDone(){const scored=Math.max(1,G.n-2);const pct=Math.round(G.inZone/scored*100);const pts=pct*10;G.score+=pts;G.rounds.push(pct);$('score').textContent=G.score;
+  const o=document.createElement('div');o.className='ov';o.innerHTML=`<div style="font-size:90px">${pct>=80?'💪':pct>=50?'👍':'🫀'}</div><h2>${pct}% in the target zone</h2><p>${pct>=80?'Great rhythm! That\'s the pace you want in the lab.':pct>=50?'Good, but your pace drifted. Think of the beat of "Stayin\' Alive."':'Keep practicing. Aim for about two pushes per second.'}</p><button class="btn" id="nx" style="margin-top:10px">${G.r===0?'Round 2: no guide':'See results'}</button>`;
+  $('play').appendChild(o);if(pct>=80){confetti();SFX.win()}$('nx').onclick=()=>{G.r===0?rhythm(1):end()}}
+function end(){clearInterval(beat);showScreen('end');const best=Math.max(...G.rounds);const s=G.orderTries===0&&G.rounds[1]>=80?3:G.rounds[1]>=60?2:1;$('fscore').textContent=G.score;$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=['','Keep practicing','Steady hands','CPR ready!'][s];$('fsum').textContent=`Round 1: ${G.rounds[0]}% in zone · Round 2 (no guide): ${G.rounds[1]}% in zone`;if(s>=2)confetti();SFX.win()}
+addEventListener('keydown',e=>{if(e.code==='Space'&&$('push')&&!$('game').classList.contains('hidden')){e.preventDefault();if(!e.repeat)press()}});
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

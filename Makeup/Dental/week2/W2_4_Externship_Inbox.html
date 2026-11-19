@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Externship Inbox | Dental Assisting Week 2</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:grid;grid-template-columns:470px 1fr;gap:22px;padding:16px 24px 18px}
+.inbox{background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.inbox h3{font-family:var(--body);font-size:16px;color:var(--teal2);display:flex;justify-content:space-between}
+.empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--soft);font-size:20px;text-align:center}
+.msg{background:#fff;color:var(--navy);border-radius:14px;padding:10px 14px;display:grid;grid-template-columns:40px 1fr;gap:4px 12px;cursor:pointer;border:3px solid transparent;animation:slidein .35s;flex:none}
+@keyframes slidein{from{transform:translateX(-40px);opacity:0}to{transform:none;opacity:1}}
+.msg.sel{border-color:var(--gold)}
+.msg .ic{grid-row:span 2;font-size:30px;display:flex;align-items:center}
+.msg b{font-size:17px;line-height:1.2}
+.msg .tb{height:8px;border-radius:4px;background:#E3EBF2;overflow:hidden;align-self:center}
+.msg .tb i{display:block;height:100%;background:var(--teal)}
+.msg.urgent .tb i{background:var(--red)}.msg.urgent{animation:slidein .35s,urg 1s infinite}
+@keyframes urg{50%{border-color:var(--red)}}
+.msg.gone{animation:out .35s forwards}
+@keyframes out{to{transform:translateX(60px);opacity:0}}
+.reader{background:var(--card);color:var(--cardink);border-radius:22px;padding:22px 28px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+.reader .from{font-size:16px;color:#4F6680;font-weight:700}
+.reader h2{font-size:32px;color:var(--navy)}
+.reader .body{font-size:21px;line-height:1.45;color:#2B4260}
+.reader .left{font-weight:700;font-size:17px}
+.acts{margin-top:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.act{font:700 19px var(--body);padding:13px 14px;border-radius:14px;border:3px solid #D5E0EA;background:#F1F5F9;color:var(--navy);cursor:pointer;display:flex;gap:10px;align-items:center;text-align:left}
+.act:hover{border-color:var(--teal)}.act span{font-size:24px}
+.act.no{border-color:var(--red);background:#FFE1DF;animation:shake .35s}
+.idle{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#4F6680;font-size:22px;gap:10px}
+.status{border-radius:12px;padding:6px 14px;font-weight:700;font-size:15px;text-align:center;min-width:170px}
+.status.ok{background:rgba(20,163,165,.25);color:var(--teal2);border:2px solid var(--teal)}
+.status.rev{background:rgba(229,83,75,.3);color:#FFB3AE;border:2px solid var(--red);animation:pulse .8s infinite}
+.tip{font-size:17px;padding:10px 14px;border-radius:12px;background:#FFE1DF;color:#9E2E28;font-weight:700}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 2 · Externship search</div>
+  <h1>Externship <em>Inbox</em></h1>
+  <p class="lead">It's a busy week. Messages keep coming in, and each one has a 24-hour clock. Open each message and take the right action before time runs out.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">⏰</div><b>Apply within 24 hours</b><span>Miss an HSS opportunity and your Externship Ready status gets revoked.</span></div>
+    <div class="rule"><div class="ico">🎯</div><b>Pick the right action</b><span>Wrong actions cost points. Fast, correct ones earn bonuses.</span></div>
+    <div class="rule"><div class="ico">⚡</div><b>Time moves fast</b><span>1 second = 1 hour. Your week lasts about 2 minutes.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Open my inbox</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 2</small>Externship Inbox</div>
+    <div class="status ok" id="status">Externship Ready ✓</div>
+    <div class="chipstat"><span>Clock</span><b id="clock">Mon 8 AM</b></div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play">
+    <div class="inbox" id="inbox"></div>
+    <div class="reader" id="reader"></div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">The week is over</div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Play another week</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const ACTS=[['hss','📨','Apply in HSS'],['reflect','📝','Submit Reinstatement Reflection'],['advisor','🧑‍💼','Contact your Student Advisor'],['upload','📤','Upload to your learning portal'],['practice','🎤','Plan and practice out loud']];
+const TPL={
+ hss:o=>({ic:'📨',from:'Healthcare Staff Solutions',title:`New externship match: ${o}`,body:`${o} posted an externship opportunity that matches your profile. Remember: treat every interaction like a job interview.`,act:'hss',why:'Externship opportunities get an application in HSS within 24 hours.'}),
+ dentrix:()=>({ic:'💻',from:'Dentrix Ascend',title:'Your Dentrix login isn\'t working',body:'You got the sign-up email, but you still can\'t get into Dentrix.',act:'advisor',why:'Dentrix access trouble after the sign-up email goes to your Student Advisor.'}),
+ docs:()=>({ic:'📁',from:'Learning portal',title:'Missing registration documents',body:'Your high school diploma or transcript and your US government ID still aren\'t in your portal.',act:'upload',why:'Required documents get uploaded to your learning portal.'}),
+ video:()=>({ic:'🎥',from:'Program reminder',title:'Your 3-minute intro video',body:'Start getting ready for your 3-minute introduction video.',act:'practice',why:'Plan what you\'ll say and practice your delivery.'}),
+ visit:o=>({ic:'🏢',from:'Your calendar',title:`Office visit tomorrow: ${o}`,body:`You're stopping by ${o} to ask about externships.`,act:'practice',why:'Rehearse your elevator pitch out loud before you go.'}),
+ resume:()=>({ic:'📄',from:'Program reminder',title:'Resume and LinkedIn check',body:'Your resume and LinkedIn profile should reflect your skills, education and career goals.',act:'practice',why:'Plan your updates and practice talking about your skills.',alt:'upload'}),
+ revoked:()=>({ic:'⛔',from:'Healthcare Staff Solutions',title:'Externship Ready status revoked',body:'You didn\'t apply to an opportunity within 24 hours, so your Externship Ready status was revoked.',act:'reflect',why:'Submit the Reinstatement Reflection on the Externship Ready page in HSS.',noTimer:true})};
+const OFF=['Bright Smiles Family Dental','Riverside Oral Surgery','Little Teeth Pediatrics','Oak Street Orthodontics','Downtown Dental Group','Lakeside Periodontics','Main St. Family Dentistry'];
+const SCHED=[[1,'hss'],[4,'dentrix'],[10,'docs'],[16,'hss'],[24,'visit'],[30,'hss'],[34,'video'],[44,'hss'],[52,'docs'],[58,'hss'],[66,'visit'],[70,'hss'],[80,'hss'],[86,'dentrix'],[94,'hss'],[100,'video'],[106,'hss']];
+const END=124,DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+let G,tick;
+function newGame(){G={h:0,score:0,msgs:[],sel:null,id:0,revoked:false,onTime:0,missed:0,wrong:0,revCount:0,sched:SCHED.map(s=>[...s]),offs:shuffle(OFF)};showScreen('game');render();reader();hud();
+  clearInterval(tick);tick=setInterval(step,1000)}
+function hourLabel(h){const t=8+h;const d=Math.floor(t/24);const hr=t%24;return `${DAYS[d%7]} ${hr%12||12} ${hr<12?'AM':'PM'}`}
+function hud(){$('clock').textContent=hourLabel(G.h);$('score').textContent=G.score;const s=$('status');s.className='status '+(G.revoked?'rev':'ok');s.textContent=G.revoked?'Status REVOKED ✗':'Externship Ready ✓'}
+function add(type){const t=TPL[type](type==='hss'||type==='visit'?G.offs[G.id%G.offs.length]:null);const m={...t,type,id:++G.id,born:G.h};G.msgs.push(m);SFX.whoosh();render();if(!G.sel)select(m.id)}
+function step(){G.h++;while(G.sched.length&&G.sched[0][0]<=G.h){add(G.sched.shift()[1])}
+  G.msgs.slice().forEach(m=>{if(m.noTimer)return;const left=24-(G.h-m.born);if(left<=0)expire(m);else if(left<=5)SFX.tick()});
+  render();if(G.sel)updLeft();hud();
+  if(G.h>=END&&(!G.msgs.length||G.h>=END+12))finish()}
+function expire(m){G.msgs=G.msgs.filter(x=>x!==m);G.missed++;flash('#E5534B');SFX.bad();
+  if(m.type==='hss'){if(!G.revoked){G.revoked=true;G.revCount++;add('revoked')}G.score=Math.max(0,G.score-150);comboText('STATUS REVOKED')}else{G.score=Math.max(0,G.score-75)}
+  if(G.sel===m.id){G.sel=null;reader()}}
+function render(){const ib=$('inbox');const open=G.msgs.length;
+  ib.innerHTML=`<h3><span>Inbox</span><span>${open} open</span></h3>`+(open?G.msgs.slice(0,6).map(m=>{const left=m.noTimer?24:24-(G.h-m.born);return `<div class="msg ${m.id===G.sel?'sel':''} ${left<=6&&!m.noTimer?'urgent':''}" data-id="${m.id}"><span class="ic">${m.ic}</span><b>${m.title}</b>
+   <div class="tb">${m.noTimer?'<i style="width:100%;background:#E5534B"></i>':`<i style="width:${left/24*100}%"></i>`}</div></div>`}).join(''):`<div class="empty">Inbox zero. Nice!<br>New messages will pop in.</div>`);
+  ib.querySelectorAll('.msg').forEach(e=>{e.style.animation=e.dataset.id==G.id&&G.h-G.msgs.find(m=>m.id==e.dataset.id).born<1?'':'none';if(e.classList.contains('urgent'))e.style.animation='urg 1s infinite';e.onclick=()=>select(+e.dataset.id)})}
+function select(id){G.sel=id;SFX.click();render();reader()}
+function updLeft(){const m=G.msgs.find(x=>x.id===G.sel);if(!m)return;const el=$('leftT');if(el)el.textContent=m.noTimer?'Fix this before you can apply to new opportunities.':`⏰ ${24-(G.h-m.born)} hours left to respond`}
+function reader(){const m=G.msgs.find(x=>x.id===G.sel);
+  if(!m){$('reader').innerHTML=`<div class="idle"><div style="font-size:70px">📬</div>Tap a message in your inbox to open it.</div>`;return}
+  $('reader').innerHTML=`<div class="from">From: ${m.from}</div><h2>${m.ic} ${m.title}</h2><div class="body">${m.body}</div><div class="left" id="leftT" style="color:${m.noTimer?'var(--red)':'#0B6F71'}"></div><div id="tip"></div>
+   <div class="acts">${ACTS.map(a=>`<button class="act" data-a="${a[0]}"><span>${a[1]}</span>${a[2]}</button>`).join('')}</div>`;updLeft();
+  $('reader').querySelectorAll('.act').forEach(b=>b.onclick=()=>act(m,b))}
+function act(m,b){const a=b.dataset.a;
+  if(a===m.act||a===m.alt){if(a==='hss'&&G.revoked){b.classList.add('no');SFX.bad();$('tip').innerHTML='<div class="tip">Your status is revoked, so you can\'t apply yet. Submit the Reinstatement Reflection first!</div>';return}
+    const left=m.noTimer?12:24-(G.h-m.born);const pts=100+left*10;G.score+=pts;G.onTime++;if(m.type==='revoked')G.revoked=false;
+    const p=centerOf(b);burst(p.x,p.y);floatText(p.x,p.y-30,'+'+pts);SFX.good(G.onTime);if(m.type==='revoked'){comboText('REINSTATED!');SFX.combo()}
+    G.msgs=G.msgs.filter(x=>x!==m);G.sel=G.msgs[0]?G.msgs[0].id:null;render();reader();hud();if(G.h>=END&&!G.msgs.length)finish()}
+  else{G.wrong++;G.score=Math.max(0,G.score-50);b.classList.add('no');SFX.bad();const p=centerOf(b);floatText(p.x,p.y-30,'−50','#FF8A84');hud();
+    $('tip').innerHTML=`<div class="tip">Not quite. Think about who handles this, then try again.</div>`}}
+function finish(){clearInterval(tick);showScreen('end');const s=G.missed===0&&G.wrong<=2?3:G.missed<=1&&G.wrong<=5?2:G.missed<=3?1:0;
+  $('fscore').textContent=G.score;$('fstars').innerHTML=starsHTML(s);$('frank').textContent=['Status: needs work','Getting organized','On top of it','Externship Ready all week'][s];
+  $('fsum').textContent=`${G.onTime} handled · ${G.missed} missed · ${G.wrong} wrong actions · status revoked ${G.revCount} ${G.revCount===1?'time':'times'}`;if(s>=2)confetti();s>=1?SFX.win():SFX.lose()}
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

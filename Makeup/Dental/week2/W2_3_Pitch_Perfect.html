@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pitch Perfect | Dental Assisting Week 2</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:grid;grid-template-columns:420px 1fr;gap:24px;padding:18px 26px 20px}
+.left{display:flex;flex-direction:column;gap:14px}
+.office{background:var(--card);color:var(--cardink);border-radius:22px;padding:16px 20px;display:flex;gap:16px;align-items:center;box-shadow:0 8px 0 rgba(0,0,0,.25)}
+.office .em{font-size:60px;line-height:1;transition:transform .2s}
+.office b{display:block;font-family:var(--head);font-size:24px;color:var(--navy)}
+.office span{font-size:16px;color:#4F6680}
+.script{flex:1;background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.script h3{font-size:18px;color:var(--teal2);font-family:var(--body)}
+.bub{background:#fff;color:var(--navy);border-radius:16px 16px 16px 4px;padding:10px 14px;font-size:17px;line-height:1.35;animation:pop .3s;border-left:6px solid var(--teal)}
+.bub.meh{border-left-color:var(--gold)}.bub.bad{border-left-color:var(--red)}
+.bub.empty{background:transparent;border:2px dashed rgba(255,255,255,.15);color:rgba(255,255,255,.3);animation:none}
+.clock{background:rgba(5,14,30,.5);border:2px solid rgba(127,216,217,.2);border-radius:18px;padding:12px 16px}
+.clock .row{display:flex;justify-content:space-between;color:var(--soft);font-size:16px;margin-bottom:6px}
+.clock .row b{color:var(--gold);font-family:var(--head);font-size:22px}
+.ctrack{height:18px;border-radius:9px;background:rgba(255,255,255,.1);position:relative;overflow:hidden}
+.ctrack i{position:absolute;left:0;top:0;bottom:0;background:var(--teal);transition:width .5s cubic-bezier(.3,1.4,.5,1)}
+.ctrack i.over{background:var(--red)}
+.ctrack::after{content:"";position:absolute;left:75%;top:0;bottom:0;border-left:3px solid #fff;opacity:.6}
+.right{display:flex;flex-direction:column;gap:14px}
+.stepbar{display:flex;gap:10px}
+.stepbar div{flex:1;padding:10px 14px;border-radius:14px;background:rgba(255,255,255,.06);color:var(--soft);font-weight:700;font-size:17px;border:2px solid transparent}
+.stepbar div.cur{border-color:var(--gold);color:#fff;background:rgba(242,179,61,.12)}.stepbar div.done{color:var(--teal2)}
+.prompt{font-family:var(--head);font-size:34px;color:#fff}
+.opts{flex:1;display:flex;flex-direction:column;gap:12px}
+.opt{flex:1;font:600 23px var(--body);text-align:left;padding:14px 20px;border-radius:18px;border:3px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);color:#fff;cursor:pointer;display:flex;gap:16px;align-items:center;line-height:1.3;transition:transform .08s}
+.opt:hover{border-color:var(--gold);background:rgba(255,255,255,.12)}.opt:active{transform:scale(.99)}
+.opt .q{flex:none;font-size:30px}
+.opt .sec{margin-left:auto;flex:none;font-size:15px;color:var(--soft);background:rgba(255,255,255,.1);padding:4px 10px;border-radius:99px}
+.opt.best{background:rgba(20,163,165,.35);border-color:var(--teal2)}.opt.meh{background:rgba(242,179,61,.2);border-color:var(--gold)}.opt.bad{background:rgba(229,83,75,.3);border-color:var(--red)}
+.opt.dim{opacity:.3}
+.opts.locked .opt{pointer-events:none}
+.fb{display:flex;align-items:center;gap:16px;min-height:72px;padding:10px 18px;border-radius:16px;background:rgba(255,255,255,.06)}
+.fb p{flex:1;margin:0;font-size:20px;line-height:1.35}
+.fb b{font-family:var(--head);font-size:24px}
+.verdict{position:absolute;inset:0;background:rgba(7,20,42,.92);z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center}
+.verdict .em{font-size:120px;line-height:1;animation:pop .5s}
+.verdict h2{font-size:64px;color:#fff}
+.verdict p{font-size:24px;color:var(--soft);max-width:820px;margin:0}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 2 · Externship search</div>
+  <h1>Pitch <em>Perfect</em></h1>
+  <p class="lead">You're walking into three offices to ask about an externship. Build your elevator pitch one line at a time, and keep it under 30 seconds.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">🙋</div><b>Introduce yourself</b><span>Your name, your program, and where you train.</span></div>
+    <div class="rule"><div class="ico">💪</div><b>Lead with what you offer</b><span>Specific skills, not "I need an externship."</span></div>
+    <div class="rule"><div class="ico">⏱️</div><b>Clear ask, under 30s</b><span>Busy staff will thank you for it.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Walk into office #1</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 2</small>Pitch Perfect</div>
+    <div class="chipstat"><span>Office</span><b id="num">1/3</b></div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play" id="play">
+    <div class="left">
+      <div class="office"><div class="em" id="oem">🙂</div><div><b id="oname"></b><span id="odesc"></span></div></div>
+      <div class="script" id="script"></div>
+      <div class="clock"><div class="row"><span>Pitch clock</span><b id="secs">0s / 30s</b></div><div class="ctrack"><i id="cbar" style="width:0"></i></div></div>
+    </div>
+    <div class="right">
+      <div class="stepbar" id="stepbar"></div>
+      <div class="prompt" id="prompt"></div>
+      <div class="opts" id="opts"></div>
+      <div class="fb" id="fb"><p style="color:var(--soft)">Pick the line you'd actually say.</p></div>
+    </div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">Three offices visited</div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <p class="lead" style="font-size:20px;color:var(--teal2)">Now practice it out loud with a classmate, an instructor, or in front of a mirror.</p>
+  <button class="btn" id="again">Pitch again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const STEPS=['Introduce yourself','Lead with what you offer','Make a clear ask'];
+// [text, seconds, quality 2/1/0, feedback]
+const OFFICES=[
+ {name:'Bright Smiles Family Dental',desc:'Busy general practice. The front desk phone is ringing.',lines:[
+  [['Hi, I\'m Jordan, a dental assisting student training at Zollege.',5,2,'Name, program, where you train. Confident and quick.'],['Hi! So, um, I\'m a student… I go to school for, like, dental stuff.',7,1,'Too vague. Say your name, your program, and where you train.'],['Hey, is the dentist around? I need to talk to them.',4,0,'Lead with who you are, politely. Don\'t demand the dentist.']],
+  [['I\'m trained in chairside assisting, instrument transfer, and infection control.',8,2,'Specific skills show exactly what you bring.'],['I\'m a really hard worker and a fast learner.',4,1,'Nice, but generic. Name specific skills.'],['I really need an externship or I can\'t graduate.',6,0,'That leads with what you need, not what you offer.']],
+  [['Would you be open to taking on an extern, or could I leave my resume with you?',6,2,'A clear ask with an easy yes.'],['Anyway, let me know if anything opens up!',3,1,'No clear ask, and nothing to follow up on.'],['Let me tell you the whole story of why I chose dental assisting…',25,0,'Way too long. Busy staff need a tight pitch.']]]},
+ {name:'Little Teeth Pediatric Dentistry',desc:'Kids in the waiting room. The office manager has a minute.',lines:[
+  [['Hi, I\'m Jordan. I\'m in Zollege\'s dental assisting program, training locally.',6,2,'Clear, friendly, and professional.'],['Hi, sorry, I\'m kind of nervous… I\'m a student.',5,1,'Take a breath and lead with your name and program.'],['Can I see whoever does the hiring? It\'s important.',4,0,'Pushy openers make a bad first impression.']],
+  [['I\'m trained in chairside assisting and patient comfort, and I\'d love to support your young patients.',9,2,'Skills that fit this office. Great tailoring.'],['I\'ve always loved kids.',3,1,'Warm, but it doesn\'t show your dental skills.'],['My schedule is tight, so I\'d need really flexible hours.',6,0,'Leads with your needs before they\'re even interested.']],
+  [['Would you consider taking an extern? I\'d be happy to leave my resume.',5,2,'Respectful, specific, and easy to say yes to.'],['Okay, well… thanks anyway!',2,1,'You never actually asked.'],['So can I start on Monday?',3,0,'Too presumptuous. Ask, don\'t assume.']]]},
+ {name:'Riverside Oral Surgery',desc:'Fast-paced surgical office. Staff are between procedures.',lines:[
+  [['Good afternoon, I\'m Jordan, a dental assisting student at Zollege.',5,2,'Polished and to the point.'],['Hi, I\'m doing an externship thing for school.',4,1,'Say your name and program clearly.'],['I\'ve been waiting a while. Can someone help me?',4,0,'Complaining is never a good first impression.']],
+  [['I\'ve trained in sterilization, instrument transfer, and moisture control, which I know matter in surgery.',10,2,'Tailored to what a surgical office needs.'],['I\'m pretty good with computers.',3,1,'Not specific to dental assisting.'],['I don\'t know much about surgery, but I need hours.',5,0,'Undersells you and leads with your needs.']],
+  [['Would you be open to an extern? May I leave my resume for the office manager?',6,2,'A clear ask that respects their time.'],['Do you have a website I could check sometime?',3,1,'Puts the work back on you and ends with no ask.'],['Here\'s a quick rundown of every class I\'ve taken so far…',28,0,'Nobody has time for that between procedures.']]]}];
+let G;
+function newGame(){G={o:0,score:0,best:0};office()}
+function office(){showScreen('game');const O=OFFICES[G.o];Object.assign(G,{s:0,secs:0,picks:[]});$('oname').textContent=O.name;$('odesc').textContent=O.desc;$('oem').textContent='🙂';$('num').textContent=(G.o+1)+'/3';$('score').textContent=G.score;
+  script();clock();step()}
+function script(){$('script').innerHTML='<h3>Your pitch so far</h3>'+[0,1,2].map(i=>{const p=G.picks[i];return p?`<div class="bub ${['bad','meh',''][p[2]]}">"${p[0]}"</div>`:`<div class="bub empty">${STEPS[i]}…</div>`}).join('')}
+function clock(){$('secs').textContent=G.secs+'s / 30s';$('cbar').style.width=Math.min(100,G.secs/40*100)+'%';$('cbar').classList.toggle('over',G.secs>30)}
+function step(){const O=OFFICES[G.o];$('stepbar').innerHTML=STEPS.map((s,i)=>`<div class="${i<G.s?'done':i===G.s?'cur':''}">${i<G.s?'✓ ':''}${i+1}. ${s}</div>`).join('');
+  $('prompt').textContent=['How do you open?','What do you say next?','How do you wrap it up?'][G.s];
+  const opts=shuffle(O.lines[G.s]);$('opts').className='opts';$('opts').innerHTML=opts.map((o,i)=>`<button class="opt" data-i="${i}"><span class="q">💬</span><span>"${o[0]}"</span></button>`).join('');
+  $('fb').innerHTML='<p style="color:var(--soft)">Pick the line you\'d actually say. (Keys 1–3 work too.)</p>';
+  $('opts').querySelectorAll('.opt').forEach(b=>b.onclick=()=>choose(opts[+b.dataset.i],b));
+  $('opts').animate([{transform:'translateY(20px)',opacity:0},{transform:'none',opacity:1}],{duration:250})}
+function choose(o,b){if($('opts').classList.contains('locked'))return;$('opts').classList.add('locked');G.picks.push(o);G.secs+=o[1];
+  const q=o[2];const pts=[0,40,100][q];G.score+=pts;$('score').textContent=G.score;
+  $('opts').querySelectorAll('.opt').forEach(x=>x.classList.add(x===b?['bad','meh','best'][q]:'dim'));
+  $('oem').textContent=['😒','😐','😊'][q];$('oem').animate([{transform:'scale(1.4)'},{transform:'scale(1)'}],{duration:350});
+  if(q===2){SFX.good(G.s+1);const p=centerOf(b);burst(p.x,p.y);floatText(p.x,p.y-30,'+100')}else if(q===1){SFX.click();const p=centerOf(b);floatText(p.x,p.y-30,'+40','#FFD97A')}else{SFX.bad();shakeEl(b)}
+  script();clock();
+  const best=OFFICES[G.o].lines[G.s].find(l=>l[2]===2);
+  $('fb').innerHTML=`<p><b style="color:${['#FF8A84','#FFD97A','#7FD8D9'][q]}">${['Ouch.','Close.','Great line!'][q]}</b> ${o[3]}${q<2?` <span style="color:var(--soft)">Better: "${best[0]}"</span>`:''}</p><button class="btn" id="nx">${G.s<2?'Next line':'Deliver pitch'}</button>`;
+  $('nx').onclick=()=>{SFX.click();G.s++;if(G.s<3)step();else deliver()};$('nx').focus()}
+function deliver(){const q=G.picks.reduce((a,p)=>a+p[2],0);const over=G.secs>30;let bonus=over?-50:50;G.score=Math.max(0,G.score+bonus);if(q===6&&!over)G.best++;
+  const tier=over?(q>=4?1:0):q===6?3:q>=4?2:q>=2?1:0;
+  const v=document.createElement('div');v.className='verdict';
+  v.innerHTML=`<div class="em">${['😬','🤔','😊','🤩'][tier]}</div><h2>${['That didn\'t land','They\'ll think about it','Leave your resume!','They want to meet you!'][tier]}</h2>
+   <p>${G.secs}s pitch${over?' — over 30 seconds, so you lost their attention (−50)':' — under 30 seconds (+50)'}. ${tier===3?'Confident intro, specific skills, clear ask. That\'s the formula.':'Remember: name and program, specific skills, then a clear ask.'}</p>
+   <button class="btn" id="nv" style="margin-top:12px">${G.o<2?'Next office':'See results'}</button>`;
+  $('play').appendChild(v);if(tier===3){confetti();SFX.win()}else if(tier>=2)SFX.combo();else SFX.lose();$('score').textContent=G.score;
+  $('nv').onclick=()=>{v.remove();G.o++;if(G.o<3)office();else end()}}
+function end(){showScreen('end');const s=G.best===3?3:G.best===2?2:G.best===1||G.score>=600?1:0;$('fscore').textContent=G.score;$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=['Keep practicing your pitch','Getting comfortable','Smooth talker','Pitch perfect'][s];$('fsum').textContent=`${G.best} of 3 perfect pitches.`;if(s>=2)confetti();SFX.win()}
+addEventListener('keydown',e=>{if(!G||$('game').classList.contains('hidden'))return;const n=+e.key;if(n>=1&&n<=3&&!$('opts').classList.contains('locked')){const b=$('opts').querySelectorAll('.opt')[n-1];if(b)b.click()}});
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

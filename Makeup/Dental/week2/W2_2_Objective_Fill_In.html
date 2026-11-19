@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Objective Fill-In | Dental Assisting Week 2</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+.play{flex:1;display:flex;flex-direction:column;padding:20px 40px 24px;gap:18px}
+.steps{display:flex;gap:10px;justify-content:center}
+.steps i{width:110px;height:10px;border-radius:5px;background:rgba(255,255,255,.12)}
+.steps i.done{background:var(--teal)}.steps i.cur{background:var(--gold)}
+.sent{flex:1;background:var(--card);color:var(--cardink);border-radius:26px;padding:28px 44px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 10px 0 rgba(0,0,0,.25)}
+.sent .lab{display:inline-flex;align-items:center;gap:10px;align-self:flex-start;background:var(--navy);color:#fff;font-weight:700;font-size:20px;padding:6px 18px;border-radius:99px}
+.sent .we{font-weight:700;color:#4F6680;font-size:19px;margin:16px 0 4px}
+.sent .txt{font-family:var(--head);font-size:36px;line-height:1.75;color:var(--navy)}
+.blank{display:inline-block;min-width:150px;height:52px;line-height:44px;vertical-align:middle;margin:0 4px;padding:0 14px;border-radius:12px;border:3px dashed #9DB4CC;background:#F1F5F9;text-align:center;font-family:var(--body);font-weight:700;font-size:28px;color:var(--navy);cursor:pointer;transition:background .15s}
+.blank.sel{border-color:var(--gold);background:#FFF5DB}
+.blank.full{border-style:solid;border-color:var(--navy);background:#E8EEF5}
+.blank.ok{border-color:var(--teal);background:#D3F0F0;color:#0B6F71;cursor:default}
+.blank.no{border-color:var(--red);background:#FFE1DF;color:var(--red);animation:shake .35s}
+.bank{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;min-height:64px}
+.word{font:700 26px var(--body);padding:12px 24px;border-radius:14px;border:0;background:var(--gold);color:var(--navy);cursor:pointer;box-shadow:0 5px 0 #B57E10;transition:transform .08s,opacity .2s}
+.word:active{transform:translateY(3px);box-shadow:0 2px 0 #B57E10}
+.word.used{opacity:.2;pointer-events:none}
+.bar{display:flex;justify-content:space-between;align-items:center}
+.bar .msg{font-family:var(--head);font-size:28px;font-weight:700}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 2 labs</div>
+  <h1>Objective <em>Fill-In</em></h1>
+  <p class="lead">Each Week 2 lab objective has missing words. Tap words from the bank to fill the blanks, then check your answer. Watch out for decoy words.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">👆</div><b>Tap to fill</b><span>A word drops into the highlighted blank. Tap a filled blank to clear it.</span></div>
+    <div class="rule"><div class="ico">🎯</div><b>First try counts</b><span>Each blank is worth 100 points if you get it right the first time.</span></div>
+    <div class="rule"><div class="ico">🧪</div><b>7 labs</b><span>Finish every objective to earn your stars.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Let's fill</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 2</small>Objective Fill-In</div>
+    <div class="chipstat"><span>Lab</span><b id="num">1/7</b></div>
+    <div class="chipstat"><span>Score</span><b id="score">0</b></div>
+    <div class="chipstat"><span>Time</span><b id="time">0:00</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play">
+    <div class="steps" id="steps"></div>
+    <div class="sent"><div class="lab" id="lab"></div><div class="we">We will…</div><div class="txt" id="txt"></div></div>
+    <div class="bank" id="bank"></div>
+    <div class="bar"><button class="btn ghost" id="clear">Clear all</button><span class="msg" id="msg"></span><button class="btn" id="check">Check</button></div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker">All 7 objectives complete</div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Play again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+const S=[
+ ['🦷 Intro to Alginate Impressions','identify the components of a good [alginate] impression, provide patient [comfort] throughout, and demonstrate it on a [typodont].',['plaster','speed','mannequin']],
+ ['📋 Intro to Charting','understand the basics of [digital] charting and recognize the [symbols] used when [paper] charting.',['colors','verbal','billing']],
+ ['🧰 Restorative Setup','identify the instruments used during a [composite] procedure and their [functions].',['extraction','prices','colors']],
+ ['🤝 Instrument Transfer & Moisture Control','efficiently and [safely] pass instruments and perform a [limited] and [full] mouth rinse.',['quickly','partial','fluoride']],
+ ['✋ Finger Rest Exercise','understand the importance of [finger rests] and demonstrate performing them on a [patient].',['hand signals','typodont','posture']],
+ ['♨️ Sterilization Procedure','properly sterilize instruments and [handpieces], and identify why it is important to follow the proper [procedure].',['gloves','schedule','x-rays']],
+ ['📸 Intro to Radiography','understand and practice placing a [RINN] assembly on a [human].',['tray','typodont','bite block']]];
+let G,clk;
+function newGame(){G={i:0,score:0,firstRight:0,blanks:0,secs:0};clearInterval(clk);clk=setInterval(()=>{G.secs++;$('time').textContent=Math.floor(G.secs/60)+':'+String(G.secs%60).padStart(2,'0')},1000);showScreen('game');load()}
+function load(){const [lab,t,dec]=S[G.i];G.ans=[];G.tries={};let k=0;
+  $('txt').innerHTML=t.replace(/\[([^\]]+)\]/g,(m,w)=>{G.ans.push(w);return `<span class="blank" data-k="${k++}"></span>`});
+  $('lab').textContent=lab;$('num').textContent=(G.i+1)+'/7';$('score').textContent=G.score;$('msg').textContent='';
+  $('steps').innerHTML=S.map((_,i)=>`<i class="${i<G.i?'done':i===G.i?'cur':''}"></i>`).join('');
+  $('bank').innerHTML=shuffle([...G.ans,...dec]).map(w=>`<button class="word">${w}</button>`).join('');
+  document.querySelectorAll('.blank').forEach(b=>b.onclick=()=>{if(b.classList.contains('ok'))return;if(b.dataset.w){unfill(b)}sel(b)});
+  document.querySelectorAll('.word').forEach(w=>w.onclick=()=>fill(w));sel(document.querySelector('.blank'));
+  $('txt').parentElement.animate([{transform:'translateX(60px)',opacity:0},{transform:'none',opacity:1}],{duration:300,easing:'ease-out'})}
+function sel(b){document.querySelectorAll('.blank').forEach(x=>x.classList.remove('sel'));if(b)b.classList.add('sel')}
+function fill(w){let b=document.querySelector('.blank.sel')||[...document.querySelectorAll('.blank')].find(x=>!x.dataset.w);if(!b)return;if(b.dataset.w)unfill(b);
+  SFX.click();b.textContent=w.textContent;b.dataset.w=w.textContent;b.classList.add('full');b.classList.remove('no');w.classList.add('used');
+  sel([...document.querySelectorAll('.blank')].find(x=>!x.dataset.w))}
+function unfill(b){const w=[...document.querySelectorAll('.word.used')].find(x=>x.textContent===b.dataset.w);if(w)w.classList.remove('used');b.textContent='';delete b.dataset.w;b.classList.remove('full','no')}
+function check(){const bl=[...document.querySelectorAll('.blank')];if(bl.some(b=>!b.dataset.w)){$('msg').style.color='#FF8A84';$('msg').textContent='Fill every blank first';SFX.bad();return}
+  let all=true;bl.forEach(b=>{if(b.classList.contains('ok'))return;const k=b.dataset.k;const ok=b.dataset.w===G.ans[k];G.tries[k]=(G.tries[k]||0)+1;
+    if(ok){b.classList.add('ok');b.classList.remove('full','sel');const pts=G.tries[k]===1?100:40;G.score+=pts;if(G.tries[k]===1)G.firstRight++;const p=centerOf(b);burst(p.x,p.y,undefined,10);floatText(p.x,p.y-30,'+'+pts)}
+    else{all=false;b.classList.add('no')}});
+  $('score').textContent=G.score;
+  if(all){G.blanks+=G.ans.length;SFX.good(3);SFX.combo();$('msg').style.color='var(--teal2)';$('msg').textContent=['Nailed it!','Perfect!','Exactly right!'][Math.random()*3|0];
+    setTimeout(()=>{G.i++;if(G.i<S.length)load();else end()},1200)}
+  else{SFX.bad();$('msg').style.color='#FF8A84';$('msg').textContent='Some words are off. Try again!';setTimeout(()=>document.querySelectorAll('.blank.no').forEach(unfill),900);setTimeout(()=>sel([...document.querySelectorAll('.blank')].find(x=>!x.dataset.w)),950)}}
+function end(){clearInterval(clk);showScreen('end');const acc=G.firstRight/G.blanks;const s=acc>=.95?3:acc>=.8?2:acc>=.5?1:0;
+  $('fscore').textContent=G.score;$('fstars').innerHTML=starsHTML(s);$('frank').textContent=['Read the objectives again','Getting there','Objective expert','Knows every lab by heart'][s];
+  $('fsum').textContent=`${G.firstRight} of ${G.blanks} blanks right on the first try · ${Math.floor(G.secs/60)}:${String(G.secs%60).padStart(2,'0')}`;if(s>=2)confetti();SFX.win()}
+$('check').onclick=check;$('clear').onclick=()=>document.querySelectorAll('.blank:not(.ok)').forEach(b=>{if(b.dataset.w)unfill(b)});$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

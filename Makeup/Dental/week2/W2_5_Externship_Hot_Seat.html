@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Externship Hot Seat | Dental Assisting Week 2</title>
+<style>
+:root{--navy:#0E2240;--navy2:#16325A;--navy3:#1F4373;--teal:#14A3A5;--teal2:#7FD8D9;--gold:#F2B33D;--gold2:#FFD97A;--red:#E5534B;--ink:#FFFFFF;--soft:#B9CBE0;--card:#FFFFFF;--cardink:#0E2240;
+--head:Cambria,"Cambria Math",Georgia,serif;--body:Calibri,Carlito,"Segoe UI",Candara,Arial,sans-serif;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--soft:#B9CBE0}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#07142A;font-family:var(--body);color:var(--ink);-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;overflow:hidden;
+ background:radial-gradient(ellipse 900px 520px at 50% 40%,#1A3A66 0%,#0E2240 60%,#0A1A33 100%)}
+#stage::before{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(127,216,217,.10) 1.5px,transparent 1.5px);background-size:32px 32px;pointer-events:none}
+h1,h2,h3{font-family:var(--head);margin:0;line-height:1.1}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+.hidden{display:none!important}
+.hud{height:76px;flex:none;display:flex;align-items:center;gap:14px;padding:0 28px;background:rgba(5,14,30,.55);border-bottom:2px solid rgba(127,216,217,.18);position:relative;z-index:5}
+.hud .title{font-family:var(--head);font-size:26px;font-weight:700;margin-right:auto;color:#fff}
+.hud .title small{display:block;font-family:var(--body);font-size:13px;font-weight:400;color:var(--teal2);letter-spacing:.3px}
+.chipstat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 14px;text-align:center;min-width:86px}
+.chipstat span{display:block;font-size:12px;color:var(--soft)}
+.chipstat b{font-family:var(--head);font-size:24px;color:var(--gold);line-height:1.1}
+.iconbtn{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer}
+.btn{font-family:var(--body);font-weight:700;font-size:22px;border:0;border-radius:14px;padding:14px 30px;cursor:pointer;background:var(--gold);color:var(--navy);box-shadow:0 6px 0 #B57E10;transition:transform .08s,box-shadow .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 2px 0 #B57E10}
+.btn.teal{background:var(--teal);color:#fff;box-shadow:0 6px 0 #0B6F71}
+.btn.teal:active{box-shadow:0 2px 0 #0B6F71}
+.btn.ghost{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35);box-shadow:none}
+.btn[disabled]{opacity:.4;pointer-events:none}
+button:focus-visible{outline:4px solid var(--gold2);outline-offset:3px}
+/* start / end screens */
+.splash{align-items:center;justify-content:center;text-align:center;gap:18px;padding:40px}
+.splash .kicker{color:var(--teal2);font-size:20px;font-weight:700}
+.splash h1{font-size:84px;color:#fff;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.splash h1 em{font-style:normal;color:var(--gold)}
+.splash p.lead{font-size:24px;color:var(--soft);max-width:820px;margin:0;line-height:1.4}
+.rules{display:flex;gap:16px;margin:8px 0 10px}
+.rule{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:16px 18px;width:250px;text-align:left}
+.rule .ico{font-size:34px}
+.rule b{display:block;font-size:19px;margin:6px 0 2px}
+.rule span{color:var(--soft);font-size:16px;line-height:1.35}
+.bigscore{font-family:var(--head);font-size:120px;color:var(--gold);line-height:1;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+.stars{font-size:70px;letter-spacing:10px;line-height:1}
+.stars i{font-style:normal;color:rgba(255,255,255,.15);display:inline-block}
+.stars i.on{color:var(--gold);animation:starpop .5s both}
+.stars i.on:nth-child(2){animation-delay:.25s}.stars i.on:nth-child(3){animation-delay:.5s}
+@keyframes starpop{0%{transform:scale(0) rotate(-90deg)}70%{transform:scale(1.35)}100%{transform:scale(1)}}
+.rank{font-family:var(--head);font-size:34px;color:#fff}
+/* fx */
+.float{position:absolute;font-family:var(--head);font-weight:700;font-size:34px;pointer-events:none;z-index:60;text-shadow:0 3px 0 rgba(0,0,0,.4);animation:floatup 1s ease-out forwards}
+@keyframes floatup{0%{transform:translate(-50%,0) scale(.6);opacity:0}15%{transform:translate(-50%,-10px) scale(1.15);opacity:1}100%{transform:translate(-50%,-90px) scale(1);opacity:0}}
+.spark{position:absolute;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:59}
+@keyframes shake{0%,100%{transform:translate(0)}20%{transform:translate(-10px,4px)}40%{transform:translate(9px,-4px)}60%{transform:translate(-6px,2px)}80%{transform:translate(5px,-2px)}}
+.shake{animation:shake .35s}
+@keyframes pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.flash{position:absolute;inset:0;pointer-events:none;z-index:58;animation:flash .35s forwards}
+@keyframes flash{from{opacity:.35}to{opacity:0}}
+.combo{position:absolute;font-family:var(--head);font-weight:700;color:var(--gold);z-index:61;pointer-events:none;font-size:64px;left:50%;top:44%;transform:translate(-50%,-50%);text-shadow:0 5px 0 #B57E10,0 0 30px rgba(242,179,61,.6);animation:comboin .9s forwards}
+@keyframes comboin{0%{transform:translate(-50%,-50%) scale(.3);opacity:0}25%{transform:translate(-50%,-50%) scale(1.15);opacity:1}75%{opacity:1}100%{transform:translate(-50%,-70%) scale(1);opacity:0}}
+canvas.confetti{position:absolute;inset:0;pointer-events:none;z-index:70}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
+
+#stage{background:radial-gradient(ellipse 700px 500px at 40% 45%,#21407A 0%,#10224A 55%,#0A1228 100%)}
+.play{flex:1;display:grid;grid-template-columns:1fr 290px;gap:22px;padding:16px 24px 18px}
+.main{display:flex;flex-direction:column;gap:14px}
+.lifes{display:flex;gap:12px;align-items:center}
+.life{font:700 17px var(--body);padding:10px 18px;border-radius:99px;border:3px solid var(--gold);background:rgba(242,179,61,.12);color:#fff;cursor:pointer;display:flex;gap:8px;align-items:center}
+.life:hover{background:rgba(242,179,61,.25)}.life.used{opacity:.25;pointer-events:none;text-decoration:line-through}
+.qtimer{margin-left:auto;width:74px;height:74px;border-radius:50%;border:5px solid var(--teal);display:grid;place-items:center;font:700 32px var(--head);color:#fff}
+.qtimer.low{border-color:var(--red);animation:pulse .5s infinite}
+.qbox{flex:1;border-radius:24px;background:linear-gradient(180deg,#1C2E66,#14204A);border:3px solid #7FA3E8;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px 40px;font-family:var(--head);font-weight:700;font-size:40px;line-height:1.25;color:#fff;box-shadow:0 0 40px rgba(127,163,232,.25)}
+.hint{min-height:30px;color:var(--gold2);font-size:20px;font-weight:700;text-align:center}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ans{font:700 22px var(--body);min-height:86px;text-align:left;padding:12px 22px;border-radius:44px;border:3px solid #7FA3E8;background:#14204A;color:#fff;cursor:pointer;display:flex;align-items:center;gap:14px;transition:background .15s}
+.ans b{color:var(--gold);font-size:22px}
+.ans:hover{background:#22357A}
+.ans.lock{background:var(--gold);color:var(--navy);border-color:#fff}.ans.lock b{color:var(--navy)}
+.ans.right{background:#1E9E5A;border-color:#9BF0C0;animation:pulse .5s 3}.ans.right b{color:#fff}
+.ans.wrong{background:var(--red);border-color:#FFB3AE}
+.ans.gone{visibility:hidden}
+.answers.locked .ans{pointer-events:none}
+.ladder{background:rgba(5,10,30,.6);border:2px solid rgba(127,163,232,.3);border-radius:22px;padding:14px;display:flex;flex-direction:column-reverse;gap:6px}
+.rung{flex:1;align-items:center;display:flex;justify-content:space-between;padding:9px 16px;border-radius:12px;font-weight:700;font-size:19px;color:var(--soft)}
+.rung span{color:rgba(255,255,255,.4)}
+.rung.safe{color:#fff}.rung.safe span{color:var(--gold)}
+.rung.done{color:var(--teal2)}
+.rung.cur{background:var(--gold);color:var(--navy)}.rung.cur span{color:var(--navy)}
+.reveal{position:absolute;inset:0;background:rgba(7,10,30,.9);z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+.reveal h2{font-size:70px;color:#fff}.reveal p{font-size:24px;color:var(--soft);max-width:860px;margin:0;line-height:1.4}
+</style></head><body><div id="stage">
+<section class="screen splash" id="start">
+  <div class="kicker">Dental Assisting · Week 2 · Externship</div>
+  <h1>Externship <em>Hot Seat</em></h1>
+  <p class="lead">Ten questions, each one tougher and worth more. One wrong answer ends the game, but safe havens protect your points.</p>
+  <div class="rules">
+    <div class="rule"><div class="ico">✂️</div><b>50:50</b><span>Removes two wrong answers.</span></div>
+    <div class="rule"><div class="ico">💡</div><b>Ask the Instructor</b><span>Get a hint from your instructor.</span></div>
+    <div class="rule"><div class="ico">🔄</div><b>Swap</b><span>Trade the question for a new one.</span></div>
+  </div>
+  <button class="btn" id="playBtn">Take the hot seat</button>
+</section>
+<section class="screen hidden" id="game">
+  <div class="hud"><div class="title"><small>Dental Assisting · Week 2</small>Externship Hot Seat</div>
+    <div class="chipstat"><span>Question</span><b id="qn">1/10</b></div>
+    <div class="chipstat"><span>Banked</span><b id="bank">0</b></div>
+    <button class="iconbtn mute" aria-label="Sound">🔊</button></div>
+  <div class="play" id="play">
+    <div class="main">
+      <div class="lifes"><button class="life" id="l50">✂️ 50:50</button><button class="life" id="lHint">💡 Ask the Instructor</button><button class="life" id="lSwap">🔄 Swap</button><div class="qtimer" id="qt">30</div></div>
+      <div class="qbox" id="qbox"></div>
+      <div class="hint" id="hint"></div>
+      <div class="answers" id="answers"></div>
+    </div>
+    <div class="ladder" id="ladder"></div>
+  </div>
+</section>
+<section class="screen splash hidden" id="end">
+  <div class="kicker" id="ek"></div>
+  <div class="bigscore" id="fscore">0</div><div id="fstars"></div><div class="rank" id="frank"></div>
+  <p class="lead" id="fsum"></p>
+  <button class="btn" id="again">Play again</button>
+</section>
+</div>
+<script>
+const stage=document.getElementById('stage');let SCALE=1;
+function fit(){SCALE=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform=`translate(-50%,-50%) scale(${SCALE})`}
+addEventListener('resize',fit);fit();
+const $=id=>document.getElementById(id);
+function toStage(cx,cy){const r=stage.getBoundingClientRect();return{x:(cx-r.left)/SCALE,y:(cy-r.top)/SCALE}}
+function centerOf(el){const r=el.getBoundingClientRect();return toStage(r.left+r.width/2,r.top+r.height/2)}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('hidden',s.id!==id))}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+// ---- sound ----
+const SFX=(()=>{let ctx=null,on=true;
+ function tone(f,d,type='sine',v=.18,when=0,slide=0){if(!on)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const t=ctx.currentTime+when;const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+d+.02)}catch(e){}}
+ return{toggle(){on=!on;return on},
+  good(n=0){const b=523*Math.pow(1.06,Math.min(n,10));tone(b,.12,'triangle',.2);tone(b*1.5,.18,'triangle',.18,.07)},
+  bad(){tone(180,.3,'sawtooth',.12,0,90)},tick(){tone(1200,.04,'square',.05)},click(){tone(700,.05,'triangle',.12)},
+  whoosh(){tone(300,.25,'sine',.1,0,900)},
+  combo(){[659,784,988,1319].forEach((f,i)=>tone(f,.15,'triangle',.16,i*.06))},
+  win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.12))},
+  unlock(){tone(900,.06,'square',.1);tone(1400,.1,'triangle',.15,.08)},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.3,'triangle',.16,i*.18))}}})();
+function wireMute(){document.querySelectorAll('.mute').forEach(b=>b.onclick=()=>{const on=SFX.toggle();document.querySelectorAll('.mute').forEach(x=>x.textContent=on?'🔊':'🔇')})}
+// ---- fx ----
+function floatText(x,y,txt,color='#FFD97A'){const d=document.createElement('div');d.className='float';d.textContent=txt;d.style.left=x+'px';d.style.top=y+'px';d.style.color=color;stage.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function burst(x,y,colors=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF'],n=16){for(let i=0;i<n;i++){const s=document.createElement('div');s.className='spark';s.style.left=x+'px';s.style.top=y+'px';s.style.background=colors[i%colors.length];stage.appendChild(s);
+ const a=Math.random()*Math.PI*2,dist=50+Math.random()*90;s.animate([{transform:'translate(-50%,-50%) scale(1)',opacity:1},{transform:`translate(calc(-50% + ${Math.cos(a)*dist}px),calc(-50% + ${Math.sin(a)*dist}px)) rotate(${Math.random()*360}deg) scale(.3)`,opacity:0}],{duration:600+Math.random()*300,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>s.remove()}}
+function flash(color){const f=document.createElement('div');f.className='flash';f.style.background=color;stage.appendChild(f);setTimeout(()=>f.remove(),400)}
+function shakeEl(el){el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')}
+function comboText(t){const d=document.createElement('div');d.className='combo';d.textContent=t;stage.appendChild(d);setTimeout(()=>d.remove(),900)}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const c=document.createElement('canvas');c.className='confetti';c.width=1280;c.height=720;stage.appendChild(c);const x=c.getContext('2d');const cols=['#F2B33D','#14A3A5','#7FD8D9','#FFFFFF','#FFD97A'];
+ const P=Array.from({length:180},()=>({x:Math.random()*1280,y:-20-Math.random()*400,vx:(Math.random()-.5)*4,vy:3+Math.random()*4,r:Math.random()*8+5,a:Math.random()*6,c:cols[Math.random()*5|0]}));let t=0;
+ (function f(){x.clearRect(0,0,1280,720);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.a+=.12;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);x.restore()});if(++t<220)requestAnimationFrame(f);else c.remove()})()}
+function starsHTML(n){return `<div class="stars">${[0,1,2].map(i=>`<i class="${i<n?'on':''}">★</i>`).join('')}</div>`}
+
+// [q, correct, w1, w2, w3, hint]
+const POOL=[
+ [['How many hours is the required externship?','40 hours','20 hours','60 hours','100 hours','It\'s the same number from Week 1.'],
+  ['Who should you contact if you can\'t access Dentrix after the sign-up email?','Your Student Advisor','The externship dentist','A classmate','Nobody, just wait','Think: who supports you with program access?'],
+  ['Where should you put your Week 2 reminders?','Your phone and your calendar','Only on a sticky note','In a classmate\'s notes','Nowhere, just remember them','Put them somewhere that will actually alert you.'],
+  ['How should you treat every externship interaction?','Like a job interview','Like a casual chat','Like a class lecture','Like a group project','Every interaction could become a job offer.'],
+  ['What should you start preparing in Week 2?','Your resume, LinkedIn, and 3-minute video','Your final exam notes','Your radiography final','Your graduation speech','These are all part of Externship Ready.'],
+  ['Which documents should already be in your learning portal?','All the required registration documents','Only your resume','Only your headshot','None until Week 12','Check the Week 2 reminders.']],
+ [['How quickly must you apply to opportunities you receive in HSS?','Within 24 hours','Within 72 hours','Within a week','Before Week 12','One day.'],
+  ['What happens if you don\'t apply in time?','Your Externship Ready status is revoked','Nothing at all','You get bonus time','You repeat Week 2','You lose a status you worked hard to earn.'],
+  ['How long should your elevator pitch be?','Under 30 seconds','About 2 minutes','About 5 minutes','As long as it takes','Office staff are busy. Keep it tight.'],
+  ['What should your elevator pitch lead with?','What you offer','What you need','Your schedule','Your GPA','Specific skills, not "I need an externship."'],
+  ['What risk comes with being dismissed from an externship?','Being dropped from the program','A lower quiz grade','Repeating one lab','No risk at all','It\'s the most serious consequence on the slide.'],
+  ['Which is a key benefit of an externship?','Building relationships and gaining references','Skipping final exams','Replacing your lab hours','Guaranteed pay','Many students get job leads from it.']],
+ [['Your Externship Ready status was revoked. What do you do?','Submit the Reinstatement Reflection in HSS','Email the dentist directly','Retake the Anatomy assessment','Wait until next term','It\'s on the Externship Ready page in HSS.'],
+  ['What\'s the best way to end your elevator pitch?','Ask if they\'d take an extern, or if you can leave your resume','Say "let me know if anything opens up"','Ask how much externs get paid','Just say thanks and leave','End with a clear ask.'],
+  ['Which is NOT one of the office brainstorm sources?','Random offices in another state','Providers you or your family have seen','Offices you pass in your daily routine','People you know who work in the field','Look for the one that isn\'t close to your life.'],
+  ['Which skill example fits "lead with what you offer" for a dental assistant?','Chairside assisting','"I need hours to graduate"','"My schedule is flexible"','"I\'m nervous"','Pick a specific, job-ready skill.'],
+  ['Besides gaining experience, what should your externship help you build?','Professional relationships and references','A social media following','A list of complaints','A shorter program','Who you meet can lead to a job.'],
+  ['Who are good people to practice your pitch with?','A classmate, an instructor, or a mirror','Only the dentist you\'re visiting','Nobody, it should be spontaneous','Strangers online','Practice out loud before the visit.']]];
+const VAL=[100,300,500,1000,2500,5000,10000,25000,50000,100000],SAFE=[3,6];
+let G,tm;
+function newGame(){const p=POOL.map(t=>shuffle(t));G={n:0,bank:0,used:{f:0,h:0,s:0},q:[p[0][0],p[0][1],p[0][2],p[1][0],p[1][1],p[1][2],p[1][3],p[2][0],p[2][1],p[2][2]],spare:[p[0][3],p[1][4],p[2][3]]};
+  ['l50','lHint','lSwap'].forEach(id=>$(id).classList.remove('used'));showScreen('game');ask()}
+function tier(n){return n<3?0:n<7?1:2}
+function ladder(){$('ladder').innerHTML=VAL.map((v,i)=>`<div class="rung ${SAFE.includes(i)?'safe':''} ${i<G.n?'done':''} ${i===G.n?'cur':''}"><span>${i+1}</span>${v.toLocaleString()}</div>`).join('')}
+function ask(){const Q=G.q[G.n];G.lock=false;$('qn').textContent=(G.n+1)+'/10';$('bank').textContent=G.bank.toLocaleString();ladder();$('hint').textContent='';
+  $('qbox').textContent=Q[0];$('qbox').animate([{opacity:0,transform:'scale(.95)'},{opacity:1,transform:'none'}],{duration:300});
+  const o=shuffle([1,2,3,4]);$('answers').className='answers';$('answers').innerHTML=o.map((k,i)=>`<button class="ans" data-k="${k}"><b>${'ABCD'[i]}:</b>${Q[k]}</button>`).join('');
+  $('answers').querySelectorAll('.ans').forEach(b=>b.onclick=()=>lockIn(b));
+  let t=30;$('qt').textContent=t;$('qt').classList.remove('low');clearInterval(tm);tm=setInterval(()=>{t--;$('qt').textContent=t;$('qt').classList.toggle('low',t<=5);if(t<=5&&t>0)SFX.tick();if(t<=0){clearInterval(tm);lockIn(null)}},1000)}
+function lockIn(b){if(G.lock)return;G.lock=true;clearInterval(tm);$('answers').classList.add('locked');if(b)b.classList.add('lock');SFX.click();
+  setTimeout(()=>{const right=$('answers').querySelector('.ans[data-k="1"]');right.classList.remove('gone');
+    if(b&&b.dataset.k==='1'){b.classList.remove('lock');b.classList.add('right');G.bank=VAL[G.n];SFX.good(G.n);const p=centerOf(b);burst(p.x,p.y);$('bank').textContent=G.bank.toLocaleString();
+      if(SAFE.includes(G.n)){comboText('SAFE HAVEN!');SFX.combo()}
+      setTimeout(()=>{G.n++;if(G.n>=10)end(true);else ask()},1500)}
+    else{if(b){b.classList.remove('lock');b.classList.add('wrong')}right.classList.add('right');SFX.bad();flash('#E5534B');
+      const safe=SAFE.filter(s=>s<G.n).pop();G.bank=safe!==undefined?VAL[safe]:0;const Q=G.q[G.n];
+      const r=document.createElement('div');r.className='reveal';r.innerHTML=`<div style="font-size:90px">${b?'😬':'⏰'}</div><h2>${b?'Wrong answer!':'Time\'s up!'}</h2><p>The answer was <b style="color:var(--gold)">${Q[1]}</b>.</p><p>You leave the hot seat with <b style="color:var(--gold)">${G.bank.toLocaleString()}</b> points${safe!==undefined?' from your safe haven':''}.</p><button class="btn" id="go2" style="margin-top:10px">See results</button>`;
+      setTimeout(()=>{$('play').appendChild(r);$('go2').onclick=()=>{r.remove();end(false)}},1600)}},1300)}
+$('l50').onclick=()=>{if(G.lock)return;$('l50').classList.add('used');SFX.whoosh();shuffle([...$('answers').querySelectorAll('.ans:not([data-k="1"])')]).slice(0,2).forEach(b=>b.classList.add('gone'))};
+$('lHint').onclick=()=>{if(G.lock)return;$('lHint').classList.add('used');SFX.click();$('hint').textContent='💡 Instructor says: '+G.q[G.n][5]};
+$('lSwap').onclick=()=>{if(G.lock)return;$('lSwap').classList.add('used');SFX.whoosh();G.q[G.n]=G.spare[tier(G.n)];ask()};
+function end(won){showScreen('end');const s=won?3:G.n>=7?2:G.n>=4?1:0;$('ek').textContent=won?'All 10 answered':'Out of the hot seat';$('fscore').textContent=G.bank.toLocaleString();$('fstars').innerHTML=starsHTML(s);
+  $('frank').textContent=won?'Externship Ready champion!':['Review the Week 2 slides','Good effort','Almost there'][s];$('fsum').textContent=`You answered ${won?10:G.n} of 10 questions correctly.`;if(s>=2){confetti();SFX.win()}else SFX.lose()}
+addEventListener('keydown',e=>{if(!G||G.lock||$('game').classList.contains('hidden'))return;const i='abcd'.indexOf(e.key.toLowerCase());if(i>-1){const b=$('answers').querySelectorAll('.ans')[i];if(b&&!b.classList.contains('gone'))lockIn(b)}});
+$('playBtn').onclick=newGame;$('again').onclick=newGame;wireMute();
+</script></body></html>

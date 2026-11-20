@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lab Test Sort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;gap:clamp(8px,1.5vh,14px);max-width:1250px;width:100%;margin:0 auto}
+.ip{font:600 clamp(16px,1.8vw,21px) Lexend,sans-serif;text-align:center}
+.ip small{display:block;font:400 14px 'Source Sans 3',sans-serif;color:var(--muted);margin-top:3px}
+.pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:44px;padding:8px;border:1px dashed var(--line);border-radius:14px}
+.chip{font:600 clamp(13px,1.2vw,15px) Lexend,sans-serif;background:var(--panel2);color:var(--text);border:2px solid var(--line);border-radius:30px;padding:7px 14px;cursor:grab}
+.chip:hover{border-color:var(--teal)}.chip.sel{border-color:var(--gold);background:#3a2f12}
+.chip.lock{border-color:var(--good);background:#123a35;cursor:default}.chip.bad{border-color:var(--bad);background:#3a1a22;animation:shake .3s}
+.binrow{flex:1;min-height:0;display:grid;gap:10px}
+.bx{background:var(--panel);border:2px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-height:0;cursor:pointer;padding:0;color:var(--text);text-align:left}
+.bx.over,.bx.armed:hover{border-color:var(--teal)}
+.bx h3{margin:0;padding:9px 12px 2px;font-size:clamp(14px,1.45vw,17px)}
+.bx p{margin:0;padding:0 12px 6px;font-size:12px;color:var(--muted);line-height:1.25}
+.bx .in{flex:1;display:flex;flex-direction:column;gap:6px;padding:8px;border-top:1px solid var(--line);overflow:hidden}
+.bx .chip{width:100%;text-align:center;padding:6px 8px}
+.foot{display:flex;gap:12px;align-items:stretch}.foot .fb{flex:1}
+</style></head><body>
+<header><div class="ttl"><h1>Lab Test Sort</h1><p>Week 4 &nbsp;|&nbsp; Types of Diagnostic Laboratory Tests</p></div><div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="st">0</b><span>Checks</span></div><div class="stat"><b id="pr">0</b><span>Locked</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="stage"><div class="ip" id="ip"></div><div class="pool" id="pool"></div><div class="binrow" id="bins"></div><div class="foot"><div class="fb" id="fb"></div><button class="btn gold" id="ck">Check bins</button></div></div>
+
+</main>
+<footer><span>Medical Assistant Certificate Program</span><span>Accurate diagnostic testing leads to better patient outcomes</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const CFG={"prompt": "Sort each test into its lab department<small>Drag items into bins, or tap an item and then tap a bin.</small>", "endTitle": "Lab sorted!", "intro": {"h": "Lab Test Sort", "p": "Every test belongs to a department. Knowing which one helps you choose the right container, requisition, and handling.", "rules": ["Drag all 15 tests into the right bins, or tap a test and then tap a bin.", "Press Check. Correct items lock in and wrong ones bounce back.", "Get them all right on your first check for a 30-point bonus."]}, "end": {"hi": "Perfect sort. You know your way around the lab.", "mid": "Nicely done. Review the tests you placed wrong.", "lo": "Review the five lab departments and try again."}, "bins": [{"n": "Hematology", "d": "Blood cells"}, {"n": "Chemistry", "d": "Chemicals in the blood"}, {"n": "Urinalysis", "d": "Urine testing"}, {"n": "Microbiology", "d": "Cultures for bacteria, viruses, and fungi"}, {"n": "Immunology / Serology", "d": "Antibodies and immune response"}], "items": [["CBC", 0, "A complete blood count measures blood cells. That’s hematology."], ["Hemoglobin", 0, "Hemoglobin is measured in hematology."], ["Hematocrit", 0, "Hematocrit (the percentage of red cells) is hematology."], ["Platelet count", 0, "Platelets are blood cells, so this is hematology."], ["Glucose", 1, "Blood glucose is part of chemistry panels."], ["Cholesterol", 1, "Cholesterol is a chemistry test."], ["Electrolytes", 1, "Electrolytes are part of chemistry panels."], ["Liver function panel", 1, "Liver and kidney function tests are chemistry."], ["Urine dipstick", 2, "Dipstick testing is part of urinalysis."], ["Microscopic urine exam", 2, "Looking at urine under the microscope is urinalysis."], ["Throat culture", 3, "Cultures grow organisms. That’s microbiology."], ["Wound culture", 3, "Wound cultures are microbiology."], ["Antibody test", 4, "Testing for antibodies is immunology/serology."], ["Pregnancy test (hCG)", 4, "Your course groups pregnancy tests under immunology/serology."], ["Mono spot test", 4, "It detects antibodies, so it’s serology."]]};
+function intro(){showOv('<h2>'+CFG.intro.h+'</h2><p>'+CFG.intro.p+'</p><ul>'+CFG.intro.rules.map(r=>'<li>'+r+'</li>').join('')+'</ul><div class="row"><button class="btn" onclick="start()">'+(CFG.intro.go||'Start')+'</button></div>')}
+function endScreen(o){const pct=o.pct;const m=CFG.end||{};const msg=pct>=85?(m.hi||'Outstanding work!'):pct>=60?(m.mid||'Nice job. Review the ones you missed and try again.'):(m.lo||'Keep practicing. Replay to lock it in.');
+ showOv('<h2>'+(o.title||'Activity complete!')+'</h2><div class="big">'+o.big+'</div><p>'+o.line+'</p><p>'+msg+'</p>'+(o.review&&o.review.length?'<div class="review">'+o.review.map(r=>'<div>'+r+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+function setStat(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function setBar(f){$('#bar').style.width=Math.round(f*100)+'%'}
+function fbSet(cls,html){const f=$('#fb');f.className='fb'+(cls?' '+cls:'');f.innerHTML=html}
+
+let items=[],where={},sel=null,attempts=0,firstWrong=new Set(),done=false,checks=0;const B=CFG.bins,N=CFG.items.length;
+function hud(){const lk=items.filter(x=>x.lock).length;setStat('sc',score());setStat('st',checks);setStat('pr',lk+'/'+N);setBar(lk/N)}
+function score(){return items.filter(x=>x.lock).length*10-firstWrong.size*4+(done&&firstWrong.size===0?30:0)}
+function start(){hideOv();$('#ip').innerHTML=CFG.prompt;items=shuffle(CFG.items.map((x,k)=>({t:x[0],b:x[1],why:x[2],k,lock:false})));where={};items.forEach(x=>where[x.k]=-1);sel=null;firstWrong=new Set();done=false;checks=0;
+ const r=$('#bins');r.style.gridTemplateColumns='repeat('+B.length+',1fr)';r.innerHTML='';
+ B.forEach((b,j)=>{const e=document.createElement('button');e.className='bx';e.innerHTML='<h3>'+b.n+'</h3><p>'+b.d+'</p><div class="in"></div>';e.onclick=ev=>{if(ev.target.closest('.chip'))return;dropTo(j)};
+  e.ondragover=ev=>{ev.preventDefault();e.classList.add('over')};e.ondragleave=()=>e.classList.remove('over');e.ondrop=ev=>{ev.preventDefault();e.classList.remove('over');sel=+ev.dataTransfer.getData('text');dropTo(j)};r.appendChild(e)});
+ const pl=$('#pool');pl.onclick=ev=>{if(ev.target===pl&&sel!=null)dropTo(-1)};pl.ondragover=ev=>ev.preventDefault();pl.ondrop=ev=>{ev.preventDefault();sel=+ev.dataTransfer.getData('text');dropTo(-1)};
+ fbSet('',CFG.hint||'Drag each item into a bin, or tap an item and then tap a bin. Check when you\u2019re ready.');render();hud()}
+function chip(x){const c=document.createElement('div');c.className='chip'+(x.lock?' lock':'')+(sel===x.k?' sel':'');c.textContent=x.t;c.tabIndex=x.lock?-1:0;c.setAttribute('role','button');
+ if(!x.lock){c.draggable=true;c.ondragstart=ev=>{ev.dataTransfer.setData('text',x.k)};c.onclick=ev=>{ev.stopPropagation();sel=sel===x.k?null:x.k;render()};c.onkeydown=ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();c.click()}}}
+ else c.onclick=()=>fbSet('ok','<strong>'+x.t+':</strong> '+x.why);return c}
+function render(){const pl=$('#pool');pl.innerHTML='';items.filter(x=>where[x.k]===-1).forEach(x=>pl.appendChild(chip(x)));
+ if(!pl.children.length)pl.innerHTML='<span style="color:var(--muted);font-size:14px;align-self:center">All items placed. Check your bins!</span>';
+ [...$('#bins').children].forEach((b,j)=>{b.classList.toggle('armed',sel!=null);const ins=b.querySelector('.in');ins.innerHTML='';items.filter(x=>where[x.k]===j).forEach(x=>ins.appendChild(chip(x)))});
+ const any=items.some(x=>!x.lock&&where[x.k]>=0);$('#ck').disabled=!any;$('#ck').style.display=done?'none':''}
+function dropTo(j){if(sel==null)return;const x=items.find(y=>y.k===sel);if(!x||x.lock)return;where[x.k]=j;sel=null;render()}
+function check(){checks++;let ok=0,bad=[];items.forEach(x=>{if(x.lock||where[x.k]<0)return;if(where[x.k]===x.b){x.lock=true;ok++}else{bad.push(x);firstWrong.add(x.k)}});
+ render();const badChips=[...document.querySelectorAll('.bx .chip:not(.lock)')];badChips.forEach(c=>c.classList.add('bad'));
+ const left=items.filter(x=>!x.lock).length;
+ if(!left){done=true;fbSet('ok','<strong>Every item sorted!</strong> Tap any item to see why it belongs there.');render();hud();setTimeout(end,1600);return}
+ fbSet(bad.length?'no':'ok','<strong>'+ok+' locked in'+(bad.length?', '+bad.length+' in the wrong bin.':'.')+'</strong> '+(bad.length?'Red items go back to the pool. Give them another try.':'Keep going!'));
+ setTimeout(()=>{bad.forEach(x=>where[x.k]=-1);render()},900);hud()}
+$('#ck').onclick=check;
+function end(){endScreen({title:CFG.endTitle,big:score(),pct:(N-firstWrong.size)/N*100,line:(N-firstWrong.size)+' of '+N+' right on the first try &nbsp;|&nbsp; '+checks+' check'+(checks>1?'s':''),review:items.filter(x=>firstWrong.has(x.k)).map(x=>'<b>'+x.t+'</b> \u2192 '+B[x.b].n)})}
+intro();
+</script></body></html>

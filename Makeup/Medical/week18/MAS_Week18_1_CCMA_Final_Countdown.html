@@ -1,0 +1,115 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CCMA Final Countdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:clamp(10px,2vh,20px);max-width:1050px;width:100%;margin:0 auto}
+.tag{font:600 14px Lexend,sans-serif;color:var(--teal);display:flex;justify-content:space-between;gap:10px}
+.lives{color:var(--bad);letter-spacing:4px}
+.pbox{background:var(--panel2);border:2px solid var(--line);border-radius:18px;padding:clamp(14px,2.4vh,24px) 26px;font:600 clamp(18px,2.1vw,25px) Lexend,sans-serif;line-height:1.35;animation:pop .2s}
+.pbox small{display:block;font:400 15px 'Source Sans 3',sans-serif;color:var(--muted);margin-top:6px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts.col{grid-template-columns:1fr}
+.opt{text-align:left;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:12px 16px;color:var(--text);font-size:clamp(15px,1.45vw,18px);cursor:pointer;display:flex;gap:12px;align-items:center;line-height:1.3}
+.opt:hover:not(:disabled){border-color:var(--teal)}
+.opt .k{font:600 13px Lexend,sans-serif;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 8px;flex:none}
+.opt.right{border-color:var(--good);background:#123a35}.opt.wrong{border-color:var(--bad);background:#3a1a22;animation:shake .3s}
+.opt:disabled{cursor:default}
+.timer{height:8px;background:var(--panel);border-radius:8px;overflow:hidden}.timer i{display:block;height:100%;background:var(--gold);width:100%}
+.foot{display:flex;gap:12px;align-items:stretch}.foot .fb{flex:1}
+/* skins */
+.monitor{background:#07131f;border:2px solid #1f4a4a;font-family:Lexend,sans-serif;display:grid;grid-template-columns:auto 1fr;gap:6px 26px;align-items:end}
+.monitor .lbl{font:600 14px Lexend,sans-serif;color:var(--teal);grid-column:1/3}
+.monitor .val{font:700 clamp(40px,6vw,68px) Lexend,sans-serif;color:var(--good);line-height:1;text-shadow:0 0 18px rgba(79,209,165,.35)}
+.monitor .unit{font:400 clamp(16px,1.8vw,22px) 'Source Sans 3',sans-serif;color:var(--muted);padding-bottom:8px}
+.monitor .ctx{grid-column:1/3;font:400 16px 'Source Sans 3',sans-serif;color:var(--muted)}
+.label-card{display:grid;grid-template-columns:1fr 1fr;gap:16px;font-family:'Source Sans 3',sans-serif;font-weight:400}
+.label-card .doc{background:#f5f1e6;color:#1b2430;border-radius:10px;padding:12px 16px;font-size:clamp(14px,1.35vw,16px);line-height:1.45}
+.label-card .doc h4{margin:0 0 6px;font:700 13px Lexend,sans-serif;color:#44506a}
+.label-card .doc b{font-weight:600}
+.label-card .doc.tube{border-left:10px solid #e8b04a}
+</style></head><body>
+<header><div class="ttl"><h1>CCMA Final Countdown</h1><p>Week 18 &nbsp;|&nbsp; CCMA Exam Day Warm-Up</p></div><div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="st">0</b><span>Streak</span></div><div class="stat"><b id="pr">0</b><span>Question</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="stage"><div class="tag"><span id="tagl"></span><span class="lives" id="lives"></span></div><div class="timer"><i id="tm"></i></div><div class="pbox" id="pbox"></div><div class="opts" id="opts"></div><div class="foot"><div class="fb" id="fb"></div><button class="btn" id="nx" style="display:none">Next</button></div></div>
+
+</main>
+<footer><span>Medical Assistant Certificate Program</span><span>Read every question carefully. You’ve got this!</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const CFG={"timer": 20000, "col": true, "tag": "Question #", "hint": "Exam-style question. Take your time and read carefully.", "okWord": "Correct!", "endTitle": "Warm-up complete!", "intro": {"h": "CCMA Final Countdown", "p": "A final warm-up with 15 exam-style questions from every CCMA content area. 20 seconds each.", "rules": ["15 questions, 20 seconds each.", "Click an answer or use keys <span class=\"kbd\">A</span>–<span class=\"kbd\">D</span>.", "Read the explanations. They’re your last-minute review!"]}, "end": {"hi": "You’re ready. Go pass that CCMA!", "mid": "Nice warm-up. Skim the explanations once more.", "lo": "Take a breath, review the explanations, and trust your training."}, "qs": [{"p": "Which tube is drawn right after blood cultures?", "o": ["Light blue", "Lavender", "Gray", "Green"], "a": 0, "short": "After blood cultures", "why": "Blood cultures, light blue, red/gold, green, lavender, gray."}, {"p": "Where is the black limb lead placed?", "o": ["Left arm", "Right arm", "Left leg", "Right leg"], "a": 0, "short": "Black lead", "why": "Smoke (black) over fire (red), on the left side."}, {"p": "A patient states, “It burns when I urinate.” Where is this documented?", "o": ["Chief complaint", "Social history", "Family history", "Past medical history"], "a": 0, "short": "Burning urination", "why": "The reason for the visit, in the patient’s words."}, {"p": "Which form is used for a Medicare patient when a service may not be medically necessary?", "o": ["ABN", "DNR", "DPAHC", "Notice of Privacy Practices"], "a": 0, "short": "Medicare form", "why": "Advance Beneficiary Notice of Non-coverage."}, {"p": "A patient opens their mouth for a strep swab. What type of consent is this?", "o": ["Implied", "Informed", "Written", "Expressed"], "a": 0, "short": "Strep swab consent", "why": "The action implies consent."}, {"p": "Order: 500 mg. On hand: 250 mg tablets. How many tablets?", "o": ["2", "1", "4", "½"], "a": 0, "short": "500 mg, 250 mg tabs", "why": "500 ÷ 250 = 2."}, {"p": "Which artifact causes regular, evenly spaced spikes on an EKG?", "o": ["60-cycle interference", "Somatic tremor", "Wandering baseline", "Interrupted baseline"], "a": 0, "short": "Regular spikes", "why": "Electrical interference."}, {"p": "Which question is open-ended?", "o": ["“Tell me about your pain.”", "“Do you smoke?”", "“What’s your date of birth?”", "“Are you allergic to penicillin?”"], "a": 0, "short": "Open-ended", "why": "It invites the patient to describe."}, {"p": "What should you do first after a needlestick?", "o": ["Wash with soap and water", "Report it tomorrow", "Apply bleach", "Ignore it if it’s small"], "a": 0, "short": "Needlestick", "why": "Wash, report, get evaluated, get counseling."}, {"p": "What is a normal adult heart rate?", "o": ["60–100/min", "40–60/min", "100–140/min", "12–20/min"], "a": 0, "short": "Normal HR", "why": "60–100 beats per minute."}, {"p": "Which law prohibits the sale of a patient’s PHI?", "o": ["HITECH Act", "OSH Act", "CLIA", "Patient’s Bill of Rights"], "a": 0, "short": "Sale of PHI", "why": "The HITECH Act."}, {"p": "A claim is denied for lack of medical necessity. What do you do?", "o": ["Submit an appeal", "Bill the patient", "Write it off", "Resubmit it unchanged"], "a": 0, "short": "Denied claim", "why": "Appeal with supporting documentation."}, {"p": "Signs of hypoglycemia include:", "o": ["Sweating, confusion, and trembling", "Hives and swelling", "Facial droop", "A fever of 103°F"], "a": 0, "short": "Hypoglycemia", "why": "Sweating, confusion, trembling, and irritability."}, {"p": "Which precautions apply to a patient who is coughing and sneezing?", "o": ["Droplet", "Contact", "Sterile", "None"], "a": 0, "short": "Coughing", "why": "Droplet precautions."}, {"p": "How do you verify the “right medication”?", "o": ["State the drug name, who ordered it, and its intended effect", "Check the color of the pill", "Ask the patient what it’s for", "Use what’s on the counter"], "a": 0, "short": "Right medication", "why": "Confirm the name, the order, and the intended effect."}]};
+function intro(){showOv('<h2>'+CFG.intro.h+'</h2><p>'+CFG.intro.p+'</p><ul>'+CFG.intro.rules.map(r=>'<li>'+r+'</li>').join('')+'</ul><div class="row"><button class="btn" onclick="start()">'+(CFG.intro.go||'Start')+'</button></div>')}
+function endScreen(o){const pct=o.pct;const m=CFG.end||{};const msg=pct>=85?(m.hi||'Outstanding work!'):pct>=60?(m.mid||'Nice job. Review the ones you missed and try again.'):(m.lo||'Keep practicing. Replay to lock it in.');
+ showOv('<h2>'+(o.title||'Activity complete!')+'</h2><div class="big">'+o.big+'</div><p>'+o.line+'</p><p>'+msg+'</p>'+(o.review&&o.review.length?'<div class="review">'+o.review.map(r=>'<div>'+r+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+function setStat(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function setBar(f){$('#bar').style.width=Math.round(f*100)+'%'}
+function fbSet(cls,html){const f=$('#fb');f.className='fb'+(cls?' '+cls:'');f.innerHTML=html}
+
+let q=[],i=0,score=0,streak=0,best=0,right=0,miss=[],lives=0,locked=true,t0=0,raf=null;const N=CFG.count||CFG.qs.length;
+function hud(){setStat('sc',score);setStat('st',streak);setStat('pr',Math.min(i+1,N)+'/'+N);setBar(i/N);if(CFG.lives)$('#lives').textContent='\u2665'.repeat(Math.max(0,lives))+'\u2661'.repeat(CFG.lives-Math.max(0,lives))}
+function start(){hideOv();q=shuffle(CFG.qs).slice(0,N);i=0;score=0;streak=0;best=0;right=0;miss=[];lives=CFG.lives||0;show()}
+function show(){const s=q[i];locked=false;$('#tagl').textContent=CFG.tag?CFG.tag.replace('#',i+1):'';
+ const p=$('#pbox');p.className='pbox '+(s.skin||CFG.skin||'');p.style.animation='none';void p.offsetWidth;p.style.animation='';p.innerHTML=s.p;
+ let os=s.o.map((t,k)=>({t,k}));if(CFG.shuffleOpts!==false)os=shuffle(os);
+ const o=$('#opts');o.className='opts'+(CFG.col||s.o.some(x=>x.length>60)?' col':'');o.innerHTML='';
+ os.forEach((x,j)=>{const b=document.createElement('button');b.className='opt';b.innerHTML='<span class="k">'+'ABCD'[j]+'</span><span>'+x.t+'</span>';b._k=x.k;b.onclick=()=>pick(b);o.appendChild(b)});
+ fbSet('',CFG.hint||'Choose the best answer. Keys A\u2013D work too.');$('#nx').style.display='none';hud();
+ if(CFG.timer){t0=performance.now();cancelAnimationFrame(raf);run()}}
+function run(){const el=performance.now()-t0;$('#tm').style.width=Math.max(0,100-el/CFG.timer*100)+'%';if(el>=CFG.timer&&!locked){pick(null);return}if(!locked)raf=requestAnimationFrame(run)}
+function pick(b){if(locked)return;locked=true;cancelAnimationFrame(raf);const s=q[i];const ok=b&&b._k===s.a;
+ document.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(x._k===s.a)x.classList.add('right')});
+ if(ok){streak++;best=Math.max(best,streak);right++;let pts=10+Math.min(streak-1,5)*2;if(CFG.timer)pts+=Math.max(0,Math.round((CFG.timer-(performance.now()-t0))/CFG.timer*10));score+=pts;fbSet('ok','<strong>'+(CFG.okWord||'Correct!')+' +'+pts+'</strong> '+s.why)}
+ else{streak=0;miss.push(s);if(b)b.classList.add('wrong');if(CFG.lives)lives--;fbSet('no','<strong>'+(b?(CFG.noWord||'Not quite.'):'Time\u2019s up!')+'</strong> '+s.why)}
+ const nx=$('#nx');nx.style.display='';const over=CFG.lives&&lives<=0;nx.textContent=(i<N-1&&!over)?'Next':'See results';nx.focus();hud()}
+$('#nx').onclick=()=>{const over=CFG.lives&&lives<=0;i++;if(i<N&&!over)show();else{setBar(1);endScreen({title:over?(CFG.outTitle||'Out of lives!'):CFG.endTitle,big:score,pct:right/N*100,line:right+' of '+N+' correct &nbsp;|&nbsp; Best streak: '+best,review:miss.map(m=>'<b>'+(m.short||m.p.replace(/<[^>]+>/g,' ').slice(0,90))+'</b> \u2192 '+m.o[m.a])})}};
+addEventListener('keydown',e=>{if(!ov.classList.contains('hide'))return;const k='abcd'.indexOf(e.key.toLowerCase());if(k>=0&&!locked){const b=document.querySelectorAll('.opt')[k];if(b)pick(b)}});
+if(!CFG.timer)$('.timer').style.display='none';if(!CFG.lives)$('#lives').style.display='none';
+intro();
+</script></body></html>

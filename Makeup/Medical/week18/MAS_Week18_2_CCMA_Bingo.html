@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CCMA Bingo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.wrap{flex:1;min-height:0;display:grid;grid-template-columns:minmax(260px,380px) 1fr;gap:22px;max-width:1200px;width:100%;margin:0 auto}
+.side{display:flex;flex-direction:column;gap:14px;justify-content:center}
+.clue{background:var(--panel2);border:2px solid var(--line);border-radius:18px;padding:20px;font:600 clamp(17px,1.9vw,22px) Lexend,sans-serif;line-height:1.35;animation:pop .2s}
+.clue small{display:block;font:600 13px Lexend,sans-serif;color:var(--teal);margin-bottom:8px}
+.board{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto repeat(4,1fr);gap:8px;min-height:0}
+.bh{font:700 clamp(22px,2.6vw,32px) Lexend,sans-serif;color:var(--gold);text-align:center}
+.cell{background:var(--panel);border:2px solid var(--line);border-radius:12px;color:var(--text);font:600 clamp(13px,1.3vw,16px) Lexend,sans-serif;padding:6px;cursor:pointer;line-height:1.2;position:relative}
+.cell:hover:not(:disabled){border-color:var(--teal)}
+.cell.hit{background:#123a35;border-color:var(--good);cursor:default}
+.cell.hit::after{content:'';position:absolute;inset:18%;border-radius:50%;border:3px solid rgba(79,209,165,.45)}
+.cell.line{background:#3a2f12;border-color:var(--gold)}.cell.line::after{border-color:rgba(244,185,66,.55)}
+.cell.wrong{border-color:var(--bad);animation:shake .3s}
+.bingo{font:700 clamp(26px,3.5vw,42px) Lexend,sans-serif;color:var(--gold);text-align:center;min-height:1.2em}
+@keyframes zoom{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+.bingo.go{animation:zoom .5s}
+@media (max-width:820px){.wrap{grid-template-columns:1fr}}
+</style></head><body>
+<header><div class="ttl"><h1>CCMA Bingo</h1><p>Week 18 &nbsp;|&nbsp; CCMA Exam Day</p></div><div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="st">0</b><span>Bingos</span></div><div class="stat"><b id="pr">0</b><span>Marked</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="wrap"><section class="side"><div class="clue" id="clue"></div><div class="bingo" id="bg"></div><div class="fb" id="fb">Find the term that matches the clue.</div></section><div class="board" id="board"></div></div>
+
+</main>
+<footer><span>Medical Assistant Certificate Program</span><span>Welcome to the medical assisting profession!</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const CFG={"head": "CCMA", "endTitle": "Blackout!", "intro": {"h": "CCMA Bingo", "p": "One last game before the exam: 16 clues from all 18 weeks. Line up four in a row for a bingo!", "rules": ["16 clues from across the program.", "First-try matches earn 10 points. Each bingo line earns a 25-point bonus.", "Rows, columns, and both diagonals count."]}, "end": {"hi": "Full card! You’re ready.", "mid": "Good game. Glance at the terms you missed.", "lo": "Quick review, then you’re off!"}, "terms": [{"t": "Chain of infection", "clue": "Infectious agent, reservoir, mode of transmission, portal of entry, susceptible host."}, {"t": "Scope of practice", "clue": "The legal limits of what an MA is trained and permitted to do."}, {"t": "Chief complaint", "clue": "The reason for the visit, in the patient’s own words."}, {"t": "Chain of custody", "clue": "Required documentation for a drug screen."}, {"t": "Co-payment", "clue": "A flat $20 paid at check-in."}, {"t": "Six Rights", "clue": "Patient, medication, dose, route, time, documentation."}, {"t": "Median cubital", "clue": "The first-choice vein."}, {"t": "QRS complex", "clue": "Ventricular depolarization."}, {"t": "FAST", "clue": "Face, arm, speech, time to call 911."}, {"t": "Teach-back", "clue": "The patient shows you they understood."}, {"t": "HIPAA", "clue": "Protects patient health information."}, {"t": "DNR", "clue": "No CPR if the heart stops."}, {"t": "Autoclave", "clue": "Sterilizes at 250°F."}, {"t": "Droplet precautions", "clue": "For coughing and sneezing."}, {"t": "Hepatitis B", "clue": "Vaccine employers must offer free."}, {"t": "CCMA", "clue": "The certification you’re earning today!"}]};
+function intro(){showOv('<h2>'+CFG.intro.h+'</h2><p>'+CFG.intro.p+'</p><ul>'+CFG.intro.rules.map(r=>'<li>'+r+'</li>').join('')+'</ul><div class="row"><button class="btn" onclick="start()">'+(CFG.intro.go||'Start')+'</button></div>')}
+function endScreen(o){const pct=o.pct;const m=CFG.end||{};const msg=pct>=85?(m.hi||'Outstanding work!'):pct>=60?(m.mid||'Nice job. Review the ones you missed and try again.'):(m.lo||'Keep practicing. Replay to lock it in.');
+ showOv('<h2>'+(o.title||'Activity complete!')+'</h2><div class="big">'+o.big+'</div><p>'+o.line+'</p><p>'+msg+'</p>'+(o.review&&o.review.length?'<div class="review">'+o.review.map(r=>'<div>'+r+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+function setStat(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function setBar(f){$('#bar').style.width=Math.round(f*100)+'%'}
+function fbSet(cls,html){const f=$('#fb');f.className='fb'+(cls?' '+cls:'');f.innerHTML=html}
+
+let clues=[],ci=0,score=0,misses=0,lines=0,marked=new Set(),wrongOn={},layout=[],locked=false,missedList=[];const T=CFG.terms;
+const LINES=[];for(let r=0;r<4;r++)LINES.push([0,1,2,3].map(c=>r*4+c));for(let c=0;c<4;c++)LINES.push([0,1,2,3].map(r=>r*4+c));LINES.push([0,5,10,15],[3,6,9,12]);
+function hud(){setStat('sc',score);setStat('st',lines);setStat('pr',marked.size+'/16');setBar(marked.size/16)}
+function start(){hideOv();layout=shuffle(T.map((t,k)=>k));clues=shuffle(T.map((t,k)=>k));ci=0;score=0;misses=0;lines=0;marked=new Set();missedList=[];wrongOn={};
+ const b=$('#board');b.innerHTML='';(CFG.head||'BILL').split('').forEach(h=>{const e=document.createElement('div');e.className='bh';e.textContent=h;b.appendChild(e)});
+ layout.forEach((k,pos)=>{const e=document.createElement('button');e.className='cell';e.textContent=T[k].t;e._k=k;e._p=pos;e.onclick=()=>tap(e);b.appendChild(e)});showClue();hud()}
+function showClue(){locked=false;const k=clues[ci];const c=$('#clue');c.style.animation='none';void c.offsetWidth;c.style.animation='';c.innerHTML='<small>Clue '+(ci+1)+' of 16</small>'+T[k].clue;$('#bg').textContent='';$('#bg').className='bingo'}
+function tap(e){if(locked||e.classList.contains('hit'))return;const k=clues[ci];
+ if(e._k===k){locked=true;const tries=wrongOn[k]||0;const pts=tries?4:10;score+=pts;e.classList.add('hit');marked.add(e._p);
+  const before=lines;const done=LINES.filter(L=>L.every(p=>marked.has(p)));const newL=done.length-before;lines=done.length;
+  done.forEach(L=>L.forEach(p=>$('#board').children[4+p].classList.add('line')));
+  if(newL>0){score+=25*newL;$('#bg').textContent=newL>1?'DOUBLE BINGO! +'+50:'BINGO! +25';$('#bg').className='bingo go'}
+  fbSet('ok','<strong>'+T[k].t+'! +'+pts+'</strong> '+(T[k].why||''));hud();setTimeout(()=>{ci++;if(ci<16)showClue();else end()},newL?1500:1000)}
+ else{misses++;wrongOn[k]=(wrongOn[k]||0)+1;if(wrongOn[k]===1)missedList.push(k);e.classList.add('wrong');setTimeout(()=>e.classList.remove('wrong'),400);fbSet('no','<strong>Not '+T[e._k].t+'.</strong> '+(wrongOn[k]>=2?'Hint: look for <b>'+T[k].t.split(' ')[0]+'\u2026</b>':'Try another square.'))}}
+function end(){endScreen({title:CFG.endTitle,big:score,pct:Math.max(0,(16-missedList.length)/16*100),line:lines+' bingo lines &nbsp;|&nbsp; '+(16-missedList.length)+' of 16 on the first try',review:missedList.map(k=>'<b>'+T[k].t+':</b> '+T[k].clue)})}
+intro();
+</script></body></html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CCMA: Fact or Myth?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.stage{flex:1;min-height:0;display:grid;grid-template-columns:1fr minmax(280px,480px) 1fr;align-items:center;gap:20px}
+.side{display:flex;flex-direction:column;align-items:center;gap:10px}
+.side .btn{width:min(230px,100%);padding:16px 12px;font-size:17px}
+.side .lb{background:var(--bad);color:#2a0608}
+.side p{margin:0;color:var(--muted);font-size:14px;text-align:center}
+.deck{position:relative;height:clamp(220px,42vh,340px)}
+.sc{position:absolute;inset:0;background:var(--panel2);border:2px solid var(--line);border-radius:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:26px;touch-action:none;user-select:none;cursor:grab;box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.sc.back{transform:translateY(12px) scale(.95);opacity:.55;cursor:default}
+.sc .who{font:600 13px Lexend,sans-serif;color:var(--teal);margin-bottom:12px}
+.sc .task{font:600 clamp(18px,2.1vw,25px) Lexend,sans-serif;line-height:1.35}
+.stamp{position:absolute;top:20px;padding:5px 12px;border:4px solid;border-radius:10px;font:700 20px Lexend,sans-serif;opacity:0}
+.stamp.r{right:18px;color:var(--good);border-color:var(--good);transform:rotate(-12deg)}
+.stamp.l{left:18px;color:var(--bad);border-color:var(--bad);transform:rotate(12deg)}
+.fly{transition:transform .35s ease-in,opacity .35s}
+main>.fb{max-width:1000px;width:100%;margin:0 auto}
+@media (max-width:760px){.stage{grid-template-columns:1fr 1fr;grid-template-rows:1fr auto}.deck{grid-column:1/3;grid-row:1}.side.l{grid-row:2;grid-column:1}.side.r{grid-row:2;grid-column:2}}
+</style></head><body>
+<header><div class="ttl"><h1>CCMA: Fact or Myth?</h1><p>Week 17 &nbsp;|&nbsp; Cumulative Program Review</p></div><div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="st">0</b><span>Streak</span></div><div class="stat"><b id="pr">0</b><span>Cards</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="stage"><div class="side l"><button class="btn lb" id="bL"></button><p>Swipe left or press <span class="kbd">←</span></p></div><div class="deck" id="deck"></div><div class="side r"><button class="btn" id="bR"></button><p>Swipe right or press <span class="kbd">→</span></p></div></div>
+<div class="fb" id="fb"></div>
+
+</main>
+<footer><span>Medical Assistant Certificate Program</span><span>Confirm your CCMA practice exam is complete</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const CFG={"left": {"label": "Myth", "stamp": "MYTH"}, "right": {"label": "Fact", "stamp": "FACT"}, "cardTag": "Statement", "hint": "Fact or myth? Swipe, click, or use the arrow keys.", "endTitle": "Myths busted!", "intro": {"h": "CCMA: Fact or Myth?", "p": "Statements from across all 17 weeks. Sort the facts from the myths before the CCMA.", "rules": ["Swipe right for <b>Fact</b> and left for <b>Myth</b>.", "You can also use the buttons or the <span class=\"kbd\">←</span> <span class=\"kbd\">→</span> keys.", "20 cards. Streaks earn bonus points."]}, "end": {"hi": "You’re ready for the CCMA!", "mid": "Good work. Review the myths that fooled you.", "lo": "Review the topics you missed and try again."}, "cards": [["Use two identifiers, name and DOB, before any procedure.", 1, "Always."], ["The basilic vein is the first choice for venipuncture.", 0, "The median cubital is first. The basilic is last."], ["Light blue tubes contain sodium citrate.", 1, "For coagulation tests."], ["A 12-lead EKG uses 12 electrodes.", 0, "It uses 10 electrodes."], ["The P wave represents atrial depolarization.", 1, "Correct."], ["Hand sanitizer must contain at least 60% alcohol.", 1, "Correct."], ["An autoclave sterilizes at 250°F (121°C).", 1, "Correct."], ["MAs can tell patients what their lab results mean.", 0, "Interpreting results is the provider’s job."], ["A DNR means the patient refuses all treatment.", 0, "A DNR only refers to CPR."], ["Employers are covered entities under HIPAA.", 0, "They are not."], ["A claim denied for medical necessity should be appealed.", 1, "Correct."], ["Adult CPR is 30 compressions to 2 breaths.", 1, "Correct."], ["The TB skin test is read 48–72 hours later.", 1, "Correct."], ["Subcutaneous injections are given at 90° into muscle.", 0, "45° into fatty tissue."], ["Colorectal screening starts at age 45.", 1, "Correct."], ["Medication names can be abbreviated to save time.", 0, "Never abbreviate medication names."], ["A bandage should stay on at least 15 minutes after a draw.", 1, "Correct."], ["OSHA requires a free hepatitis B vaccine for health care workers.", 1, "Correct."], ["A wandering baseline comes from nearby electrical equipment.", 0, "That’s 60-cycle interference. A wandering baseline comes from poor contact or breathing."], ["Medication allergies are only asked about at the first visit.", 0, "Ask at every visit."]]};
+function intro(){showOv('<h2>'+CFG.intro.h+'</h2><p>'+CFG.intro.p+'</p><ul>'+CFG.intro.rules.map(r=>'<li>'+r+'</li>').join('')+'</ul><div class="row"><button class="btn" onclick="start()">'+(CFG.intro.go||'Start')+'</button></div>')}
+function endScreen(o){const pct=o.pct;const m=CFG.end||{};const msg=pct>=85?(m.hi||'Outstanding work!'):pct>=60?(m.mid||'Nice job. Review the ones you missed and try again.'):(m.lo||'Keep practicing. Replay to lock it in.');
+ showOv('<h2>'+(o.title||'Activity complete!')+'</h2><div class="big">'+o.big+'</div><p>'+o.line+'</p><p>'+msg+'</p>'+(o.review&&o.review.length?'<div class="review">'+o.review.map(r=>'<div>'+r+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+function setStat(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function setBar(f){$('#bar').style.width=Math.round(f*100)+'%'}
+function fbSet(cls,html){const f=$('#fb');f.className='fb'+(cls?' '+cls:'');f.innerHTML=html}
+
+let q=[],i=0,score=0,streak=0,best=0,right=0,miss=[],locked=true,drag=null;const N=CFG.cards.length;
+$('#bL').textContent=CFG.left.label;$('#bR').textContent=CFG.right.label;
+function hud(){setStat('sc',score);setStat('st',streak);setStat('pr',i+'/'+N);setBar(i/N)}
+function start(){hideOv();q=shuffle(CFG.cards);i=0;score=0;streak=0;best=0;right=0;miss=[];fbSet('',CFG.hint);render();hud()}
+function ch(c,n){return '<span class="stamp r">'+CFG.right.stamp+'</span><span class="stamp l">'+CFG.left.stamp+'</span><div class="who">'+(CFG.cardTag||'Card')+' '+n+' of '+N+'</div><div class="task">'+c[0]+'</div>'}
+function render(){const deck=$('#deck');deck.innerHTML='';if(i+1<N){const b=document.createElement('div');b.className='sc back';b.innerHTML=ch(q[i+1],i+2);deck.appendChild(b)}
+ const d=document.createElement('div');d.className='sc';d.id='top';d.innerHTML=ch(q[i],i+1);deck.appendChild(d);locked=false;
+ d.onpointerdown=e=>{if(locked)return;drag={x:e.clientX,dx:0};d.setPointerCapture(e.pointerId)};
+ d.onpointermove=e=>{if(!drag)return;drag.dx=e.clientX-drag.x;d.style.transform='translateX('+drag.dx+'px) rotate('+drag.dx/18+'deg)';d.querySelector('.stamp.r').style.opacity=Math.max(0,drag.dx/120);d.querySelector('.stamp.l').style.opacity=Math.max(0,-drag.dx/120)};
+ d.onpointerup=()=>{if(!drag)return;const dx=drag.dx;drag=null;if(Math.abs(dx)>110)answer(dx>0?1:0);else{d.style.transform='';d.querySelectorAll('.stamp').forEach(s=>s.style.opacity=0)}}}
+function answer(k){if(locked)return;locked=true;const c=q[i],d=$('#top');d.querySelector(k?'.stamp.r':'.stamp.l').style.opacity=1;d.classList.add('fly');d.style.transform='translateX('+(k?700:-700)+'px) rotate('+(k?25:-25)+'deg)';d.style.opacity=0;
+ const lab=k=>k?CFG.right.stamp:CFG.left.stamp;
+ if(k===c[1]){streak++;best=Math.max(best,streak);right++;const pts=10+Math.min(streak-1,5)*2;score+=pts;fbSet('ok','<strong>'+lab(k)+'! +'+pts+'</strong> '+c[2])}
+ else{streak=0;miss.push(c);fbSet('no','<strong>Nope, that one is '+lab(c[1]).toLowerCase()+'.</strong> '+c[2])}
+ i++;hud();setTimeout(()=>{i<N?render():endScreen({title:CFG.endTitle,big:score,pct:right/N*100,line:right+' of '+N+' correct &nbsp;|&nbsp; Best streak: '+best,review:miss.map(m=>'<b>'+m[0]+'</b> \u2192 '+lab(m[1]))})},k===c[1]?600:1400)}
+$('#bR').onclick=()=>answer(1);$('#bL').onclick=()=>answer(0);
+addEventListener('keydown',e=>{if(!ov.classList.contains('hide'))return;if(e.key==='ArrowRight'){e.preventDefault();answer(1)}if(e.key==='ArrowLeft'){e.preventDefault();answer(0)}});
+intro();
+</script></body></html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Surgical Term Scramble</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:clamp(12px,2.4vh,26px)}
+.clue{max-width:860px;text-align:center;font:600 clamp(18px,2.2vw,25px) Lexend,sans-serif;line-height:1.35}
+.clue small{display:block;font:400 15px 'Source Sans 3',sans-serif;color:var(--muted);margin-top:6px}
+.slots,.tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(4px,.6vw,8px);max-width:1100px}
+.slot,.tile{width:clamp(34px,3.6vw,48px);height:clamp(42px,6vh,56px);border-radius:10px;display:flex;align-items:center;justify-content:center;font:700 clamp(18px,2.2vw,26px) Lexend,sans-serif}
+.slot{border:2px solid var(--line);background:var(--bg);color:var(--text)}
+.slot.f{border-color:var(--teal)}.slot.h{color:var(--gold);border-color:var(--gold)}
+.slot.gap{width:16px;border:0;background:none}
+.slots.ok .slot{border-color:var(--good);background:#123a35}.slots.no{animation:shake .3s}.slots.no .slot{border-color:var(--bad)}
+.tile{border:0;background:var(--panel2);color:var(--text);cursor:pointer;box-shadow:0 3px 0 var(--line);transition:transform .08s}
+.tile:hover{background:#21406a}.tile:active{transform:translateY(2px)}
+.tile.used{visibility:hidden}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.stage .fb{width:min(900px,100%)}
+</style></head><body>
+<header><div class="ttl"><h1>Surgical Term Scramble</h1><p>Week 14 &nbsp;|&nbsp; Minor Surgery and Infection Control Vocabulary</p></div><div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="st">0</b><span>Streak</span></div><div class="stat"><b id="pr">0</b><span>Term</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="stage"><div class="clue" id="clue"></div><div class="slots" id="slots"></div><div class="tiles" id="tiles"></div><div class="ctrl" id="ctrl"></div><div class="fb" id="fb"></div></div>
+
+</main>
+<footer><span>Medical Assistant Certificate Program</span><span>Accurate documentation ensures legal compliance and continuity of care</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const CFG={"endTitle": "Vocabulary unlocked!", "intro": {"h": "Surgical Term Scramble", "p": "Each clue describes a minor surgery or infection control term. The letters are all there, just scrambled.", "rules": ["Tap letters, or type on your keyboard, to spell the term.", "Stuck? A hint places the next correct letter, but costs 4 points.", "Solve terms back to back to build a streak."]}, "end": {"hi": "Surgical vocab pro!", "mid": "Nice work. Review the terms you revealed.", "lo": "Give it another go."}, "words": [{"w": "Abscess", "clue": "A pocket of pus, often treated with I&amp;D", "why": "I&amp;D stands for incision and drainage."}, {"w": "Biopsy", "clue": "Removing tissue for examination: shave, punch, or excisional", "why": "Specimens must be labeled and documented."}, {"w": "Excisional", "clue": "The type of biopsy that removes the entire lesion", "why": "Shave and punch biopsies remove less."}, {"w": "Sterile Field", "clue": "The germ-free area set up for a procedure", "why": "Never touch non-sterile items within it."}, {"w": "Autoclave", "clue": "The machine that sterilizes instruments with steam under pressure", "why": "Check the indicator strip on every pack."}, {"w": "Suture", "clue": "A stitch used to close a wound", "why": "Suturing and suture removal are common office procedures."}, {"w": "Dressing", "clue": "Material applied to cover and protect a wound", "why": "Applied after the procedure."}, {"w": "Specimen", "clue": "Tissue or fluid collected for testing", "why": "Document how it was handled."}, {"w": "Forceps", "clue": "An instrument for grasping tissue", "why": "Drop extras onto the field without touching the drape."}, {"w": "Laceration", "clue": "A cut or tear in the skin", "why": "Closed with sutures when needed."}, {"w": "Lesion", "clue": "An abnormal area of skin, like a wart or cyst", "why": "Lesion removal is a common minor procedure."}, {"w": "Dehiscence", "clue": "When the wound edges separate", "why": "A wound complication to watch for."}]};
+function intro(){showOv('<h2>'+CFG.intro.h+'</h2><p>'+CFG.intro.p+'</p><ul>'+CFG.intro.rules.map(r=>'<li>'+r+'</li>').join('')+'</ul><div class="row"><button class="btn" onclick="start()">'+(CFG.intro.go||'Start')+'</button></div>')}
+function endScreen(o){const pct=o.pct;const m=CFG.end||{};const msg=pct>=85?(m.hi||'Outstanding work!'):pct>=60?(m.mid||'Nice job. Review the ones you missed and try again.'):(m.lo||'Keep practicing. Replay to lock it in.');
+ showOv('<h2>'+(o.title||'Activity complete!')+'</h2><div class="big">'+o.big+'</div><p>'+o.line+'</p><p>'+msg+'</p>'+(o.review&&o.review.length?'<div class="review">'+o.review.map(r=>'<div>'+r+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+function setStat(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function setBar(f){$('#bar').style.width=Math.round(f*100)+'%'}
+function fbSet(cls,html){const f=$('#fb');f.className='fb'+(cls?' '+cls:'');f.innerHTML=html}
+
+let q=[],i=0,score=0,streak=0,best=0,right=0,miss=[],tiles=[],ans=[],hints=0,locked=true;const N=CFG.words.length;
+const clean=w=>w.toUpperCase().replace(/[^A-Z]/g,'');
+function hud(){setStat('sc',score);setStat('st',streak);setStat('pr',Math.min(i+1,N)+'/'+N);setBar(i/N)}
+function start(){hideOv();q=shuffle(CFG.words);i=0;score=0;streak=0;best=0;right=0;miss=[];show()}
+function show(){const w=q[i];const L=clean(w.w).split('');let s;do{s=shuffle(L)}while(s.join('')===L.join('')&&L.length>1);
+ tiles=s.map((c,k)=>({c,k,used:false}));ans=[];hints=0;locked=false;
+ $('#clue').innerHTML=w.clue+'<small>'+L.length+' letters'+(w.w.includes(' ')?' in '+w.w.split(' ').length+' words':'')+'</small>';fbSet('',CFG.hint||'Tap letters to spell the term. Typing works too.');render();hud()}
+function render(){const w=q[i];const L=clean(w.w);let html='',n=0;for(const ch of w.w.toUpperCase()){if(!/[A-Z]/.test(ch)){html+='<div class="slot gap"></div>';continue}const a=ans[n];html+='<div class="slot'+(a?(a.h?' f h':' f'):'')+'">'+(a?a.c:'')+'</div>';n++}
+ $('#slots').className='slots';$('#slots').innerHTML=html;
+ $('#tiles').innerHTML='';tiles.forEach(t=>{const b=document.createElement('button');b.className='tile'+(t.used?' used':'');b.textContent=t.c;b.onclick=()=>add(t);$('#tiles').appendChild(b)});
+ $('#bk').disabled=!ans.some(a=>!a.h);}
+function add(t){if(locked||t.used)return;t.used=true;ans.push({c:t.c,t});render();if(ans.length===clean(q[i].w).length)check()}
+function back(){if(locked)return;for(let k=ans.length-1;k>=0;k--){if(!ans[k].h){ans[k].t.used=false;ans.splice(k,1);break}}render()}
+function hint(){if(locked)return;const L=clean(q[i].w);// clear wrong suffix then add correct next letter
+ let n=0;while(n<ans.length&&ans[n].c===L[n])n++;while(ans.length>n){const a=ans.pop();a.t.used=false}
+ if(n>=L.length)return;const t=tiles.find(x=>!x.used&&x.c===L[n]);t.used=true;ans.push({c:t.c,t,h:true});hints++;render();if(ans.length===L.length)check()}
+function check(){const w=q[i];const ok=ans.map(a=>a.c).join('')===clean(w.w);
+ if(ok){locked=true;streak++;best=Math.max(best,streak);right++;const pts=Math.max(5,20-hints*4)+Math.min(streak-1,5)*2;score+=pts;$('#slots').classList.add('ok');fbSet('ok','<strong>'+w.w+'! +'+pts+'</strong> '+w.why);next()}
+ else{$('#slots').classList.add('no');fbSet('no','<strong>Not quite.</strong> Tap Undo to fix letters, or use a hint.');setTimeout(()=>$('#slots').classList.remove('no'),400)}hud()}
+function skip(){if(locked)return;locked=true;streak=0;miss.push(q[i]);const w=q[i];ans=[];const L=clean(w.w);fbSet('no','<strong>The answer is '+w.w+'.</strong> '+w.why);
+ let html='',n=0;for(const ch of w.w.toUpperCase()){if(!/[A-Z]/.test(ch)){html+='<div class="slot gap"></div>';continue}html+='<div class="slot f h">'+L[n++]+'</div>'}$('#slots').innerHTML=html;next()}
+function next(){$('#ctrl').innerHTML='<button class="btn" id="nx">'+(i<N-1?'Next term':'See results')+'</button>';$('#nx').onclick=()=>{i++;resetCtrl();i<N?show():(setBar(1),endScreen({big:score,pct:right/N*100,line:right+' of '+N+' solved &nbsp;|&nbsp; Best streak: '+best,review:miss.map(m=>'<b>'+m.w+':</b> '+m.clue),title:CFG.endTitle}))};$('#nx').focus();hud()}
+function resetCtrl(){$('#ctrl').innerHTML='<button class="btn ghost" id="bk">Undo</button><button class="btn ghost" id="hn">Hint (\u22124)</button><button class="btn ghost" id="sk">Reveal</button>';$('#bk').onclick=back;$('#hn').onclick=hint;$('#sk').onclick=skip}
+resetCtrl();
+addEventListener('keydown',e=>{if(!ov.classList.contains('hide')||locked)return;if(e.key==='Backspace'){e.preventDefault();back();return}const c=e.key.toUpperCase();if(/^[A-Z]$/.test(c)){const t=tiles.find(x=>!x.used&&x.c===c);if(t)add(t)}});
+intro();
+</script></body></html>

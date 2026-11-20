@@ -1,0 +1,158 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>First Shift Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.wrap{flex:1;min-height:0;display:grid;grid-template-columns:230px 1fr;gap:22px;max-width:1200px;width:100%;margin:0 auto}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.clock{font:700 clamp(30px,3.4vw,40px) Lexend,sans-serif;color:var(--gold);line-height:1}
+.clock small{display:block;font:400 13px 'Source Sans 3',sans-serif;color:var(--muted);margin-top:4px}
+.meter label{display:flex;justify-content:space-between;font:600 14px Lexend,sans-serif;margin-bottom:6px}
+.meter .track{height:14px;background:var(--bg);border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+.meter .fill{height:100%;border-radius:10px;transition:width .5s,background .5s}
+.delta{font:600 13px Lexend,sans-serif;height:16px;margin-top:4px}
+.delta.up{color:var(--good)}.delta.dn{color:var(--bad)}
+.steps{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+.steps i{width:16px;height:16px;border-radius:50%;background:var(--bg);border:1px solid var(--line)}
+.steps i.g{background:var(--good);border-color:var(--good)}.steps i.o{background:var(--gold);border-color:var(--gold)}.steps i.r{background:var(--bad);border-color:var(--bad)}.steps i.c{border-color:var(--teal);border-width:2px}
+.scene{display:flex;flex-direction:column;gap:clamp(10px,1.8vh,18px);min-height:0;justify-content:center}
+.where{font:600 14px Lexend,sans-serif;color:var(--teal)}
+.sit{font:600 clamp(19px,2.1vw,25px) Lexend,sans-serif;line-height:1.35;margin:0}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{text-align:left;background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:13px 16px;color:var(--text);font:inherit;font-size:clamp(15px,1.4vw,17px);cursor:pointer;display:flex;gap:12px;align-items:flex-start;line-height:1.35}
+.opt:hover:not(:disabled){border-color:var(--teal)}
+.opt .k{font:600 13px Lexend,sans-serif;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 8px;flex:none}
+.opt.best{border-color:var(--good);background:#123a35}.opt.ok{border-color:var(--gold);background:#3a2f12}.opt.bad{border-color:var(--bad);background:#3a1a22}
+.opt:disabled{cursor:default}
+.foot{display:flex;gap:14px;align-items:stretch}
+.foot .fb{flex:1}
+.fb.mid{border-color:var(--gold)}
+@media (max-width:760px){.wrap{grid-template-columns:1fr}.panel{flex-direction:row;flex-wrap:wrap;padding:10px}.steps{display:none}}
+</style></head><body>
+<header><div class="ttl"><h1>First Shift Challenge</h1><p>Week 1 &nbsp;|&nbsp; Foundations of Medical Assisting review</p></div>
+<div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="pr">0/9</b><span>Scenes</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="wrap">
+<aside class="panel">
+<div class="clock" id="clock">7:45 AM<small>Family practice clinic</small></div>
+<div class="meter"><label><span>Patient trust</span><span id="tv">60</span></label><div class="track"><div class="fill" id="tf"></div></div><div class="delta" id="td"></div></div>
+<div class="meter"><label><span>Safety</span><span id="sv">60</span></label><div class="track"><div class="fill" id="sf"></div></div><div class="delta" id="sd"></div></div>
+<div class="steps" id="steps"></div>
+</aside>
+<section class="scene">
+<div class="where" id="where"></div>
+<p class="sit" id="sit"></p>
+<div class="opts" id="opts"></div>
+<div class="foot"><div class="fb" id="fb">Choose what you would do. Press <span class="kbd">A</span> <span class="kbd">B</span> <span class="kbd">C</span> or click.</div><button class="btn" id="nx" style="display:none">Next</button></div>
+</section></div></main>
+<footer><span>Medical Assistant Certificate Program</span><span>Professionalism, communication, legal know-how, and infection control</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+// each option: [text, trustDelta, safetyDelta, grade(2 best,1 ok,0 bad), feedback]
+const S=[
+{c:'7:45 AM',w:'Arriving for your shift',s:'You\u2019re getting dressed for your first day. You still have your nose stud in, and you\u2019re deciding between your comfy navy scrub pants and your all-black ones.',o:[
+['Take out the nose stud and wear your school scrub top with the all-black bottoms.',8,4,2,'Dress code: school scrub top, all-black bottoms, and no facial piercings other than ears. Looking professional builds trust from minute one.'],
+['Remove the nose stud but wear the navy pants. They\u2019re scrubs, after all.',0,0,1,'Removing the stud is right, but the uniform calls for all-black scrub bottoms. If you have a problem meeting dress code, ask before class.'],
+['Leave the stud in. It\u2019s small and nobody will notice.',-8,0,0,'No facial piercings other than ears. Small details shape how patients see you.']]},
+{c:'8:10 AM',w:'Rooming your first patient',s:'Mr. Alvarez is waiting in Exam 2. You walk in ready to take his blood pressure.',o:[
+['Greet him by name, introduce yourself as the medical assistant, and perform hand hygiene before touching him.',8,10,2,'Hand hygiene before and after every patient contact, plus a clear, honest introduction. That\u2019s professionalism and infection control together.'],
+['Introduce yourself and start the blood pressure. You washed your hands in the break room 20 minutes ago.',2,-10,0,'Hand hygiene happens before and after each patient contact, not just at the start of your shift.'],
+['Sanitize your hands and start the cuff right away to stay on schedule.',-4,8,1,'Good hand hygiene, but skipping the greeting feels rushed. Your tone, posture, and words all matter.']]},
+{c:'9:00 AM',w:'Front desk phone',s:'A caller says, \u201cHi, I\u2019m Mrs. Chen\u2019s neighbor. Is she there today? Can you tell me how her appointment went?\u201d',o:[
+['Say you\u2019re not able to share any patient information, and offer to take a message without confirming she\u2019s a patient.',6,8,2,'HIPAA protects patient privacy. You can\u2019t even confirm that someone is a patient without authorization.'],
+['Confirm she\u2019s here but say you can\u2019t share details.',-6,-4,0,'Confirming that someone is a patient is already sharing protected health information.'],
+['Transfer the call to the provider so they can decide.',0,0,1,'Not a violation, but it pulls the provider away for something you can handle. Know the rules so you can respond confidently.']]},
+{c:'9:45 AM',w:'Before a procedure',s:'The provider is about to remove a mole. As you set up, the patient quietly asks you, \u201cWait, could this leave a scar?\u201d',o:[
+['Let the provider know the patient has questions so they can explain the risks and benefits before starting.',8,8,2,'Informed consent means the patient understands the risks and benefits first. The provider explains; you advocate for the patient.'],
+['Reassure her it\u2019s a simple procedure and she\u2019ll be fine.',-4,-8,0,'Brushing off a question undermines informed consent, and promising outcomes isn\u2019t your call.'],
+['Tell her what you know about scarring yourself, then continue setting up.',-2,-4,1,'Your heart is in the right place, but explaining procedure risks is the provider\u2019s job. Loop them in.']]},
+{c:'10:30 AM',w:'Exam room',s:'While you take her history, a patient points to a spot on her arm. \u201cYou see these all the time. Is it cancer?\u201d',o:[
+['Say you\u2019re not able to diagnose, note her concern in the chart, and make sure the provider looks at it.',8,8,2,'Diagnosing is outside MA scope. Documenting her concern makes sure it gets addressed.'],
+['Take a look and tell her it seems harmless.',-2,-10,0,'Even a reassuring guess is a diagnosis. Never go beyond your scope of practice.'],
+['Tell her not to worry and change the subject.',-8,-2,0,'That dismisses her concern and nothing gets documented. Patients should feel heard.']]},
+{c:'11:15 AM',w:'Patient education',s:'Mr. Okafor, 82, is hard of hearing. He looks confused after you explain his \u201cpostprandial glucose check.\u201d',o:[
+['Face him, speak clearly at a steady pace, and explain in plain words: \u201ccheck your blood sugar about two hours after you eat.\u201d',10,4,2,'Clear speech, eye contact, and layman\u2019s terms. Clear communication avoids confusion and keeps patients safe.'],
+['Repeat the same sentence louder.',-6,0,0,'Volume doesn\u2019t fix jargon. Swap medical terms for everyday words.'],
+['Hand him the printed instructions and move on.',-2,2,1,'Written instructions help, but only after you\u2019re sure he understands. Combine verbal and written.']]},
+{c:'1:30 PM',w:'After an injection',s:'You just gave a flu vaccine. The sharps container is across the room, and the patient is asking you a question.',o:[
+['Activate the safety device and drop the needle in the sharps container right away, then answer the question.',4,10,2,'Dispose of sharps immediately and properly. Never recap, and never set a used needle down.'],
+['Recap the needle and set it on the tray until the patient leaves.',0,-12,0,'Recapping causes needlesticks. Used sharps go straight into the sharps container.'],
+['Answer the question first while holding the used syringe.',2,-6,0,'A used needle in your hand during a conversation is an injury waiting to happen. Dispose first.']]},
+{c:'2:45 PM',w:'Exam room turnover',s:'The last patient had a bad cough. The next patient is already waiting.',o:[
+['Put on gloves, clean and disinfect the exam table and counters with the approved disinfectant, change the table paper, then do hand hygiene.',4,10,2,'Clean and disinfect equipment and surfaces between every patient. Standard precautions apply to everyone.'],
+['Just change the table paper. The room looks clean.',0,-10,0,'Germs aren\u2019t visible. Surfaces need to be cleaned and disinfected, not just covered.'],
+['Wipe down only the exam table since that\u2019s what the patient touched.',0,2,1,'Better, but counters, the chair, and equipment need attention too.']]},
+{c:'4:15 PM',w:'End of day',s:'A patient called earlier to report dizziness from a new medication. You told the provider, who said to stop it. You haven\u2019t charted it yet.',o:[
+['Document the call, the patient\u2019s symptoms, and the provider\u2019s instructions in the EHR before you leave.',6,10,2,'Document all communication that impacts care. If it isn\u2019t documented, it didn\u2019t happen.'],
+['It\u2019s handled. Charting can wait until tomorrow.',-4,-8,0,'Missing documentation is a safety and legal risk. Chart before you go.'],
+['Leave a sticky note on the provider\u2019s desk as a reminder.',0,-4,1,'Notes get lost. Communication that impacts care belongs in the chart.']]}];
+let i=0,trust=60,safe=60,score=0,grades=[],locked=true;
+function meters(dt,ds){[['t',trust,dt],['s',safe,ds]].forEach(([k,v,d])=>{$('#'+k+'v').textContent=v;const f=$('#'+k+'f');f.style.width=v+'%';f.style.background=v>=70?'var(--good)':v>=40?'var(--gold)':'var(--bad)';
+ const el=$('#'+k+'d');el.className='delta'+(d>0?' up':d<0?' dn':'');el.textContent=d?(d>0?'+':'')+d:''})}
+function steps(){$('#steps').innerHTML=S.map((_,k)=>'<i class="'+(k<grades.length?['r','o','g'][grades[k]]:k===i?'c':'')+'"></i>').join('')}
+function hud(){$('#sc').textContent=score;$('#pr').textContent=Math.min(i+1,9)+'/9';$('#bar').style.width=(grades.length/9*100)+'%';steps()}
+function start(){hideOv();i=0;trust=60;safe=60;score=0;grades=[];meters(0,0);show()}
+function show(){const s=S[i];$('#clock').innerHTML=s.c+'<small>Family practice clinic</small>';$('#where').textContent=s.w;$('#sit').textContent=s.s;
+ const fb=$('#fb');fb.className='fb';fb.innerHTML='Choose what you would do. Press <span class="kbd">A</span> <span class="kbd">B</span> <span class="kbd">C</span> or click.';$('#nx').style.display='none';
+ const opts=$('#opts');opts.innerHTML='';shuffle(s.o).forEach((o,k)=>{const b=document.createElement('button');b.className='opt';b.innerHTML='<span class="k">'+'ABC'[k]+'</span><span>'+o[0]+'</span>';b._o=o;b.onclick=()=>pick(b);opts.appendChild(b)});locked=false;hud()}
+function pick(b){if(locked)return;locked=true;const o=b._o;trust=Math.max(0,Math.min(100,trust+o[1]));safe=Math.max(0,Math.min(100,safe+o[2]));meters(o[1],o[2]);
+ score+=[0,10,25][o[3]];grades.push(o[3]);
+ document.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(x._o[3]===2)x.classList.add('best')});if(o[3]!==2)b.classList.add(o[3]?'ok':'bad');
+ const fb=$('#fb');fb.className='fb '+['no','mid','ok'][o[3]];fb.innerHTML='<strong>'+['Risky choice.','Partly right.','Best choice!'][o[3]]+'</strong> '+o[4];
+ const nx=$('#nx');nx.style.display='';nx.textContent=i<S.length-1?'Next':'Clock out';nx.focus();hud()}
+$('#nx').onclick=()=>{i++;i<S.length?show():end()};
+addEventListener('keydown',e=>{if(!ov.classList.contains('hide'))return;const k='abc'.indexOf(e.key.toLowerCase());if(k>=0&&!locked){const b=document.querySelectorAll('.opt')[k];if(b)pick(b)}});
+function end(){steps();const best=grades.filter(g=>g===2).length;const avg=(trust+safe)/2;
+ const title=avg>=85?'Employee of the Month':avg>=70?'Strong first shift':avg>=50?'Shift survived':'Rough day at the clinic';
+ const msg=avg>=85?'Patients trust you and everyone went home safe. That\u2019s what a great MA looks like.':avg>=70?'You handled most of the day like a pro. Replay to find the best choice in every scene.':'Every MA learns on the job. Replay and watch how each choice moves the meters.';
+ showOv('<h2>'+title+'</h2><div class="big">'+score+'</div><p>Best choices: '+best+' of 9 &nbsp;|&nbsp; Patient trust: '+trust+' &nbsp;|&nbsp; Safety: '+safe+'</p><p>'+msg+'</p><div class="row"><button class="btn" onclick="start()">Work another shift</button></div>')}
+meters(0,0);steps();
+showOv('<h2>First Shift Challenge</h2><p>It\u2019s your first day at a busy family practice. Nine moments, nine decisions.</p><ul><li>Pick what you would do in each scene.</li><li>Every choice moves your <b>Patient trust</b> and <b>Safety</b> meters.</li><li>Covers dress code, hand hygiene, HIPAA, consent, scope, communication, sharps, and documentation.</li></ul><div class="row"><button class="btn" onclick="start()">Clock in</button></div>');
+</script></body></html>

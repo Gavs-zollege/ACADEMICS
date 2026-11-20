@@ -1,0 +1,129 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Break the Chain of Infection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2.4vh,26px)}
+.prompt{font-family:Lexend,sans-serif;font-size:clamp(18px,2.3vw,26px);text-align:center;line-height:1.35;max-width:900px;margin:0 auto}
+.prompt small{display:block;font-family:'Source Sans 3',sans-serif;color:var(--muted);font-size:15px;margin-top:6px}
+.chain{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:nowrap}
+.link{position:relative;width:clamp(120px,15vw,176px);height:clamp(84px,13vh,112px);border:5px solid var(--line);border-radius:60px;display:flex;align-items:center;justify-content:center;text-align:center;font-family:Lexend,sans-serif;font-weight:600;font-size:clamp(13px,1.35vw,16px);padding:0 14px;background:var(--panel);color:var(--text);cursor:pointer;margin:0 -10px;transition:border-color .2s,transform .2s,background .2s}
+.link:nth-child(odd){z-index:2}.link .n{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--bg);border:1px solid var(--line);border-radius:20px;font-size:11px;padding:1px 8px;color:var(--muted)}
+.link.empty{border-style:dashed;color:var(--muted);font-weight:400;cursor:default}
+.link.filled{border-color:var(--teal)}
+.link.right{border-color:var(--good);background:#123a35}
+.link.wrong{border-color:var(--bad);background:#3a1a22}
+.link:hover:not(.empty):not(.locked){transform:translateY(-3px)}
+.link.snipped{border-color:var(--gold);background:#3a2f12;transform:translateY(10px) rotate(-6deg)}
+.link.cut-wrong{border-color:var(--bad);animation:shake .3s}
+.pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:52px}
+.chip{font:600 15px Lexend,sans-serif;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:30px;padding:11px 18px;cursor:pointer;animation:pop .2s}
+.chip:hover{border-color:var(--teal)}
+.ctrl{display:flex;gap:10px;justify-content:center}
+.scis{font-size:clamp(28px,4vw,40px);text-align:center;line-height:1}
+.phase{font-family:Lexend,sans-serif;color:var(--teal);text-align:center;font-size:15px;font-weight:600}
+</style></head><body>
+<header><div class="ttl"><h1>Break the Chain of Infection</h1><p>Week 1 &nbsp;|&nbsp; Infection Control Basics</p></div>
+<div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="st">0</b><span>Streak</span></div><div class="stat"><b id="pr">–</b><span>Progress</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="stage">
+<div class="phase" id="phase">Round 1: Build the chain</div>
+<div class="prompt" id="prompt"></div>
+<div class="chain" id="chain"></div>
+<div class="pool" id="pool"></div>
+<div class="fb" id="fb" style="max-width:900px;width:100%;margin:0 auto">Tap the links below in order to build the chain from start to finish.</div>
+<div class="ctrl" id="ctrl"></div>
+</div></main>
+<footer><span>Medical Assistant Certificate Program</span><span>Infection control protects patients, staff, and visitors</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const LINKS=['Infectious Agent','Reservoir','Mode of Transmission','Portal of Entry','Susceptible Host'];
+const SC=[
+{t:'You wash your hands thoroughly between every patient.',a:2,why:'Clean hands stop germs from traveling from one person or surface to the next, which blocks the mode of transmission.'},
+{t:'A patient gets this year\u2019s flu vaccine.',a:4,why:'Vaccination builds immunity, so the person is no longer a susceptible host.'},
+{t:'You cover a patient\u2019s open cut with a sterile bandage.',a:3,why:'Broken skin is a doorway into the body. Covering it closes the portal of entry.'},
+{t:'Used instruments are sterilized before they\u2019re used again.',a:0,why:'Sterilization destroys the microorganisms themselves, which eliminates the infectious agent.'},
+{t:'A soiled dressing goes straight into a biohazard bag instead of sitting on the counter.',a:1,why:'Contaminated materials are places where germs live and multiply. Removing them eliminates the reservoir.'},
+{t:'You put on gloves and a gown before a procedure with possible splashing.',a:2,why:'PPE puts a barrier between you and the germs, blocking the mode of transmission.'},
+{t:'You clean the skin with an alcohol prep pad before giving an injection.',a:3,why:'The needle creates an opening in the skin. Prepping the site protects the portal of entry.'},
+{t:'A patient finishes the full course of antibiotics the provider prescribed.',a:0,why:'Antibiotics kill the bacteria causing the infection, targeting the infectious agent.'},
+{t:'Exam room counters are cleaned, disinfected, and kept dry.',a:1,why:'Damp, dirty surfaces let germs survive and grow. Keeping surfaces clean removes the reservoir.'},
+{t:'A patient eats well, sleeps enough, and manages their health conditions.',a:4,why:'A stronger immune system makes the person a less susceptible host.'}];
+let score=0,streak=0,best=0,phase=1,placed=[],pool=[],tries=0,q=[],qi=0,miss=[],locked=false;
+const chain=$('#chain'),poolEl=$('#pool'),fb=$('#fb'),ctrl=$('#ctrl');
+function hud(){$('#sc').textContent=score;$('#st').textContent=streak;
+ if(phase===1){$('#pr').textContent='R1';$('#bar').style.width=(placed.filter(Boolean).length/5*30)+'%'}
+ else{$('#pr').textContent=Math.min(qi+1,q.length)+'/'+q.length;$('#bar').style.width=(30+qi/q.length*70)+'%'}}
+function start(){hideOv();score=0;streak=0;best=0;phase=1;tries=0;miss=[];placed=[null,null,null,null,null];pool=shuffle(LINKS);
+ $('#phase').textContent='Round 1: Build the chain';$('#prompt').innerHTML='Put the five links of the chain of infection in order.<small>Tap a link to place it. Tap a placed link to send it back.</small>';
+ fb.className='fb';fb.textContent='Start with where infection begins and end with who it infects.';renderBuild();hud()}
+function renderBuild(){chain.innerHTML='';placed.forEach((p,i)=>{const d=document.createElement('button');d.className='link '+(p?'filled':'empty');d.innerHTML='<span class="n">'+(i+1)+'</span>'+(p||'?');
+ if(p)d.onclick=()=>{placed[i]=null;pool.push(p);renderBuild();hud()};else d.disabled=true;chain.appendChild(d)});
+ poolEl.innerHTML='';pool.forEach(p=>{const c=document.createElement('button');c.className='chip';c.textContent=p;c.onclick=()=>{const i=placed.indexOf(null);placed[i]=p;pool=pool.filter(x=>x!==p);renderBuild();hud()};poolEl.appendChild(c)});
+ ctrl.innerHTML='';const b=document.createElement('button');b.className='btn';b.textContent='Check my chain';b.disabled=placed.includes(null);b.onclick=checkBuild;ctrl.appendChild(b)}
+function checkBuild(){tries++;let right=0;[...chain.children].forEach((d,i)=>{const ok=placed[i]===LINKS[i];d.classList.add(ok?'right':'wrong');if(ok)right++});
+ if(right===5){const pts=tries===1?50:tries===2?30:15;score+=pts;fb.className='fb ok';fb.innerHTML='<strong>Chain complete! +'+pts+'</strong> Infectious agent \u2192 reservoir \u2192 mode of transmission \u2192 portal of entry \u2192 susceptible host.';
+  ctrl.innerHTML='<button class="btn gold" id="go">Round 2: Snip the chain</button>';$('#go').onclick=startSnip;$('#go').focus()}
+ else{fb.className='fb no';fb.innerHTML='<strong>'+right+' of 5 in the right spot.</strong> The red links are out of place. They\u2019ve been sent back so you can try again.';
+  setTimeout(()=>{placed=placed.map((p,i)=>p===LINKS[i]?p:null);pool=shuffle(LINKS.filter(l=>!placed.includes(l)));renderBuild();[...chain.children].forEach((d,i)=>{if(placed[i])d.classList.add('right')})},900)}
+ hud()}
+function startSnip(){phase=2;q=shuffle(SC).slice(0,8);qi=0;$('#phase').textContent='Round 2: Snip the chain';poolEl.innerHTML='';showQ()}
+function showQ(){locked=false;const s=q[qi];$('#prompt').innerHTML='\u2702\uFE0F '+s.t+'<small>Which link does this break? Tap it to snip.</small>';
+ fb.className='fb';fb.textContent='Think about what this action actually stops.';ctrl.innerHTML='';
+ chain.innerHTML='';LINKS.forEach((l,i)=>{const d=document.createElement('button');d.className='link filled';d.innerHTML='<span class="n">'+(i+1)+'</span>'+l;d.onclick=()=>snip(i,d);chain.appendChild(d)});hud()}
+function snip(i,d){if(locked)return;locked=true;const s=q[qi];[...chain.children].forEach(x=>x.classList.add('locked'));
+ if(i===s.a){streak++;best=Math.max(best,streak);const pts=10+Math.min(streak-1,4)*2;score+=pts;d.classList.add('snipped');fb.className='fb ok';fb.innerHTML='<strong>Snipped! +'+pts+'</strong> '+s.why}
+ else{streak=0;miss.push(s);d.classList.add('cut-wrong');chain.children[s.a].classList.add('snipped');fb.className='fb no';fb.innerHTML='<strong>Not that one. It breaks the '+LINKS[s.a].toLowerCase()+'.</strong> '+s.why}
+ ctrl.innerHTML='<button class="btn" id="nx">'+(qi<q.length-1?'Next scenario':'See my results')+'</button>';$('#nx').onclick=()=>{qi++;qi<q.length?showQ():end()};$('#nx').focus();hud()}
+function end(){$('#bar').style.width='100%';const max=50+8*18;const pct=Math.round(score/max*100);
+ const msg=pct>=85?'Infection control pro. The chain didn\u2019t stand a chance.':pct>=60?'Solid work. Review the links you missed and try again.':'Keep practicing. Every link you can name is a link you can break.';
+ showOv('<h2>Chain broken!</h2><div class="big">'+score+'</div><p>'+msg+'<br>Best streak: '+best+'</p>'+(miss.length?'<div class="review">'+miss.map(m=>'<div><b>'+m.t+'</b> \u2192 '+LINKS[m.a]+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+showOv('<h2>Break the Chain</h2><p>Infection needs all five links to spread. Your job is to know every link and how to break it.</p><ul><li><b>Round 1:</b> Build the chain of infection in the right order.</li><li><b>Round 2:</b> Read 8 clinic scenarios and snip the link each action breaks.</li><li>Answer correctly in a row to build a streak for bonus points.</li></ul><div class="row"><button class="btn" onclick="start()">Start</button></div>');
+</script></body></html>

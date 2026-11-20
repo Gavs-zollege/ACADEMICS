@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Communication Speed Sort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:clamp(12px,2.5vh,28px)}
+.timer{width:min(640px,100%);height:10px;background:var(--panel);border-radius:10px;overflow:hidden}
+.timer i{display:block;height:100%;background:var(--gold);width:100%;transition:width .1s linear}
+.item{width:min(640px,100%);min-height:clamp(110px,20vh,170px);background:var(--panel2);border:2px solid var(--line);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px 24px;font:600 clamp(22px,3vw,34px) Lexend,sans-serif;animation:pop .18s;position:relative}
+.item small{font:400 15px 'Source Sans 3',sans-serif;color:var(--muted);margin-top:6px}
+.item.ok{border-color:var(--good)}.item.no{border-color:var(--bad)}
+.mult{position:absolute;top:10px;right:14px;font:600 14px Lexend,sans-serif;color:var(--gold)}
+.bins{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:min(900px,100%)}
+.bin{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:14px 10px;cursor:pointer;color:var(--text);text-align:center;transition:border-color .15s,transform .1s}
+.bin:hover{border-color:var(--teal)}.bin:active{transform:scale(.97)}
+.bin h3{margin:0;font-size:clamp(18px,2vw,23px)}
+.bin p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.bin .ct{font:600 13px Lexend,sans-serif;color:var(--teal);margin-top:6px}
+.bin.flash-ok{border-color:var(--good);background:#123a35}.bin.flash-no{border-color:var(--bad);background:#3a1a22}
+.fb{width:min(900px,100%)}
+</style></head><body>
+<header><div class="ttl"><h1>Communication Speed Sort</h1><p>Week 1 &nbsp;|&nbsp; Verbal, Nonverbal, and Written Communication</p></div>
+<div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="st">0</b><span>Streak</span></div><div class="stat"><b id="pr">0/20</b><span>Sorted</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="stage">
+<div class="timer" aria-hidden="true"><i id="tm"></i></div>
+<div class="item" id="item" aria-live="polite"></div>
+<div class="bins">
+<button class="bin" data-k="0"><h3>Verbal</h3><p>How you say it out loud</p><div class="ct"><span class="kbd">1</span> or <span class="kbd">←</span></div></button>
+<button class="bin" data-k="1"><h3>Nonverbal</h3><p>What your body says</p><div class="ct"><span class="kbd">2</span> or <span class="kbd">↓</span></div></button>
+<button class="bin" data-k="2"><h3>Written</h3><p>What you put in writing</p><div class="ct"><span class="kbd">3</span> or <span class="kbd">→</span></div></button>
+</div>
+<div class="fb" id="fb">Sort fast. Quick answers earn a speed bonus, and streaks multiply your points.</div>
+</div></main>
+<footer><span>Medical Assistant Certificate Program</span><span>Your tone, posture, and words all matter</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const CAT=['Verbal','Nonverbal','Written'];
+const ITEMS=[
+['Tone of voice',0,'How warm or sharp your voice sounds changes how the message lands.'],
+['Clarity',0,'Speaking clearly helps patients understand you the first time.'],
+['Pacing',0,'Slowing down gives patients time to process health information.'],
+['Word choice',0,'Choosing layman\u2019s terms over medical jargon is a verbal skill.'],
+['Answering the phone with a friendly greeting',0,'Phone calls are spoken communication.'],
+['Explaining a procedure in plain language',0,'Talking a patient through what to expect is verbal.'],
+['Facial expressions',1,'A smile or a frown communicates without words.'],
+['Eye contact',1,'Eye contact shows you\u2019re listening and engaged.'],
+['Posture',1,'Standing tall and open signals confidence and respect.'],
+['Gestures',1,'Hand movements communicate without speaking.'],
+['Nodding while a patient talks',1,'Nodding is active listening shown with your body.'],
+['Crossed arms',1,'Crossed arms can read as closed off, even if you don\u2019t mean it.'],
+['Sitting at eye level with the patient',1,'Positioning yourself at their level feels less intimidating.'],
+['Chart notes',2,'Chart notes are written records of care.'],
+['Patient instructions',2,'Take-home instructions give patients something to refer back to.'],
+['EHR documentation',2,'Electronic health record entries are written communication.'],
+['Appointment reminder text',2,'Texts and emails are written messages.'],
+['Reply to a patient portal message',2,'Portal messages are written and become part of the record.'],
+['Discharge handout',2,'Printed handouts are written communication.'],
+['Documenting a patient\u2019s phone call',2,'Communication that impacts care must be documented.']];
+let q=[],i=0,score=0,streak=0,best=0,right=0,miss=[],t0=0,raf=null,locked=true;
+const LIMIT=6000;
+function hud(){$('#sc').textContent=score;$('#st').textContent=streak;$('#pr').textContent=i+'/20';$('#bar').style.width=(i/20*100)+'%'}
+function start(){hideOv();q=shuffle(ITEMS);i=0;score=0;streak=0;best=0;right=0;miss=[];hud();show()}
+function show(){const it=q[i];const m=1+Math.min(streak,6)*0.25;$('#item').className='item';$('#item').innerHTML=(streak>=2?'<span class="mult">x'+m.toFixed(2)+'</span>':'')+it[0]+'<small>Item '+(i+1)+' of 20</small>';
+ void $('#item').offsetWidth;$('#item').style.animation='none';void $('#item').offsetWidth;$('#item').style.animation='';
+ locked=false;t0=performance.now();cancelAnimationFrame(raf);run()}
+function run(){const el=performance.now()-t0;$('#tm').style.width=Math.max(0,100-el/LIMIT*100)+'%';if(el>=LIMIT&&!locked){answer(-1);return}if(!locked)raf=requestAnimationFrame(run)}
+function answer(k){if(locked)return;locked=true;cancelAnimationFrame(raf);const it=q[i],el=performance.now()-t0,fb=$('#fb');
+ const bins=document.querySelectorAll('.bin');
+ if(k===it[1]){streak++;best=Math.max(best,streak);right++;const speed=Math.max(0,Math.round((LIMIT-el)/LIMIT*10));const m=1+Math.min(streak-1,6)*0.25;const pts=Math.round((10+speed)*m);score+=pts;
+  $('#item').classList.add('ok');bins[k].classList.add('flash-ok');fb.className='fb ok';fb.innerHTML='<strong>'+CAT[k]+'! +'+pts+'</strong> '+it[2]}
+ else{streak=0;miss.push(it);$('#item').classList.add('no');if(k>=0)bins[k].classList.add('flash-no');bins[it[1]].classList.add('flash-ok');fb.className='fb no';fb.innerHTML='<strong>'+(k<0?'Time\u2019s up!':'Not quite.')+' It\u2019s '+CAT[it[1]].toLowerCase()+'.</strong> '+it[2]}
+ i++;hud();setTimeout(()=>{bins.forEach(b=>b.classList.remove('flash-ok','flash-no'));i<q.length?show():end()},k===it[1]?750:1700)}
+document.querySelectorAll('.bin').forEach(b=>b.onclick=()=>answer(+b.dataset.k));
+addEventListener('keydown',e=>{if(!ov.classList.contains('hide'))return;const m={'1':0,'2':1,'3':2,ArrowLeft:0,ArrowDown:1,ArrowRight:2}[e.key];if(m!==undefined){e.preventDefault();answer(m)}});
+function end(){const msg=right>=18?'Master communicator. Patients are going to love talking with you.':right>=14?'Great sorting! Check the few you missed below.':'Good start. Review the categories and go for a higher streak.';
+ showOv('<h2>Sort complete!</h2><div class="big">'+score+'</div><p>'+right+' of 20 correct &nbsp;|&nbsp; Best streak: '+best+'</p><p>'+msg+'</p>'+(miss.length?'<div class="review">'+miss.map(m=>'<div><b>'+m[0]+'</b> \u2192 '+CAT[m[1]]+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+showOv('<h2>Communication Speed Sort</h2><p>Every message you send a patient is verbal, nonverbal, or written. How fast can you tell them apart?</p><ul><li>20 items, 6 seconds each.</li><li>Click a bin, or use keys <span class="kbd">1</span> <span class="kbd">2</span> <span class="kbd">3</span> or the arrow keys.</li><li>Faster answers earn a speed bonus. Streaks multiply your points.</li></ul><div class="row"><button class="btn" onclick="start()">Start</button></div>');
+</script></body></html>

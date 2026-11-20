@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Legal Lingo Memory Match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.phase{font-family:Lexend,sans-serif;color:var(--teal);text-align:center;font-size:15px;font-weight:600}
+.grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,1fr);gap:clamp(8px,1.4vw,16px);max-width:1200px;width:100%;margin:0 auto}
+.mc{perspective:900px;border:0;background:none;padding:0;cursor:pointer;min-height:0}
+.in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.mc.open .in,.mc.done .in{transform:rotateY(180deg)}
+.f,.b{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:10px 12px;text-align:center}
+.f{background:repeating-linear-gradient(45deg,#16304d 0 10px,#13283f 10px 20px);border:2px solid var(--line);font:700 clamp(26px,3.4vw,40px) Lexend,sans-serif;color:var(--line)}
+.mc:hover .f{border-color:var(--teal);color:var(--teal)}
+.b{transform:rotateY(180deg);background:var(--panel2);border:2px solid var(--teal);color:var(--text);font-size:clamp(13px,1.25vw,16px);line-height:1.3;flex-direction:column;gap:6px}
+.b .tag{font:600 11px Lexend,sans-serif;color:var(--muted)}
+.b.term{font:600 clamp(16px,1.7vw,21px) Lexend,sans-serif;border-color:var(--gold)}
+.mc.done .b{background:#123a35;border-color:var(--good)}
+.mc.bad .b{border-color:var(--bad);animation:shake .3s}
+</style></head><body>
+<header><div class="ttl"><h1>Legal Lingo Memory Match</h1><p>Week 1 &nbsp;|&nbsp; Legal and Ethical Responsibilities</p></div>
+<div class="stats"><div class="stat"><b id="pairs">0/5</b><span>Pairs</span></div><div class="stat"><b id="moves">0</b><span>Tries</span></div><div class="stat"><b id="time">0:00</b><span>Time</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="phase" id="phase"></div>
+<div class="grid" id="grid"></div>
+<div class="fb" id="fb">Flip two cards. Match each legal term with the card that belongs to it.</div>
+</main>
+<footer><span>Medical Assistant Certificate Program</span><span>Never perform a task you’re not trained or cleared to do. If unsure, ask!</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const T=[
+{t:'Informed Consent',d:'Permission a patient gives after understanding the risks and benefits of a procedure.',s:'Before a mole removal, the provider explains the risks and benefits, and the patient agrees in writing.'},
+{t:'HIPAA',d:'Federal law that protects patient privacy and controls how medical information is shared.',s:'A caller says she\u2019s the patient\u2019s coworker and asks for his lab results. The MA politely declines.'},
+{t:'Scope of Practice',d:'The legal boundaries of what an MA is trained and permitted to do.',s:'A patient asks the MA to read his X-ray. She explains that only the provider can interpret it.'},
+{t:'Negligence',d:'Failing to provide the standard of care, resulting in harm to a patient.',s:'A spill in the hallway is left unmarked for an hour, and a patient slips and is injured.'},
+{t:'Malpractice',d:'Professional negligence by a healthcare provider that causes injury.',s:'A surgeon operates on the wrong knee, and the patient is left with a lasting injury.'}];
+let round=1,first=null,busy=false,matched=0,moves=0,sec=0,tick=null,totals=[];
+const grid=$('#grid'),fb=$('#fb');
+function hud(){$('#pairs').textContent=matched+'/5';$('#moves').textContent=moves;$('#time').textContent=fmt(sec);$('#bar').style.width=((round-1)*50+matched/5*50)+'%'}
+function start(r){hideOv();round=r;if(r===1)totals=[];first=null;busy=false;matched=0;moves=0;sec=0;clearInterval(tick);tick=setInterval(()=>{sec++;hud()},1000);
+ $('#phase').textContent=r===1?'Round 1: Term \u2194 Definition':'Round 2: Term \u2194 Real-life scenario';
+ fb.className='fb';fb.textContent=r===1?'Flip two cards. Match each legal term with its definition.':'Now match each term to a situation you might see on the job.';
+ const cards=shuffle(T.flatMap((x,i)=>[{id:i,term:true,txt:x.t},{id:i,term:false,txt:r===1?x.d:x.s}]));
+ grid.innerHTML='';cards.forEach(c=>{const b=document.createElement('button');b.className='mc';b.dataset.id=c.id;b.setAttribute('aria-label','Hidden card');
+  b.innerHTML='<div class="in"><div class="f">?</div><div class="b'+(c.term?' term':'')+'">'+(c.term?'':'<span class="tag">'+(r===1?'Definition':'Scenario')+'</span>')+c.txt+'</div></div>';
+  b.onclick=()=>flip(b,c);grid.appendChild(b)});hud()}
+function flip(b,c){if(busy||b.classList.contains('open')||b.classList.contains('done'))return;b.classList.add('open');b.setAttribute('aria-label',c.txt);
+ if(!first){first={b,c};return}
+ moves++;const a=first;first=null;
+ if(a.c.id===c.id&&a.c.term!==c.term){matched++;[a.b,b].forEach(x=>{x.classList.remove('open');x.classList.add('done')});fb.className='fb ok';fb.innerHTML='<strong>Match! '+T[c.id].t+'.</strong> '+(round===1?T[c.id].s:T[c.id].d);
+  hud();if(matched===5)setTimeout(finish,900)}
+ else{busy=true;[a.b,b].forEach(x=>x.classList.add('bad'));fb.className='fb no';fb.innerHTML=a.c.term===c.term?'<strong>Two of the same kind.</strong> Pair a term with a '+(round===1?'definition':'scenario')+'.':'<strong>Not a match.</strong> Remember where these were and try again.';
+  setTimeout(()=>{[a.b,b].forEach(x=>{x.classList.remove('open','bad');x.setAttribute('aria-label','Hidden card')});busy=false},1100);hud()}}
+function stars(m){return m<=7?'\u2605\u2605\u2605':m<=10?'\u2605\u2605\u2606':'\u2605\u2606\u2606'}
+function finish(){clearInterval(tick);totals.push({moves,sec});
+ if(round===1)showOv('<h2>Round 1 cleared</h2><div class="big">'+stars(moves)+'</div><p>'+moves+' tries in '+fmt(sec)+'. A perfect game is 5 tries.</p><p>Next, match each term to a real situation in the clinic.</p><div class="row"><button class="btn" onclick="start(2)">Start Round 2</button></div>');
+ else{const tm=totals[0].moves+totals[1].moves,ts=totals[0].sec+totals[1].sec;
+  showOv('<h2>Legal eagle!</h2><div class="big">'+stars(Math.round(tm/2))+'</div><p>Total: '+tm+' tries in '+fmt(ts)+'</p><div class="review">'+T.map(x=>'<div><b>'+x.t+':</b> '+x.d+'</div>').join('')+'</div><div class="row"><button class="btn" onclick="start(1)">Play again</button></div>')}}
+showOv('<h2>Legal Lingo Memory Match</h2><p>Knowing these five terms keeps you, your patients, and your employer protected.</p><ul><li><b>Round 1:</b> Match each legal term to its definition.</li><li><b>Round 2:</b> Match each term to a real-life clinic scenario.</li><li>Fewer tries means more stars. A perfect round is 5 tries.</li></ul><div class="row"><button class="btn" onclick="start(1)">Start</button></div>');
+</script></body></html>

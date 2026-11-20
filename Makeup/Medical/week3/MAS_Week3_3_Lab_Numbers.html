@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lab Numbers: Closest Guess</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.stage{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:clamp(10px,2.2vh,24px)}
+.sq{max-width:900px;text-align:center;font:600 clamp(18px,2.2vw,26px) Lexend,sans-serif;line-height:1.35}
+.sq small{display:block;font:400 15px 'Source Sans 3',sans-serif;color:var(--muted);margin-top:6px}
+.readout{font:700 clamp(48px,8vw,88px) Lexend,sans-serif;color:var(--gold);line-height:1}
+.readout span{font-size:.38em;color:var(--muted);font-weight:400;margin-left:6px}
+.sl{display:flex;align-items:center;gap:14px;width:min(820px,100%)}
+.sl input{flex:1;accent-color:var(--teal);height:28px}
+.sl .ends{font:600 14px Lexend,sans-serif;color:var(--muted);min-width:40px;text-align:center}
+.nudge{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:var(--text);font:700 22px Lexend,sans-serif;cursor:pointer}
+.track{position:relative;width:min(820px,100%);height:26px}
+.track .mk{position:absolute;top:0;transform:translateX(-50%);font:600 12px Lexend,sans-serif;padding:3px 8px;border-radius:8px;white-space:nowrap}
+.track .mk.you{background:var(--panel2);border:1px solid var(--line)}.track .mk.ans{background:var(--good);color:#06291d}
+.verdict{font:700 clamp(20px,2.6vw,30px) Lexend,sans-serif;min-height:1.2em}
+.stage .fb{width:min(900px,100%)}
+</style></head><body>
+<header><div class="ttl"><h1>Lab Numbers: Closest Guess</h1><p>Week 3 &nbsp;|&nbsp; Point-of-Care Testing and Lab Procedures</p></div><div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="st">0</b><span>Bullseyes</span></div><div class="stat"><b id="pr">0</b><span>Question</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="stage"><div class="sq" id="sq"></div><div class="readout" id="ro"></div><div class="sl"><button class="nudge" id="m" aria-label="Decrease">−</button><span class="ends" id="mn"></span><input type="range" id="rng" aria-label="Your answer"><span class="ends" id="mx"></span><button class="nudge" id="p" aria-label="Increase">+</button></div><div class="track" id="trk"></div><div class="verdict" id="vd"></div><div style="display:flex;gap:10px"><button class="btn gold" id="go">Lock it in</button><button class="btn" id="nx" style="display:none">Next</button></div><div class="fb" id="fb"></div></div>
+
+</main>
+<footer><span>Medical Assistant Certificate Program</span><span>Always follow the manufacturer’s instructions and your facility’s protocols</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const CFG={"endTitle": "Numbers locked in!", "intro": {"h": "Lab Numbers: Closest Guess", "p": "Lab work runs on numbers: wait times, ranges, and counts. How close can you get?", "rules": ["Slide to your answer, then lock it in.", "Exact answer = 100 points. Close = 60. In the neighborhood = 25.", "Use the − and + buttons or arrow keys for fine control."]}, "end": {"hi": "Bullseye after bullseye. You know your lab numbers.", "mid": "Close on most. Review the numbers you missed.", "lo": "These numbers show up on the CCMA. Review and try again."}, "qs": [{"p": "After a scratch test, how many minutes do you wait before checking for a wheal?", "min": 0, "max": 30, "step": 1, "unit": "min", "ans": 15, "tol": 2, "ansText": "15 minutes", "short": "Scratch test wait", "why": "Wait 15 minutes, then check for wheal formation."}, {"p": "How many days before skin testing should a patient stop antihistamines?", "min": 0, "max": 14, "step": 1, "unit": "days", "ans": 3, "tol": 1, "ansText": "3 days", "short": "Stop antihistamines", "why": "Your course materials say 3 days, because antihistamines can block the skin reaction and cause a false negative. Follow the provider’s instructions."}, {"p": "How many successful, measured breathing maneuvers are needed for spirometry?", "min": 1, "max": 8, "step": 1, "unit": "maneuvers", "ans": 3, "tol": 1, "ansText": "3 maneuvers", "short": "Spirometry maneuvers", "why": "Three acceptable maneuvers confirm the results are consistent."}, {"p": "An adult with normal hearing should hear tones at how many decibels?", "min": 0, "max": 60, "step": 5, "unit": "dB", "ans": 25, "tol": 5, "ansText": "25 dB", "short": "Normal hearing", "why": "Hearing tones at 25 dB is within normal limits for an adult."}, {"p": "How many minutes does it take to read a urine pregnancy test result?", "min": 0, "max": 15, "step": 1, "unit": "min", "ans": 5, "tol": 1, "ansText": "5 minutes", "short": "Urine pregnancy test", "why": "Read the result at 5 minutes. Reading too early or too late can give a wrong result."}, {"p": "A normal hemoglobin A1c is less than what percent?", "min": 4, "max": 10, "step": 0.1, "unit": "%", "ans": 5.7, "tol": 0.2, "ansText": "5.7%", "short": "Normal A1c", "why": "Below 5.7% is normal. Higher values suggest prediabetes or diabetes."}, {"p": "A normal total cholesterol tops out at what level?", "min": 100, "max": 300, "step": 10, "unit": "mg/dL", "ans": 200, "tol": 10, "ansText": "200 mg/dL", "short": "Total cholesterol", "why": "The normal range in your course is 130–200 mg/dL."}, {"p": "How many identifiers do you use to verify a patient before collecting a specimen?", "min": 1, "max": 5, "step": 1, "unit": "identifiers", "ans": 2, "tol": 1, "ansText": "2 (name and DOB)", "short": "Patient identifiers", "why": "Always use two identifiers: name and date of birth."}, {"p": "Your externship elevator pitch should be under how many seconds?", "min": 0, "max": 120, "step": 5, "unit": "sec", "ans": 30, "tol": 5, "ansText": "30 seconds", "short": "Elevator pitch", "why": "Office staff are busy. A tight pitch under 30 seconds respects their time."}]};
+function intro(){showOv('<h2>'+CFG.intro.h+'</h2><p>'+CFG.intro.p+'</p><ul>'+CFG.intro.rules.map(r=>'<li>'+r+'</li>').join('')+'</ul><div class="row"><button class="btn" onclick="start()">'+(CFG.intro.go||'Start')+'</button></div>')}
+function endScreen(o){const pct=o.pct;const m=CFG.end||{};const msg=pct>=85?(m.hi||'Outstanding work!'):pct>=60?(m.mid||'Nice job. Review the ones you missed and try again.'):(m.lo||'Keep practicing. Replay to lock it in.');
+ showOv('<h2>'+(o.title||'Activity complete!')+'</h2><div class="big">'+o.big+'</div><p>'+o.line+'</p><p>'+msg+'</p>'+(o.review&&o.review.length?'<div class="review">'+o.review.map(r=>'<div>'+r+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+function setStat(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function setBar(f){$('#bar').style.width=Math.round(f*100)+'%'}
+function fbSet(cls,html){const f=$('#fb');f.className='fb'+(cls?' '+cls:'');f.innerHTML=html}
+
+let q=[],i=0,score=0,streak=0,best=0,bulls=0,miss=[],locked=false;const N=CFG.qs.length;const inp=$('#rng');
+function hud(){setStat('sc',score);setStat('st',bulls);setStat('pr',Math.min(i+1,N)+'/'+N);setBar(i/N)}
+function dec(s){const d=String(s.step).split('.')[1];return d?d.length:0}
+function upd(){const s=q[i];$('#ro').innerHTML=(+inp.value).toFixed(dec(s))+'<span>'+s.unit+'</span>'}
+function start(){hideOv();q=shuffle(CFG.qs);i=0;score=0;streak=0;best=0;bulls=0;miss=[];show()}
+function show(){const s=q[i];locked=false;$('#sq').innerHTML=s.p+'<small>'+(s.sub||'Slide to your best guess, then lock it in.')+'</small>';
+ inp.min=s.min;inp.max=s.max;inp.step=s.step;const steps=Math.round((s.max-s.min)/s.step);let v;do{v=+(s.min+Math.floor(Math.random()*(steps+1))*s.step).toFixed(dec(s))}while(Math.abs(v-s.ans)<=s.tol*2+1e-9);inp.value=v;inp.disabled=false;
+ $('#mn').textContent=s.min;$('#mx').textContent=s.max;$('#trk').innerHTML='';$('#vd').textContent='';fbSet('',CFG.hint||'Use the slider, the \u2212/+ buttons, or arrow keys for fine control.');
+ $('#go').style.display='';$('#nx').style.display='none';upd();hud();inp.focus()}
+function lock(){if(locked)return;locked=true;inp.disabled=true;const s=q[i],v=+inp.value,d=Math.abs(v-s.ans);let pts,vd,cls;
+ if(d<1e-9){pts=100;vd='Bullseye!';cls='ok';bulls++;streak++}else if(d<=s.tol+1e-9){pts=60;vd='So close!';cls='ok';streak++}else if(d<=s.tol*2+1e-9){pts=25;vd='In the neighborhood';cls='no';streak=0;miss.push(s)}else{pts=0;vd='Way off';cls='no';streak=0;miss.push(s)}
+ best=Math.max(best,streak);score+=pts;const pos=x=>((x-s.min)/(s.max-s.min)*100)+'%';
+ $('#trk').innerHTML='<span class="mk you" style="left:'+pos(v)+'">You: '+v.toFixed(dec(s))+'</span><span class="mk ans" style="left:'+pos(s.ans)+';top:'+(d/(s.max-s.min)<.12?'28px':'0')+'">Answer: '+s.ansText+'</span>';
+ $('#vd').textContent=vd+' +'+pts;$('#vd').style.color=cls==='ok'?'var(--good)':'var(--bad)';fbSet(cls,'<strong>The answer is '+s.ansText+'.</strong> '+s.why);
+ $('#go').style.display='none';const nx=$('#nx');nx.style.display='';nx.textContent=i<N-1?'Next question':'See results';nx.focus();hud()}
+inp.oninput=upd;$('#m').onclick=()=>{inp.stepDown();upd()};$('#p').onclick=()=>{inp.stepUp();upd()};$('#go').onclick=lock;
+$('#nx').onclick=()=>{i++;if(i<N)show();else{setBar(1);endScreen({title:CFG.endTitle,big:score,pct:score/(N*100)*100,line:bulls+' bullseyes out of '+N+' &nbsp;|&nbsp; Best streak: '+best,review:miss.map(m=>'<b>'+m.short+'</b> \u2192 '+m.ansText)})}};
+addEventListener('keydown',e=>{if(!ov.classList.contains('hide'))return;if(e.key==='Enter'&&!locked&&document.activeElement===inp){e.preventDefault();lock()}});
+intro();
+</script></body></html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>De-escalation Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.wrap{flex:1;min-height:0;display:grid;grid-template-columns:1fr 360px;gap:22px;max-width:1200px;width:100%;margin:0 auto}
+.left{display:flex;flex-direction:column;justify-content:center;gap:clamp(8px,1.6vh,16px);min-height:0}
+.gp{font:600 14px Lexend,sans-serif;color:var(--teal)}
+.gq{font:600 clamp(18px,2.1vw,24px) Lexend,sans-serif;line-height:1.35;margin:0}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{text-align:left;background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:11px 15px;color:var(--text);font-size:clamp(15px,1.4vw,17px);cursor:pointer;line-height:1.35;display:flex;gap:12px}
+.opt .k{font:600 13px Lexend,sans-serif;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:1px 8px;flex:none;height:fit-content}
+.opt:hover:not(:disabled){border-color:var(--teal)}.opt:disabled{cursor:default}
+.opt.best{border-color:var(--good);background:#123a35}.opt.ok{border-color:var(--gold);background:#3a2f12}.opt.bad{border-color:var(--bad);background:#3a1a22}
+.foot{display:flex;gap:12px;align-items:stretch}.foot .fb{flex:1}.fb.mid{border-color:var(--gold)}
+.card{background:#f5f1e6;color:#1b2430;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:hidden}
+.card h3{margin:0;font-size:17px;color:#2b3a55;overflow-wrap:anywhere}
+.card .line{font-size:15px;line-height:1.45;border-left:4px solid #cfd6e3;padding-left:10px;color:#2a3140}
+.card .line.e{color:#8a93a6;font-style:italic}
+.card .line.g2{border-color:#2aa58f}.card .line.g1{border-color:#d69a20}.card .line.g0{border-color:#d0545a}
+.card .meta{margin-top:auto;font:600 13px Lexend,sans-serif;color:#44506a;display:flex;justify-content:space-between}
+@media (max-width:860px){.wrap{grid-template-columns:1fr}.card{display:none}}
+</style></head><body>
+<header><div class="ttl"><h1>De-escalation Builder</h1><p>Week 8 &nbsp;|&nbsp; Week 7 Quiz Review: Communication and Customer Service</p></div><div class="stats"><div class="stat"><b id="sc">0</b><span>Points</span></div><div class="stat"><b id="st">0</b><span>Strong</span></div><div class="stat"><b id="pr">0</b><span>Step</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="wrap"><section class="left"><div class="gp" id="gp"></div><p class="gq" id="gq"></p><div class="opts" id="opts"></div><div class="foot"><div class="fb" id="fb"></div><button class="btn" id="nx" style="display:none">Next</button></div></section><aside class="card" id="card"></aside></div>
+
+</main>
+<footer><span>Medical Assistant Certificate Program</span><span>Stay calm, listen first, and document the conversation</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const CFG={"noTime": true, "cardTitle": "Your response to an upset patient", "finalLabel": "Your de-escalation, step by step:", "hint": "Pick the strongest response for this step. Keys A–C work too.", "endTitle": "Situation de-escalated!", "intro": {"h": "De-escalation Builder", "p": "A patient arrived 25 minutes late and is upset about being asked to reschedule. Build your response one step at a time.", "rules": ["Choose the best response for each of the 5 steps.", "Watch your approach come together on the right.", "Aim for all strong choices."]}, "end": {"hi": "Calm, kind, and professional. That patient will be back.", "mid": "Good approach. Swap in the stronger steps.", "lo": "Listen first, empathize, offer options, and document. Try again!"}, "slots": [{"label": "1. Let them vent", "q": "The patient raises their voice: “Traffic was terrible! You can’t just turn me away!”", "opts": [{"t": "Stay calm and let them explain what happened without interrupting.", "g": 2, "why": "Letting the patient vent is the first step in de-escalation."}, {"t": "“Please lower your voice.”", "g": 1, "why": "Understandable, but it can feel dismissive before they’ve been heard."}, {"t": "“It’s our policy. There’s nothing I can do.”", "g": 0, "why": "Shutting them down escalates the situation."}]}, {"label": "2. Show empathy", "q": "They pause. What do you say?", "opts": [{"t": "“I understand how frustrating that is, especially after the drive.”", "g": 2, "why": "Acknowledging their feelings builds trust."}, {"t": "“Okay.”", "g": 1, "why": "Neutral, but it misses a chance to connect."}, {"t": "“You should have left earlier.”", "g": 0, "why": "Blaming the patient makes things worse."}]}, {"label": "3. Explain clearly", "q": "Explain why they need to reschedule.", "opts": [{"t": "“The provider’s next patients are already here, and I want you to get a full, unrushed visit.”", "g": 2, "why": "A clear, patient-focused reason."}, {"t": "“The schedule is full.”", "g": 1, "why": "True, but blunt."}, {"t": "“Rules are rules.”", "g": 0, "why": "No explanation feels dismissive."}]}, {"label": "4. Offer options", "q": "What do you offer?", "opts": [{"t": "“I can get you the first opening tomorrow morning, or I can ask my supervisor whether there’s anything sooner.”", "g": 2, "why": "Options plus involving a supervisor gives them a path forward."}, {"t": "“You can call back to reschedule.”", "g": 1, "why": "It puts all the work on the patient."}, {"t": "“Squeeze yourself in somewhere, I guess.”", "g": 0, "why": "Unprofessional and unhelpful."}]}, {"label": "5. Follow through", "q": "The patient calms down and books tomorrow. What next?", "opts": [{"t": "Thank them, confirm the appointment, and document the conversation in their record.", "g": 2, "why": "Always document the conversation after de-escalating."}, {"t": "Confirm the appointment and move on.", "g": 1, "why": "Good, but the conversation should be documented."}, {"t": "Vent to a coworker about the patient at the front desk.", "g": 0, "why": "That’s unprofessional and could violate privacy."}]}]};
+function intro(){showOv('<h2>'+CFG.intro.h+'</h2><p>'+CFG.intro.p+'</p><ul>'+CFG.intro.rules.map(r=>'<li>'+r+'</li>').join('')+'</ul><div class="row"><button class="btn" onclick="start()">'+(CFG.intro.go||'Start')+'</button></div>')}
+function endScreen(o){const pct=o.pct;const m=CFG.end||{};const msg=pct>=85?(m.hi||'Outstanding work!'):pct>=60?(m.mid||'Nice job. Review the ones you missed and try again.'):(m.lo||'Keep practicing. Replay to lock it in.');
+ showOv('<h2>'+(o.title||'Activity complete!')+'</h2><div class="big">'+o.big+'</div><p>'+o.line+'</p><p>'+msg+'</p>'+(o.review&&o.review.length?'<div class="review">'+o.review.map(r=>'<div>'+r+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+function setStat(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function setBar(f){$('#bar').style.width=Math.round(f*100)+'%'}
+function fbSet(cls,html){const f=$('#fb');f.className='fb'+(cls?' '+cls:'');f.innerHTML=html}
+
+let i=0,score=0,picks=[],locked=true;const S=CFG.slots,N=S.length;
+function hud(){setStat('sc',score);setStat('st',picks.filter(p=>p.g===2).length);setStat('pr',Math.min(i+1,N)+'/'+N);setBar(i/N)}
+function card(){const w=picks.map(p=>p.t).join(' ').split(/\s+/).filter(Boolean).length;
+ $('#card').innerHTML='<h3>'+CFG.cardTitle+'</h3>'+S.map((s,k)=>{const p=picks[k];return '<div class="line '+(p?'g'+p.g:'e')+'">'+(p?p.t:s.label+'\u2026')+'</div>'}).join('')+'<div class="meta"><span>'+w+' words</span>'+(CFG.noTime?'':'<span>\u2248 '+Math.round(w/2.5)+' sec out loud</span>')+'</div>'}
+function start(){hideOv();i=0;score=0;picks=[];card();show()}
+function show(){const s=S[i];locked=false;$('#gp').textContent=s.label;$('#gq').textContent=s.q;const o=$('#opts');o.innerHTML='';
+ shuffle(s.opts).forEach((x,j)=>{const b=document.createElement('button');b.className='opt';b.innerHTML='<span class="k">'+'ABC'[j]+'</span><span>'+x.t+'</span>';b._x=x;b.onclick=()=>pick(b);o.appendChild(b)});
+ fbSet('',CFG.hint||'Pick the strongest line.');$('#nx').style.display='none';hud()}
+function pick(b){if(locked)return;locked=true;const x=b._x;picks.push(x);score+=[0,10,25][x.g];
+ document.querySelectorAll('.opt').forEach(o=>{o.disabled=true;if(o._x.g===2)o.classList.add('best')});if(x.g!==2)b.classList.add(x.g?'ok':'bad');
+ fbSet(['no','mid','ok'][x.g],'<strong>'+['Weak choice.','Not bad, but there\u2019s a stronger option.','Strong choice!'][x.g]+'</strong> '+x.why);card();
+ const nx=$('#nx');nx.style.display='';nx.textContent=i<N-1?'Next':'Finish';nx.focus();hud()}
+$('#nx').onclick=()=>{i++;if(i<N)show();else{setBar(1);const b=picks.filter(p=>p.g===2).length;const w=picks.map(p=>p.t).join(' ').split(/\s+/).length;
+ endScreen({title:CFG.endTitle,big:score,pct:score/(N*25)*100,line:b+' of '+N+' strongest choices'+(CFG.noTime?'':' &nbsp;|&nbsp; about '+Math.round(w/2.5)+' seconds'),review:['<b>'+(CFG.finalLabel||'Your final version:')+'</b>'].concat(picks.map(p=>p.t))})}};
+addEventListener('keydown',e=>{if(!ov.classList.contains('hide'))return;const k='abc'.indexOf(e.key.toLowerCase());if(k>=0&&!locked){const b=document.querySelectorAll('.opt')[k];if(b)pick(b)}});
+intro();
+</script></body></html>

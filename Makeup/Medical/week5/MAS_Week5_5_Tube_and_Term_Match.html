@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tube & Term Match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c1a2b;--panel:#13263c;--panel2:#1a3250;--line:#284563;--teal:#2ec4b6;--teal-d:#062b28;--gold:#f4b942;--text:#eaf2f8;--muted:#9ab0c5;--bad:#ef6f6c;--good:#4fd1a5}
+*{box-sizing:border-box}
+button{font-family:inherit}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:radial-gradient(1200px 600px at 85% -10%,#16314f 0%,transparent 60%),var(--bg);color:var(--text);font-family:'Source Sans 3',system-ui,-apple-system,'Segoe UI',sans-serif;display:flex;flex-direction:column;font-size:17px}
+h1,h2,h3,.disp{font-family:'Lexend',system-ui,sans-serif;letter-spacing:-.01em}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;border-bottom:1px solid var(--line);flex:none}
+.ttl h1{font-size:clamp(18px,2.1vw,25px);margin:0;font-weight:600}
+.ttl p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.stats{display:flex;gap:10px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 14px;text-align:center;min-width:76px}
+.stat b{display:block;font-family:'Lexend',sans-serif;font-size:20px;color:var(--gold);font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+main{flex:1;min-height:0;display:flex;flex-direction:column;padding:16px 28px;gap:14px}
+footer{flex:none;padding:8px 28px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}
+.btn{font:600 16px 'Lexend',sans-serif;border:0;border-radius:10px;padding:11px 22px;cursor:pointer;background:var(--teal);color:var(--teal-d);transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+.btn.gold{background:var(--gold);color:#2b1d00}
+.btn:disabled{opacity:.4;cursor:default;filter:none;transform:none}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.bar{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;flex:none}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--gold));transition:width .35s}
+.fb{border-radius:12px;padding:12px 16px;font-size:16px;line-height:1.4;background:var(--panel);border-left:4px solid var(--line);min-height:52px}
+.fb.ok{border-color:var(--good)}.fb.no{border-color:var(--bad)}
+.fb strong{font-family:'Lexend',sans-serif}
+.ov{position:fixed;inset:0;background:rgba(6,14,24,.82);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
+.ov.hide{display:none}
+.card-ov{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:30px 34px;max-width:620px;width:100%;max-height:92vh;overflow:auto;text-align:center}
+.card-ov h2{margin:0 0 6px;font-size:clamp(24px,3vw,34px)}
+.card-ov .big{font-family:'Lexend',sans-serif;font-size:clamp(40px,6vw,64px);color:var(--gold);font-weight:700;margin:6px 0}
+.card-ov p{color:var(--muted);line-height:1.5;margin:8px 0}
+.card-ov ul{text-align:left;color:var(--text);line-height:1.55;padding-left:22px;margin:12px 0 20px}
+.card-ov .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.review{text-align:left;font-size:14px;color:var(--muted);background:var(--bg);border-radius:10px;padding:10px 14px;margin-top:10px;max-height:26vh;overflow:auto}
+.review div{padding:3px 0}.review b{color:var(--text)}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;font-size:12px;color:var(--text);background:var(--bg)}
+@keyframes pop{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.shake{animation:shake .3s}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-height:640px){body{font-size:15px}header{padding:8px 20px}main{padding:10px 20px;gap:10px}}
+
+.phase{font-family:Lexend,sans-serif;color:var(--teal);text-align:center;font-size:15px;font-weight:600}
+.grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:clamp(8px,1.2vw,14px);max-width:1150px;width:100%;margin:0 auto}
+.mc{perspective:900px;border:0;background:none;padding:0;cursor:pointer;min-height:0}
+.in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+.mc.open .in,.mc.done .in{transform:rotateY(180deg)}
+.f,.b{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:8px 12px;text-align:center}
+.f{background:repeating-linear-gradient(45deg,#16304d 0 10px,#13283f 10px 20px);border:2px solid var(--line);font:700 clamp(22px,3vw,34px) Lexend,sans-serif;color:var(--line)}
+.mc:hover .f{border-color:var(--teal);color:var(--teal)}
+.b{transform:rotateY(180deg);background:var(--panel2);border:2px solid var(--teal);color:var(--text);font-size:clamp(13px,1.2vw,15px);line-height:1.3;flex-direction:column;gap:4px}
+.b .tag{font:600 11px Lexend,sans-serif;color:var(--muted)}
+.b.term{font:600 clamp(15px,1.6vw,20px) Lexend,sans-serif;border-color:var(--gold)}
+.mc.done .b{background:#123a35;border-color:var(--good)}
+.mc.bad .b{border-color:var(--bad);animation:shake .3s}
+</style></head><body>
+<header><div class="ttl"><h1>Tube & Term Match</h1><p>Week 5 &nbsp;|&nbsp; Tubes, Additives, and Pharmacology Basics</p></div><div class="stats"><div class="stat"><b id="pairs">0/6</b><span>Pairs</span></div><div class="stat"><b id="moves">0</b><span>Tries</span></div><div class="stat"><b id="time">0:00</b><span>Time</span></div></div></header>
+<main><div class="bar"><i id="bar"></i></div>
+<div class="phase" id="phase"></div><div class="grid" id="grid"></div><div class="fb" id="fb"></div>
+
+</main>
+<footer><span>Medical Assistant Certificate Program</span><span>Know your tubes and your terms before you draw or administer</span></footer>
+<div class="ov" id="ov"><div class="card-ov" id="ovc"></div></div>
+<script>const $=s=>document.querySelector(s);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ov=$('#ov'),ovc=$('#ovc');
+function showOv(html){ovc.innerHTML=html;ov.classList.remove('hide');const b=ovc.querySelector('button');if(b)b.focus()}
+function hideOv(){ov.classList.add('hide')}
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+
+const CFG={"endTitle": "All matched!", "intro": {"h": "Tube & Term Match", "p": "A memory game in two rounds: blood tube colors, then pharmacology terms.", "rules": ["<b>Round 1:</b> Match each tube color to its additive and use.", "<b>Round 2:</b> Match pharmacology terms to their meanings.", "Fewer tries earns more stars. A perfect round is 6 tries."]}, "end": {"hi": "Sharp memory! Tubes and terms locked in.", "mid": "Nice matching. Review the pairs below.", "lo": "Read through the pairs below and play again."}, "rounds": [{"label": "Tube color ↔ additive", "a": "Tube", "b": "Additive and use", "pairs": [["Light blue", "Sodium citrate, for coagulation tests", "Light blue is drawn right after blood cultures."], ["Red", "No additive or clot activator, for serum", ""], ["Gold / tiger top", "Gel separator, for serum", ""], ["Green", "Heparin", ""], ["Lavender", "EDTA, for a CBC", "Invert 8 to 10 times."], ["Gray", "Sodium fluoride, for glucose and lactate", "Gray is last in the order of draw."]]}, {"label": "Pharmacology terms", "a": "Term", "b": "Meaning", "pairs": [["Pharmacokinetics", "What the body does to the drug", "Absorption, distribution, metabolism, and excretion."], ["Pharmacodynamics", "What the drug does to the body", "Its mechanism of action and therapeutic effects."], ["Oral (PO)", "The most common and convenient route", ""], ["Parenteral", "Given by injection: IM, SubQ, ID, or IV", ""], ["Transdermal", "Through the skin, for example a patch", ""], ["Inhalation", "Rapid absorption through the respiratory system", ""]]}]};
+function intro(){showOv('<h2>'+CFG.intro.h+'</h2><p>'+CFG.intro.p+'</p><ul>'+CFG.intro.rules.map(r=>'<li>'+r+'</li>').join('')+'</ul><div class="row"><button class="btn" onclick="start()">'+(CFG.intro.go||'Start')+'</button></div>')}
+function endScreen(o){const pct=o.pct;const m=CFG.end||{};const msg=pct>=85?(m.hi||'Outstanding work!'):pct>=60?(m.mid||'Nice job. Review the ones you missed and try again.'):(m.lo||'Keep practicing. Replay to lock it in.');
+ showOv('<h2>'+(o.title||'Activity complete!')+'</h2><div class="big">'+o.big+'</div><p>'+o.line+'</p><p>'+msg+'</p>'+(o.review&&o.review.length?'<div class="review">'+o.review.map(r=>'<div>'+r+'</div>').join('')+'</div>':'')+'<div class="row"><button class="btn" onclick="start()">Play again</button></div>')}
+function setStat(id,v){const e=document.getElementById(id);if(e)e.textContent=v}
+function setBar(f){$('#bar').style.width=Math.round(f*100)+'%'}
+function fbSet(cls,html){const f=$('#fb');f.className='fb'+(cls?' '+cls:'');f.innerHTML=html}
+
+let round=0,first=null,busy=false,matched=0,moves=0,sec=0,tick=null,totals=[],P=[];const NR=CFG.rounds.length;
+function hud(){const n=P.length;setStat('pairs',matched+'/'+n);setStat('moves',moves);setStat('time',fmt(sec));setBar((round+matched/n)/NR)}
+function start(){hideOv();totals=[];go(0)}
+function go(r){hideOv();round=r;const R=CFG.rounds[r];P=R.pairs;first=null;busy=false;matched=0;moves=0;sec=0;clearInterval(tick);tick=setInterval(()=>{sec++;hud()},1000);
+ $('#phase').textContent='Round '+(r+1)+' of '+NR+': '+R.label;fbSet('',R.hint||'Flip two cards. Match each '+R.a.toLowerCase()+' to its '+R.b.toLowerCase()+'.');
+ const cards=shuffle(P.flatMap((x,i)=>[{id:i,term:true,txt:x[0]},{id:i,term:false,txt:x[1]}]));
+ const g=$('#grid');g.innerHTML='';cards.forEach(c=>{const b=document.createElement('button');b.className='mc';b.setAttribute('aria-label','Hidden card');
+  b.innerHTML='<div class="in"><div class="f">?</div><div class="b'+(c.term?' term':'')+'">'+(c.term?'':'<span class="tag">'+R.b+'</span>')+c.txt+'</div></div>';b.onclick=()=>flip(b,c);g.appendChild(b)});hud()}
+function flip(b,c){if(busy||b.classList.contains('open')||b.classList.contains('done'))return;b.classList.add('open');b.setAttribute('aria-label',c.txt);
+ if(!first){first={b,c};return}moves++;const a=first;first=null;
+ if(a.c.id===c.id&&a.c.term!==c.term){matched++;[a.b,b].forEach(x=>{x.classList.remove('open');x.classList.add('done')});const p=P[c.id];fbSet('ok','<strong>Match! '+p[0]+'.</strong> '+(p[2]||p[1]));hud();if(matched===P.length)setTimeout(finish,900)}
+ else{busy=true;[a.b,b].forEach(x=>x.classList.add('bad'));fbSet('no',a.c.term===c.term?'<strong>Two of the same kind.</strong> Pair a '+CFG.rounds[round].a.toLowerCase()+' with a '+CFG.rounds[round].b.toLowerCase()+'.':'<strong>Not a match.</strong> Remember where these were and try again.');
+  setTimeout(()=>{[a.b,b].forEach(x=>{x.classList.remove('open','bad');x.setAttribute('aria-label','Hidden card')});busy=false},1100);hud()}}
+function stars(m,n){return m<=n+2?'\u2605\u2605\u2605':m<=n+6?'\u2605\u2605\u2606':'\u2605\u2606\u2606'}
+function finish(){clearInterval(tick);totals.push({moves,sec,n:P.length});
+ if(round<NR-1)showOv('<h2>Round '+(round+1)+' cleared</h2><div class="big">'+stars(moves,P.length)+'</div><p>'+moves+' tries in '+fmt(sec)+'. A perfect round is '+P.length+' tries.</p><p>Next up: '+CFG.rounds[round+1].label+'.</p><div class="row"><button class="btn" onclick="go('+(round+1)+')">Start Round '+(round+2)+'</button></div>');
+ else{setBar(1);const tm=totals.reduce((a,t)=>a+t.moves,0),ts=totals.reduce((a,t)=>a+t.sec,0),tn=totals.reduce((a,t)=>a+t.n,0);const pct=Math.max(0,100-(tm-tn)*5);
+  endScreen({title:CFG.endTitle,big:stars(tm,tn),pct,line:tm+' tries in '+fmt(ts)+' (a perfect game is '+tn+')',review:CFG.rounds.flatMap(R=>R.pairs.map(p=>'<b>'+p[0]+':</b> '+p[1]))})}}
+intro();
+</script></body></html>
